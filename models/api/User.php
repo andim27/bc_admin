@@ -74,6 +74,20 @@ class User
     }
 
     /**
+     * Returns user list
+     *
+     * @return bool|mixed
+     */
+    public static function getList()
+    {
+        $apiClient = new ApiClient('users/list/full');
+
+        $response = $apiClient->get();
+
+        return self::_getResults($response);
+    }
+
+    /**
      * Returns users
      *
      * @param $limit

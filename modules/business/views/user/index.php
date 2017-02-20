@@ -38,6 +38,9 @@
                         <?=THelper::t('user_parent_fname_sname')?>
                     </th>
                     <th>
+                        <?=THelper::t('user_rank')?>
+                    </th>
+                    <th>
                         <?=THelper::t('user_edit_profile')?>
                     </th>
                 </tr>
@@ -73,6 +76,9 @@
                             <?= $user->sponsor ? $user->sponsor->firstName : '' ?> <?= $user->sponsor ? $user->sponsor->secondName : '' ?>
                         </td>
                         <td>
+                            <?= $user->rankString ? $user->rankString : '' ?>
+                        </td>
+                        <td>
                             <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/user', 'u' => $user->username]) ?>
                         </td>
                     </tr>
@@ -85,29 +91,6 @@
 <script>
     var table = $('.table-users').dataTable({
         language: TRANSLATION,
-        lengthMenu: [25, 50, 75, 100],
-        bSort: false
+        lengthMenu: [25, 50, 75, 100]
     });
-
-    var limit = 500;
-    var i = 1;
-
-    function load(offset) {
-        i++;
-        $.ajax({
-            url: '/' + LANG + '/business/user/load',
-            method: 'GET',
-            data: {
-                offset: offset
-            },
-            success: function(data) {
-                if (data.length > 0) {
-                    table.fnAddData(data);
-                    load(limit * i);
-                }
-            }
-        });
-    }
-
-    load(limit);
 </script>

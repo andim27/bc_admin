@@ -70,7 +70,7 @@ class UserController extends BaseController
                 ]);
             } else {
                 return $this->render('index', [
-                    'users' => api\User::users(0, self::LIMIT)
+                    'users' => api\User::getList()
                 ]);
             }
         } else if ($request->isPost) {
