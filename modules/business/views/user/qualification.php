@@ -23,9 +23,6 @@ use yii\helpers\Html;
                     <?=THelper::t('user_fname_sname')?>
                 </th>
                 <th>
-                    <?=THelper::t('user_rank')?>
-                </th>
-                <th>
                     <?=THelper::t('user_country_city')?>
                 </th>
                 <th>
@@ -47,9 +44,6 @@ use yii\helpers\Html;
                     </td>
                     <td>
                         <?= $user->firstName ?> <?= $user->secondName ?>
-                    </td>
-                    <td>
-                        <?= THelper::t('rank_' . $user->rank) ?>
                     </td>
                     <td>
                         <?= $user->getCountryCityAsString() ?>
