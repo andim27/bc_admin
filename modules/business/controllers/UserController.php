@@ -136,6 +136,13 @@ class UserController extends BaseController
         $this->redirect('/' . Yii::$app->language . '/business/user?u=' . $user->username);
     }
 
+    public function actionQualification()
+    {
+        return $this->render('qualification', [
+            'users' => api\User::getQualification()
+        ]);
+    }
+
     public function actionLoad()
     {
         if (Yii::$app->request->isAjax) {

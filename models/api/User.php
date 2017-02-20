@@ -88,6 +88,20 @@ class User
     }
 
     /**
+     * Returns user qualification
+     *
+     * @return bool|mixed
+     */
+    public static function getQualification()
+    {
+        $apiClient = new ApiClient('users/list/qualification');
+
+        $response = $apiClient->get();
+
+        return self::_getResults($response);
+    }
+
+    /**
      * Returns users
      *
      * @param $limit

@@ -29,6 +29,13 @@
                                         <span><?=THelper::t('sidebar_users_users')?></span>
                                     </a>
                                 </li>
+                                <li <?= ($currentAction == 'qualification') ? $class_a : '' ?>>
+                                    <a href="<?= Url::to(['/business/user/qualification']) ?>" <?= ($currentAction == 'qualification') ? $class_a : '' ?>>
+                                        <b class="badge bg-info pull-right non_seen_promo"></b>
+                                        <i class="fa fa-angle-right"></i>
+                                        <span><?=THelper::t('sidebar_users_qualification')?></span>
+                                    </a>
+                                </li>
                                 <li <?= ($currentAction == 'genealogy') ? $class_a : '' ?>>
                                     <a href="<?= Url::to(['/business/user/genealogy']) ?>" <?= ($currentAction == 'genealogy') ? $class_a : '' ?>>
                                         <b class="badge bg-info pull-right non_seen_promo"></b>
