@@ -1,0 +1,11 @@
+# Parameters Configuration
+adminEmail = adminEmail
+apiAddress = apiAddress
+
+#DB configuration
+class = class
+dsn = dsn
+username = username
+password = password
+charset = charset
+tablePrefix = tablePrefix
