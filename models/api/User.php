@@ -277,79 +277,120 @@ class User
             }
             foreach ($data as $object) {
                 $user = new self;
-
                 $user->id                 = $object->{'_id'};
-                $user->email              = $object->email;
-                $user->skype              = $object->skype;
-                $user->username           = $object->username;
-                $user->unreadedNews       = $object->statistics->unreadNews;
-                $user->unreadedPromotions = $object->statistics->unreadPromotions;
-                $user->accountId          = $object->accountId;
-                $user->layout             = $object->settings->layout;
+                if (isset($object->email)) {
+                    $user->email = $object->email;
+                }
+                if (isset($object->skype)) {
+                    $user->skype = $object->skype;
+                }
+                $user->username = $object->username;
+                if (isset($object->statistics->unreadNews)) {
+                    $user->unreadedNews = $object->statistics->unreadNews;
+                }
+                if (isset($object->statistics->unreadPromotions)) {
+                    $user->unreadedPromotions = $object->statistics->unreadPromotions;
+                }
+                if (isset($object->accountId)) {
+                    $user->accountId = $object->accountId;
+                }
+                if (isset($object->settings->layout)) {
+                    $user->layout = $object->settings->layout;
+                }
                 $user->avatar             = isset($object->avatar) ? $object->avatar : '';
-                $user->firstName          = $object->firstName;
-                $user->secondName         = $object->secondName;
-                $user->moneys             = $object->moneys;
-                $user->charityPercent     = $object->settings->charityPercent;
-                $user->firstPurchase      = strtotime($object->firstPurchase);
-                $user->created            = strtotime($object->created);
-                $user->phoneNumber        = $object->phoneNumber;
-                $user->phoneNumber2       = $object->phoneNumber2;
-                $user->rank               = $object->rank;
-                $user->status             = $object->status;
-                $user->expirationDateBS   = strtotime($object->expirationDateBS);
-                $user->side               = $object->side;
-                $user->parentId           = $object->parentId;
-                $user->pointsLeft         = $object->pointsLeft;
-                $user->pointsRight        = $object->pointsRight;
-                $user->autoExtensionBS    = $object->autoExtensionBS;
-
+                if (isset($object->firstName)) {
+                    $user->firstName = $object->firstName;
+                }
+                if (isset($object->secondName)) {
+                    $user->secondName = $object->secondName;
+                }
+                if (isset($object->moneys)) {
+                    $user->moneys = $object->moneys;
+                }
+                if (isset($object->settings->charityPercent)) {
+                    $user->charityPercent = $object->settings->charityPercent;
+                }
+                if (isset($object->firstPurchase)) {
+                    $user->firstPurchase = strtotime($object->firstPurchase);
+                }
+                if (isset($object->created)) {
+                    $user->created = strtotime($object->created);
+                }
+                if (isset($object->phoneNumber)) {
+                    $user->phoneNumber = $object->phoneNumber;
+                }
+                if (isset($object->phoneNumber2)) {
+                    $user->phoneNumber2 = $object->phoneNumber2;
+                }
+                if (isset($object->rank)) {
+                    $user->rank = $object->rank;
+                }
+                if (isset($object->status)) {
+                    $user->status = $object->status;
+                }
+                if (isset($object->expirationDateBS)) {
+                    $user->expirationDateBS = strtotime($object->expirationDateBS);
+                }
+                if (isset($object->side)) {
+                    $user->side = $object->side;
+                }
+                if (isset($object->parentId)) {
+                    $user->parentId = $object->parentId;
+                }
+                if (isset($object->pointsLeft)) {
+                    $user->pointsLeft = $object->pointsLeft;
+                }
+                if (isset($object->pointsRight)) {
+                    $user->pointsRight = $object->pointsRight;
+                }
+                if (isset($object->autoExtensionBS)) {
+                    $user->autoExtensionBS = $object->autoExtensionBS;
+                }
                 if (isset($object->structBonus)) {
                     $user->structBonus = $object->structBonus;
                 }
-
                 if (isset($object->personalBonus)) {
                     $user->personalBonus = $object->personalBonus;
                 }
-
                 if (isset($object->qualification)) {
                     $user->qualification = $object->qualification;
                 }
-
                 if (isset($object->chldrnLeftId)) {
                     $user->chldrnLeftId = $object->chldrnLeftId;
                 }
-
                 if (isset($object->chldrnRightId)) {
                     $user->chldrnRightId = $object->chldrnRightId;
                 }
-
                 if ($user->side == -1) {
                     $user->side = 1;
                 }
-
                 if (isset($object->settings)) {
                     $user->settings = $object->settings;
                 }
-
                 if (isset($object->leftSideNumberUsers)) {
                     $user->leftSideNumberUsers  = $object->leftSideNumberUsers;
                 }
-
                 if (isset($object->rightSideNumberUsers)) {
                     $user->rightSideNumberUsers = $object->rightSideNumberUsers;
                 }
-
                 if (isset($object->sideToNextUser)) {
                     $user->sideToNextUser = $object->sideToNextUser;
                 }
-
-                $user->countryCode          = $object->country;
-                $user->city                 = $object->city;
-                $user->state                = $object->state;
-                $user->address              = $object->address;
-                $user->zipCode              = $object->zipCode;
-
+                if (isset($object->country)) {
+                    $user->countryCode = $object->country;
+                }
+                if (isset($object->city)) {
+                    $user->city = $object->city;
+                }
+                if (isset($object->state)) {
+                    $user->state = $object->state;
+                }
+                if (isset($object->address)) {
+                    $user->address = $object->address;
+                }
+                if (isset($object->zipCode)) {
+                    $user->zipCode = $object->zipCode;
+                }
                 if (isset($object->birthday)) {
                     $user->birthday = strtotime($object->birthday);
                 }
@@ -368,20 +409,16 @@ class User
                 if (isset($object->settings)) {
                     $user->settings = $object->settings;
                 }
-
                 if (isset($user->rank)) {
                     $rank = THelper::t('rank_'.$user->rank);
                     $user->rankString = $rank;
                 }
-
                 if (isset($object->nextRegistration)) {
                     $user->nextRegistration = $object->nextRegistration;
                 }
-
                 if (isset($object->settings->timeZone)) {
                     $user->settings->timeZone = json_decode($object->settings->timeZone);
                 }
-
                 if (isset($object->promotions)) {
                     $user->promotions = $object->promotions;
                 }
