@@ -26,9 +26,6 @@
                         <?=THelper::t('user_fname_sname')?>
                     </th>
                     <th>
-                        <?=THelper::t('user_rank')?>
-                    </th>
-                    <th>
                         <?=THelper::t('user_country_city')?>
                     </th>
                     <th>
@@ -62,9 +59,6 @@
                         </td>
                         <td>
                             <?= $user->firstName ?> <?= $user->secondName ?>
-                        </td>
-                        <td>
-                            <?= THelper::t('rank_' . $user->rank) ?>
                         </td>
                         <td>
                             <?= $user->getCountryCityAsString() ?>
