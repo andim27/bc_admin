@@ -24,7 +24,9 @@
         "kartik-v/yii2-field-range": "*",
         "bupy7/yii2-widget-cropbox": "*",
         "yiisoft/yii2-imagine": "^2.0",
-        "moonlandsoft/yii2-phpexcel": "*"
+        "moonlandsoft/yii2-phpexcel": "*",
+        "yiisoft/yii2-mongodb": "*",
+        "yii2tech/embedded": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

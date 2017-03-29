@@ -4,6 +4,8 @@ namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
 use app\models\AlertForm;
+use app\models\Menu;
+use app\models\Users;
 use app\modules\business\models\AddCell;
 use app\modules\business\models\ImportTranslationForm;
 use app\modules\business\models\TranslationForm;
@@ -283,12 +285,69 @@ class SettingController extends BaseController {
 
     public function actionAdminRules()
     {
-        $admins = [];
+
+        $model = Users::find()
+            ->where(['isAdmin'=>1])
+            ->andWhere(['!=','username','main'])
+            ->all();
+
+        $adminList = [];
+        if(!empty($model)){
+            foreach ($model as $item){
+                $adminList[$item->_id->__toString()] = $item->username . '(' . $item->email . ')';
+            }
+        }
+
 
         return $this->render('admin_rules', [
-            'adminList' => $admins ? ArrayHelper::map($admins, 'id', 'name') : []
+            'adminList' => $adminList,
+            'successText' => Yii::$app->getSession()->getFlash('success', '', true),
+            'errorsText' => Yii::$app->getSession()->getFlash('errors', '', true)
         ]);
     }
+    public function actionAdminRulesShow()
+    {
+        $request = Yii::$app->request->post();
+
+        if(!empty($request['userId'])) {
+            $model = Users::find()->where(['_id'=> new \MongoId($request['userId'])])->one();
+
+            $items = Menu::getItems();
+            return $this->renderPartial('_admin_rules_show', [
+                'items' => $items,
+                'language' => Yii::$app->language,
+                'model' => $model
+            ]);
+        }
+    }
+
+    public function actionAdminRulesSave()
+    {
+        $request = Yii::$app->request->post();
+
+        if(!empty($request['id']) && !empty($request['rule'])){
+
+            $model = Users::find()
+                ->where(['_id'=> new \MongoId($request['id'])])
+                ->one();
+
+            $model->rules->showMenu = $request['rule']['showMenu'];
+            $model->rules->edit = $request['rule']['edit'];
+
+            $model->refreshFromEmbedded();
+
+
+            if($model->save()){
+                Yii::$app->session->setFlash('success', 'rules_admin_change_success');
+            } else {
+                Yii::$app->session->setFlash('danger', 'rules_admin_change_error');
+            }
+
+        }
+
+        return $this->redirect('/'.Yii::$app->language.'/business/setting/admin-rules');
+    }
+
 
     public function actionAddAdmin()
     {

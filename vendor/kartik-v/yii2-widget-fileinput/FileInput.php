@@ -1,27 +1,25 @@
 <?php
 
 /**
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2015
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2016
  * @package yii2-widgets
  * @subpackage yii2-widget-fileinput
- * @version 1.0.3
+ * @version 1.0.5
  */
 
 namespace kartik\file;
 
 use Yii;
-use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
-use yii\web\JsExpression;
+use yii\helpers\Html;
+use kartik\base\InputWidget;
+use kartik\base\TranslationTrait;
 
 /**
- * FileInput widget styled for Bootstrap 3.0 with ability to multiple file
- * selection and preview, format button styles and inputs. Runs on all modern
- * browsers supporting HTML5 File Inputs and File Processing API. For browser
- * versions IE9 and below, this widget will gracefully degrade to normal HTML
- * file input.
- *
- * Wrapper for the Bootstrap FileInput JQuery Plugin by Krajee
+ * Wrapper for the Bootstrap FileInput JQuery Plugin by Krajee. The FileInput widget is styled for Bootstrap 3.0 with
+ * ability to multiple file selection and preview, format button styles and inputs. Runs on all modern browsers
+ * supporting HTML5 File Inputs and File Processing API. For browser versions IE9 and below, this widget will
+ * gracefully degrade to normal HTML file input.
  *
  * @see http://plugins.krajee.com/bootstrap-fileinput
  * @see https://github.com/kartik-v/bootstrap-fileinput
@@ -30,10 +28,25 @@ use yii\web\JsExpression;
  * @since 2.0
  * @see http://twitter.github.com/typeahead.js/examples
  */
-class FileInput extends \kartik\base\InputWidget
+class FileInput extends InputWidget
 {
-    use \kartik\base\TranslationTrait;
-    
+    use TranslationTrait;
+
+    /**
+     * @var bool whether to resize images on client side
+     */
+    public $resizeImages = false;
+
+    /**
+     * @var bool whether to load sortable plugin to rearrange initial preview images on client side
+     */
+    public $sortThumbs = true;
+
+    /**
+     * @var bool whether to load dom purify plugin to purify HTML content in purfiy
+     */
+    public $purifyHtml = true;
+
     /**
      * @var bool whether to show 'plugin unsupported' message for IE browser versions 9 & below
      */
@@ -51,6 +64,16 @@ class FileInput extends \kartik\base\InputWidget
     public $i18n = [];
 
     /**
+     * @inheritdoc
+     */
+    public $pluginName = 'fileinput';
+
+    /**
+     * @var array the list of inbuilt themes
+     */
+    private static $_themes = ['fa', 'gly'];
+
+    /**
      * @var array initialize the FileInput widget
      */
     public function init()
@@ -66,8 +89,15 @@ class FileInput extends \kartik\base\InputWidget
         $input = $this->getInput('fileInput');
         $script = 'document.getElementById("' . $this->options['id'] . '").className.replace(/\bfile-loading\b/,"");';
         if ($this->showMessage) {
-            $validation = ArrayHelper::getValue($this->pluginOptions, 'showPreview', true) ? 'file preview and multiple file upload' : 'multiple file upload';
-            $message = '<strong>' . Yii::t('fileinput', 'Note:') . '</strong> ' . Yii::t('fileinput', 'Your browser does not support {validation}. Try an alternative or more recent browser to access these features.', ['validation' => $validation]);
+            $validation = ArrayHelper::getValue($this->pluginOptions, 'showPreview', true) ?
+                Yii::t('fileinput', 'file preview and multiple file upload') :
+                Yii::t('fileinput', 'multiple file upload');
+            $message = '<strong>' . Yii::t('fileinput', 'Note:') . '</strong> ' .
+                Yii::t(
+                    'fileinput',
+                    'Your browser does not support {validation}. Try an alternative or more recent browser to access these features.',
+                    ['validation' => $validation]
+                );
             $content = Html::tag('div', $message, $this->messageOptions) . "<script>{$script};</script>";
             $input .= "\n" . $this->validateIE($content);
         }
@@ -79,27 +109,44 @@ class FileInput extends \kartik\base\InputWidget
      *
      * @param string $content
      * @param string $validation
+     *
      * @return string
      */
     protected function validateIE($content, $validation = 'lt IE 10')
     {
         return "<!--[if {$validation}]><br>{$content}<![endif]-->";
     }
-    
+
     /**
      * Registers the asset bundle and locale
      */
-    public function registerAssetBundle() {
+    public function registerAssetBundle()
+    {
         $view = $this->getView();
-        FileInputAsset::register($view)->addLanguage($this->language, 'fileinput_locale_');
+        if ($this->resizeImages) {
+            CanvasBlobAsset::register($view);
+            $this->pluginOptions['resizeImage'] = true;
+        }
+        $theme = ArrayHelper::getValue($this->pluginOptions, 'theme');
+        if (!empty($theme) && in_array($theme, self::$_themes)) {
+            FileInputThemeAsset::register($view)->addTheme($theme);
+        }
+        if ($this->sortThumbs) {
+            SortableAsset::register($view);
+        }
+        if ($this->purifyHtml) {
+            DomPurifyAsset::register($view);
+            $this->pluginOptions['purifyHtml'] = true;
+        }
+        FileInputAsset::register($view)->addLanguage($this->language, '', 'js/locales');
     }
-    
+
     /**
      * Registers the needed assets
      */
     public function registerAssets()
     {
         $this->registerAssetBundle();
-        $this->registerPlugin('fileinput');
+        $this->registerPlugin($this->pluginName);
     }
 }

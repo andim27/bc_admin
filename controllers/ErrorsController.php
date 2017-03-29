@@ -12,6 +12,8 @@ class ErrorsController extends Controller
 {
 
      public function init(){
+         
+
      	$path = $_SERVER['DOCUMENT_ROOT'];
 
         //echo file_get_contents($path.'/404.php');

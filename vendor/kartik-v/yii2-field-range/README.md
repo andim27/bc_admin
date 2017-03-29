@@ -1,6 +1,12 @@
 yii2-field-range
 =================
 
+[![Latest Stable Version](https://poser.pugx.org/kartik-v/yii2-field-range/v/stable)](https://packagist.org/packages/kartik-v/yii2-field-range)
+[![License](https://poser.pugx.org/kartik-v/yii2-field-range/license)](https://packagist.org/packages/kartik-v/yii2-field-range)
+[![Total Downloads](https://poser.pugx.org/kartik-v/yii2-field-range/downloads)](https://packagist.org/packages/kartik-v/yii2-field-range)
+[![Monthly Downloads](https://poser.pugx.org/kartik-v/yii2-field-range/d/monthly)](https://packagist.org/packages/kartik-v/yii2-field-range)
+[![Daily Downloads](https://poser.pugx.org/kartik-v/yii2-field-range/d/daily)](https://packagist.org/packages/kartik-v/yii2-field-range)
+
 A Yii 2 extension that allows you to easily setup ActiveField range fields with Bootstrap 3 addons markup and more. This allows you to setup 
 the attributes joined together like a single field with a bootstrap addon separating the two. In addition, it enables you to display the field 
 validation error messages as one single block instead of separate validation errors for two fields.
@@ -23,6 +29,9 @@ The key features supported by this widget extension are:
 
 ### Demo
 You can see detailed [documentation and demos](http://demos.krajee.com/field-range) on usage of the extension.
+
+## Latest Release
+>NOTE: The latest version of the extension is v1.3.1. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-field-range/blob/master/CHANGE.md) for details.
 
 ## Installation
 

@@ -14,7 +14,31 @@ $config = [
             'class' => 'app\modules\business\business',
             'layout' => 'start'
         ],
+
+        // for mongodb
+        'gii' => [
+            'class' => 'yii\gii\Module',
+            'generators' => [
+                'mongoDbModel' => [
+                    'class' => 'yii\mongodb\gii\model\Generator'
+                ]
+            ],
+        ],
+        'debug' => [
+            'class' => 'yii\\debug\\Module',
+            'panels' => [
+                'mongodb' => [
+                    'class' => 'yii\\mongodb\\debug\\MongoDbPanel',
+                ],
+            ],
+        ],
     ],
+
+    // for mongodb
+    'controllerMap' => [
+        'mongodb-migrate' => 'yii\mongodb\console\controllers\MigrateController'
+    ],
+
     'components' => array(
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -54,6 +78,14 @@ $config = [
         ],
 
 //        'db' => require(__DIR__ . '/db.php'),
+
+        // for mongodb
+        'mongodb' => [
+            'class' => '\yii\mongodb\Connection',
+            //'dsn' => 'mongodb://gnf_mongo_db_1/gnc',
+            'dsn' => 'mongodb://localhost/gnc',
+        ],
+    
         'urlManager' => [
             'class' => 'app\components\LangUrlManager',
             'showScriptName' => false,
