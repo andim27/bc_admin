@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use MongoDB\BSON\UTCDatetime;
 use yii\mongodb\ActiveRecord;
 
 /**
@@ -72,7 +73,7 @@ class Sales extends ActiveRecord
                     $modelSet = new SetSales();
                     $modelSet->title = $itemSet->setName;
                     $modelSet->status = StatusSales::$listStatus['0'];
-                    $modelSet->dateChange = new \MongoDate(strtotime(date("Y-m-d H:i:s")));
+                    $modelSet->dateChange = new UTCDatetime(strtotime(date("Y-m-d H:i:s")));
 
                     $model->set[] = $modelSet;
                 }

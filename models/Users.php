@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use MongoDB\BSON\ObjectID;
 use yii2tech\embedded\mongodb\ActiveRecord;
 use yii\base\Model;
 
@@ -57,7 +58,7 @@ class Users extends ActiveRecord
     public static function getRulesUser()
     {
         $model = self::find()
-            ->where(['_id'=>new \MongoId(\Yii::$app->view->params['user']->id)])
+            ->where(['_id'=>new ObjectID(\Yii::$app->view->params['user']->id)])
             ->one();
         
         return $model->rules;

@@ -12,6 +12,8 @@ use app\models\Sales;
 use app\models\SetSales;
 use app\models\StatusSales;
 use app\models\Users;
+use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDatetime;
 use Yii;
 use app\controllers\BaseController;
 use yii\helpers\ArrayHelper;
@@ -105,7 +107,7 @@ class StatusSalesController extends BaseController {
         if(!empty($request['idSale'])) {
 
             $formModel = StatusSales::find()
-                ->where(['idSale'=> new \MongoId($request['idSale'])])
+                ->where(['idSale'=> new ObjectID($request['idSale'])])
                 ->one();
 
             $setStatus = ArrayHelper::map($formModel->set,'title','status');
@@ -134,7 +136,7 @@ class StatusSalesController extends BaseController {
         if(!empty($request)){
             $model = StatusSales::find()
                 ->where([
-                    'idSale' => new \MongoId($request['idSale'])
+                    'idSale' => new ObjectID($request['idSale'])
                 ])->one();
 
             $setStatus = ArrayHelper::map($model->set,'title','status');
@@ -150,8 +152,8 @@ class StatusSalesController extends BaseController {
                 foreach ($model->set as $itemSet) {
                     if($itemSet->title == $request['set']){
                         $itemSet->status = $request['status'];
-                        $itemSet->dateChange = new \MongoDate(strtotime(date("Y-m-d H:i:s")));
-                        $itemSet->idUserChange =  new \MongoId($this->user->id);
+                        $itemSet->dateChange = new UTCDateTime(strtotime(date("Y-m-d H:i:s")));
+                        $itemSet->idUserChange =  new ObjectID($this->user->id);
                     }
 
                 }
@@ -160,8 +162,8 @@ class StatusSalesController extends BaseController {
 
                                 
                 $comment = new ReviewsSale();
-                $comment->idUser = new \MongoId($this->user->id);
-                $comment->dateCreate = new \MongoDate(strtotime(date("Y-m-d H:i:s")));
+                $comment->idUser = new ObjectID($this->user->id);
+                $comment->dateCreate = new UTCDateTime(strtotime(date("Y-m-d H:i:s")));
                 $comment->review = 'Смена статуса ('.$request['set'].') ' . THelper::t($oldStatus) . '->' . THelper::t($request['status']);
 
                 $model->reviews[] = $comment;
@@ -199,7 +201,7 @@ class StatusSalesController extends BaseController {
 
         if(!empty($request['idSale'])) {
             $model = StatusSales::find()
-                ->where(['idSale'=> new \MongoId($request['idSale'])])
+                ->where(['idSale'=> new ObjectID($request['idSale'])])
                 ->one();
             $arrayRev = ArrayHelper::toArray($model->reviews);
             krsort($arrayRev);
@@ -229,13 +231,13 @@ class StatusSalesController extends BaseController {
         
         if(!empty($request)){
             $model = StatusSales::find()
-                ->where(['_id'=> new \MongoId($request['id'])])
+                ->where(['_id'=> new ObjectID($request['id'])])
                 ->one();
 
             $comment = new ReviewsSale();
             if($comment->load($request)){
-                $comment->idUser = new \MongoId($this->user->id);
-                $comment->dateCreate = new \MongoDate(strtotime(date("Y-m-d H:i:s")));
+                $comment->idUser = new ObjectID($this->user->id);
+                $comment->dateCreate = new UTCDateTime(strtotime(date("Y-m-d H:i:s")));
 
                 $model->reviews[] = $comment;       
         
@@ -246,7 +248,7 @@ class StatusSalesController extends BaseController {
                 if($model->save()){
 
                     $model = StatusSales::find()
-                        ->where(['_id'=> new \MongoId($request['id'])])
+                        ->where(['_id'=> new ObjectID($request['id'])])
                         ->one();
                     $arrayRev = ArrayHelper::toArray($model->reviews);
                     krsort($arrayRev);
@@ -283,8 +285,8 @@ class StatusSalesController extends BaseController {
         $model = Sales::find()
             ->where([
                 'dateCreate' => [
-                    '$gte' => new \MongoDate(strtotime($dateInterval['from'])),
-                    '$lte' => new \MongoDate(strtotime($dateInterval['to'] . '23:59:59'))
+                    '$gte' => new UTCDateTime(strtotime($dateInterval['from'])),
+                    '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59'))
                 ]
             ])
             ->all();
@@ -309,7 +311,7 @@ class StatusSalesController extends BaseController {
 
         if(!empty($request['idSale'])) {
             $model = StatusSales::find()
-                ->where(['idSale'=> new \MongoId($request['idSale'])])
+                ->where(['idSale'=> new ObjectID($request['idSale'])])
                 ->one();
             $arrayRev = ArrayHelper::toArray($model->reviews);
             krsort($arrayRev);
@@ -337,8 +339,8 @@ class StatusSalesController extends BaseController {
         $model = Sales::find()
             ->where([
                 'dateCreate' => [
-                    '$gte' => new \MongoDate(strtotime($from)),
-                    '$lte' => new \MongoDate(strtotime($to))
+                    '$gte' => new UTCDateTime(strtotime($from)),
+                    '$lte' => new UTCDatetime(strtotime($to))
                 ]
             ])
             ->all();
@@ -405,7 +407,7 @@ class StatusSalesController extends BaseController {
 
         if($request){
             $infoProduct = Products::find()
-                ->where(['_id'=>new \MongoId($request['id'])])
+                ->where(['_id'=>new ObjectID($request['id'])])
                 ->one();
 
             $infoProduct->set = [];
@@ -430,7 +432,7 @@ class StatusSalesController extends BaseController {
 
             if($infoProduct->save()){
                 $infoProduct = Products::find()
-                    ->where(['_id'=>new \MongoId($request['id'])])
+                    ->where(['_id'=>new ObjectID($request['id'])])
                     ->one();
 
                 $error = [

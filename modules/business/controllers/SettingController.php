@@ -9,6 +9,7 @@ use app\models\Users;
 use app\modules\business\models\AddCell;
 use app\modules\business\models\ImportTranslationForm;
 use app\modules\business\models\TranslationForm;
+use MongoDB\BSON\ObjectID;
 use Yii;
 use app\models\User;
 use yii\web\UploadedFile;
@@ -310,7 +311,7 @@ class SettingController extends BaseController {
         $request = Yii::$app->request->post();
 
         if(!empty($request['userId'])) {
-            $model = Users::find()->where(['_id'=> new \MongoId($request['userId'])])->one();
+            $model = Users::find()->where(['_id'=> new ObjectID($request['userId'])])->one();
 
             $items = Menu::getItems();
             return $this->renderPartial('_admin_rules_show', [
@@ -328,7 +329,7 @@ class SettingController extends BaseController {
         if(!empty($request['id']) && !empty($request['rule'])){
 
             $model = Users::find()
-                ->where(['_id'=> new \MongoId($request['id'])])
+                ->where(['_id'=> new ObjectID($request['id'])])
                 ->one();
 
             $model->rules->showMenu = $request['rule']['showMenu'];
