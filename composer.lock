@@ -1171,26 +1171,26 @@
         },
         {
             "name": "yiisoft/yii2-mongodb",
-            "version": "2.0.5",
+            "version": "2.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-mongodb.git",
-                "reference": "b920e885b214bdd3b9409ab0c793384c2caf4c31"
+                "reference": "431811d9d030b4ece6ce32e13650af640e82fa14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-mongodb/zipball/b920e885b214bdd3b9409ab0c793384c2caf4c31",
-                "reference": "b920e885b214bdd3b9409ab0c793384c2caf4c31",
+                "url": "https://api.github.com/repos/yiisoft/yii2-mongodb/zipball/431811d9d030b4ece6ce32e13650af640e82fa14",
+                "reference": "431811d9d030b4ece6ce32e13650af640e82fa14",
                 "shasum": ""
             },
             "require": {
-                "ext-mongo": ">=1.5.0",
-                "yiisoft/yii2": ">=2.0.5"
+                "ext-mongodb": ">=1.0.0",
+                "yiisoft/yii2": "~2.0.5"
             },
             "type": "yii2-extension",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "2.1.x-dev"
                 }
             },
             "autoload": {
@@ -1208,14 +1208,15 @@
                     "email": "klimov.paul@gmail.com"
                 }
             ],
-            "description": "MongoDb extension for the Yii framework",
+            "description": "MongoDB extension for the Yii framework",
             "keywords": [
+                "GridFS",
                 "active-record",
                 "mongo",
                 "mongodb",
                 "yii2"
             ],
-            "time": "2016-05-09T10:57:48+00:00"
+            "time": "2017-02-15T14:11:36+00:00"
         },
         {
             "name": "yiisoft/yii2-swiftmailer",

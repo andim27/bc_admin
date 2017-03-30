@@ -129,15 +129,6 @@ return array (
       '@moonland/phpexcel' => $vendorDir . '/moonlandsoft/yii2-phpexcel',
     ),
   ),
-  'yiisoft/yii2-mongodb' => 
-  array (
-    'name' => 'yiisoft/yii2-mongodb',
-    'version' => '2.0.5.0',
-    'alias' => 
-    array (
-      '@yii/mongodb' => $vendorDir . '/yiisoft/yii2-mongodb',
-    ),
-  ),
   'yii2tech/embedded' => 
   array (
     'name' => 'yii2tech/embedded',
@@ -145,6 +136,15 @@ return array (
     'alias' => 
     array (
       '@yii2tech/embedded' => $vendorDir . '/yii2tech/embedded',
+    ),
+  ),
+  'yiisoft/yii2-mongodb' => 
+  array (
+    'name' => 'yiisoft/yii2-mongodb',
+    'version' => '2.1.3.0',
+    'alias' => 
+    array (
+      '@yii/mongodb' => $vendorDir . '/yiisoft/yii2-mongodb',
     ),
   ),
 );

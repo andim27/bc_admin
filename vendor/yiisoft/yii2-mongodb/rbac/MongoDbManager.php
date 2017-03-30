@@ -118,14 +118,14 @@ class MongoDbManager extends BaseManager
     /**
      * Performs access check for the specified user based on the data loaded from cache.
      * This method is internally called by [[checkAccess()]] when [[cache]] is enabled.
-     * @param string|integer $user the user ID. This should can be either an integer or a string representing
+     * @param string|int $user the user ID. This should can be either an integer or a string representing
      * the unique identifier of a user. See [[\yii\web\User::id]].
      * @param string $itemName the name of the operation that need access check
      * @param array $params name-value pairs that would be passed to rules associated
      * with the tasks and roles assigned to the user. A param with name 'user' is added to this array,
      * which holds the value of `$userId`.
      * @param Assignment[] $assignments the assignments to the specified user
-     * @return boolean whether the operations can be performed by the user.
+     * @return bool whether the operations can be performed by the user.
      */
     protected function checkAccessFromCache($user, $itemName, $params, $assignments)
     {
@@ -159,14 +159,14 @@ class MongoDbManager extends BaseManager
     /**
      * Performs access check for the specified user.
      * This method is internally called by [[checkAccess()]].
-     * @param string|integer $user the user ID. This should can be either an integer or a string representing
+     * @param string|int $user the user ID. This should can be either an integer or a string representing
      * the unique identifier of a user. See [[\yii\web\User::id]].
      * @param string $itemName the name of the operation that need access check
      * @param array $params name-value pairs that would be passed to rules associated
      * with the tasks and roles assigned to the user. A param with name 'user' is added to this array,
      * which holds the value of `$userId`.
      * @param Assignment[] $assignments the assignments to the specified user
-     * @return boolean whether the operations can be performed by the user.
+     * @return bool whether the operations can be performed by the user.
      */
     protected function checkAccessRecursive($user, $itemName, $params, $assignments)
     {
@@ -446,26 +446,52 @@ class MongoDbManager extends BaseManager
             return [];
         }
 
-        $rows = (new Query)->select(['item_name'])
+        $roles = $this->instantiateDefaultRoles();
+
+        $rows = (new Query())
+            ->select(['item_name'])
             ->from($this->assignmentCollection)
             ->where(['user_id' => (string) $userId])
             ->all($this->db);
 
         if (empty($rows)) {
-            return [];
+            return $roles;
         }
 
         $itemNames = ArrayHelper::getColumn($rows, 'item_name');
 
-        $query = (new Query)
+        $query = (new Query())
             ->from($this->itemCollection)
             ->where(['name' => $itemNames])
             ->andWhere(['type' => Item::TYPE_ROLE]);
 
-        $roles = [];
         foreach ($query->all($this->db) as $row) {
             $roles[$row['name']] = $this->populateItem($row);
         }
+
+        return $roles;
+    }
+
+    /**
+     * @inheritdoc
+     * @since 2.1.2
+     */
+    public function getChildRoles($roleName)
+    {
+        $role = $this->getRole($roleName);
+
+        if (is_null($role)) {
+            throw new InvalidParamException("Role '{$roleName}' not found.");
+        }
+
+        $result = [];
+        $this->getChildrenRecursive($roleName, $this->getChildrenList(), $result);
+
+        $roles = [$roleName => $role];
+
+        $roles += array_filter($this->getRoles(), function (Role $roleItem) use ($result) {
+            return array_key_exists($roleItem->name, $result);
+        });
 
         return $roles;
     }
@@ -912,7 +938,7 @@ class MongoDbManager extends BaseManager
 
     /**
      * Removes all auth items of the specified type.
-     * @param integer $type the auth item type (either Item::TYPE_PERMISSION or Item::TYPE_ROLE)
+     * @param int $type the auth item type (either Item::TYPE_PERMISSION or Item::TYPE_ROLE)
      */
     protected function removeAllItems($type)
     {
@@ -1022,7 +1048,7 @@ class MongoDbManager extends BaseManager
      * Checks whether there is a loop in the authorization item hierarchy.
      * @param Item $parent the parent item
      * @param Item $child the child item to be added to the hierarchy
-     * @return boolean whether a loop exists
+     * @return bool whether a loop exists
      */
     protected function detectLoop($parent, $child)
     {
@@ -1035,5 +1061,21 @@ class MongoDbManager extends BaseManager
             }
         }
         return false;
+    }
+
+    /**
+     * Returns defaultRoles as array of Role objects
+     * @since 2.1.3
+     * @return Role[] default roles. The array is indexed by the role names
+     */
+    private function instantiateDefaultRoles()
+    {
+        // this method can be removed in favor of `yii\rbac\BaseManager::getDefaultRoles()` in case
+        // extension dependency on `yii2` is raised up to 2.0.12
+        $result = [];
+        foreach ($this->defaultRoles as $roleName) {
+            $result[$roleName] = $this->createRole($roleName);
+        }
+        return $result;
     }
 }
