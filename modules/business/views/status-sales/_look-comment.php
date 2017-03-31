@@ -20,7 +20,7 @@ use \app\models\Users;
                                 <?= Users::getUserEmail($item['idUser']['$id'])  ?>
 
                                 <span class="label label-default">
-                                    <?=Yii::$app->formatter->asDate($item->dateCreate->sec,'php:Y-m-d H:i:s')?>
+                                    <?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?>
                                 </span>
                             </h6>
                             <?=$item['review']?>

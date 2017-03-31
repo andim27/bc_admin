@@ -92,7 +92,7 @@
                     <?php $infoSet = $item->statusSale->set; ?>
                 <tr id="row_<?=$item->_id->__toString()?>">
                     <td>
-                        <?=Yii::$app->formatter->asDate($item->dateCreate->sec,'php:Y-m-d H:i:s')?>
+                        <?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?>
                     </td>
                     <td>
                         <?=$item->productName?>

@@ -359,7 +359,7 @@ class StatusSalesController extends BaseController {
 
 
                 $infoExport[] = [
-                    'dateCreate'    =>  Yii::$app->formatter->asDate($item->dateCreate->sec,'php:Y-m-d H:i:s'),
+                    'dateCreate'    =>  $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
                     'fullName'      =>  $item->infoUser->secondName . ' ' . $item->infoUser->firstName,
                     'login'         =>  $item->username,
                     'goods'         =>  $item->productName,
