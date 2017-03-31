@@ -1,45 +1,56 @@
 <?php
+
 use yii\helpers\Html;
 use bupy7\cropbox\Cropbox;
-?>
-<div id="<?= $idWidget; ?>" class="cropbox">
-    <div class="imageBox">
-        <div class="thumbBox"></div>
+?> 
+<div id="<?= $this->context->id; ?>" class="cropbox">
+    <div class="alert alert-info"></div>
+    <div class="workarea-cropbox">
+        <div class="bg-cropbox">
+            <img class="image-cropbox">
+            <div class="membrane-cropbox"></div>
+        </div>
+        <div class="frame-cropbox">
+            <div class="resize-cropbox"></div>
+        </div>
     </div>
-    <p class="message"></p>
     <div class="btn-group">
         <span class="btn btn-primary btn-file">
-            <?= Cropbox::t('Browse') . Html::activeFileInput($model, $attribute, $options); ?>
+        <?= '<i class="glyphicon glyphicon-folder-open"></i> '
+            . Cropbox::t('Browse') 
+            . Html::activeFileInput($this->context->model, $this->context->attribute, $this->context->options); ?>
         </span>
-        <?php
-        echo Html::button('+', array(
-            'class' => 'btn btn-default btnZoomIn',
-        ));
-        echo Html::button('-', array(
-            'class' => 'btn btn-default btnZoomOut',
-        ));
-        echo Html::button(Cropbox::t('Crop'), array(
-            'class' => 'btn btn-success btnCrop',
-        ));
-        ?>
+        <?= Html::button('<i class="glyphicon glyphicon-scissors"></i> ' . Cropbox::t('Crop'), [
+            'class' => 'btn btn-success btn-crop',
+        ]); ?>
+        <?= Html::button('<i class="glyphicon glyphicon-repeat"></i> ' . Cropbox::t('Reset'), [
+            'class' => 'btn btn-warning btn-reset',
+        ]); ?>
     </div>
     <div class="cropped">
+        <p>
+            <?php 
+            if (!empty($this->context->originalImageUrl)) {
+                echo Html::a(
+                    '<i class="glyphicon glyphicon-eye-open"></i> ' . Cropbox::t('Show original'), 
+                    $this->context->originalImageUrl, 
+                    [
+                        'target' => '_blank',
+                        'class' => 'btn btn-info',
+                    ]
+                );
+            } 
+            ?>
+        </p>
         <?php
-        if (is_string($originalUrl) && !empty($originalUrl))
-        {
-            echo Html::a(Cropbox::t('Show original'), $originalUrl, [
-                'target' => '_blank',
-                'class' => 'btn btn-info',
-            ]);
-        }
-        if (!empty($previewUrl))
-        {
-            foreach ($previewUrl as $url) {
-                echo Html::img($url, ['class' => 'img-thumbnail']);
+        if (!empty($this->context->previewImagesUrl)) {
+            foreach ($this->context->previewImagesUrl as $url) {
+                if (!empty($url)) {
+                    echo Html::img($url, ['class' => 'img-thumbnail']);
+                }
             }
         }
         ?>
     </div>
+    <?= Html::activeHiddenInput($this->context->model, $this->context->attributeCropInfo); ?>
 </div>
-<?php
-echo Html::activeHiddenInput($model, $attributeCropInfo);

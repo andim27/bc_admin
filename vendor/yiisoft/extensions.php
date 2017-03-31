@@ -30,15 +30,6 @@ return array (
       '@mihaildev/ckeditor' => $vendorDir . '/mihaildev/yii2-ckeditor',
     ),
   ),
-  'bupy7/yii2-widget-cropbox' => 
-  array (
-    'name' => 'bupy7/yii2-widget-cropbox',
-    'version' => '2.2.0.0',
-    'alias' => 
-    array (
-      '@bupy7/cropbox' => $vendorDir . '/bupy7/yii2-widget-cropbox',
-    ),
-  ),
   'yiisoft/yii2-swiftmailer' => 
   array (
     'name' => 'yiisoft/yii2-swiftmailer',
@@ -102,15 +93,6 @@ return array (
       '@yii/codeception' => $vendorDir . '/yiisoft/yii2-codeception',
     ),
   ),
-  'yiisoft/yii2-debug' => 
-  array (
-    'name' => 'yiisoft/yii2-debug',
-    'version' => '2.0.7.0',
-    'alias' => 
-    array (
-      '@yii/debug' => $vendorDir . '/yiisoft/yii2-debug',
-    ),
-  ),
   'yiisoft/yii2-gii' => 
   array (
     'name' => 'yiisoft/yii2-gii',
@@ -138,13 +120,31 @@ return array (
       '@yii2tech/embedded' => $vendorDir . '/yii2tech/embedded',
     ),
   ),
+  'bupy7/yii2-widget-cropbox' => 
+  array (
+    'name' => 'bupy7/yii2-widget-cropbox',
+    'version' => '4.1.1.0',
+    'alias' => 
+    array (
+      '@bupy7/cropbox' => $vendorDir . '/bupy7/yii2-widget-cropbox',
+    ),
+  ),
   'yiisoft/yii2-mongodb' => 
   array (
     'name' => 'yiisoft/yii2-mongodb',
-    'version' => '2.1.3.0',
+    'version' => '2.0.5.0',
     'alias' => 
     array (
       '@yii/mongodb' => $vendorDir . '/yiisoft/yii2-mongodb',
+    ),
+  ),
+  'yiisoft/yii2-debug' => 
+  array (
+    'name' => 'yiisoft/yii2-debug',
+    'version' => '2.0.9.0',
+    'alias' => 
+    array (
+      '@yii/debug' => $vendorDir . '/yiisoft/yii2-debug',
     ),
   ),
 );

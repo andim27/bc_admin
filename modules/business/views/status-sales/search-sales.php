@@ -98,6 +98,11 @@
                         <?=$item->productName?>
                     </td>
                     <td class="text-center">
+
+                        <?php if($item->type == '-1') { ?>
+                            <div>Отменен заказ</div>
+                        <?php } ?>
+
                         <table>
                             <?php foreach ($infoSet as $itemSet) {?>
                                 <tr data-set="<?= $itemSet->title ?>">
@@ -111,11 +116,11 @@
                                     </td>
                                     <td>
                                         <div class="actionOrder">
-                                            <?php if($itemSet->status == 'status_sale_issued') {?>
+                                            <?php if($itemSet->status == 'status_sale_issued' && $item->type != '-1') {?>
                                                 Выдан кассиром: <?= Users::getUserEmail($itemSet->idUserChange)  ?>
-                                            <?php } else if(Users::checkRule('edit','sidebar_order') === true) { ?>
+                                            <?php } else if(Users::checkRule('edit','sidebar_order') === true && $item->type != '-1') { ?>
                                                 <?= Html::a(THelper::t('change_status'), ['/business/status-sales/change-status','idSale'=>$item->_id->__toString(),'title'=>$itemSet->title], [ 'class' => 'btn btn-success', 'data-toggle'=>'ajaxModal']) ?>
-                                            <?php } ?>
+                                            <?php } else {}?>
                                         </div>
                                     </td>
                                 </tr>

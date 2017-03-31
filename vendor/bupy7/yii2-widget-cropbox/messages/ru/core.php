@@ -1,9 +1,9 @@
 <?php
-
-use app\components\THelper;
-
 return [
-    'Crop' => THelper::t('crop'),
-    'Browse' => THelper::t('browse'),
-    'Show original' => THelper::t('show_original')
+    'Crop' => 'Обрезать',
+    'Browse' => 'Обзор',
+    'Show original' => 'Показать оригинал',
+    'Height' => 'Высота',
+    'Width' => 'Ширина',
+    'Reset' => 'Сброс',
 ];

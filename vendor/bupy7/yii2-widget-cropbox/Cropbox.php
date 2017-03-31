@@ -1,109 +1,58 @@
 <?php
+
 namespace bupy7\cropbox;
 
 use Yii;
-use yii\widgets\InputWidget;
+use yii\base\Widget;
 use yii\helpers\Html;
 use yii\helpers\Json;
+use yii\web\View;
+use yii\base\Model;
+use yii\base\InvalidConfigException;
 
 /**
  * Class file CropboxWidget.
  * Crop image via jQuery before upload image.
  *
- * GitHub repository JS library: https://github.com/hongkhanh/cropbox
- * GitHub repository this widget: https://github.com/bupy7/yii2-cropbox
+ * GitHub repository this widget: https://github.com/bupy7/yii2-widget-cropbox
  * 
  * @author Vasilij "BuPy7" Belosludcev http://mihaly4.ru
- * @version 2.2
+ * @since 1.0.0
  */
-class Cropbox extends InputWidget
+class Cropbox extends Widget
 {
-    
     /**
-     * @var array Attribute name where will be crop information in JSON format. 
-     * After cropping image all information will be added with uses key from $optionsCropbox.
-     * Example: [
-     *      {
-     *          "x":-86,
-     *          "y":-17,
-     *          "dw":372,
-     *          "dh":232,
-     *          "ratio":0.5314410000000002
-     *      },
-     *      {
-     *          "x":-136,
-     *          "y":-67,
-     *          "dw":372,
-     *          "dh":232,
-     *          "ratio":0.5314410000000002
-     *      }
-     * ]
-     * 
-     * @property int $x Start crop by X.
-     * @property int $y Start crop by Y.
-     * @property int $dw Width image after resize.
-     * @property int $dh Height image after resize.
-     * @property float $ratio Ratio.
+     * @var Model the data model that this widget is associated with.
+     */
+    public $model;
+    /**
+     * @var string the model attribute that this widget is associated with.
+     */
+    public $attribute;
+    /**
+     * @var string the input name. This must be set if [[model]] and [[attribute]] are not set.
+     */
+    public $name;
+    /**
+     * @var array the HTML attributes for the input tag.
+     * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
+     */
+    public $options = [];
+    /**
+     * @var array Attribute name that content information about crop image.
      */
     public $attributeCropInfo;
-    
     /**
-     * @var array Cropbox options.
-     * 
-     * @property int $boxWidth Width of box for thumb image. By default 300.
-     * @property int $boxHeight Height of box for thumb image. By default 300.
-     * @property array $cropSettings
-     * [
-     *      int $width Width of thumbBox. By default 200.
-     *      int $heiht Height of thumbBox. By default 200.
-     *      int $marginTop Property margin-top of thumbBox. By default center.
-     *      int $marginLeft Property margin-left of thumbBox. By default center.
-     * ]
-     * @property array $messages Array with messages for croppping options. 
-     *
-     * and etc. See cropbox.js to assets this widget.
-     * 
-     * Example use:
-     * [   
-     *      'cropSettings' => [
-     *          [
-     *              'width' => 350,
-     *              'height' => 400,
-     *          ],
-     *      ],
-     *      'messages' => [
-     *          'Preview image of article',
-     *      ]
-     *  
-     * ]
-     * 
-     * or more once option:
-     * [
-     *      'cropSettings' => [
-     *          [
-     *              'width' => 350,
-     *              'height' => 400,
-     *          ],
-     *          [
-     *              'width' => 150,
-     *              'height' => 150,
-     *          ],
-     *          'messages' => [
-     *              'Preview image of article',
-     *              'Thumbnail image of article',
-     *          ],
-     *      ],
-     * ]
+     * @var array Options of jQuery plugin.
      */
-    public $optionsCropbox = [];
-    
+    public $pluginOptions = [];
     /**
-     * @string Link to image for display before upload to original URL.
+     * @string URL to image for display before upload to original URL.
      */
-    public $originalUrl;
-    
+    public $originalImageUrl;
     /**
-     * @var mixed Link to images for display before upload to preview URL.
+     * @var array URL to images for display before upload to preview URL.
+     * 
      * Example:
      * [
      *      '/uploads/1.png',
@@ -112,74 +61,99 @@ class Cropbox extends InputWidget
      * 
      * or simply string to image.
      */
-    public $previewUrl;
-    
+    public $previewImagesUrl;
     /**
      * @var string Path to view of cropbox field.
+     * 
      * Example: '@app/path/to/view'
      */
     public $pathToView = 'field';
     
+    /**
+     * @inheritdoc
+     * @throws InvalidConfigException
+     */
     public function init()
     {
+        if ($this->name === null && !$this->hasModel()) {
+            throw new InvalidConfigException("Either 'name', or 'model' and 'attribute' properties must be specified.");
+        }
+        if (!isset($this->options['id'])) {
+            $this->options['id'] = $this->hasModel() ? Html::getInputId($this->model, $this->attribute) : false;
+        }
         parent::init();
         
-        CropboxAsset::register($this->view);
+        WidgetAsset::register($this->view);
         $this->registerTranslations();
         
-        $this->optionsCropbox = array_merge([
-            'boxWidth' => 300,
-            'boxHeight' => 300,
-        ], $this->optionsCropbox);
-        if (!isset($this->optionsCropbox['cropSettings']) || empty($this->optionsCropbox['cropSettings'])) {
-            $this->optionsCropbox['cropSettings'][] = [
-                'width' => 200,
-                'height' => 200,
-            ];
-        }
-        $this->optionsCropbox['idCropInfo'] = Html::getInputId($this->model, $this->attributeCropInfo);
         $this->options = array_merge([
-            'class' => 'file',
+            'accept' => 'image/*',
         ], $this->options);
+        $this->pluginOptions = array_merge([
+            'selectors' => [
+                'inputFile' => '#' . $this->id . ' input[type="file"]',
+                'btnCrop' => '#' . $this->id . ' .btn-crop',
+                'btnReset' => '#' . $this->id . ' .btn-reset',
+                'resultContainer' => '#' . $this->id . ' .cropped',
+                'messageBlock' => '#' . $this->id . ' .alert',
+            ],
+            'imageOptions' => [
+                'class' => 'img-thumbnail',
+            ],
+        ], $this->pluginOptions);
+        $this->pluginOptions['selectors']['inputInfo'] = '#' 
+            . $this->id 
+            . ' input[name="' 
+            . Html::getInputName($this->model, $this->attributeCropInfo) 
+            . '"]';
+        $optionsCropbox = Json::encode($this->pluginOptions);
         
-        $optionsCropbox = Json::encode($this->optionsCropbox);
-        
-        $js = <<<JS
-(function($){
-    $('#{$this->id}').cropbox({$optionsCropbox});
-})(jQuery);               
-JS;
-        $this->view->registerJs($js, \yii\web\View::POS_END);
+        $js = "$('#{$this->id}').cropbox({$optionsCropbox});";
+        $this->view->registerJs($js, View::POS_READY);
     }
     
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
-        return $this->render($this->pathToView, [
-            'idWidget' => $this->id,
-            'model' => $this->model,
-            'attribute' => $this->attribute,
-            'previewUrl' => (array)$this->previewUrl,
-            'originalUrl' => $this->originalUrl,
-            'options' => $this->options,
-            'attributeCropInfo' => $this->attributeCropInfo,
-        ]);
+        return $this->render($this->pathToView);
+    }
+        
+    /**
+     * Translates a message to the specified language.
+     * 
+     * @param string $message the message to be translated.
+     * @param array $params the parameters that will be used to replace the corresponding placeholders in the message.
+     * @param string $language the language code (e.g. `en-US`, `en`). If this is null, the current of application
+     * language.
+     * @return string
+     */
+    public static function t($message, $params = [], $language = null)
+    {
+        return Yii::t('bupy7/cropbox', $message, $params, $language);
     }
     
-    public function registerTranslations()
+    /**
+     * Registration of translation class.
+     */
+    protected function registerTranslations()
     {
-        Yii::$app->i18n->translations['bupy7/cropbox/*'] = [
+        Yii::$app->i18n->translations['bupy7/cropbox'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en',
             'basePath' => '@bupy7/cropbox/messages',
             'fileMap' => [
-                'bupy7/cropbox/core' => 'core.php',
+                'bupy7/cropbox' => 'core.php',
             ],
         ];
     }
-
-    public static function t($message, $params = [], $language = null)
+    
+    /**
+     * @return boolean whether this widget is associated with a data model.
+     */
+    protected function hasModel()
     {
-        return Yii::t('bupy7/cropbox/core', $message, $params, $language);
+        return $this->model instanceof Model && $this->attribute !== null;
     }
-
 }

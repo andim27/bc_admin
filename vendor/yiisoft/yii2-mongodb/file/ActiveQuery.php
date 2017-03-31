@@ -72,7 +72,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     /**
      * @inheritdoc
      */
-    public function buildCursor($db = null)
+    protected function buildCursor($db = null)
     {
         if ($this->primaryModel !== null) {
             // lazy loading
@@ -122,13 +122,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      */
     public function one($db = null)
     {
-        $row = parent::one($db);
-        if ($row !== false) {
-            $models = $this->populate([$row]);
-            return reset($models) ?: null;
-        } else {
-            return null;
-        }
+        return parent::one($db);
     }
 
     /**

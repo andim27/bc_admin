@@ -1,50 +1,6 @@
 Yii Framework 2 mongodb extension Change Log
 ============================================
 
-2.1.3 February 15, 2017
------------------------
-
-- Bug #168: Fixed `yii\mongodb\Command::update()` uses `upsert` option by default (klimov-paul)
-- Bug #170: Fixed incorrect order of migrations history in case `yii\mongodb\console\controllers\MigrateController::$migrationNamespaces` is in use (klimov-paul)
-- Bug #173: Fixed `yii\mongodb\ActiveQuery` does not respects relational link at methods `count()`, `distinct()`, `sum()`, `average()`, `modify()` (tuyakhov, klimov-paul)
-- Bug #176: Fixed `yii\mongodb\validators\MongoDateValidator` uses seconds instead of milliseconds while creating `MongoDB\BSON\UTCDateTime` instance (reza-id, klimov-paul)
-- Bug #179: Fixed `yii\mongodb\file\Upload` unable to handle custom `_id` value, if it does not provided as `\MongoDB\BSON\ObjectID` instance (klimov-paul)
-- Bug #186: Fixed `yii\mongodb\rbac\MongoDbManager::getRolesByUser()` results now includes default roles (klimov-paul)
-- Enh #171: Added support for `yii\db\QueryInterface::emulateExecution()` to force returning an empty result for a query (klimov-paul)
-- Enh #177: Method `yii\mongodb\ActiveQuery::exists()` optimized avoiding redundant ActiveRecord and relations population (klimov-paul)
-
-
-2.1.2 October 31, 2016
-----------------------
-
-- Bug #150: Fixed `yii\mongodb\Query::exists()` always returning true (klimov-paul)
-- Bug #155: Fixed `yii\mongodb\Query` unable to process `not` condition with `null` compare value (klimov-paul)
-- Enh #152: Added support for namespaced migrations via [[yii\mongodb\console\controllers\MigrateController::migrationNamespaces]] (klimov-paul)
-- Enh #153: Added `yii\mongodb\rbac\MongoDbManager::getChildRoles()` method allowing finding child roles for the given one (githubjeka, klimov-paul)
-- Enh #154: Methods `scalar()` and `column()` added to `yii\mongodb\Query` (klimov-paul)
-
-
-2.1.1 August 29, 2016
----------------------
-
-- Bug #136: Fixed `yii\mongodb\Collection::findOne()` returns `false` instead of `null` on empty result (klimov-paul)
-- Bug #142: Fixed `yii\mongodb\Migration::createIndexes()` triggers E_NOTICE (klimov-paul)
-- Bug #145: Fixed `yii\mongodb\ActiveFixture` fails to find default data file if `collectionName` is specified in array format (klimov-paul)
-- Bug #146: Fixed `yii\mongodb\ActiveRecord` and `yii\mongodb\file\ActiveRecord` looses `_id` custom value on insertion (lxyfirst, klimov-paul)
-- Enh #147: Added unknown methods `stream_seek` and `stream_tell` to `yii\mongodb\file\StreamWrapper` for `fseek()` and `ftell()` (AstRonin)
-- Enh: Added `yii\mongodb\Migration::listCollections()` method (klimov-paul)
-
-
-2.1.0 June 27, 2016
--------------------
-
-- Enh #33: Added support for batch (bulk) write operations (klimov-paul)
-- Enh #56: Now 'mongodb' PHP extension used instead of 'mongo' (klimov-paul, hardsetting, Sammaye)
-- Enh #76: Added ability to disable logging and/or profiling for the commands and queries (klimov-paul)
-- Enh #77: Added support for fetching data from MongoDB in batches (klimov-paul)
-- Enh #79: `yii\mongodb\ActiveRecord::toArray()` provides better representation for BSON objects in recursive mode (klimov-paul, rowdyroad)
-
-
 2.0.5 May 9, 2016
 -----------------
 

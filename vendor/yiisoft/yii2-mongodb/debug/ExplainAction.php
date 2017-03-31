@@ -15,7 +15,6 @@ use yii\web\HttpException;
  * ExplainAction provides EXPLAIN information for MongoDB queries
  *
  * @author Sergey Smirnov <webdevsega@yandex.ru>
- * @author Klimov Paul <klimov@zfort.com>
  * @since 2.0.5
  */
 class ExplainAction extends Action
@@ -28,7 +27,7 @@ class ExplainAction extends Action
 
     /**
      * Runs the explain action
-     * @param int $seq
+     * @param integer $seq
      * @param string $tag
      * @return string explain result content
      * @throws HttpException if requested log not found
@@ -44,72 +43,70 @@ class ExplainAction extends Action
         }
 
         $query = $timings[$seq]['info'];
-
-        if (strpos($query, 'find({') !== 0) {
+        preg_match('/^.+\((.*)\)$/', $query, $matches);
+        if (!isset($matches[1])) {
             return '';
         }
 
-        $query = substr($query, strlen('find('), -1);
-        $result = $this->explainQuery($query);
-        if (!$result) {
+        $cursor = $this->getCursorFromQueryLog($matches[1]);
+        if (!$cursor) {
             return '';
         }
+        $result = $cursor->explain();
 
         return Json::encode($result, JSON_PRETTY_PRINT);
     }
 
     /**
-     * Runs explain command over the query
+     * Create MongoCursor from string query log
      *
-     * @param string $queryString query log string.
-     * @return array|false explain results, `false` on failure.
+     * @param string $queryString
+     * @return \MongoCursor|null
      */
-    protected function explainQuery($queryString)
+    protected function getCursorFromQueryLog($queryString)
     {
-        /* @var $connection \yii\mongodb\Connection */
+        $cursor = null;
+
         $connection = $this->panel->getDb();
+        $connection->open();
 
-        $queryInfo = Json::decode($queryString);
-        if (!isset($queryInfo['ns'])) {
-            return false;
+        if ($connection->isActive) {
+            $queryInfo = Json::decode($queryString);
+            $query = $this->prepareQuery(isset($queryInfo['query']['$query']) ? $queryInfo['query']['$query'] : $queryInfo['query']);
+
+            $cursor = new \MongoCursor($connection->mongoClient, $queryInfo['ns'], $query, $queryInfo['fields']);
+            $cursor->limit($queryInfo['limit']);
+            $cursor->skip($queryInfo['skip']);
+            if (isset($queryInfo['query']['$orderby'])) {
+                $cursor->sort($queryInfo['query']['$orderby']);
+            }
         }
 
-        list($databaseName, $collectionName) = explode('.', $queryInfo['ns'], 2);
-        unset($queryInfo['ns']);
-
-        if (!empty($queryInfo['filer'])) {
-            $queryInfo['filer'] = $this->prepareQueryFiler($queryInfo['filer']);
-        }
-
-        return $connection->createCommand($databaseName)->explain($collectionName, $queryInfo);
+        return $cursor;
     }
 
     /**
-     * Prepare query filer for explain.
-     * Converts BSON object log entries into actual objects.
+     * Prepare query for using in MongoCursor.
+     * Converts array contains `$id` key into [[MongoId]] instance.
+     * If array given, each element of it will be processed.
      *
-     * @param array $query raw query filter.
+     * @param mixed $query raw query
      * @return array|string prepared query
      */
-    private function prepareQueryFiler($query)
+    protected function prepareQuery($query)
     {
-        $result = [];
-        foreach ($query as $key => $value) {
-            if (is_array($value)) {
-                $result[$key] = $this->prepareQueryFiler($value);
-            } elseif (is_string($value) && preg_match('#^(MongoDB\\\\BSON\\\\[A-Za-z]+)\\((.*)\\)$#s', $value, $matches)) {
-                $class = $matches[1];
-                $objectValue = $matches[1];
-
-                try {
-                    $result[$key] = new $class($objectValue);
-                } catch (\Exception $e) {
-                    $result[$key] = $value;
-                }
+        if (is_array($query)) {
+            if (count($query) === 1 && isset($query['$id'])) {
+                return new \MongoId($query['$id']);
             } else {
-                $result[$key] = $value;
+                $result = [];
+                foreach ($query as $key => $value) {
+                    $result[$key] = $this->prepareQuery($value);
+                }
+                return $result;
             }
+        } else {
+            return $query;
         }
-        return $result;
     }
 }

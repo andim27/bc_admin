@@ -7,13 +7,10 @@
 
 namespace yii\mongodb;
 
-use MongoDB\BSON\Binary;
-use MongoDB\BSON\Type;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\BaseActiveRecord;
 use yii\db\StaleObjectException;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
 
@@ -48,7 +45,7 @@ abstract class ActiveRecord extends BaseActiveRecord
      * @param array $condition description of the objects to update.
      * Please refer to [[Query::where()]] on how to specify this parameter.
      * @param array $options list of options in format: optionName => optionValue.
-     * @return int the number of documents updated.
+     * @return integer the number of documents updated.
      */
     public static function updateAll($attributes, $condition = [], $options = [])
     {
@@ -68,7 +65,7 @@ abstract class ActiveRecord extends BaseActiveRecord
      * @param array $condition description of the objects to update.
      * Please refer to [[Query::where()]] on how to specify this parameter.
      * @param array $options list of options in format: optionName => optionValue.
-     * @return int the number of documents updated.
+     * @return integer the number of documents updated.
      */
     public static function updateAllCounters($counters, $condition = [], $options = [])
     {
@@ -88,7 +85,7 @@ abstract class ActiveRecord extends BaseActiveRecord
      * @param array $condition description of the objects to delete.
      * Please refer to [[Query::where()]] on how to specify this parameter.
      * @param array $options list of options in format: optionName => optionValue.
-     * @return int the number of documents deleted.
+     * @return integer the number of documents deleted.
      */
     public static function deleteAll($condition = [], $options = [])
     {
@@ -196,11 +193,11 @@ abstract class ActiveRecord extends BaseActiveRecord
      * $customer->insert();
      * ```
      *
-     * @param bool $runValidation whether to perform validation before saving the record.
+     * @param boolean $runValidation whether to perform validation before saving the record.
      * If the validation fails, the record will not be inserted into the collection.
      * @param array $attributes list of attributes that need to be saved. Defaults to null,
      * meaning all attributes that are loaded will be saved.
-     * @return bool whether the attributes are valid and the record is inserted successfully.
+     * @return boolean whether the attributes are valid and the record is inserted successfully.
      * @throws \Exception in case insert failed.
      */
     public function insert($runValidation = true, $attributes = null)
@@ -231,10 +228,8 @@ abstract class ActiveRecord extends BaseActiveRecord
             }
         }
         $newId = static::getCollection()->insert($values);
-        if ($newId !== null) {
-            $this->setAttribute('_id', $newId);
-            $values['_id'] = $newId;
-        }
+        $this->setAttribute('_id', $newId);
+        $values['_id'] = $newId;
 
         $changedAttributes = array_fill_keys(array_keys($values), null);
         $this->setOldAttributes($values);
@@ -300,7 +295,7 @@ abstract class ActiveRecord extends BaseActiveRecord
      * In the above step 1 and 3, events named [[EVENT_BEFORE_DELETE]] and [[EVENT_AFTER_DELETE]]
      * will be raised by the corresponding methods.
      *
-     * @return int|bool the number of documents deleted, or false if the deletion is unsuccessful for some reason.
+     * @return integer|boolean the number of documents deleted, or false if the deletion is unsuccessful for some reason.
      * Note that it is possible the number of documents deleted is 0, even though the deletion execution is successful.
      * @throws StaleObjectException if [[optimisticLock|optimistic locking]] is enabled and the data
      * being deleted is outdated.
@@ -344,7 +339,7 @@ abstract class ActiveRecord extends BaseActiveRecord
      * The comparison is made by comparing the collection names and the primary key values of the two active records.
      * If one of the records [[isNewRecord|is new]] they are also considered not equal.
      * @param ActiveRecord $record record to compare to
-     * @return bool whether the two active records refer to the same row in the same Mongo collection.
+     * @return boolean whether the two active records refer to the same row in the same Mongo collection.
      */
     public function equals($record)
     {
@@ -353,63 +348,5 @@ abstract class ActiveRecord extends BaseActiveRecord
         }
 
         return $this->collectionName() === $record->collectionName() && (string) $this->getPrimaryKey() === (string) $record->getPrimaryKey();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function toArray(array $fields = [], array $expand = [], $recursive = true)
-    {
-        $data = parent::toArray($fields, $expand, false);
-        if (!$recursive) {
-            return $data;
-        }
-        return $this->toArrayInternal($data);
-    }
-
-    /**
-     * Converts data to array recursively, converting MongoDB BSON objects to readable values.
-     * @param mixed $data the data to be converted into an array.
-     * @return array the array representation of the data.
-     * @since 2.1
-     */
-    private function toArrayInternal($data)
-    {
-        if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                if (is_array($value)) {
-                    $data[$key] = $this->toArrayInternal($value);
-                }
-                if (is_object($value)) {
-                    if ($value instanceof Type) {
-                        $data[$key] = $this->dumpBsonObject($value);
-                    } else {
-                        $data[$key] = ArrayHelper::toArray($value);
-                    }
-                }
-            }
-            return $data;
-        } elseif (is_object($data)) {
-            return ArrayHelper::toArray($data);
-        } else {
-            return [$data];
-        }
-    }
-
-    /**
-     * Converts MongoDB BSON object to readable value.
-     * @param Type $object MongoDB BSON object.
-     * @return array|string object dump value.
-     * @since 2.1
-     */
-    private function dumpBsonObject(Type $object)
-    {
-        if ($object instanceof Binary) {
-            return $object->getData();
-        }
-        if (method_exists($object, '__toString')) {
-            return $object->__toString();
-        }
-        return ArrayHelper::toArray($object);
     }
 }

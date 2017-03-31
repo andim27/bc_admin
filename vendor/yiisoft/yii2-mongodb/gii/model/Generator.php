@@ -8,7 +8,6 @@
 namespace yii\mongodb\gii\model;
 
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\mongodb\ActiveRecord;
 use yii\mongodb\Connection;
 use yii\gii\CodeFile;
@@ -116,8 +115,7 @@ class Generator extends \yii\gii\Generator
         if ($db !== null) {
             return [
                 'collectionName' => function () use ($db) {
-                    $collections = $db->getDatabase()->createCommand()->listCollections();
-                    return ArrayHelper::getColumn($collections, 'name');
+                    return $db->getDatabase()->mongoDb->getCollectionNames();
                 },
             ];
         } else {

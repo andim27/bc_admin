@@ -32,11 +32,13 @@ use yii\mongodb\Query;
  * {
  *     "category": "app",
  *     "language": "de",
- *     "messages": {
- *         "Hello world!": "Hallo Welt!",
- *         "The dog runs fast.": "Der Hund rennt schnell.",
+ *     "messages": [
+ *         {
+ *             "Hello world!": "Hallo Welt!",
+ *             ...
+ *         },
  *         ...
- *     },
+ *     ],
  * }
  * ```
  *
@@ -73,13 +75,13 @@ class MongoDbMessageSource extends MessageSource
      */
     public $collection = 'message';
     /**
-     * @var int the time in seconds that the messages can remain valid in cache.
+     * @var integer the time in seconds that the messages can remain valid in cache.
      * Use 0 to indicate that the cached data will never expire.
      * @see enableCaching
      */
     public $cachingDuration = 0;
     /**
-     * @var bool whether to enable caching translated messages
+     * @var boolean whether to enable caching translated messages
      */
     public $enableCaching = false;
 

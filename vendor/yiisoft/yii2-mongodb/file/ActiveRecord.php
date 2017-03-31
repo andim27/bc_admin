@@ -128,10 +128,8 @@ abstract class ActiveRecord extends \yii\mongodb\ActiveRecord
         } else {
             $newId = $collection->insert($values);
         }
-        if ($newId !== null) {
-            $this->setAttribute('_id', $newId);
-            $values['_id'] = $newId;
-        }
+        $this->setAttribute('_id', $newId);
+        $values['_id'] = $newId;
 
         $changedAttributes = array_fill_keys(array_keys($values), null);
         $this->setOldAttributes($values);
@@ -259,12 +257,12 @@ abstract class ActiveRecord extends \yii\mongodb\ActiveRecord
         }
         if (empty($file)) {
             return null;
-        } elseif ($file instanceof Download) {
+        } elseif ($file instanceof \MongoGridFSFile) {
             $fileSize = $file->getSize();
             if (empty($fileSize)) {
                 return null;
             } else {
-                return $file->toString();
+                return $file->getBytes();
             }
         } elseif ($file instanceof UploadedFile) {
             return file_get_contents($file->tempName);
@@ -282,7 +280,7 @@ abstract class ActiveRecord extends \yii\mongodb\ActiveRecord
     /**
      * Writes the the internal file content into the given filename.
      * @param string $filename full filename to be written.
-     * @return bool whether the operation was successful.
+     * @return boolean whether the operation was successful.
      * @throws \yii\base\InvalidParamException on invalid file attribute value.
      */
     public function writeFile($filename)
@@ -293,8 +291,8 @@ abstract class ActiveRecord extends \yii\mongodb\ActiveRecord
         }
         if (empty($file)) {
             throw new InvalidParamException('There is no file associated with this object.');
-        } elseif ($file instanceof Download) {
-            return ($file->toFile($filename) == $file->getSize());
+        } elseif ($file instanceof \MongoGridFSFile) {
+            return ($file->write($filename) == $file->getSize());
         } elseif ($file instanceof UploadedFile) {
             return copy($file->tempName, $filename);
         } elseif (is_string($file)) {
@@ -323,7 +321,7 @@ abstract class ActiveRecord extends \yii\mongodb\ActiveRecord
         }
         if (empty($file)) {
             throw new InvalidParamException('There is no file associated with this object.');
-        } elseif ($file instanceof Download) {
+        } elseif ($file instanceof \MongoGridFSFile) {
             return $file->getResource();
         } elseif ($file instanceof UploadedFile) {
             return fopen($file->tempName, 'r');

@@ -13,8 +13,6 @@ use yii\log\Logger;
 /**
  * MongoDbPanel panel that collects and displays MongoDB queries performed.
  *
- * @property array $profileLogs This property is read-only.
- *
  * @author Klimov Paul <klimov@zfort.com>
  * @since 2.0.1
  */
@@ -62,9 +60,9 @@ class MongoDbPanel extends DbPanel
         $target = $this->module->logTarget;
 
         return $target->filterMessages($target->messages, Logger::LEVEL_PROFILE, [
-            'yii\mongodb\Command::*',
+            'yii\mongodb\Collection::*',
             'yii\mongodb\Query::*',
-            'yii\mongodb\BatchQueryResult::*',
+            'yii\mongodb\Database::*',
         ]);
     }
 
@@ -95,4 +93,4 @@ class MongoDbPanel extends DbPanel
     {
         return $type === 'find';
     }
-}
+} 

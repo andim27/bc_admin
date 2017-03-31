@@ -152,7 +152,7 @@ class StatusSalesController extends BaseController {
                 foreach ($model->set as $itemSet) {
                     if($itemSet->title == $request['set']){
                         $itemSet->status = $request['status'];
-                        $itemSet->dateChange = new UTCDateTime(strtotime(date("Y-m-d H:i:s")));
+                        $itemSet->dateChange = new UTCDateTime(strtotime(date("Y-m-d H:i:s")) * 1000);
                         $itemSet->idUserChange =  new ObjectID($this->user->id);
                     }
 
@@ -163,7 +163,7 @@ class StatusSalesController extends BaseController {
                                 
                 $comment = new ReviewsSale();
                 $comment->idUser = new ObjectID($this->user->id);
-                $comment->dateCreate = new UTCDateTime(strtotime(date("Y-m-d H:i:s")));
+                $comment->dateCreate = new UTCDateTime(strtotime(date("Y-m-d H:i:s")) * 1000);
                 $comment->review = 'Смена статуса ('.$request['set'].') ' . THelper::t($oldStatus) . '->' . THelper::t($request['status']);
 
                 $model->reviews[] = $comment;
@@ -237,7 +237,7 @@ class StatusSalesController extends BaseController {
             $comment = new ReviewsSale();
             if($comment->load($request)){
                 $comment->idUser = new ObjectID($this->user->id);
-                $comment->dateCreate = new UTCDateTime(strtotime(date("Y-m-d H:i:s")));
+                $comment->dateCreate = new UTCDateTime(strtotime(date("Y-m-d H:i:s")) * 1000);
 
                 $model->reviews[] = $comment;       
         
@@ -285,8 +285,8 @@ class StatusSalesController extends BaseController {
         $model = Sales::find()
             ->where([
                 'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime($dateInterval['from'])),
-                    '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59'))
+                    '$gte' => new UTCDateTime(strtotime($dateInterval['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
                 ]
             ])
             ->all();
@@ -339,8 +339,8 @@ class StatusSalesController extends BaseController {
         $model = Sales::find()
             ->where([
                 'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime($from)),
-                    '$lte' => new UTCDatetime(strtotime($to))
+                    '$gte' => new UTCDateTime(strtotime($from) * 1000),
+                    '$lte' => new UTCDatetime(strtotime($to) *1000)
                 ]
             ])
             ->all();

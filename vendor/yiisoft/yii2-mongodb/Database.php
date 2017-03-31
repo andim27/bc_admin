@@ -9,11 +9,13 @@ namespace yii\mongodb;
 
 use yii\base\Object;
 use Yii;
+use yii\helpers\Json;
 
 /**
  * Database represents the Mongo database information.
  *
  * @property file\Collection $fileCollection Mongo GridFS collection. This property is read-only.
+ * @property string $name Name of this database. This property is read-only.
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 2.0
@@ -21,13 +23,9 @@ use Yii;
 class Database extends Object
 {
     /**
-     * @var Connection MongoDB connection.
+     * @var \MongoDB Mongo database instance.
      */
-    public $connection;
-    /**
-     * @var string name of this database.
-     */
-    public $name;
+    public $mongoDb;
 
     /**
      * @var Collection[] list of collections.
@@ -40,9 +38,17 @@ class Database extends Object
 
 
     /**
+     * @return string name of this database.
+     */
+    public function getName()
+    {
+        return $this->mongoDb->__toString();
+    }
+
+    /**
      * Returns the Mongo collection with the given name.
      * @param string $name collection name
-     * @param bool $refresh whether to reload the collection instance even if it is found in the cache.
+     * @param boolean $refresh whether to reload the collection instance even if it is found in the cache.
      * @return Collection Mongo collection instance.
      */
     public function getCollection($name, $refresh = false)
@@ -57,7 +63,7 @@ class Database extends Object
     /**
      * Returns Mongo GridFS collection with given prefix.
      * @param string $prefix collection prefix.
-     * @param bool $refresh whether to reload the collection instance even if it is found in the cache.
+     * @param boolean $refresh whether to reload the collection instance even if it is found in the cache.
      * @return file\Collection Mongo GridFS collection.
      */
     public function getFileCollection($prefix = 'fs', $refresh = false)
@@ -78,8 +84,7 @@ class Database extends Object
     {
         return Yii::createObject([
             'class' => 'yii\mongodb\Collection',
-            'database' => $this,
-            'name' => $name,
+            'mongoCollection' => $this->mongoDb->selectCollection($name)
         ]);
     }
 
@@ -92,20 +97,8 @@ class Database extends Object
     {
         return Yii::createObject([
             'class' => 'yii\mongodb\file\Collection',
-            'database' => $this,
-            'prefix' => $prefix,
+            'mongoCollection' => $this->mongoDb->getGridFS($prefix)
         ]);
-    }
-
-    /**
-     * Creates MongoDB command associated with this database.
-     * @param array $document command document contents.
-     * @return Command command instance.
-     * @since 2.1
-     */
-    public function createCommand($document = [])
-    {
-        return $this->connection->createCommand($document, $this->name);
     }
 
     /**
@@ -115,44 +108,72 @@ class Database extends Object
      * you need to create collection with the specific options.
      * @param string $name name of the collection
      * @param array $options collection options in format: "name" => "value"
-     * @return bool whether operation was successful.
+     * @return \MongoCollection new Mongo collection instance.
      * @throws Exception on failure.
      */
     public function createCollection($name, $options = [])
     {
-        return $this->createCommand()->createCollection($name, $options);
+        $token = $this->getName() . '.create(' . $name . ', ' . Json::encode($options) . ')';
+        Yii::info($token, __METHOD__);
+        try {
+            Yii::beginProfile($token, __METHOD__);
+            $result = $this->mongoDb->createCollection($name, $options);
+            Yii::endProfile($token, __METHOD__);
+
+            return $result;
+        } catch (\Exception $e) {
+            Yii::endProfile($token, __METHOD__);
+            throw new Exception($e->getMessage(), (int) $e->getCode(), $e);
+        }
     }
 
     /**
-     * Drops specified collection.
-     * @param string $name name of the collection
-     * @return bool whether operation was successful.
-     * @since 2.1
+     * Executes Mongo command.
+     * @param array $command command specification.
+     * @param array $options options in format: "name" => "value"
+     * @return array database response.
+     * @throws Exception on failure.
      */
-    public function dropCollection($name)
+    public function executeCommand($command, $options = [])
     {
-        return $this->createCommand()->dropCollection($name);
+        $token = $this->getName() . '.$cmd(' . Json::encode($command) . ', ' . Json::encode($options) . ')';
+        Yii::info($token, __METHOD__);
+        try {
+            Yii::beginProfile($token, __METHOD__);
+            $result = $this->mongoDb->command($command, $options);
+            $this->tryResultError($result);
+            Yii::endProfile($token, __METHOD__);
+
+            return $result;
+        } catch (\Exception $e) {
+            Yii::endProfile($token, __METHOD__);
+            throw new Exception($e->getMessage(), (int) $e->getCode(), $e);
+        }
     }
 
     /**
-     * Returns the list of available collections in this database.
-     * @param array $condition filter condition.
-     * @param array $options options list.
-     * @return array collections information.
-     * @since 2.1.1
+     * Checks if command execution result ended with an error.
+     * @param mixed $result raw command execution result.
+     * @throws Exception if an error occurred.
      */
-    public function listCollections($condition = [], $options = [])
+    protected function tryResultError($result)
     {
-        return $this->createCommand()->listCollections($condition, $options);
-    }
-
-    /**
-     * Clears internal collection lists.
-     * This method can be used to break cycle references between [[Database]] and [[Collection]] instances.
-     */
-    public function clearCollections()
-    {
-        $this->_collections = [];
-        $this->_fileCollections = [];
+        if (is_array($result)) {
+            if (!empty($result['errmsg'])) {
+                $errorMessage = $result['errmsg'];
+            } elseif (!empty($result['err'])) {
+                $errorMessage = $result['err'];
+            }
+            if (isset($errorMessage)) {
+                if (array_key_exists('ok', $result)) {
+                    $errorCode = (int) $result['ok'];
+                } else {
+                    $errorCode = 0;
+                }
+                throw new Exception($errorMessage, $errorCode);
+            }
+        } elseif (!$result) {
+            throw new Exception('Unknown error, use "w=1" option to enable error tracking');
+        }
     }
 }

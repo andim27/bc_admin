@@ -110,14 +110,12 @@ class ActiveFixture extends BaseActiveFixture
     {
         if ($this->dataFile === null) {
             $class = new \ReflectionClass($this);
-
-            $collectionName = $this->getCollectionName();
-            $dataFile = dirname($class->getFileName()) . '/data/' . (is_array($collectionName) ? implode('.', $collectionName) : $collectionName) . '.php';
+            $dataFile = dirname($class->getFileName()) . '/data/' . $this->getCollectionName() . '.php';
 
             return is_file($dataFile) ? require($dataFile) : [];
+        } else {
+            return parent::getData();
         }
-
-        return parent::getData();
     }
 
     /**
