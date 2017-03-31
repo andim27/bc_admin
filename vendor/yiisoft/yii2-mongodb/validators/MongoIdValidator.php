@@ -7,6 +7,7 @@
 
 namespace yii\mongodb\validators;
 
+use MongoDB\BSON\ObjectID;
 use yii\base\InvalidConfigException;
 use yii\validators\Validator;
 use Yii;
@@ -44,7 +45,7 @@ class MongoIdValidator extends Validator
      * valid values are:
      * - 'string' - enforce value converted to plain string.
      * - 'object' - enforce value converted to [[\MongoId]] instance.
-     * If not set - no conversion will be performed, leaving attribute value intact.
+     *   If not set - no conversion will be performed, leaving attribute value intact.
      */
     public $forceFormat;
 
@@ -102,13 +103,13 @@ class MongoIdValidator extends Validator
      */
     private function parseMongoId($value)
     {
-        if ($value instanceof \MongoId) {
+        if ($value instanceof ObjectID) {
             return $value;
         }
         try {
-            return new \MongoId($value);
+            return new ObjectID($value);
         } catch (\Exception $e) {
             return null;
         }
     }
-} 
+}

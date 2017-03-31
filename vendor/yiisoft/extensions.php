@@ -120,10 +120,19 @@ return array (
       '@yii2tech/embedded' => $vendorDir . '/yii2tech/embedded',
     ),
   ),
+  'yiisoft/yii2-debug' => 
+  array (
+    'name' => 'yiisoft/yii2-debug',
+    'version' => '2.0.9.0',
+    'alias' => 
+    array (
+      '@yii/debug' => $vendorDir . '/yiisoft/yii2-debug',
+    ),
+  ),
   'bupy7/yii2-widget-cropbox' => 
   array (
     'name' => 'bupy7/yii2-widget-cropbox',
-    'version' => '4.1.1.0',
+    'version' => '2.2.0.0',
     'alias' => 
     array (
       '@bupy7/cropbox' => $vendorDir . '/bupy7/yii2-widget-cropbox',
@@ -132,19 +141,10 @@ return array (
   'yiisoft/yii2-mongodb' => 
   array (
     'name' => 'yiisoft/yii2-mongodb',
-    'version' => '2.0.5.0',
+    'version' => '2.1.3.0',
     'alias' => 
     array (
       '@yii/mongodb' => $vendorDir . '/yiisoft/yii2-mongodb',
-    ),
-  ),
-  'yiisoft/yii2-debug' => 
-  array (
-    'name' => 'yiisoft/yii2-debug',
-    'version' => '2.0.9.0',
-    'alias' => 
-    array (
-      '@yii/debug' => $vendorDir . '/yiisoft/yii2-debug',
     ),
   ),
 );
