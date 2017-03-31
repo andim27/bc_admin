@@ -100,4 +100,10 @@ class Sales extends ActiveRecord
         return $this->hasOne(Users::className(),['_id'=>'idUser']);
     }
 
+    public function getProduct()
+    {
+        return $this->hasOne(Products::className(),['product'=>'product']);
+    }
+
+
 }

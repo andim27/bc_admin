@@ -58,6 +58,7 @@
             <tbody>
                 <?php if(!empty($model)) {?>
                     <?php foreach($model as $item) {?>
+                        <?php if(count($item->product->set)>0) {?>
                         <tr>
                             <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
                             <td><?=$item->infoUser->secondName?> <?=$item->infoUser->firstName?></td>
@@ -85,6 +86,7 @@
                             <td>
                                 <?= Html::a('<i class="fa fa-comment"></i>', ['/business/status-sales/look-comment','idSale'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                             </td>
+                        <?php } ?>
                     <?php } ?>
                 <?php } ?>
             </tbody>
