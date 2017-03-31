@@ -289,6 +289,7 @@ class StatusSalesController extends BaseController {
                     '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
                 ]
             ])
+            ->andWhere(['in','product',[19,20,21,22,23,25,26,27,35]])
             ->all();
 
 
@@ -348,6 +349,7 @@ class StatusSalesController extends BaseController {
                     '$lte' => new UTCDatetime(strtotime($to) *1000)
                 ]
             ])
+            ->andWhere(['in','product',[19,20,21,22,23,25,26,27,35]])
             ->all();
 
         $infoExport = [];
