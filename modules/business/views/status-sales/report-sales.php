@@ -59,7 +59,7 @@
                 <?php if(!empty($model)) {?>
                     <?php foreach($model as $item) {?>
                         <tr>
-                            <td><?=Yii::$app->formatter->asDate($item->dateCreate->sec,'php:Y-m-d H:i:s')?></td>
+                            <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
                             <td><?=$item->infoUser->secondName?> <?=$item->infoUser->firstName?></td>
                             <td><?=$item->username?></td>
                             <td><?=$item->productName?></td>
