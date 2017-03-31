@@ -313,8 +313,13 @@ class StatusSalesController extends BaseController {
             $model = StatusSales::find()
                 ->where(['idSale'=> new ObjectID($request['idSale'])])
                 ->one();
-            $arrayRev = ArrayHelper::toArray($model->reviews);
-            krsort($arrayRev);
+
+
+            $arrayRev = [];
+            if($model !== null){
+                $arrayRev = ArrayHelper::toArray($model->reviews);
+                krsort($arrayRev);
+            }
 
             return $this->renderAjax('_look-comment', [
                 'language' => Yii::$app->language,
