@@ -31,7 +31,7 @@
 
                 <tr>
                     <td>
-                        <?=$item->_id->__toString()?>
+                        <?=$item->product?>
                     </td>
                     <td>
                         <?=$item->productName?>

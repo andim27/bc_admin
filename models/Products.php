@@ -26,6 +26,7 @@ class Products extends ActiveRecord
     {
         return [
             '_id',
+            'product',
             'name',
             'productName',
             'productSet',
