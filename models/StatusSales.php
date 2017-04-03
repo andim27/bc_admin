@@ -64,7 +64,25 @@ class StatusSales extends \yii2tech\embedded\mongodb\ActiveRecord
         return $listStatus;
     }
     
-    
+    public function checkSalesForUserChange(){
+
+        $answer = false;
+
+        if(!empty($this->set)){
+            foreach ($this->set as $item) {
+
+
+                $userID = (string)$item->idUserChange;
+
+
+                if($userID == \Yii::$app->view->params['user']->id){
+                    $answer = true;
+                    break;
+                }
+            }
+        }
+        return $answer;
+    }
 }
 
 class ReviewsSale extends Model

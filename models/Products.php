@@ -45,7 +45,7 @@ class Products extends ActiveRecord
     {
         $model = self::find()->where(['productSet'=>[
             '$exists' => true
-        ]])->all();;
+        ]])->all();
         $arrayId = ArrayHelper::getColumn($model,'product');
 
 

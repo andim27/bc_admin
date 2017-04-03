@@ -200,12 +200,24 @@ class StatusSalesController extends BaseController {
 
 
         if(!empty($request['idSale'])) {
+            $arrayRev = [];
             $model = StatusSales::find()
                 ->where(['idSale'=> new ObjectID($request['idSale'])])
                 ->one();
-            $arrayRev = ArrayHelper::toArray($model->reviews);
+
+
+            if($model->reviews){
+                foreach ($model->reviews as $item) {
+                    $arrayRev[] = [
+                        'idUser' => $item->idUser->__toString(),
+                        'review' => $item->review,
+                        'dateCreate' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
+                    ];
+                }
+            }
+
             krsort($arrayRev);
-            
+
             $formModel = new ReviewsSale();
             
             return $this->renderAjax('_look-and-add-comment', [

@@ -58,6 +58,7 @@
             <tbody>
                 <?php if(!empty($model)) {?>
                     <?php foreach($model as $item) {?>
+                        <?php if (!empty($item->statusSale) && count($item->statusSale->set)>0 && $item->statusSale->checkSalesForUserChange()!==false) {?>
                         <tr>
                             <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
                             <td><?=$item->infoUser->secondName?> <?=$item->infoUser->firstName?></td>
@@ -65,7 +66,7 @@
                             <td><?=$item->productName?></td>
                             <td>
                                 <table>
-                                    <?php if (!empty($item->statusSale) && count($item->statusSale->set)>0) {?>
+
                                         <?php foreach ($item->statusSale->set as $itemSet) {?>
                                             <tr data-set="<?= $itemSet->title ?>">
                                                 <td>
@@ -78,14 +79,14 @@
                                                 </td>
                                             </tr>
                                         <?php } ?>
-                                    <?php } ?>
+
 
                                 </table>
                             </td>
                             <td>
                                 <?= Html::a('<i class="fa fa-comment"></i>', ['/business/status-sales/look-comment','idSale'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                             </td>
-                        
+                        <?php } ?>
                     <?php } ?>
                 <?php } ?>
             </tbody>

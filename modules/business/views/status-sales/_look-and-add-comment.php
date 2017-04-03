@@ -41,10 +41,10 @@ use \app\models\Users;
                     <div class="media text-left">
                         <div class="media-body">
                             <h6 class="media-heading">
-                                <?= Users::getUserEmail($item['idUser']['$id'])  ?>
+                                <?= Users::getUserEmail($item['idUser'])  ?>
 
                                 <span class="label label-default">
-                                    <?=Yii::$app->formatter->asDate($item['dateCreate']['sec'],'php:Y-m-d H:i:s')?>
+                                    <?=$item['dateCreate']?>
                                 </span>
                             </h6>
                             <?=$item['review']?>
