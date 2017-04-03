@@ -241,6 +241,13 @@ Class Menu
                         'url' => ['status-sales/report-sales'],
                         'action' => 'report-sales',
                     ],
+
+                    [
+                        'key'   =>  'sidebar_consolidated_report',
+                        'label' => THelper::t('sidebar_consolidated_report'),
+                        'url' => ['status-sales/consolidated-report-sales'],
+                        'action' => 'consolidated-report-sales',
+                    ],
                     [
                         'key'   =>  'sidebar_product_set',
                         'label' => THelper::t('sidebar_product_set'),

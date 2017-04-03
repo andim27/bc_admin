@@ -3,6 +3,7 @@
 namespace app\models;
 
 use yii\base\Model;
+use yii\helpers\ArrayHelper;
 use yii2tech\embedded\mongodb\ActiveRecord;
 
 /**
@@ -39,6 +40,17 @@ class Products extends ActiveRecord
         return $this->mapEmbeddedList('productSet', ProductSet::className());
     }
 
+
+    public static function productIDWithSet()
+    {
+        $model = self::find()->where(['productSet'=>[
+            '$exists' => true
+        ]])->all();;
+        $arrayId = ArrayHelper::getColumn($model,'product');
+
+
+        return $arrayId;
+    }
        
     
 }

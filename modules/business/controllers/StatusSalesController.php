@@ -289,7 +289,7 @@ class StatusSalesController extends BaseController {
                     '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
                 ]
             ])
-            ->andWhere(['in','product',[19,20,21,22,23,25,26,27,35]])
+            ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
 
 
@@ -349,7 +349,7 @@ class StatusSalesController extends BaseController {
                     '$lte' => new UTCDatetime(strtotime($to) *1000)
                 ]
             ])
-            ->andWhere(['in','product',[19,20,21,22,23,25,26,27,35]])
+            ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
 
         $infoExport = [];
@@ -398,6 +398,112 @@ class StatusSalesController extends BaseController {
     }
 
 
+    /**
+     * looking count sales on query for report
+     * @return string
+     */
+    public function actionConsolidatedReportSales()
+    {
+        $request =  Yii::$app->request->post();;
+        if(!empty($request)){
+            $dateInterval['to'] = $request['to'];
+            $dateInterval['from'] =  $request['from'];
+        } else {
+            $dateInterval['to'] = date("Y-m-d");
+            $dateInterval['from'] = date("Y-m-d",strtotime('-7 days'));
+        }
+
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($dateInterval['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->all();
+
+        $infoGoods = [];
+        if(!empty($model)){
+            foreach ($model as $item){
+
+                if(empty($infoGoods[$item->product]['count'])){
+                    $infoGoods[$item->product]['title'] = $item->productName;
+                    $infoGoods[$item->product]['count'] = 0;
+                }
+                $infoGoods[$item->product]['count']++;
+            }
+        }
+
+        return $this->render('consolidated-report-sales',[
+            'language' => Yii::$app->language,
+            'dateInterval' => $dateInterval,
+            'infoGoods' => $infoGoods,
+        ]);
+    }
+
+    /**
+     * export consolidated report between $from and $to
+     * @param $from
+     * @param $to
+     */
+    public function actionExportConsolidatedReport($from,$to)
+    {
+        $language = Yii::$app->language;
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($from) * 1000),
+                    '$lte' => new UTCDatetime(strtotime($to) *1000)
+                ]
+            ])
+            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->all();
+
+        if(!empty($model)){
+            foreach ($model as $item){
+
+                if(empty($infoGoods[$item->product]['count'])){
+                    $infoGoods[$item->product]['title'] = $item->productName;
+                    $infoGoods[$item->product]['count'] = 0;
+                }
+                $infoGoods[$item->product]['count']++;
+            }
+        }
+
+        $infoExport = [];
+        if(!empty($infoGoods)){
+            foreach ($infoGoods as $k=>$item) {
+
+                $infoExport[] = [
+                    'id'            =>  $k,
+                    'goods'         =>  $item['title'],
+                    'count_goods'   =>  $item['count']
+                ];
+            }
+        }
+
+        \moonland\phpexcel\Excel::export([
+            'models'    => $infoExport,
+            'fileName'  => 'export_'.$from.'-'.$to.'_' . $language,
+            'columns'   => [
+                'id',
+                'goods',
+                'count_goods'
+            ],
+            'headers' => [
+                'id'            => '№',
+                'goods'         => THelper::t('goods'),
+                'count_goods'   => THelper::t('count_goods'),
+            ],
+        ]);
+
+        die();
+    }
+
+    
     public function  actionProductSet()
     {
         $infoProduct = Products::find()->all();
