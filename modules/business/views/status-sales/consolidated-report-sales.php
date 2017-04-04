@@ -64,6 +64,34 @@ use yii\widgets\ActiveForm;
         </div>
     </section>
 
+    <section class="panel panel-default">
+        <div class="table-responsive">
+            <table class="table table-translations table-striped datagrid m-b-sm">
+                <thead>
+                <tr>
+                    <th>
+                        <?=THelper::t('sale_product_set')?>
+                    </th>
+                    <th>
+                        <?=THelper::t('count_goods')?>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php if(!empty($infoSetGoods)) {?>
+                <?php foreach($infoSetGoods as $k=>$item) {?>
+                <tr>
+                    <td><?=$k?></td>
+                    <td>
+                        <?=$item?>
+                    </td>
+                    <?php } ?>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
     <script>
         $('.table-translations').dataTable({
             language: TRANSLATION,

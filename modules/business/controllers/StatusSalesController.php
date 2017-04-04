@@ -436,7 +436,7 @@ class StatusSalesController extends BaseController {
             ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
 
-        $infoGoods = [];
+        $infoGoods = $infoSetGoods = [];
         if(!empty($model)){
             foreach ($model as $item){
 
@@ -445,13 +445,22 @@ class StatusSalesController extends BaseController {
                     $infoGoods[$item->product]['count'] = 0;
                 }
                 $infoGoods[$item->product]['count']++;
+
+
+                foreach($item->infoProduct->set as $itemSet){
+                    if(empty($infoSetGoods[$itemSet->setName])){
+                        $infoSetGoods[$itemSet->setName] = 0;
+                    }
+                    $infoSetGoods[$itemSet->setName]++;
+                }
             }
         }
-
+        
         return $this->render('consolidated-report-sales',[
             'language' => Yii::$app->language,
             'dateInterval' => $dateInterval,
             'infoGoods' => $infoGoods,
+            'infoSetGoods' => $infoSetGoods,
         ]);
     }
 

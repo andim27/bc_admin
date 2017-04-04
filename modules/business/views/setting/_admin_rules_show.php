@@ -44,14 +44,14 @@
                     <div class="col-md-2">
                         <label class="control-label switch-center"><?= THelper::t('rules_admin_display');?></label>
                         <label class="switch">
-                            <input value="<?=$subitem['key']?>" class="btnRulesShow" type="checkbox" name="rule[showMenu][]" <?= (in_array($subitem['key'],(array)$model->rules->edit) ? 'checked="checked"' : '')?>/>
+                            <input value="<?=$subitem['key']?>" class="btnRulesShow" type="checkbox" name="rule[showMenu][]" <?= (in_array($subitem['key'],(array)$model->rules->showMenu) ? 'checked="checked"' : '')?>/>
                             <span></span>
                         </label>
                     </div>
                     <div class="col-md-2">
                         <label class="control-label switch-center"><?= THelper::t('rules_admin_edit');?></label>
                         <label class="switch">
-                            <input value="<?=$subitem['key']?>" class="btnRulesEdit" type="checkbox" name="rule[edit][]" <?= (in_array($subitem['key'],(array)$model->rules->showMenu) ? 'checked="checked"' : '')?>/>
+                            <input value="<?=$subitem['key']?>" class="btnRulesEdit" type="checkbox" name="rule[edit][]" <?= (in_array($subitem['key'],(array)$model->rules->edit) ? 'checked="checked"' : '')?>/>
                             <span></span>
                         </label>
                     </div>

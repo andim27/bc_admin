@@ -9,6 +9,7 @@ use yii\mongodb\ActiveRecord;
  * @inheritdoc
  * @property StatusSales $statusSale
  * @property Users $infoUser
+ * @property Products $infoProduct
  *
  * Class Sales
  * @package app\models
@@ -100,7 +101,7 @@ class Sales extends ActiveRecord
         return $this->hasOne(Users::className(),['_id'=>'idUser']);
     }
 
-    public function getProduct()
+    public function getInfoProduct()
     {
         return $this->hasOne(Products::className(),['product'=>'product']);
     }
