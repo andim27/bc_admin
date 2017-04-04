@@ -32,65 +32,90 @@ use yii\widgets\ActiveForm;
             <?= Html::a('Export <i class="fa fa-file-text"></i>', 'javascript:void(0);', ['class' => 'btn btn-success exportReport']) ?>
         </div>
     </div>
-    <section class="panel panel-default">
-        <div class="table-responsive">
-            <table class="table table-translations table-striped datagrid m-b-sm">
-                <thead>
-                <tr>
-                    <th>
-                        №
-                    </th>
-                    <th>
-                        <?=THelper::t('goods')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('count_goods')?>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php if(!empty($infoGoods)) {?>
-                <?php foreach($infoGoods as $k=>$item) {?>
-                <tr>
-                    <td><?=$k?></td>
-                    <td><?=$item['title']?></td>
-                    <td>
-                        <?=$item['count']?>
-                    </td>
-                <?php } ?>
-                <?php } ?>
-                </tbody>
-            </table>
-        </div>
-    </section>
 
-    <section class="panel panel-default">
-        <div class="table-responsive">
-            <table class="table table-translations table-striped datagrid m-b-sm">
-                <thead>
-                <tr>
-                    <th>
-                        <?=THelper::t('sale_product_set')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('count_goods')?>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php if(!empty($infoSetGoods)) {?>
-                <?php foreach($infoSetGoods as $k=>$item) {?>
-                <tr>
-                    <td><?=$k?></td>
-                    <td>
-                        <?=$item?>
-                    </td>
-                    <?php } ?>
-                    <?php } ?>
-                </tbody>
-            </table>
+    <div class="row">
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <header class="panel-heading bg-light">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li class="active">
+                            <a href="#by-goods" class="tab-by-goods" data-toggle="tab"><?= THelper::t('goods') ?></a>
+                        </li>
+                        <li class="">
+                            <a href="#by-set" class="tab-by-set" data-toggle="tab"><?= THelper::t('sale_product_set') ?></a>
+                        </li>
+                    </ul>
+                </header>
+                <div class="panel-body">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="by-goods">
+                            <section class="panel panel-default">
+                                <div class="table-responsive">
+                                    <table class="table table-translations table-striped datagrid m-b-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                №
+                                            </th>
+                                            <th>
+                                                <?=THelper::t('goods')?>
+                                            </th>
+                                            <th>
+                                                <?=THelper::t('count_goods')?>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php if(!empty($infoGoods)) {?>
+                                        <?php foreach($infoGoods as $k=>$item) {?>
+                                        <tr>
+                                            <td><?=$k?></td>
+                                            <td><?=$item['title']?></td>
+                                            <td>
+                                                <?=$item['count']?>
+                                            </td>
+                                            <?php } ?>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="tab-pane" id="by-set">
+                            <section class="panel panel-default">
+                                <div class="table-responsive">
+                                    <table class="table table-translations table-striped datagrid m-b-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                <?=THelper::t('sale_product_set')?>
+                                            </th>
+                                            <th>
+                                                <?=THelper::t('count_goods')?>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php if(!empty($infoSetGoods)) {?>
+                                        <?php foreach($infoSetGoods as $k=>$item) {?>
+                                        <tr>
+                                            <td><?=$k?></td>
+                                            <td>
+                                                <?=$item?>
+                                            </td>
+                                            <?php } ?>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-    </section>
+    </div>
+
 
     <script>
         $('.table-translations').dataTable({
@@ -106,9 +131,5 @@ use yii\widgets\ActiveForm;
             document.location = "/business/status-sales/export-consolidated-report?from="+$dateFrom+"&to="+$dateTo;
 
         });
-
-
-
-
     </script>
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
