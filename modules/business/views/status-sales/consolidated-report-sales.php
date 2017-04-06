@@ -39,10 +39,10 @@ use yii\widgets\ActiveForm;
                 <header class="panel-heading bg-light">
                     <ul class="nav nav-tabs nav-justified">
                         <li class="active">
-                            <a href="#by-goods" class="tab-by-goods" data-toggle="tab"><?= THelper::t('goods') ?></a>
+                            <a href="#by-goods" class="tab-by-goods" data-toggle="tab"><?= THelper::t('business_product') ?></a>
                         </li>
                         <li class="">
-                            <a href="#by-set" class="tab-by-set" data-toggle="tab"><?= THelper::t('sale_product_set') ?></a>
+                            <a href="#by-set" class="tab-by-set" data-toggle="tab"><?= THelper::t('goods') ?></a>
                         </li>
                     </ul>
                 </header>
@@ -58,10 +58,10 @@ use yii\widgets\ActiveForm;
                                                 №
                                             </th>
                                             <th>
-                                                <?=THelper::t('goods')?>
+                                                <?=THelper::t('business_product')?>
                                             </th>
                                             <th>
-                                                <?=THelper::t('count_goods')?>
+                                                <?=THelper::t('number_booked')?>
                                             </th>
                                         </tr>
                                         </thead>
@@ -88,10 +88,13 @@ use yii\widgets\ActiveForm;
                                         <thead>
                                         <tr>
                                             <th>
-                                                <?=THelper::t('sale_product_set')?>
+                                                <?=THelper::t('goods')?>
                                             </th>
                                             <th>
-                                                <?=THelper::t('count_goods')?>
+                                                <?=THelper::t('number_booked')?>
+                                            </th>
+                                            <th>
+                                                <?=THelper::t('number_issue')?>
                                             </th>
                                         </tr>
                                         </thead>
@@ -101,7 +104,10 @@ use yii\widgets\ActiveForm;
                                         <tr>
                                             <td><?=$k?></td>
                                             <td>
-                                                <?=$item?>
+                                                <?=$item['books']?>
+                                            </td>
+                                            <td>
+                                                <?=$item['issue']?>
                                             </td>
                                             <?php } ?>
                                             <?php } ?>

@@ -35,7 +35,8 @@ class Users extends ActiveRecord
             'secondName',
             'rank',
             'isAdmin',
-            'rulesAdmin'
+            'rulesAdmin',
+            'settings',
         ];
     }
 

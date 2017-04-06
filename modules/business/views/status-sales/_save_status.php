@@ -20,8 +20,8 @@ use app\models\Users;
     changeRow = $(document).find('#row_' + idChangeRow);
     changeRow.find("[data-set='" + set + "'] .statusOrder").text(newStatusTranslate);
 
-    if(newStatus == 'status_sale_issued'){
-        changeRow.find("[data-set='" + set + "'] .actionOrder").html(' Выдан кассиром: ' + userChangeStatus);
-    }
+//    if(newStatus == 'status_sale_issued'){
+//        changeRow.find("[data-set='" + set + "'] .actionOrder").html(' Выдан кассиром: ' + userChangeStatus);
+//    }
 </script>
 

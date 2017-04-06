@@ -18,28 +18,18 @@ class Pins extends ActiveRecord
         return 'pins';
     }
 
-//    /**
-//     * @return array
-//     */
-//    public function attributes()
-//    {
-//        return [
-//            '_id',
-//            'idSale',
-//            'status',
-//            'dateIssue',
-//            'reviews'
-//        ];
-//    }
-
     /**
-     * @return array validation rules for model attributes.
+     * @return array
      */
-    public function rules()
+    public function attributes()
     {
         return [
-            ['*', 'safe'],
+            '_id',
+            'userId',
+            'pin',
         ];
     }
+
+
 
 }

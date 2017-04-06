@@ -37,20 +37,22 @@ use \app\models\Users;
         </div>
         <div class="modal-footer">
             <?php if(!empty($arrayRev)){ ?>
-                <?php foreach($arrayRev as $item){ ?>
-                    <div class="media text-left">
-                        <div class="media-body">
-                            <h6 class="media-heading">
-                                <?= Users::getUserEmail($item['idUser'])  ?>
+                <div class="blockRev">
+                    <?php foreach($arrayRev as $item){ ?>
+                        <div class="media text-left">
+                            <div class="media-body">
+                                <h6 class="media-heading">
+                                    <?= Users::getUserEmail($item['idUser'])  ?>
 
-                                <span class="label label-default">
+                                    <span class="label label-default">
                                     <?=$item['dateCreate']?>
                                 </span>
-                            </h6>
-                            <?=$item['review']?>
+                                </h6>
+                                <?=$item['review']?>
+                            </div>
                         </div>
-                    </div>
-                <?php } ?>
+                    <?php } ?>
+                </div>                
             <?php } ?>
         </div>
         <?php Pjax::end(); ?>

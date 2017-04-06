@@ -3,13 +3,13 @@
 namespace app\modules\business\controllers;
 
 
+use app\components\SendMessageHelper;
 use app\components\THelper;
 use app\models\Pins;
 use app\models\Products;
 use app\models\ProductSet;
 use app\models\ReviewsSale;
 use app\models\Sales;
-use app\models\SetSales;
 use app\models\StatusSales;
 use app\models\Users;
 use MongoDB\BSON\ObjectID;
@@ -124,6 +124,97 @@ class StatusSalesController extends BaseController {
         }
 
     }
+
+    public function actionCheckPin()
+    {
+        $data['answer'] = false;
+
+        $request = Yii::$app->request->post();
+        if(!empty($request)) {
+
+            $infoPin = Pins::find()
+                ->where(['pin' => $request['pin']])
+                ->one();
+
+            $infoSale = Sales::find()
+                ->where(['_id' => new ObjectID($request['idSale'])])
+                ->one();
+
+            if(!empty($infoPin) && !empty($infoSale) && $infoPin->userId == $infoSale->idUser){
+                $data['answer'] = true;
+            }
+
+        }
+        
+        return $data['answer'];
+    }
+
+    public function actionSendSms(){
+        $data['answer'] = false;
+
+        $request = Yii::$app->request->post();
+        if(!empty($request)) {
+
+            $part1 = substr(preg_replace("/[^0-9]/", '', $request['idSale']),-2);
+            $part2 = substr(mb_strlen($request['setName']),0,2);
+            $code = $part1.$part2;
+
+            $infoSale = Sales::find()
+                ->where(['_id' => new ObjectID($request['idSale'])])
+                ->one();
+
+            if(!empty($infoSale->infoUser->settings)){
+                $infoUser = $infoSale->infoUser->settings;
+
+
+                $countMessage = 0;
+
+                if(!empty($infoUser['phoneViber'])){
+                    SendMessageHelper::sendMessage($infoUser['phoneWhatsApp'],'viber',$code);
+                    $countMessage++;
+                }
+
+                if(!empty($infoUser['phoneFB'])){
+                    SendMessageHelper::sendMessage($infoUser['phoneWhatsApp'],'facebook',$code);
+                    $countMessage++;
+                }
+
+                if(!empty($infoUser['phoneTelegram']) && $countMessage < 2){
+                    SendMessageHelper::sendMessage($infoUser['phoneWhatsApp'],'telegram',$code);
+                    $countMessage++;
+                }
+
+                if(!empty($infoUser['phoneWhatsApp']) && $countMessage < 2){
+                    SendMessageHelper::sendMessage($infoUser['phoneWhatsApp'],'whatsapp',$code);
+                }
+
+                
+            }
+            
+            $data['answer'] = true;
+        }
+
+        return $data['answer'];
+    }
+
+    public function actionCheckCode(){
+        $data['answer'] = false;
+
+        $request = Yii::$app->request->post();
+        if(!empty($request)) {
+
+            $part1 = substr(preg_replace("/[^0-9]/", '', $request['idSale']),-2);
+            $part2 = substr(mb_strlen($request['setName']),0,2);
+            $code = $part1.$part2;
+
+            if($code == $request['code']){
+                $data['answer'] = true;
+            }
+        }
+
+        return $data['answer'];
+    }
+
 
     /**
      * save new status
@@ -262,7 +353,17 @@ class StatusSalesController extends BaseController {
                     $model = StatusSales::find()
                         ->where(['_id'=> new ObjectID($request['id'])])
                         ->one();
-                    $arrayRev = ArrayHelper::toArray($model->reviews);
+
+                    if($model->reviews){
+                        foreach ($model->reviews as $item) {
+                            $arrayRev[] = [
+                                'idUser' => $item->idUser->__toString(),
+                                'review' => $item->review,
+                                'dateCreate' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
+                            ];
+                        }
+                    }
+
                     krsort($arrayRev);
                     
                     
@@ -329,10 +430,17 @@ class StatusSalesController extends BaseController {
 
 
             $arrayRev = [];
-            if($model !== null){
-                $arrayRev = ArrayHelper::toArray($model->reviews);
-                krsort($arrayRev);
+            if(!empty($model->reviews)){
+                foreach ($model->reviews as $item) {
+                    $arrayRev[] = [
+                        'idUser' => $item->idUser->__toString(),
+                        'review' => $item->review,
+                        'dateCreate' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
+                    ];
+                }
             }
+
+            krsort($arrayRev);
 
             return $this->renderAjax('_look-comment', [
                 'language' => Yii::$app->language,
@@ -447,11 +555,17 @@ class StatusSalesController extends BaseController {
                 $infoGoods[$item->product]['count']++;
 
 
-                foreach($item->infoProduct->set as $itemSet){
-                    if(empty($infoSetGoods[$itemSet->setName])){
-                        $infoSetGoods[$itemSet->setName] = 0;
+                foreach($item->statusSale->set as $itemSet){
+                    if(empty($infoSetGoods[$itemSet->title]['books'])){
+                        $infoSetGoods[$itemSet->title]['books'] = 0;
+                        $infoSetGoods[$itemSet->title]['issue'] = 0;
                     }
-                    $infoSetGoods[$itemSet->setName]++;
+
+                    if($itemSet->status == 'status_sale_issued'){
+                        $infoSetGoods[$itemSet->title]['issue']++;
+                    }
+
+                    $infoSetGoods[$itemSet->title]['books']++;
                 }
             }
         }
@@ -534,6 +648,7 @@ class StatusSalesController extends BaseController {
             'infoProduct'   =>  $infoProduct
         ]);
     }
+
     public function actionProductSetSave()
     {
         $request = Yii::$app->request->post();

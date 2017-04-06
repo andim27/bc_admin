@@ -3504,6 +3504,26 @@ fieldset[disabled] .btn-gplus.active {
   margin-bottom: 30px;
 }
 
+.modal-body .blockRev,.modal-footer .blockRev{
+    overflow-y: scroll;
+    height: 200px;
+}
+
+.dopInfoStatus{
+  display: none;
+  margin: 15px 0px 0px 0px;
+}
+.dopInfoStatus .panel-body{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.blCheckBySms{
+  display: none;
+  margin-bottom: 15px;
+  overflow: auto;
+}
+
 
 /* loader */
 .infoSet{

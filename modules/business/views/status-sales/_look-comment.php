@@ -13,20 +13,22 @@ use \app\models\Users;
 
         <div class="modal-body">
             <?php if(!empty($arrayRev)){ ?>
-                <?php foreach($arrayRev as $item){ ?>
-                    <div class="media text-left">
-                        <div class="media-body">
-                            <h6 class="media-heading">
-                                <?= Users::getUserEmail($item['idUser']['$id'])  ?>
+                <div class="blockRev">
+                    <?php foreach($arrayRev as $item){ ?>
+                        <div class="media text-left">
+                            <div class="media-body">
+                                <h6 class="media-heading">
+                                    <?= Users::getUserEmail($item['idUser'])  ?>
 
-                                <span class="label label-default">
-                                    <?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?>
-                                </span>
-                            </h6>
-                            <?=$item['review']?>
+                                    <span class="label label-default">
+                                        <?=$item['dateCreate']?>
+                                    </span>
+                                </h6>
+                                <?=$item['review']?>
+                            </div>
                         </div>
-                    </div>
-                <?php } ?>
+                    <?php } ?>
+                </div>
             <?php } else { ?>
                 <div class="row">
                     <div class="col-md-12 text-center">
