@@ -386,7 +386,7 @@ class StatusSalesController extends BaseController {
      */
     public function actionReportSales()
     {
-        $request =  Yii::$app->request->post();;
+        $request =  Yii::$app->request->post();
         if(!empty($request)){
             $dateInterval['to'] = $request['to'];
             $dateInterval['from'] =  $request['from'];

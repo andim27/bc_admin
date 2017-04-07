@@ -71,9 +71,7 @@ class StatusSales extends \yii2tech\embedded\mongodb\ActiveRecord
         if(!empty($this->set)){
             foreach ($this->set as $item) {
 
-
                 $userID = (string)$item->idUserChange;
-
 
                 if($userID == \Yii::$app->view->params['user']->id){
                     $answer = true;

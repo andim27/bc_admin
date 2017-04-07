@@ -6,12 +6,14 @@ use app\controllers\BaseController;
 use app\models\AlertForm;
 use app\models\Menu;
 use app\models\Users;
+use app\models\Warehouse;
 use app\modules\business\models\AddCell;
 use app\modules\business\models\ImportTranslationForm;
 use app\modules\business\models\TranslationForm;
 use MongoDB\BSON\ObjectID;
 use Yii;
 use app\models\User;
+use yii\helpers\Url;
 use yii\web\UploadedFile;
 use app\modules\business\models\PasswordForm;
 use app\components\THelper;
@@ -582,6 +584,91 @@ class SettingController extends BaseController {
                 'onMapY' => $lng
             ]);
         }
+    }
+    
+    
+    public function actionWarehouse()
+    {
+        $request =  Yii::$app->request->post();
+        if(!empty($request['title'])){
+            $model = new Warehouse();
+            $model->title = $request['title'];
+
+            if($model->save()){
+                Yii::$app->session->setFlash('alert' ,['typeAlert'=>'success', 'message'=>'add_new_warehouse']);
+            } else {
+                Yii::$app->session->setFlash('alert' ,['typeAlert'=>'danger', 'message'=>'did_not_new_warehouse']);
+            }
+            return $this->redirect(Url::to(''),'301');
+        }
+
+        $alert = Yii::$app->session->getFlash('alert', '', true);
+
+        $infoWarehouse = Warehouse::find()->all();
+        
+        return $this->render('warehouse',[
+            'infoWarehouse' => $infoWarehouse,
+            'alert' => $alert
+        ]);
+    }
+
+    public function actionWarehouseAdminSave()
+    {
+        $request = Yii::$app->request->post();
+        $infoWarehouse = '';
+
+        if($request){
+            $infoWarehouse = Warehouse::find()
+                ->where(['_id'=>new ObjectID($request['id'])])
+                ->one();
+
+
+            $infoWarehouse->idUsers = [];
+            if(!empty($request['idUsers'])){
+                foreach($request['idUsers'] as $item){
+                    $infoWarehouse->idUsers[] = $item;
+                }
+            }
+
+
+            if($infoWarehouse->save()){
+
+                header('Content-Type: text/html; charset=utf-8');
+                echo "<xmp>";
+                print_r($infoWarehouse);
+                echo "</xmp>";
+                die();
+//                $infoProduct = Products::find()
+//                    ->where(['_id'=>new ObjectID($request['id'])])
+//                    ->one();
+//
+//                $error = [
+//                    'type' => 'success',
+//                    'message' => 'the changes are saved',
+//                ];
+
+            } else {
+                $error = [
+                    'type' => 'success',
+                    'message' => 'the changes are not saved',
+                ];
+            }
+
+
+        } else {
+//            $error = [
+//                'type' => 'success',
+//                'message' => 'the changes are not saved',
+//            ];
+        }
+
+
+
+//        return $this->renderPartial('_product-set-update',[
+//            'language'      =>  Yii::$app->language,
+//            'infoProduct'   =>  $infoProduct,
+//            'error'         =>  $error
+//        ]);
     }
 }
 

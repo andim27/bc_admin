@@ -3,6 +3,7 @@
 namespace app\models;
 
 use MongoDB\BSON\ObjectID;
+use yii\helpers\ArrayHelper;
 use yii2tech\embedded\mongodb\ActiveRecord;
 use yii\base\Model;
 
@@ -77,6 +78,24 @@ class Users extends ActiveRecord
             
         return $fl;
             
+    }
+
+    public static function getListAdmin()
+    {
+        $listAdmin['placeh'] = 'Выберите пользователя';
+
+        $model = self::find()
+            ->where(['isAdmin' => 1])
+            ->andWhere(['!=','username','main'])
+            ->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $listAdmin[(string)$item->_id] = $item->username;
+            }
+        }
+
+
+        return $listAdmin;
     }
     
 }

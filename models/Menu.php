@@ -169,6 +169,12 @@ Class Menu
                         'url' => ['/business/setting/admin-rules'],
                         'action' => 'admin-rules',
                     ],
+//                    [
+//                        'key'   =>  'sidebar_settings_warehouse',
+//                        'label' => THelper::t('sidebar_settings_warehouse'),
+//                        'url' => ['/business/setting/warehouse'],
+//                        'action' => 'admin-rules',
+//                    ],
                     [
                         'key'   =>  'sidebar_settings_translation',
                         'label' => THelper::t('sidebar_settings_translation'),

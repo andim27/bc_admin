@@ -3525,6 +3525,10 @@ fieldset[disabled] .btn-gplus.active {
 }
 
 
+.addFormWarehouse{
+  display: none;
+}
+
 /* loader */
 .infoSet{
   position: relative;
