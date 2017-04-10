@@ -2,6 +2,9 @@
 use app\components\THelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\models\Warehouse;
+
+$listWarehouse = Warehouse::getArrayWarehouse();
 ?>
     <div class="m-b-md">
         <h3 class="m-b-none"><?= THelper::t('consolidated_report_for_sales') ?></h3>
@@ -13,14 +16,23 @@ use yii\widgets\ActiveForm;
             'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
         ]); ?>
 
-        <div class="col-md-3 m-b">
+        <div class="col-md-2 m-b">
             <?= Html::input('text','from',$dateInterval['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
         </div>
         <div class="col-md-1 m-b text-center">
             -
         </div>
-        <div class="col-md-3 m-b">
+        <div class="col-md-2 m-b">
             <?= Html::input('text','to',$dateInterval['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+        </div>
+        <div class="col-md-2 m-b">
+            <?=Html::dropDownList('listWarehouse',(!empty($allWarehouse) ? $allWarehouse : 'all'),$listWarehouse,[
+                'class'=>'form-control',
+                'id'=>'listWarehouse',
+                'options' => [
+                    $allWarehouse => ['disabled' => true],
+                ]
+            ])?>
         </div>
         <div class="col-md-1 m-b">
             <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>

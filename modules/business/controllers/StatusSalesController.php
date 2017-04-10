@@ -12,6 +12,7 @@ use app\models\ReviewsSale;
 use app\models\Sales;
 use app\models\StatusSales;
 use app\models\Users;
+use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
@@ -530,7 +531,17 @@ class StatusSalesController extends BaseController {
             $dateInterval['from'] =  $request['from'];
         } else {
             $dateInterval['to'] = date("Y-m-d");
-            $dateInterval['from'] = date("Y-m-d",strtotime('-7 days'));
+            $dateInterval['from'] = date("Y-01-01");
+        }
+
+        $allWarehouse = 'all';
+        $listAdmin = [];
+        if(!empty($request['listWarehouse']) && $request['listWarehouse'] != 'all'){
+            $infoWarehouse = Warehouse::find()->where(['_id'=> new ObjectID($request['listWarehouse'])])->one();
+            if(!empty($infoWarehouse->idUsers)){
+                $allWarehouse = $request['listWarehouse'];
+                $listAdmin = $infoWarehouse->idUsers;
+            }
         }
 
 
@@ -547,7 +558,6 @@ class StatusSalesController extends BaseController {
         $infoGoods = $infoSetGoods = [];
         if(!empty($model)){
             foreach ($model as $item){
-
                 if(empty($infoGoods[$item->product]['count'])){
                     $infoGoods[$item->product]['title'] = $item->productName;
                     $infoGoods[$item->product]['count'] = 0;
@@ -556,16 +566,29 @@ class StatusSalesController extends BaseController {
 
 
                 foreach($item->statusSale->set as $itemSet){
-                    if(empty($infoSetGoods[$itemSet->title]['books'])){
-                        $infoSetGoods[$itemSet->title]['books'] = 0;
-                        $infoSetGoods[$itemSet->title]['issue'] = 0;
+
+                    $flUse = 0;
+                    if($allWarehouse!='all'){
+                        if(in_array($itemSet->idUserChange,$listAdmin)) {
+                            $flUse = 1;
+                        }
+                    } else{
+                        $flUse = 1;
                     }
 
-                    if($itemSet->status == 'status_sale_issued'){
-                        $infoSetGoods[$itemSet->title]['issue']++;
+                    if($flUse == 1){
+                        if(empty($infoSetGoods[$itemSet->title]['books'])){
+                            $infoSetGoods[$itemSet->title]['books'] = 0;
+                            $infoSetGoods[$itemSet->title]['issue'] = 0;
+                        }
+
+                        if($itemSet->status == 'status_sale_issued'){
+                            $infoSetGoods[$itemSet->title]['issue']++;
+                        }
+
+                        $infoSetGoods[$itemSet->title]['books']++;
                     }
 
-                    $infoSetGoods[$itemSet->title]['books']++;
                 }
             }
         }
@@ -575,6 +598,7 @@ class StatusSalesController extends BaseController {
             'dateInterval' => $dateInterval,
             'infoGoods' => $infoGoods,
             'infoSetGoods' => $infoSetGoods,
+            'allWarehouse' => $allWarehouse,
         ]);
     }
 

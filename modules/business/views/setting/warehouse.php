@@ -4,6 +4,9 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use app\components\AlertWidget;
 use app\models\Users;
+
+
+$userArray = Users::getListAdmin();
 ?>
 
 <div class="m-b-md">
@@ -69,7 +72,8 @@ use app\models\Users;
                                     <?php foreach($item->idUsers as $itemUser) { ?>
                                         <div class="input-group m-t-sm m-b-sm blItem">
                                             <span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>
-                                            <input type="text" class="form-control input-sm" name="setName[]" placeholder="Входит в состав" value="<?= $itemSet->setName; ?>">
+                                            <input type="text" class="form-control input-sm" disabled="disabled" value="<?=$userArray[$itemUser]?>">
+                                            <input type="hidden" name="idUsers[]" value="<?=$itemUser?>">
                                         </div>
                                     <?php } ?>
                                 <?php } ?>
@@ -77,7 +81,7 @@ use app\models\Users;
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <?=Html::dropDownList('listAdmin','placeh',Users::getListAdmin(),[
+                                <?=Html::dropDownList('listAdmin','placeh',$userArray,[
                                     'class'=>'form-control',
                                     'id'=>'listAdmin',
                                     'options' => [
@@ -122,7 +126,21 @@ use app\models\Users;
         valList = changeBl.find('select[name="listAdmin"] option').filter(":selected").val();
         titleList = changeBl.find('select[name="listAdmin"] option').filter(":selected").text();
 
-        if(valList != 'placeh'){
+        var flAddNow = 0;
+        $(changeBl.find('.descrItem input[name="idUsers[]"]')).each(function () {
+            if($(this).val() == valList) {
+                flAddNow = 1;
+                alert('Уже добавлен!');
+                return
+            }
+        });
+
+        if(valList == 'placeh'){
+            flAddNow = 1;
+        }
+
+
+        if(flAddNow != 1){
             $(this).closest('.infoWarehouse').find('.descrItem').append(
                 '<div class="input-group m-t-sm m-b-sm blItem">'+
                     '<span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>'+
@@ -155,10 +173,10 @@ use app\models\Users;
                     }).get(),
                 },
                 beforeSend: function( xhr){
-                    changeBl.append('<div class="loader"><div></div></div>')
+                    changeBl.find('.descrItem').append('<div class="loader"><div></div></div>')
                 },
                 success: function (data) {
-                    changeBl.html(data);
+                    changeBl.find('.descrItem').html(data);
                 }
             });
         }

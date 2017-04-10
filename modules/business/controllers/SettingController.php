@@ -622,53 +622,41 @@ class SettingController extends BaseController {
                 ->where(['_id'=>new ObjectID($request['id'])])
                 ->one();
 
-
-            $infoWarehouse->idUsers = [];
+            $userId = [];
             if(!empty($request['idUsers'])){
                 foreach($request['idUsers'] as $item){
-                    $infoWarehouse->idUsers[] = $item;
+                    $userId[] = $item;
                 }
             }
+            $infoWarehouse->idUsers = $userId;
 
 
             if($infoWarehouse->save()){
-
-                header('Content-Type: text/html; charset=utf-8');
-                echo "<xmp>";
-                print_r($infoWarehouse);
-                echo "</xmp>";
-                die();
-//                $infoProduct = Products::find()
-//                    ->where(['_id'=>new ObjectID($request['id'])])
-//                    ->one();
-//
-//                $error = [
-//                    'type' => 'success',
-//                    'message' => 'the changes are saved',
-//                ];
+                $error = [
+                    'typeAlert' => 'success',
+                    'message' => 'the changes are saved',
+                ];
 
             } else {
                 $error = [
-                    'type' => 'success',
+                    'typeAlert' => 'danger',
                     'message' => 'the changes are not saved',
                 ];
             }
 
 
         } else {
-//            $error = [
-//                'type' => 'success',
-//                'message' => 'the changes are not saved',
-//            ];
+            $error = [
+                'typeAlert' => 'danger',
+                'message' => 'the changes are not saved',
+            ];
         }
 
-
-
-//        return $this->renderPartial('_product-set-update',[
-//            'language'      =>  Yii::$app->language,
-//            'infoProduct'   =>  $infoProduct,
-//            'error'         =>  $error
-//        ]);
+        return $this->renderPartial('_update-users-warehouse',[
+            'language'          =>  Yii::$app->language,
+            'infoWarehouse'     =>  $infoWarehouse,
+            'error'             =>  $error
+        ]);
     }
 }
 

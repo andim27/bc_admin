@@ -28,4 +28,20 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         ];
     }
 
+    public static function getArrayWarehouse()
+    {
+        $listAdmin['all'] = 'Все склады';
+
+        $model = self::find()->all();
+        
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $listAdmin[(string)$item->_id] = $item->title;
+            }
+        }
+
+
+        return $listAdmin;
+    }
+
 }

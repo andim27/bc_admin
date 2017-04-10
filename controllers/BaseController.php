@@ -32,7 +32,8 @@ class BaseController extends Controller
                 return $this->goHome();
             }
         } else {
-            return $this->goHome();
+            header( 'Location: /', true, 301 ); die();
+            //return $this->goHome();
         }
 
         $links = api\settings\Link::get();
