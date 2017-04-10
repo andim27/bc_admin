@@ -391,7 +391,9 @@ class StatusSalesController extends BaseController {
         if(!empty($request)){
             $dateInterval['to'] = $request['to'];
             $dateInterval['from'] =  $request['from'];
+            $infoWarehouse = $request['infoWarehouse'];
         } else {
+            $infoWarehouse = 'user';
             $dateInterval['to'] = date("Y-m-d");
             $dateInterval['from'] = date("Y-m-d",strtotime('-7 days'));
         }
@@ -408,9 +410,10 @@ class StatusSalesController extends BaseController {
 
 
         return $this->render('report-sales',[
-            'language' => Yii::$app->language,
-            'dateInterval' => $dateInterval,
-            'model' => $model
+            'language'          => Yii::$app->language,
+            'dateInterval'      => $dateInterval,
+            'model'             => $model,
+            'infoWarehouse'     =>  $infoWarehouse
         ]);
     }
 
@@ -525,7 +528,8 @@ class StatusSalesController extends BaseController {
      */
     public function actionConsolidatedReportSales()
     {
-        $request =  Yii::$app->request->post();;
+        $request =  Yii::$app->request->post();
+        
         if(!empty($request)){
             $dateInterval['to'] = $request['to'];
             $dateInterval['from'] =  $request['from'];
@@ -534,14 +538,17 @@ class StatusSalesController extends BaseController {
             $dateInterval['from'] = date("Y-01-01");
         }
 
-        $allWarehouse = 'all';
+        
         $listAdmin = [];
-        if(!empty($request['listWarehouse']) && $request['listWarehouse'] != 'all'){
+        if(!empty($request['listWarehouse']) && $request['listWarehouse'] != 'all' && !empty($request['flWarehouse']) && $request['flWarehouse']==1){
             $infoWarehouse = Warehouse::find()->where(['_id'=> new ObjectID($request['listWarehouse'])])->one();
             if(!empty($infoWarehouse->idUsers)){
-                $allWarehouse = $request['listWarehouse'];
                 $listAdmin = $infoWarehouse->idUsers;
             }
+        } else if(!empty($request['listAdmin']) && $request['listAdmin'] != 'placeh'){
+            $listAdmin[] = $request['listAdmin'];
+        } else {
+            $request['listWarehouse'] = 'all';
         }
 
 
@@ -568,7 +575,11 @@ class StatusSalesController extends BaseController {
                 foreach($item->statusSale->set as $itemSet){
 
                     $flUse = 0;
-                    if($allWarehouse!='all'){
+                    if(!empty($request['listWarehouse']) && $request['listWarehouse']!='all'){
+                        if(in_array($itemSet->idUserChange,$listAdmin)) {
+                            $flUse = 1;
+                        }
+                    } else if(!empty($request['listAdmin']) && $request['listAdmin']!='placeh'){
                         if(in_array($itemSet->idUserChange,$listAdmin)) {
                             $flUse = 1;
                         }
@@ -598,7 +609,9 @@ class StatusSalesController extends BaseController {
             'dateInterval' => $dateInterval,
             'infoGoods' => $infoGoods,
             'infoSetGoods' => $infoSetGoods,
-            'allWarehouse' => $allWarehouse,
+            
+            
+            'request' => $request,
         ]);
     }
 
@@ -662,7 +675,9 @@ class StatusSalesController extends BaseController {
         die();
     }
 
-    
+    /**
+     * @return string
+     */
     public function  actionProductSet()
     {
         $infoProduct = Products::find()->all();
@@ -673,6 +688,9 @@ class StatusSalesController extends BaseController {
         ]);
     }
 
+    /**
+     * @return string
+     */
     public function actionProductSetSave()
     {
         $request = Yii::$app->request->post();

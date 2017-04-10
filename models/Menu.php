@@ -258,7 +258,7 @@ Class Menu
                         'key'   =>  'sidebar_product_set',
                         'label' => THelper::t('sidebar_product_set'),
                         'url' => ['status-sales/product-set'],
-                        'action' => 'report-sales',
+                        'action' => 'product-set',
                     ],
                 ]
             ]

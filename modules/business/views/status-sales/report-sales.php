@@ -13,14 +13,27 @@
         'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
     ]); ?>
 
-    <div class="col-md-3 m-b">
+    <div class="col-md-2 m-b">
         <?= Html::input('text','from',$dateInterval['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
     </div>
     <div class="col-md-1 m-b text-center">
        -
     </div>
-    <div class="col-md-3 m-b">
+    <div class="col-md-2 m-b">
         <?= Html::input('text','to',$dateInterval['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+    </div>
+    <div class="col-md-2 m-b">
+<!--        --><?//=Html::dropDownList('infoWarehouse',$infoWarehouse,
+//            [
+//                'for_me' => THelper::t('for_me'),
+//                'for_my_warehouse' => THelper::t('for_my_warehouse'),
+//            ],[
+//            'class'=>'form-control',
+//            'id'=>'infoWarehouse',
+//            'options' => [
+//                $infoWarehouse => ['disabled' => true],
+//            ]
+//        ])?>
     </div>
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>

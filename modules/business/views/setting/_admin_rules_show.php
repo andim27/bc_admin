@@ -74,7 +74,7 @@
 <script>
     $(document).on('change','.btnRulesEdit',function () {
         if($(this).is(':checked')) {
-            $(this).closest('.row').find('.btnRulesShow').prop( "checked", true );;
+            $(this).closest('.row').find('.btnRulesShow').prop( "checked", true );
         }
     })
 </script>
