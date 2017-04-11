@@ -90,7 +90,7 @@ class Users extends ActiveRecord
             ->all();
         if(!empty($model)){
             foreach ($model as $item) {
-                $listAdmin[(string)$item->_id] = $item->username;
+                $listAdmin[(string)$item->_id] = $item->username . '('.$item->secondName.' '.$item->firstName.')';
             }
         }
 

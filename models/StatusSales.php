@@ -64,7 +64,7 @@ class StatusSales extends \yii2tech\embedded\mongodb\ActiveRecord
         return $listStatus;
     }
     
-    public function checkSalesForUserChange(){
+    public function checkSalesForUserChange($listAdmin){
 
         $answer = false;
 
@@ -73,7 +73,7 @@ class StatusSales extends \yii2tech\embedded\mongodb\ActiveRecord
 
                 $userID = (string)$item->idUserChange;
 
-                if($userID == \Yii::$app->view->params['user']->id){
+                if(in_array($userID,$listAdmin)){
                     $answer = true;
                     break;
                 }

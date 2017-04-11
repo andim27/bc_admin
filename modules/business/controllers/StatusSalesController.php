@@ -387,22 +387,27 @@ class StatusSalesController extends BaseController {
      */
     public function actionReportSales()
     {
+
         $request =  Yii::$app->request->post();
-        if(!empty($request)){
-            $dateInterval['to'] = $request['to'];
-            $dateInterval['from'] =  $request['from'];
-            $infoWarehouse = $request['infoWarehouse'];
+
+        if(empty($request)){
+            $request['infoWarehouse'] = 'for_me';
+            $request['to'] = date("Y-m-d");
+            $request['from'] = date("Y-01-01");
+        }
+
+        if( $request['infoWarehouse'] == 'for_me'){
+            $listAdmin = [$this->user->id];
         } else {
-            $infoWarehouse = 'user';
-            $dateInterval['to'] = date("Y-m-d");
-            $dateInterval['from'] = date("Y-m-d",strtotime('-7 days'));
+            $infoWarehouse = Warehouse::find()->where(['_id'=>new ObjectID($request['infoWarehouse'])])->one();
+            $listAdmin = $infoWarehouse->idUsers;
         }
 
         $model = Sales::find()
             ->where([
                 'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime($dateInterval['from']) * 1000),
-                    '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                    '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
                 ]
             ])
             ->andWhere(['in','product',Products::productIDWithSet()])
@@ -411,9 +416,9 @@ class StatusSalesController extends BaseController {
 
         return $this->render('report-sales',[
             'language'          => Yii::$app->language,
-            'dateInterval'      => $dateInterval,
+            'request'           => $request,
             'model'             => $model,
-            'infoWarehouse'     =>  $infoWarehouse
+            'listAdmin'        => $listAdmin,
         ]);
     }
 
@@ -462,7 +467,7 @@ class StatusSalesController extends BaseController {
      * @param $from
      * @param $to
      */
-    public function actionExportReport($from,$to)
+    public function actionExportReport($from,$to,$infoUser)
     {
         $language = Yii::$app->language;
 
@@ -476,26 +481,31 @@ class StatusSalesController extends BaseController {
             ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
 
+        if( $infoUser == 'for_me'){
+            $listAdmin = [$this->user->id];
+        } else {
+            $infoWarehouse = Warehouse::find()->where(['_id'=>new ObjectID($infoUser)])->one();
+            $listAdmin = $infoWarehouse->idUsers;
+        }
+
         $infoExport = [];
         if(!empty($model)){
             foreach ($model as $item) {
 
                 $status_sale = [];
-                if (!empty($item->statusSale) && count($item->statusSale->set)>0) {
+                if (!empty($item->statusSale) && count($item->statusSale->set)>0 && $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {
                     foreach ($item->statusSale->set as $itemSet) {
                         $status_sale[] = $itemSet->title . '(' . THelper::t($itemSet->status) . ')';
                     }
+
+                    $infoExport[] = [
+                        'dateCreate'    =>  $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
+                        'fullName'      =>  $item->infoUser->secondName . ' ' . $item->infoUser->firstName,
+                        'login'         =>  $item->username,
+                        'goods'         =>  $item->productName,
+                        'status_sale'   =>  implode(";;",$status_sale)
+                    ];
                 }
-
-
-
-                $infoExport[] = [
-                    'dateCreate'    =>  $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
-                    'fullName'      =>  $item->infoUser->secondName . ' ' . $item->infoUser->firstName,
-                    'login'         =>  $item->username,
-                    'goods'         =>  $item->productName,
-                    'status_sale'   =>  implode(";;",$status_sale)
-                ];
             }
         }
 

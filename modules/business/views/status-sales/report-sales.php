@@ -14,26 +14,20 @@
     ]); ?>
 
     <div class="col-md-2 m-b">
-        <?= Html::input('text','from',$dateInterval['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
+        <?= Html::input('text','from',$request['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
     </div>
     <div class="col-md-1 m-b text-center">
        -
     </div>
     <div class="col-md-2 m-b">
-        <?= Html::input('text','to',$dateInterval['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+        <?= Html::input('text','to',$request['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
     </div>
     <div class="col-md-2 m-b">
-<!--        --><?//=Html::dropDownList('infoWarehouse',$infoWarehouse,
-//            [
-//                'for_me' => THelper::t('for_me'),
-//                'for_my_warehouse' => THelper::t('for_my_warehouse'),
-//            ],[
-//            'class'=>'form-control',
-//            'id'=>'infoWarehouse',
-//            'options' => [
-//                $infoWarehouse => ['disabled' => true],
-//            ]
-//        ])?>
+        <?=Html::dropDownList('infoWarehouse', $request['infoWarehouse'],
+            \app\models\Warehouse::getMyWarehouse(),[
+            'class'=>'form-control infoUser',
+            'id'=>'infoWarehouse',
+        ])?>
     </div>
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
@@ -71,7 +65,7 @@
             <tbody>
                 <?php if(!empty($model)) {?>
                     <?php foreach($model as $item) {?>
-                        <?php if (!empty($item->statusSale) && count($item->statusSale->set)>0 && $item->statusSale->checkSalesForUserChange()!==false) {?>
+                        <?php if (!empty($item->statusSale) && count($item->statusSale->set)>0 && $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {?>
                         <tr>
                             <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
                             <td><?=$item->infoUser->secondName?> <?=$item->infoUser->firstName?></td>
@@ -117,8 +111,9 @@
     $('.exportReport').on('click',function () {
         $dateFrom = $('.dateFrom').val();
         $dateTo = $('.dateTo').val();
+        $infoUser = $('.infoUser').prop('selected',true).val();
 
-        document.location = "/business/status-sales/export-report?from="+$dateFrom+"&to="+$dateTo;
+        document.location = "/business/status-sales/export-report?from="+$dateFrom+"&to="+$dateTo+"&infoUser="+$infoUser;
 
     });
 
