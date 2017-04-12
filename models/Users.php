@@ -109,8 +109,8 @@ class Users extends ActiveRecord
                 if(!empty($item->idUsers)){
                     $infoUser = self::getListAdmin();
                     foreach ($item->idUsers as $itemId){
-                        if(!empty($infoUser[$infoUser])){
-                            $listAdmin[$itemId] = $infoUser[$infoUser];
+                        if(!empty($infoUser[$itemId])){
+                            $listAdmin[$itemId] = $infoUser[$itemId];
                         }
                     }
                 }
