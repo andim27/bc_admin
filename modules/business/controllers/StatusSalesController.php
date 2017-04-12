@@ -757,6 +757,10 @@ class StatusSalesController extends BaseController {
         die();
     }
 
+    /**
+     * looking count sales on query for report only headAdmin
+     * @return string
+     */
     public function actionConsolidatedReportSalesHeadadmin()
     {
         $request =  Yii::$app->request->post();
@@ -780,6 +784,18 @@ class StatusSalesController extends BaseController {
             $listAdmin[] = $request['listAdmin'];
         } else {
             $request['listWarehouse'] = 'all';
+
+            $infoWarehouse = Warehouse::find()->where(['headUser'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
+
+            if(!empty($infoWarehouse)){
+                foreach ($infoWarehouse as $item) {
+                    if(!empty($item->idUsers)){
+                        foreach ($item->idUsers as $itemId){
+                            $listAdmin[] = $itemId;
+                        }
+                    }
+                }
+            }
         }
 
 
@@ -812,11 +828,11 @@ class StatusSalesController extends BaseController {
                 foreach($item->statusSale->set as $itemSet){
 
                     $flUse = 0;
-                    if(!empty($request['listWarehouse']) && $request['listWarehouse']!='all'){
+                    if(!empty($request['listWarehouse'])){
                         if(in_array($itemSet->idUserChange,$listAdmin)) {
                             $flUse = 1;
                         }
-                    } else if(!empty($request['listAdmin']) && $request['listAdmin']!='placeh'){
+                    } else if(!empty($request['listAdmin'])){
                         if(in_array($itemSet->idUserChange,$listAdmin)) {
                             $flUse = 1;
                         }
