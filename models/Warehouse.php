@@ -48,18 +48,17 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
 
     public static function getListHeadAdminWarehouse()
     {
-        $listAdmin['all'] = 'Мои склады';
+        $listWarehouse['all'] = 'Мои склады';
 
-        $model = self::find()->where(['_id'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
+        $model = self::find()->where(['headUser'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
 
         if(!empty($model)){
             foreach ($model as $item) {
-                $listAdmin[(string)$item->_id] = $item->title;
+                $listWarehouse[(string)$item->_id] = $item->title;
             }
         }
-
-
-        return $listAdmin;
+        
+        return $listWarehouse;
     }
 
 

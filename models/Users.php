@@ -102,7 +102,7 @@ class Users extends ActiveRecord
     {
         $listAdmin['placeh'] = 'Выберите пользователя';
 
-        $infoWarehouse = Warehouse::find()->where(['_id'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
+        $infoWarehouse = Warehouse::find()->where(['headUser'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
 
         if(!empty($infoWarehouse)){
             foreach ($infoWarehouse as $item) {
