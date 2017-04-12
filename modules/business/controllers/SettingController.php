@@ -612,6 +612,13 @@ class SettingController extends BaseController {
         ]);
     }
 
+    public function actionRemoveWarehouse($id)
+    {
+        Warehouse::deleteAll(['_id'=>new ObjectID($id)]);
+
+        return $this->redirect('warehouse','301');
+    }
+
     public function actionWarehouseAdminSave()
     {
         $request = Yii::$app->request->post();
