@@ -6,8 +6,8 @@ use app\models\Warehouse;
 use app\models\Users;
 
 
-$listWarehouse = Warehouse::getArrayWarehouse();
-$listAdmin = Users::getListAdmin();
+$listWarehouse = Warehouse::getListHeadAdminWarehouse();
+$listAdmin = Users::getListHeadAdminAdmin();
 ?>
     <div class="m-b-md">
         <h3 class="m-b-none"><?= THelper::t('consolidated_report_for_sales') ?></h3>
@@ -15,7 +15,7 @@ $listAdmin = Users::getListAdmin();
     <div class="row">
 
         <?php $formStatus = ActiveForm::begin([
-            'action' => '/' . $language . '/business/status-sales/consolidated-report-sales',
+            'action' => '/' . $language . '/business/status-sales/consolidated-report-sales-headadmin',
             'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
         ]); ?>
 
@@ -63,7 +63,7 @@ $listAdmin = Users::getListAdmin();
         <?php ActiveForm::end(); ?>
 
         <div class="col-md-4 m-b text-right">
-            <?= Html::a('Export <i class="fa fa-file-text"></i>', 'javascript:void(0);', ['class' => 'btn btn-success exportReport']) ?>
+
         </div>
     </div>
 
@@ -164,24 +164,6 @@ $listAdmin = Users::getListAdmin();
             "order": [[ 0, "desc" ]]
         });
 
-        $('.exportReport').on('click',function () {
-            $dateFrom = $('.dateFrom').val();
-            $dateTo = $('.dateTo').val();
-
-
-            if($('.btnflWarehouse').is(':checked')){
-                $flWarehouse = 1;
-                $listWarehouse = $('.listWarehouse').prop('selected',true).val();
-                $listAdmin = '';
-            } else {
-                $flWarehouse = 0;
-                $listWarehouse = '';
-                $listAdmin = $('.listAdmin').prop('selected',true).val();
-            }
-
-            document.location = "/business/status-sales/export-consolidated-report?from="+$dateFrom+"&to="+$dateTo+"&flWarehouse="+$flWarehouse+"&listWarehouse="+$listWarehouse+"&listAdmin="+$listAdmin;
-
-        });
 
         $('.btnflWarehouse').on('change',function () {
             if($(this).is(':checked')) {

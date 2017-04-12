@@ -80,23 +80,41 @@ $userArray = Users::getListAdmin();
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="m-t-sm m-b-sm col-md-offset-4 col-md-2 text-right">
+                                <label class="control-label m-t-xs">new manager</label>
+                            </div>
+                            <div class="m-t-sm m-b-sm col-md-5">
                                 <?=Html::dropDownList('listAdmin','placeh',$userArray,[
-                                    'class'=>'form-control',
+                                    'class'=>'form-control w100',
                                     'id'=>'listAdmin',
                                     'options' => [
                                         'placeh' => ['disabled' => true],
                                     ]
                                 ])?>
-
+                            </div>
+                            <div class="m-t-sm m-b-sm col-md-1">
                                 <a href="javascript:void(0);" class="btn btn-dark btn-sm btn-icon addItemAdmin" data-toggle="tooltip" data-placement="right" title="" data-original-title="Добавить пользователя">
                                     <i class="fa fa-plus"></i>
                                 </a>
-
-                                <a href="javascript:void(0);" class="btn btn-sm btn-icon saveItemAdmin" data-toggle="tooltip" data-placement="right" title="" data-original-title="Применить правки">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="m-t-sm m-b-sm col-md-offset-4 col-md-2 text-right">
+                                <label class="control-label m-t-xs">head admin</label>
+                            </div>
+                            <div class="m-t-sm m-b-sm col-md-5">
+                                <?=Html::dropDownList('headUser',(!empty($item->headUser) ? $item->headUser : ''),$userArray,[
+                                    'class'=>'form-control w100',
+                                    'id'=>'listAdmin',
+                                    'options' => [
+                                        //'placeh' => ['disabled' => true],
+                                    ]
+                                ])?>
+                            </div>
+                            <div class="m-t-sm m-b-sm col-md-1">
+                                <a href="javascript:void(0);" class="btn btn-default btn-sm btn-icon saveItemAdmin" data-toggle="tooltip" data-placement="right" title="" data-original-title="Применить правки">
                                     <i class="fa fa-save"></i>
                                 </a>
-
                             </div>
                         </div>
                     </td>
@@ -168,6 +186,7 @@ $userArray = Users::getListAdmin();
                 type: 'POST',
                 data: {
                     id : changeBl.find('input[name="id"]').val(),
+                    headUser : changeBl.find('select[name="headUser"]').prop('selected',true).val(),
                     idUsers : changeBl.find('input[name="idUsers[]"]').map(function(){
                         return this.value;
                     }).get(),

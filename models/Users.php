@@ -97,6 +97,26 @@ class Users extends ActiveRecord
 
         return $listAdmin;
     }
+
+    public static function getListHeadAdminAdmin()
+    {
+        $listAdmin['placeh'] = 'Выберите пользователя';
+
+        $infoWarehouse = Warehouse::find()->where(['_id'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
+
+        if(!empty($infoWarehouse)){
+            foreach ($infoWarehouse as $item) {
+                if(!empty($item->idUsers)){
+                    $infoUser = self::getListAdmin();
+                    foreach ($item->idUsers as $itemId){
+                        $listAdmin[$itemId] = $infoUser[$infoUser];
+                    }
+                }
+            }
+        }
+
+        return $listAdmin;
+    }
     
 }
 

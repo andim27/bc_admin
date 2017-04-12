@@ -575,13 +575,19 @@ class StatusSalesController extends BaseController {
         $infoGoods = $infoSetGoods = [];
         if(!empty($model)){
             foreach ($model as $item){
-                if(empty($infoGoods[$item->product]['count'])){
-                    $infoGoods[$item->product]['title'] = $item->productName;
-                    $infoGoods[$item->product]['count'] = 0;
+
+                // info pack
+                if($item->statusSale->checkSalesForUserChange($listAdmin)!==false || empty($listAdmin)) {
+                    if(empty($infoGoods[$item->product]['count'])){
+                        $infoGoods[$item->product]['title'] = $item->productName;
+                        $infoGoods[$item->product]['count'] = 0;
+                    }
+                    $infoGoods[$item->product]['count']++;
                 }
-                $infoGoods[$item->product]['count']++;
 
 
+
+                // info goods
                 foreach($item->statusSale->set as $itemSet){
 
                     $flUse = 0;
@@ -644,47 +650,209 @@ class StatusSalesController extends BaseController {
             ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
 
+        $listAdmin = [];
+        if(!empty($request['listWarehouse']) && $request['listWarehouse'] != 'all' && !empty($request['flWarehouse']) && $request['flWarehouse']==1){
+            $infoWarehouse = Warehouse::find()->where(['_id'=> new ObjectID($request['listWarehouse'])])->one();
+            if(!empty($infoWarehouse->idUsers)){
+                $listAdmin = $infoWarehouse->idUsers;
+            }
+        } else if(!empty($request['listAdmin']) && $request['listAdmin'] != 'placeh'){
+            $listAdmin[] = $request['listAdmin'];
+        }
+        
         if(!empty($model)){
+            
             foreach ($model as $item){
 
-                if(empty($infoGoods[$item->product]['count'])){
-                    $infoGoods[$item->product]['title'] = $item->productName;
-                    $infoGoods[$item->product]['count'] = 0;
+                // info pack
+                if($item->statusSale->checkSalesForUserChange($listAdmin)!==false || empty($listAdmin)) {
+                    if (empty($infoGoods[$item->product]['count'])) {
+                        $infoGoods[$item->product]['title'] = $item->productName;
+                        $infoGoods[$item->product]['count'] = 0;
+                    }
+                    $infoGoods[$item->product]['count']++;
                 }
-                $infoGoods[$item->product]['count']++;
+
+
+                // info goods
+                foreach($item->statusSale->set as $itemSet){
+                    $flUse = 0;
+                    if(!empty($request['listWarehouse']) && $request['listWarehouse']!='all'){
+                        if(in_array($itemSet->idUserChange,$listAdmin)) {
+                            $flUse = 1;
+                        }
+                    } else if(!empty($request['listAdmin']) && $request['listAdmin']!='placeh'){
+                        if(in_array($itemSet->idUserChange,$listAdmin)) {
+                            $flUse = 1;
+                        }
+                    } else{
+                        $flUse = 1;
+                    }
+
+                    if($flUse == 1){
+                        if(empty($infoSetGoods[$itemSet->title]['books'])){
+                            $infoSetGoods[$itemSet->title]['books'] = 0;
+                            $infoSetGoods[$itemSet->title]['issue'] = 0;
+                        }
+
+                        if($itemSet->status == 'status_sale_issued'){
+                            $infoSetGoods[$itemSet->title]['issue']++;
+                        }
+
+                        $infoSetGoods[$itemSet->title]['books']++;
+                    }
+                }
             }
         }
 
-        $infoExport = [];
+        $infoExportPack = [];
         if(!empty($infoGoods)){
             foreach ($infoGoods as $k=>$item) {
 
-                $infoExport[] = [
-                    'id'            =>  $k,
-                    'goods'         =>  $item['title'],
-                    'count_goods'   =>  $item['count']
+                $infoExportPack[] = [
+                    'id'                =>  $k,
+                    'business_product'  =>  $item['title'],
+                    'number_booked'     =>  $item['count']
                 ];
             }
         }
 
+        $infoExportGoods = [];
+        if(!empty($infoSetGoods)){
+            foreach ($infoSetGoods as $k=>$item) {
+
+                $infoExportGoods[] = [
+                    'goods'             => $k,
+                    'number_booked'     => $item['books'],
+                    'number_issue'      => $item['issue']
+                ];
+            }
+        }
+
+
         \moonland\phpexcel\Excel::export([
-            'models'    => $infoExport,
+            'isMultipleSheet' => true,
             'fileName'  => 'export_'.$from.'-'.$to.'_' . $language,
-            'columns'   => [
-                'id',
-                'goods',
-                'count_goods'
+            'models'    => [
+                'Goods' => $infoExportGoods,
+                'Pack' => $infoExportPack,
             ],
+            'columns'   => [
+                'Goods' => ['goods','number_booked','number_issue'],
+                'Pack' => ['id','business_product','number_booked'], ],
             'headers' => [
-                'id'            => '№',
-                'goods'         => THelper::t('goods'),
-                'count_goods'   => THelper::t('count_goods'),
+                'Goods' => [
+                    'goods'             => THelper::t('goods'),
+                    'number_booked'     => THelper::t('number_booked'),
+                    'number_issue'      => THelper::t('number_issue'),
+                ],
+                'Pack' => [
+                    'id'                => '№',
+                    'business_product'  => THelper::t('business_product'),
+                    'number_booked'     => THelper::t('number_booked'),
+                ],
             ],
         ]);
 
         die();
     }
 
+    public function actionConsolidatedReportSalesHeadadmin()
+    {
+        $request =  Yii::$app->request->post();
+
+        if(!empty($request)){
+            $dateInterval['to'] = $request['to'];
+            $dateInterval['from'] =  $request['from'];
+        } else {
+            $dateInterval['to'] = date("Y-m-d");
+            $dateInterval['from'] = date("Y-01-01");
+        }
+
+
+        $listAdmin = [];
+        if(!empty($request['listWarehouse']) && $request['listWarehouse'] != 'all' && !empty($request['flWarehouse']) && $request['flWarehouse']==1){
+            $infoWarehouse = Warehouse::find()->where(['_id'=> new ObjectID($request['listWarehouse'])])->one();
+            if(!empty($infoWarehouse->idUsers)){
+                $listAdmin = $infoWarehouse->idUsers;
+            }
+        } else if(!empty($request['listAdmin']) && $request['listAdmin'] != 'placeh'){
+            $listAdmin[] = $request['listAdmin'];
+        } else {
+            $request['listWarehouse'] = 'all';
+        }
+
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($dateInterval['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->all();
+
+        $infoGoods = $infoSetGoods = [];
+        if(!empty($model)){
+            foreach ($model as $item){
+
+                // info pack
+                if($item->statusSale->checkSalesForUserChange($listAdmin)!==false || empty($listAdmin)) {
+                    if(empty($infoGoods[$item->product]['count'])){
+                        $infoGoods[$item->product]['title'] = $item->productName;
+                        $infoGoods[$item->product]['count'] = 0;
+                    }
+                    $infoGoods[$item->product]['count']++;
+                }
+
+
+
+                // info goods
+                foreach($item->statusSale->set as $itemSet){
+
+                    $flUse = 0;
+                    if(!empty($request['listWarehouse']) && $request['listWarehouse']!='all'){
+                        if(in_array($itemSet->idUserChange,$listAdmin)) {
+                            $flUse = 1;
+                        }
+                    } else if(!empty($request['listAdmin']) && $request['listAdmin']!='placeh'){
+                        if(in_array($itemSet->idUserChange,$listAdmin)) {
+                            $flUse = 1;
+                        }
+                    } else{
+                        $flUse = 1;
+                    }
+
+                    if($flUse == 1){
+                        if(empty($infoSetGoods[$itemSet->title]['books'])){
+                            $infoSetGoods[$itemSet->title]['books'] = 0;
+                            $infoSetGoods[$itemSet->title]['issue'] = 0;
+                        }
+
+                        if($itemSet->status == 'status_sale_issued'){
+                            $infoSetGoods[$itemSet->title]['issue']++;
+                        }
+
+                        $infoSetGoods[$itemSet->title]['books']++;
+                    }
+
+                }
+            }
+        }
+
+        return $this->render('consolidated-report-sales-headadmin',[
+            'language' => Yii::$app->language,
+            'dateInterval' => $dateInterval,
+            'infoGoods' => $infoGoods,
+            'infoSetGoods' => $infoSetGoods,
+
+
+            'request' => $request,
+        ]);
+    }
+    
+    
     /**
      * @return string
      */

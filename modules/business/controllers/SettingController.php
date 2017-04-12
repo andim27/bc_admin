@@ -630,6 +630,12 @@ class SettingController extends BaseController {
             }
             $infoWarehouse->idUsers = $userId;
 
+            $headUser = '';
+            if($request['headUser'] !== 'placeh'){
+                $headUser = new ObjectID($request['headUser']);
+            }
+            $infoWarehouse->headUser = $headUser;
+            
 
             if($infoWarehouse->save()){
                 $error = [

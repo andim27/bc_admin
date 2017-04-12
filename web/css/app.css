@@ -3529,6 +3529,13 @@ fieldset[disabled] .btn-gplus.active {
   display: none;
 }
 
+.dataTables_wrapper .w100{
+  width:100%;
+}
+
+
+
+
 /* loader */
 .infoSet{
   position: relative;

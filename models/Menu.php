@@ -173,7 +173,7 @@ Class Menu
                         'key'   =>  'sidebar_settings_warehouse',
                         'label' => THelper::t('sidebar_settings_warehouse'),
                         'url' => ['/business/setting/warehouse'],
-                        'action' => 'admin-rules',
+                        'action' => 'warehouse',
                     ],
                     [
                         'key'   =>  'sidebar_settings_translation',
@@ -254,6 +254,14 @@ Class Menu
                         'url' => ['status-sales/consolidated-report-sales'],
                         'action' => 'consolidated-report-sales',
                     ],
+
+                    [
+                        'key'   =>  'sidebar_consolidated_report_headadmin',
+                        'label' => THelper::t('sidebar_consolidated_report_headadmin'),
+                        'url' => ['status-sales/consolidated-report-sales-headadmin'],
+                        'action' => 'consolidated-report-sales-headadmin',
+                    ],
+
                     [
                         'key'   =>  'sidebar_product_set',
                         'label' => THelper::t('sidebar_product_set'),

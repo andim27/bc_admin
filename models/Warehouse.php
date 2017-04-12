@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use MongoDB\BSON\ObjectID;
 
 /**
  * Class Warehouse
@@ -24,6 +25,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         return [
             '_id',
             'title',
+            'headUser',
             'idUsers',
         ];
     }
@@ -43,8 +45,24 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
 
         return $listAdmin;
     }
-    
-    
+
+    public static function getListHeadAdminWarehouse()
+    {
+        $listAdmin['all'] = 'Мои склады';
+
+        $model = self::find()->where(['_id'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
+
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $listAdmin[(string)$item->_id] = $item->title;
+            }
+        }
+
+
+        return $listAdmin;
+    }
+
+
     public static function getMyWarehouse()
     {
         $idUser = \Yii::$app->view->params['user']->id;
