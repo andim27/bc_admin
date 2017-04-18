@@ -17,8 +17,19 @@ class StatusSales extends \yii2tech\embedded\mongodb\ActiveRecord
         'status_sale_repairs_under_warranty',
         'status_sale_repair_without_warranty',
         'status_sale_issued',
+        'status_sale_issued_after_repair',
     ];
-    
+
+    public static $availableMenuItems = [
+        'status_sale_new' => ['status_sale_delivered','status_sale_issued'],
+        'status_sale_delivered' => ['status_sale_issued'],
+        'status_sale_repairs_under_warranty' => ['status_sale_issued_after_repair'],
+        'status_sale_repair_without_warranty' => ['status_sale_issued_after_repair'],
+        'status_sale_issued' => ['status_sale_repairs_under_warranty','status_sale_repair_without_warranty'],
+        'status_sale_issued_after_repair' => ['status_sale_repairs_under_warranty','status_sale_repair_without_warranty'],
+    ];
+
+
     /**
      * @return string
      */
@@ -61,6 +72,17 @@ class StatusSales extends \yii2tech\embedded\mongodb\ActiveRecord
             $listStatus[$item] = THelper::t($item);    
         }
         
+        return $listStatus;
+    }
+
+    public static function getListAvailableStatusSales($statusNow)
+    {
+        $listStatus[$statusNow] = THelper::t($statusNow);
+
+        foreach (self::$availableMenuItems[$statusNow] as $item){
+            $listStatus[$item] = THelper::t($item);
+        }
+
         return $listStatus;
     }
     

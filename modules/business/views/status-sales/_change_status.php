@@ -27,7 +27,7 @@ $unicBtn = rand();
 
             <div class="row">
                 <div class="col-md-9">
-                    <?=Html::dropDownList('status',$statusNow,StatusSales::getListStatusSales(),[
+                    <?=Html::dropDownList('status',$statusNow,StatusSales::getListAvailableStatusSales($statusNow),[
                         'class'=>'form-control',
                         'id'=>'selectChangeStatus',
                         'options' => [

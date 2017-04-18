@@ -38,6 +38,9 @@ class Users extends ActiveRecord
             'isAdmin',
             'rulesAdmin',
             'settings',
+            'country',
+            'city',
+            'address',
         ];
     }
 

@@ -4,6 +4,8 @@ namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
 use app\models\api;
+use Yii;
+
 
 class SaleController extends BaseController {
 
@@ -13,4 +15,5 @@ class SaleController extends BaseController {
             'sales' => api\Sale::get($this->user->username)
         ]);
     }
+
 }

@@ -51,6 +51,40 @@ class Products extends ActiveRecord
 
         return $arrayId;
     }
+
+    public static function getListPack()
+    {
+        $list['all'] = 'Все паки';
+
+        $model = self::find()->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+                if(!empty($item->set) && count($item->set) > 0){
+                    $list[$item->_id->__toString()] = $item->productName;
+                }
+            }
+        }
+
+        return $list;
+    }
+
+    public static function getListGoods()
+    {
+        $list['all'] = 'Все товары';
+
+        $model = self::find()->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+                if(!empty($item->set) && count($item->set) > 0){
+                    foreach ($item->set as $itemSet) {
+                        $list[$itemSet->setName] = $itemSet->setName;
+                    }
+                }
+            }
+        }
+
+        return $list;
+    }
        
     
 }

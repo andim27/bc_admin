@@ -269,6 +269,27 @@ Class Menu
                         'action' => 'product-set',
                     ],
                 ]
+            ],
+
+            [
+                'key'   =>  'sidebar_sale_report',
+                'label' => THelper::t('sidebar_reports'),
+                'url' => '#',
+                'controller' => 'sale-report',
+                'items' => [
+                    [
+                        'key'   =>  'sidebar_sale_wait',
+                        'label' => THelper::t('sidebar_report_not_issued_sales'),
+                        'url' => ['sale-report/info-wait-sale-by-user'],
+                        'action' => 'info-wait-sale-by-user',
+                    ],
+//                    [
+//                        'key'   =>  'sidebar_sale_country',
+//                        'label' => 'Отчет по странам!!!!',
+//                        'url' => ['sale-report/info-sale-for-country'],
+//                        'action' => 'info-sale-for-country',
+//                    ],
+                ]
             ]
         ];
         
