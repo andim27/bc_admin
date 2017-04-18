@@ -48,6 +48,7 @@ $listCountry = Settings::getListCountry();
                 <table class="table table-translations table-striped datagrid m-b-sm">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>
                             <?=THelper::t('full_name')?>
                         </th>
@@ -73,8 +74,10 @@ $listCountry = Settings::getListCountry();
                     </thead>
                     <tbody>
                         <?php if(!empty($infoSale)) { ?>
+                            <?php $i = 1; ?>
                             <?php foreach($infoSale as $item) { ?>
                                 <tr>
+                                    <td><?=$i?></td>
                                     <td><?=$item['name']?></td>
                                     <td><?=$listCountry[$item['country']]?></td>
                                     <td><?=$item['city']?></td>
@@ -90,6 +93,7 @@ $listCountry = Settings::getListCountry();
                                     <td><?=$item['goods']?></td>
                                     <td><?=THelper::t($item['status'])?></td>
                                 </tr>
+                                <?php $i++; ?>
                             <?php } ?>
                         <?php } ?>
                     </tbody>
