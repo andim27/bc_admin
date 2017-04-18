@@ -109,7 +109,7 @@ $listCountry = Settings::getListCountry();
     $('.table-translations').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],
-        "order": [[ 0, "desc" ]]
+        "order": [[ 0, "asc" ]]
     });
 
 </script>
