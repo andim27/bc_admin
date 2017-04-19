@@ -84,6 +84,9 @@ $listGoods = Products::getListGoods();
                         <th>
                             <?=THelper::t('number_wait')?>
                         </th>
+                        <th>
+                            <?=THelper::t('number_repair')?>
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -96,6 +99,7 @@ $listGoods = Products::getListGoods();
                                         <td><?=$item['all']?></td>
                                         <td><?=$item['issued']?></td>
                                         <td><?=$item['wait']?></td>
+                                        <td><?=$item['repair']?></td>
                                     </tr>
                                 <?php } ?>
                             <?php } ?>

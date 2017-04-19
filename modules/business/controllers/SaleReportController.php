@@ -139,13 +139,19 @@ class SaleReportController extends BaseController
                                 'all' => 0,
                                 'issued' => 0,
                                 'wait' => 0,
+                                'repair' => 0,
                             ];
                         }
 
                         $flIssuedPack = '1';
+                        $flRepairsPack = '0';
                         foreach ($item->statusSale->set as $itemSet) {
                             if (!in_array($itemSet->status, ['status_sale_issued', 'status_sale_issued_after_repair'])) {
                                 $flIssuedPack = '0';
+                            }
+
+                            if(in_array($itemSet->status,['status_sale_repairs_under_warranty','status_sale_repair_without_warranty'])){
+                                $flRepairsPack = '1';
                             }
                         }
 
@@ -155,6 +161,9 @@ class SaleReportController extends BaseController
                             $infoSale[$item->infoUser->country][$item->productName]['wait']++;
                         }
 
+                        if($flRepairsPack == '1'){
+                            $infoSale[$item->infoUser->country][$item->productName]['repair']++;
+                        }
 
                         $infoSale[$item->infoUser->country][$item->productName]['all']++;
                     }
@@ -169,6 +178,7 @@ class SaleReportController extends BaseController
                                     'all' => 0,
                                     'issued' => 0,
                                     'wait' => 0,
+                                    'repair' => 0,
                                 ];
                             }
 
@@ -178,6 +188,10 @@ class SaleReportController extends BaseController
                                 $infoSale[$item->infoUser->country][$itemSet->title]['issued']++;
                             } else {
                                 $infoSale[$item->infoUser->country][$itemSet->title]['wait']++;
+                            }
+
+                            if(in_array($itemSet->status,['status_sale_repairs_under_warranty','status_sale_repair_without_warranty'])){
+                                $infoSale[$item->infoUser->country][$itemSet->title]['repair']++;
                             }
                         }
                     }
