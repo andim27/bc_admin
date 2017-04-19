@@ -283,12 +283,12 @@ Class Menu
                         'url' => ['sale-report/info-wait-sale-by-user'],
                         'action' => 'info-wait-sale-by-user',
                     ],
-//                    [
-//                        'key'   =>  'sidebar_sale_country',
-//                        'label' => 'Отчет по странам!!!!',
-//                        'url' => ['sale-report/info-sale-for-country'],
-//                        'action' => 'info-sale-for-country',
-//                    ],
+                    [
+                        'key'   =>  'sidebar_sale_country',
+                        'label' => THelper::t('sidebar_report_sale_for_country'),
+                        'url' => ['sale-report/info-sale-for-country'],
+                        'action' => 'info-sale-for-country',
+                    ],
                 ]
             ]
         ];

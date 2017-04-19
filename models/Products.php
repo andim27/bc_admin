@@ -60,7 +60,7 @@ class Products extends ActiveRecord
         if(!empty($model)){
             foreach ($model as $item) {
                 if(!empty($item->set) && count($item->set) > 0){
-                    $list[$item->_id->__toString()] = $item->productName;
+                    $list[$item->product] = $item->productName;
                 }
             }
         }

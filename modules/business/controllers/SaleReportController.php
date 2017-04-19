@@ -100,7 +100,7 @@ class SaleReportController extends BaseController
     {
         $request =  Yii::$app->request->post();
         if(empty($request['flGoods'])){
-            if(!empty($request['listGoods'])){
+            if(empty($request['listGoods'])){
                 $request['listGoods'] = 'all';
             }
             $request['listPack'] = '';
@@ -124,48 +124,72 @@ class SaleReportController extends BaseController
             ->all();
 
         if(!empty($model)){
+            $tempInfo = [];
+
             /** @var Sales $item */
             foreach ($model as $item) {
 
+                /** PACK */
                 if(!empty($request['listPack'])){
-                    if(!empty($tempInfo['info'][$item->product])){
-                        $tempInfo['info'][$item->product] = [
-                            'all' => 0,
-                            'issued' => 0,
-                            'wait' => 0,
-                        ];
-                    }
 
-                    $tempInfo['info'][$item->product]['all']++;
+                    if($item->product == $request['listPack'] || $request['listPack'] == 'all') {
 
-                } else {
-                    foreach ($item->statusSale->set as $itemSet){
-                        if(empty($tempInfo[$item->infoUser->country][$itemSet->title])){
-                            $tempInfo[$item->infoUser->country][$itemSet->title] = [
+                        if (empty($infoSale[$item->infoUser->country][$item->productName])) {
+                            $infoSale[$item->infoUser->country][$item->productName] = [
                                 'all' => 0,
                                 'issued' => 0,
                                 'wait' => 0,
                             ];
                         }
 
-                        $tempInfo[$item->infoUser->country][$itemSet->title]['all']++;
+                        $flIssuedPack = '1';
+                        foreach ($item->statusSale->set as $itemSet) {
+                            if (!in_array($itemSet->status, ['status_sale_issued', 'status_sale_issued_after_repair'])) {
+                                $flIssuedPack = '0';
+                            }
+                        }
 
-                        if(in_array($itemSet->status,['status_sale_issued','status_sale_issued_after_repair'])){
-                            $tempInfo[$item->infoUser->country][$itemSet->title]['issued']++;
+                        if ($flIssuedPack == '1') {
+                            $infoSale[$item->infoUser->country][$item->productName]['issued']++;
                         } else {
-                            $tempInfo[$item->infoUser->country][$itemSet->title]['wait']++;
+                            $infoSale[$item->infoUser->country][$item->productName]['wait']++;
+                        }
+
+
+                        $infoSale[$item->infoUser->country][$item->productName]['all']++;
+                    }
+                /** GOODS */
+                } else {
+                    foreach ($item->statusSale->set as $itemSet){
+
+                        if($itemSet->title == $request['listGoods'] || $request['listGoods'] == 'all'){
+
+                            if(empty($infoSale[$item->infoUser->country][$itemSet->title])){
+                                $infoSale[$item->infoUser->country][$itemSet->title] = [
+                                    'all' => 0,
+                                    'issued' => 0,
+                                    'wait' => 0,
+                                ];
+                            }
+
+                            $infoSale[$item->infoUser->country][$itemSet->title]['all']++;
+
+                            if(in_array($itemSet->status,['status_sale_issued','status_sale_issued_after_repair'])){
+                                $infoSale[$item->infoUser->country][$itemSet->title]['issued']++;
+                            } else {
+                                $infoSale[$item->infoUser->country][$itemSet->title]['wait']++;
+                            }
                         }
                     }
-
                 }
 
-                $infoSale= $tempInfo;
             }
         }
 
         return $this->render('info-sale-for-country',[
-            'language' => Yii::$app->language,
-            'infoSale' => $infoSale,
+            'language' =>   Yii::$app->language,
+            'infoSale' =>   $infoSale,
+            'request'  =>   $request
         ]);
     }
 }
