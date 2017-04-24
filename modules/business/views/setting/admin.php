@@ -34,6 +34,9 @@
                     <?=THelper::t('setting_admin_country_city')?>
                 </th>
                 <th>
+                    <?=THelper::t('warehouse')?>
+                </th>
+                <th>
                     <?=THelper::t('setting_admin_remove')?>
                 </th>
             </tr>
@@ -60,7 +63,11 @@
                         <?= $admin->getCountryCityAsString() ?>
                     </td>
                     <td>
-                        <?= $admin->username != 'main' ? Html::a('<i class="fa fa-trash-o"></i>', ['/business/setting/admin-remove', 'u' => $admin->username], ['onclick' => 'return confirmRemoving();']) : '' ?>
+
+                        <?= $admin->username != 'main' ? Html::a('<i class="fa fa-home"></i>', ['/business/setting/admin-warehouse-update', 'username' => $admin->username], ['title'=>'Склад']) : '' ?>
+                    </td>
+                    <td>
+                        <?= $admin->username != 'main' ? Html::a('<i class="fa fa-trash-o"></i>', ['/business/setting/admin-remove', 'u' => $admin->username], ['onclick' => 'return confirmRemoving();','title'=>THelper::t('setting_admin_remove')]) : '' ?>
                     </td>
                 </tr>
             <?php } ?>

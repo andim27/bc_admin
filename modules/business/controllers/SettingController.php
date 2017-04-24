@@ -265,6 +265,27 @@ class SettingController extends BaseController {
         ]);
     }
 
+    public function actionAdminWarehouseUpdate($username = '')
+    {
+        $request =  Yii::$app->request->post();
+        if(!empty($username)){
+            $model = Users::findOne(['username'=>$username]);
+
+            return $this->render('admin-warehouse-update', [
+                'language' => Yii::$app->language,
+                'model' => $model
+            ]);
+        } elseif(!empty($request)){
+            $model = Users::findOne(['_id'=>new ObjectID($request['id'])]);
+            $model->warehouseName = $request['warehouseName'];
+            if($model->save()){
+                return $this->redirect('/' . Yii::$app->language .'/business/setting/admin');
+            }
+
+        }
+        
+    }
+    
     public function actionAdminRemove()
     {
         $request = Yii::$app->request;

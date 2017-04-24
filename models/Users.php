@@ -36,6 +36,7 @@ class Users extends ActiveRecord
             'secondName',
             'rank',
             'isAdmin',
+            'warehouseName',
             'rulesAdmin',
             'settings',
             'country',

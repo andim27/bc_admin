@@ -82,7 +82,7 @@ $config = [
         // for mongodb
         'mongodb' => [
             'class' => '\yii\mongodb\Connection',
-            //'dsn' => 'mongodb://php_apache_mongo_db/gnc',
+            //'dsn' => 'mongodb://mongo/gnc',
             'dsn' => 'mongodb://localhost/gnc',
         ],
     

@@ -32,6 +32,7 @@ class Sales extends ActiveRecord
         return [
             '_id',
             'idUser',
+            'warehouseId',
             'price',
             'product',
             'project',
@@ -54,7 +55,6 @@ class Sales extends ActiveRecord
      */
     public function getStatusSale()
     {
-
         $model = StatusSales::find()->where(['idSale' => $this->_id])->one();
 
         if ($model === null) {
@@ -72,9 +72,14 @@ class Sales extends ActiveRecord
 
                 foreach ($infoProduct->set as $itemSet){
                     $modelSet = new SetSales();
+
                     $modelSet->title = $itemSet->setName;
                     $modelSet->status = StatusSales::$listStatus['0'];
                     $modelSet->dateChange = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+                    if(!empty($this->warehouseId)){
+                        $modelSet->idUserChange = $this->warehouseId;
+                    }
 
                     $model->set[] = $modelSet;
                 }
