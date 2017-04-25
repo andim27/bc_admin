@@ -290,7 +290,23 @@ Class Menu
                         'action' => 'info-sale-for-country',
                     ],
                 ]
-            ]
+            ],
+
+            [
+                'key'   =>  'sidebar_manufacturing_suppliers',
+                'label' => THelper::t('sidebar_manufacturing_suppliers'),
+                'url' => '#',
+                'controller' => 'manufacturing-suppliers',
+                'items' => [
+                    [
+                        'key'   =>  'sidebar_suppliers_performers',
+                        'label' => THelper::t('sidebar_suppliers_performers'),
+                        'url' => ['manufacturing-suppliers/suppliers-performers'],
+                        'action' => 'suppliers-performers',
+                    ],
+                ]
+            ],
+
         ];
         
         return $itemMenu;
