@@ -304,6 +304,12 @@ Class Menu
                         'url' => ['manufacturing-suppliers/suppliers-performers'],
                         'action' => 'suppliers-performers',
                     ],
+                    [
+                        'key'   =>  'sidebar_currency_rate',
+                        'label' => THelper::t('sidebar_currency_rate'),
+                        'url' => ['currency-rate/currency-rate'],
+                        'action' => 'currency-rate',
+                    ],
                 ]
             ],
 
