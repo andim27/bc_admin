@@ -305,6 +305,12 @@ Class Menu
                         'action' => 'suppliers-performers',
                     ],
                     [
+                        'key'   =>  'sidebar_parts_accessories',
+                        'label' => THelper::t('sidebar_parts_accessories'),
+                        'url' => ['manufacturing-suppliers/parts-accessories'],
+                        'action' => 'parts-accessories',
+                    ],
+                    [
                         'key'   =>  'sidebar_currency_rate',
                         'label' => THelper::t('sidebar_currency_rate'),
                         'url' => ['currency-rate/currency-rate'],

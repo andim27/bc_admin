@@ -6,14 +6,14 @@ use app\components\AlertWidget;
 
 
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('sidebar_suppliers_performers') ?></h3>
+    <h3 class="m-b-none"><?= THelper::t('sidebar_parts_accessories') ?></h3>
 </div>
 
 <div class="row">
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
-    
+
     <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-suppliers-performers'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+        <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-parts-accessories'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
     </div>
 </div>
 
@@ -25,13 +25,16 @@ use app\components\AlertWidget;
                 <tr>
                     <th>№</th>
                     <th>
-                        <?=THelper::t('suppliers_performers_title')?>
+                        <?=THelper::t('parts_accessories_title')?>
                     </th>
                     <th>
-                        <?=THelper::t('suppliers_performers_coordinates')?>
+                        <?=THelper::t('parts_accessories_number')?>
                     </th>
                     <th>
-                        <?=THelper::t('suppliers_performers_history_operation')?>
+                        <?=THelper::t('parts_accessories_unit')?>
+                    </th>
+                    <th>
+                        <?=THelper::t('parts_accessories_history')?>
                     </th>
                     <th></th>
                     <th></th>
@@ -43,13 +46,14 @@ use app\components\AlertWidget;
                     <tr>
                         <td><?=($k+1)?></td>
                         <td><?=$item->title?></td>
-                        <td><?=$item->coordinates?></td>
+                        <td>0</td>
+                        <td><?=THelper::t($item->unit)?></td>
                         <td>history</td>
                         <td>
-                            <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-suppliers-performers','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
+                            <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                         </td>
                         <td>
-                            <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-suppliers-performers','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]) ?>
+                            <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-parts-accessories','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]) ?>
                         </td>
                     </tr>
                 <?php } ?>
