@@ -161,4 +161,137 @@ class ManufacturingSuppliersController extends BaseController {
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
     }
 
+
+    public function actionInterchangeableGoods()
+    {
+        $model = PartsAccessories::find()->all();
+        
+        $arrayInterchangeable = [];
+        if(!empty($model)){
+            foreach ($model as $item){
+                if(!empty($item->interchangeable)){
+                    foreach ($item->interchangeable as $itemInterchangeable) {
+                        $arrayInterchangeable[] = [
+                            'id'                => (string)$item->_id,
+                            'idInterchangeable' => (string)$itemInterchangeable
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $this->render('interchangeable-goods',[
+            'arrayInterchangeable' => $arrayInterchangeable,
+            'alert' => Yii::$app->session->getFlash('alert', '', true)
+        ]);
+    }
+
+    public function actionAddUpdateInterchangeableGoods($id = '',$idInterchangeable = '')
+    {
+        return $this->renderAjax('_add-update-interchangeable-goods', [
+            'language' => Yii::$app->language,
+            'id' => $id,
+            'idInterchangeable' => $idInterchangeable,
+        ]);
+    }
+
+    public function actionSaveInterchangeableGoods()
+    {
+        $request = Yii::$app->request->post();
+
+        $model = new PartsAccessories();
+
+        if(!empty($request['id'])){
+
+            if($request['id']==$request['idInterchangeable']){
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert' => 'danger',
+                        'message' => 'error goods = goods'
+                    ]
+                );
+
+                return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/interchangeable-goods');
+            }
+
+
+
+            $model = $model::findOne(['_id'=>new ObjectID($request['id'])]);
+
+            $tempArrayInterchangeable = [];
+            if(!empty($model->interchangeable)){
+                $tempArrayInterchangeable = $model->interchangeable;
+            }
+
+            if(!in_array($request['idInterchangeable'],$tempArrayInterchangeable)){
+                $tempArrayInterchangeable[] = $request['idInterchangeable'];
+            } else {
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert' => 'danger',
+                        'message' => 'this item have'
+                    ]
+                );
+
+                return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/interchangeable-goods');
+            }
+
+            $model->interchangeable = $tempArrayInterchangeable;
+
+            if($model->save()){
+
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'success',
+                        'message'=>'the changes are saved'
+                    ]
+                );
+
+                return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/interchangeable-goods');
+            }
+        }
+
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert' => 'danger',
+                'message' => 'the changes are not saved'
+            ]
+        );
+
+        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/interchangeable-goods');
+    }
+
+    public function actionRemoveInterchangeableGoods($id,$idInterchangeable)
+    {
+        $model = new PartsAccessories();
+
+        if(!empty($id)) {
+
+
+            $model = $model::findOne(['_id' => new ObjectID($id)]);
+
+            $tempArrayInterchangeable = [];
+
+
+            if (!empty($model->interchangeable)) {
+                foreach ($model->interchangeable as $item) {
+                    if ($item != $idInterchangeable) {
+                        $tempArrayInterchangeable[] = $item;
+                    }
+                }
+
+                $model->interchangeable = $tempArrayInterchangeable;
+
+                if ($model->save()) {
+
+                    Yii::$app->session->setFlash('alert', [
+                            'typeAlert' => 'success',
+                            'message' => 'remove item'
+                        ]
+                    );
+
+                    return $this->redirect('/' . Yii::$app->language . '/business/manufacturing-suppliers/interchangeable-goods');
+                }
+            }
+
+        }
+    }
+    
+    
 }

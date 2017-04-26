@@ -35,7 +35,8 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         return [
             '_id',
             'title',
-            'unit'
+            'unit',
+            'interchangeable'
         ];
     }
 
@@ -47,6 +48,17 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
 
         foreach ($typesUnit as $item){
             $list[$item] = THelper::t($item);
+        }
+
+        return $list;
+    }
+    
+    public static function getListPartsAccessories()
+    {
+        $model = self::find()->all();
+        $list = [];
+        foreach ($model as $item){
+            $list[(string)$item->_id] = $item->title;
         }
 
         return $list;

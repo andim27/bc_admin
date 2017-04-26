@@ -311,6 +311,12 @@ Class Menu
                         'action' => 'parts-accessories',
                     ],
                     [
+                        'key'   =>  'sidebar_interchangeable_goods',
+                        'label' => THelper::t('sidebar_interchangeable_goods'),
+                        'url' => ['manufacturing-suppliers/interchangeable-goods'],
+                        'action' => 'interchangeable-goods',
+                    ],
+                    [
                         'key'   =>  'sidebar_currency_rate',
                         'label' => THelper::t('sidebar_currency_rate'),
                         'url' => ['currency-rate/currency-rate'],
