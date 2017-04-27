@@ -259,12 +259,11 @@ class ManufacturingSuppliersController extends BaseController {
 
     public function actionRemoveInterchangeableGoods($id,$idInterchangeable)
     {
-        $model = new PartsAccessories();
 
         if(!empty($id)) {
 
 
-            $model = $model::findOne(['_id' => new ObjectID($id)]);
+            $model = PartsAccessories::findOne(['_id' => new ObjectID($id)]);
 
             $tempArrayInterchangeable = [];
 
@@ -293,5 +292,75 @@ class ManufacturingSuppliersController extends BaseController {
         }
     }
     
-    
+
+    public function actionCompositeProducts()
+    {
+        $model = PartsAccessories::find()->all();
+
+        return $this->render('composite-products',[
+            'model' => $model,
+            'alert' => Yii::$app->session->getFlash('alert', '', true)
+        ]);
+
+    }
+
+    public function actionAddUpdateCompositeProducts($id = '')
+    {
+        $model = new PartsAccessories();
+        if(!empty($id)){
+            $model = $model::findOne(['_id' => new ObjectID($id)]);
+        }
+                
+        return $this->renderAjax('_add-update-composite-products', [
+            'language' => Yii::$app->language,
+            'model' => $model,
+        ]);
+    }
+
+    public function actionSaveCompositeProducts()
+    {
+        $request = Yii::$app->request->post();
+
+        $model = new PartsAccessories();
+
+        if(!empty($request['id'])){
+            $model = $model::findOne(['_id'=>new ObjectID($request['id'])]);
+
+            $arrayComposite = [];
+            if(!empty($request['composite'])){
+
+                foreach ($request['composite']['name'] as $k=>$item){
+                    $arrayComposite[] = [
+                        '_id' => new ObjectID($item),
+                        'number' => $request['composite']['number'][$k],
+                        'unit' => $request['composite']['unit'][$k],
+                    ];
+                }
+            }
+
+            $model->composite = $arrayComposite;
+
+            if($model->save()){
+
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'success',
+                        'message'=>'the changes are saved'
+                    ]
+                );
+
+                return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/composite-products');
+            }
+            
+        }
+
+
+
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert' => 'danger',
+                'message' => 'the changes are not saved'
+            ]
+        );
+        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/composite-productss');
+
+    }
 }

@@ -36,7 +36,8 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
             '_id',
             'title',
             'unit',
-            'interchangeable'
+            'interchangeable',
+            'composite'
         ];
     }
 

@@ -27,7 +27,7 @@ use app\models\PartsAccessories;
                         'id'=>'selectChangeStatus',
                         'required'=>'required',
                         'options' => [
-                            $id => ['disabled' => true]
+                            '' => ['disabled' => true]
                         ]
                     ])?>
                 </div>

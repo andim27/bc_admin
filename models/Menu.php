@@ -317,6 +317,12 @@ Class Menu
                         'action' => 'interchangeable-goods',
                     ],
                     [
+                        'key'   =>  'sidebar_composite_products',
+                        'label' => THelper::t('sidebar_composite_products'),
+                        'url' => ['manufacturing-suppliers/composite-products'],
+                        'action' => 'composite-products',
+                    ],
+                    [
                         'key'   =>  'sidebar_currency_rate',
                         'label' => THelper::t('sidebar_currency_rate'),
                         'url' => ['currency-rate/currency-rate'],
