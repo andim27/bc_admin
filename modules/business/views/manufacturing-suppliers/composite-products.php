@@ -27,10 +27,10 @@ $listPartsAccessories = PartsAccessories::getListPartsAccessories();
                 <thead>
                 <tr>
                     <th>
-                        <?=THelper::t('parts_accessories_title')?>
+                        <?=THelper::t('name_product')?>
                     </th>
                     <th>
-                        <?=THelper::t('parts_accessories_title')?>
+                        <?=THelper::t('composition')?>
                     </th>
                     <th></th>
                 </tr>

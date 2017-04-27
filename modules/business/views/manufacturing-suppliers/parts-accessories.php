@@ -25,16 +25,16 @@ use app\components\AlertWidget;
                 <tr>
                     <th>№</th>
                     <th>
-                        <?=THelper::t('parts_accessories_title')?>
+                        <?=THelper::t('name_product')?>
                     </th>
                     <th>
-                        <?=THelper::t('parts_accessories_number')?>
+                        <?=THelper::t('count')?>
                     </th>
                     <th>
-                        <?=THelper::t('parts_accessories_unit')?>
+                        <?=THelper::t('unit')?>
                     </th>
                     <th>
-                        <?=THelper::t('parts_accessories_history')?>
+                        <?=THelper::t('history_operation')?>
                     </th>
                     <th></th>
                     <th></th>

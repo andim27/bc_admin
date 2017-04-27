@@ -25,13 +25,13 @@ use app\components\AlertWidget;
                 <tr>
                     <th>№</th>
                     <th>
-                        <?=THelper::t('suppliers_performers_title')?>
+                        <?=THelper::t('title/name')?>
                     </th>
                     <th>
-                        <?=THelper::t('suppliers_performers_coordinates')?>
+                        <?=THelper::t('coordinates')?>
                     </th>
                     <th>
-                        <?=THelper::t('suppliers_performers_history_operation')?>
+                        <?=THelper::t('history_operation')?>
                     </th>
                     <th></th>
                     <th></th>

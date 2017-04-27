@@ -21,7 +21,7 @@ use app\models\PartsAccessories;
 
             <div class="row">
                 <div class="col-md-12">
-                    <?=Html::label('goods')?>
+                    <?=Html::label(THelper::t('goods'))?>
                     <?=Html::dropDownList('id',(!empty($id) ? $id : ''),PartsAccessories::getListPartsAccessories(),[
                         'class'=>'form-control',
                         'id'=>'selectChangeStatus',
@@ -35,7 +35,7 @@ use app\models\PartsAccessories;
 
             <div class="row">
                 <div class="col-md-12">
-                    <?=Html::label('goods')?>
+                    <?=Html::label(THelper::t('goods'))?>
                     <?=Html::dropDownList('idInterchangeable',(!empty($idInterchangeable) ? $idInterchangeable : ''),PartsAccessories::getListPartsAccessories() ,[
                         'class'=>'form-control',
                         'id'=>'selectChangeStatus',
