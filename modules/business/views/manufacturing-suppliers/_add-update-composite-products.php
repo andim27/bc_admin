@@ -3,7 +3,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use app\components\THelper;
 use app\models\PartsAccessories;
-
+$listGoods = PartsAccessories::getListPartsAccessories();
 ?>
 
 <div class="modal-dialog">
@@ -22,7 +22,7 @@ use app\models\PartsAccessories;
             <div class="row">
                 <div class="col-md-12">
                     <?=Html::label(THelper::t('goods'))?>
-                    <?=Html::dropDownList('id',(!empty($model->id) ? $model->id : ''),PartsAccessories::getListPartsAccessories(),[
+                    <?=Html::dropDownList('id',(!empty($model->id) ? $model->id : ''),$listGoods,[
                         'class'=>'form-control',
                         'id'=>'selectChangeStatus',
                         'required'=>'required',
@@ -42,7 +42,7 @@ use app\models\PartsAccessories;
                             <div class="row">
                                 <div class="col-md-7">
                                     <input type="hidden" name="composite[name][]" value="<?=(string)$item['_id']?>">
-                                    <?=(string)$item['_id']?>
+                                    <?=(!empty($listGoods[(string)$item['_id']]) ? $listGoods[(string)$item['_id']] : '')?>
                                 </div>
                                 <div class="col-md-2">
                                     <input type="hidden" name="composite[number][]" value="<?=$item['number']?>">
@@ -64,7 +64,7 @@ use app\models\PartsAccessories;
 
             <div class="row">
                 <div class="col-md-5">
-                    <?=Html::dropDownList('',(!empty($model->id) ? $model->id : ''),PartsAccessories::getListPartsAccessories(),[
+                    <?=Html::dropDownList('',(!empty($model->id) ? $model->id : ''),$listGoods,[
                         'class'=>'form-control compositeID',
                         'id'=>'selectChangeStatus',
                         'required'=>'required',

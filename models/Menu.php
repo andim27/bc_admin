@@ -21,7 +21,7 @@ Class Menu
                 'controller' => 'user',
                 'items' => [
                     [
-                        'key'   =>  'sidebar_users',
+                        'key'   =>  'sidebar_list_users',
                         'label' => THelper::t('sidebar_users'),
                         'url' => ['/business/user'],
                         'action' => 'user',
@@ -292,44 +292,50 @@ Class Menu
                 ]
             ],
 
-            [
-                'key'   =>  'sidebar_manufacturing_suppliers',
-                'label' => THelper::t('sidebar_manufacturing_suppliers'),
-                'url' => '#',
-                'controller' => 'manufacturing-suppliers',
-                'items' => [
-                    [
-                        'key'   =>  'sidebar_suppliers_performers',
-                        'label' => THelper::t('sidebar_suppliers_performers'),
-                        'url' => ['manufacturing-suppliers/suppliers-performers'],
-                        'action' => 'suppliers-performers',
-                    ],
-                    [
-                        'key'   =>  'sidebar_parts_accessories',
-                        'label' => THelper::t('sidebar_parts_accessories'),
-                        'url' => ['manufacturing-suppliers/parts-accessories'],
-                        'action' => 'parts-accessories',
-                    ],
-                    [
-                        'key'   =>  'sidebar_interchangeable_goods',
-                        'label' => THelper::t('sidebar_interchangeable_goods'),
-                        'url' => ['manufacturing-suppliers/interchangeable-goods'],
-                        'action' => 'interchangeable-goods',
-                    ],
-                    [
-                        'key'   =>  'sidebar_composite_products',
-                        'label' => THelper::t('sidebar_composite_products'),
-                        'url' => ['manufacturing-suppliers/composite-products'],
-                        'action' => 'composite-products',
-                    ],
-                    [
-                        'key'   =>  'sidebar_currency_rate',
-                        'label' => THelper::t('sidebar_currency_rate'),
-                        'url' => ['currency-rate/currency-rate'],
-                        'action' => 'currency-rate',
-                    ],
-                ]
-            ],
+//            [
+//                'key'   =>  'sidebar_manufacturing_suppliers',
+//                'label' => THelper::t('sidebar_manufacturing_suppliers'),
+//                'url' => '#',
+//                'controller' => 'manufacturing-suppliers',
+//                'items' => [
+//                    [
+//                        'key'   =>  'sidebar_suppliers_performers',
+//                        'label' => THelper::t('sidebar_suppliers_performers'),
+//                        'url' => ['manufacturing-suppliers/suppliers-performers'],
+//                        'action' => 'suppliers-performers',
+//                    ],
+//                    [
+//                        'key'   =>  'sidebar_parts_accessories',
+//                        'label' => THelper::t('sidebar_parts_accessories'),
+//                        'url' => ['manufacturing-suppliers/parts-accessories'],
+//                        'action' => 'parts-accessories',
+//                    ],
+//                    [
+//                        'key'   =>  'sidebar_interchangeable_goods',
+//                        'label' => THelper::t('sidebar_interchangeable_goods'),
+//                        'url' => ['manufacturing-suppliers/interchangeable-goods'],
+//                        'action' => 'interchangeable-goods',
+//                    ],
+//                    [
+//                        'key'   =>  'sidebar_composite_products',
+//                        'label' => THelper::t('sidebar_composite_products'),
+//                        'url' => ['manufacturing-suppliers/composite-products'],
+//                        'action' => 'composite-products',
+//                    ],
+//                    [
+//                        'key'   =>  'sidebar_parts_ordering',
+//                        'label' => THelper::t('sidebar_parts_ordering'),
+//                        'url' => ['manufacturing-suppliers/parts-ordering'],
+//                        'action' => 'parts-ordering',
+//                    ],
+//                    [
+//                        'key'   =>  'sidebar_currency_rate',
+//                        'label' => THelper::t('sidebar_currency_rate'),
+//                        'url' => ['currency-rate/currency-rate'],
+//                        'action' => 'currency-rate',
+//                    ],
+//                ]
+//            ],
 
         ];
         

@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\components\THelper;
+use MongoDB\BSON\ObjectID;
 
 /**
  * Class PartsAccessories
@@ -35,7 +36,9 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         return [
             '_id',
             'title',
+            'number',
             'unit',
+            'log',
             'interchangeable',
             'composite'
         ];
@@ -60,6 +63,31 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         $list = [];
         foreach ($model as $item){
             $list[(string)$item->_id] = $item->title;
+        }
+
+        return $list;
+    }
+    
+    public static function getNamePartsAccessories($id)
+    {
+        $list = self::getListPartsAccessories();
+        if(!empty($list[$id])){
+            return $list[$id];
+        } else {
+            return false;
+        }
+    }
+
+    public static function getInterchangeableList($id)
+    {
+        $listPartsAccessories = self::getListPartsAccessories();
+        $model = self::findOne(['_id' => new ObjectID($id)]);
+        $list = [];
+        if(!empty($model->interchangeable)){
+            $list[$id] = $listPartsAccessories[$id];
+            foreach ($model->interchangeable as $item){
+                $list[$item] = $listPartsAccessories[$item];
+            }
         }
 
         return $list;

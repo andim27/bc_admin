@@ -27,4 +27,29 @@ class SuppliersPerformers extends \yii2tech\embedded\mongodb\ActiveRecord
             'coordinates'
         ];
     }
+
+    public static function getListSuppliersPerformers()
+    {
+        $list = [];
+        $model = self::find()->all();
+        if(!empty($model)){
+            /** @var SuppliersPerformers $item */
+            foreach($model as $item){
+                $list[(string)$item->_id] = $item->title;
+            }
+        }
+
+        return $list;
+    }
+
+
+    public static function getNameSuppliersPerformers($id)
+    {
+        $list = self::getListSuppliersPerformers();
+        if(!empty($list[$id])){
+            return $list[$id];
+        } else {
+            return false;
+        }
+    }
 }

@@ -4,6 +4,20 @@ use yii\helpers\Html;
 use app\components\AlertWidget;
 ?>
 
+<div class="row">
+    <div class="col-md-3">
+        <?= Html::a('Оприходование', ['/business/manufacturing-suppliers/posting-ordering'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
+    </div>
+    <div class="col-md-3">
+        <?= Html::a('Оприходование пред заказа', ['/business/manufacturing-suppliers/posting-pre-ordering'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
+    </div>
+    <div class="col-md-3">
+        <?= Html::a('Списание', ['/business/manufacturing-suppliers/cancellation'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
+    </div>
+    <div class="col-md-3">
+        <?= Html::a('Cборка', ['/business/manufacturing-suppliers/assembly'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
+    </div>
+    </div>
 
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('sidebar_parts_accessories') ?></h3>
@@ -33,9 +47,6 @@ use app\components\AlertWidget;
                     <th>
                         <?=THelper::t('unit')?>
                     </th>
-                    <th>
-                        <?=THelper::t('history_operation')?>
-                    </th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -46,14 +57,19 @@ use app\components\AlertWidget;
                     <tr>
                         <td><?=($k+1)?></td>
                         <td><?=$item->title?></td>
-                        <td>0</td>
+                        <td><?= (!empty($item->number) ? $item->number : '0') ?></td>
                         <td><?=THelper::t($item->unit)?></td>
-                        <td>history</td>
                         <td>
                             <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                         </td>
                         <td>
-                            <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-parts-accessories','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]) ?>
+                            <?php
+                                if(empty($item->log)){
+                                   echo Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-parts-accessories','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]);
+                                } else {
+                                   echo Html::a('<i class="fa fa-comment"></i>', ['/business/manufacturing-suppliers/log-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']);
+                                }
+                            ?>
                         </td>
                     </tr>
                 <?php } ?>

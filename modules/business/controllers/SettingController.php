@@ -348,15 +348,16 @@ class SettingController extends BaseController {
     public function actionAdminRulesSave()
     {
         $request = Yii::$app->request->post();
+        
 
-        if(!empty($request['id']) && !empty($request['rule'])){
+        if(!empty($request['id'])){
 
             $model = Users::find()
                 ->where(['_id'=> new ObjectID($request['id'])])
                 ->one();
 
-            $model->rules->showMenu = $request['rule']['showMenu'];
-            $model->rules->edit = $request['rule']['edit'];
+            $model->rules->showMenu = (!empty($request['rule']['showMenu']) ? $request['rule']['showMenu'] : '');
+            $model->rules->edit = (!empty($request['rule']['edit']) ? $request['rule']['edit'] : '');
 
             $model->refreshFromEmbedded();
 

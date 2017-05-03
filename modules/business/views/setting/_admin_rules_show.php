@@ -3,6 +3,7 @@
     use app\components\THelper;
     use yii\widgets\ActiveForm;
     $bg = 'bg-light';
+
 ?>
 
     <?php if($items) {?>

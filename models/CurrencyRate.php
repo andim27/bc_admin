@@ -8,6 +8,12 @@ namespace app\models;
  */
 class CurrencyRate extends \yii2tech\embedded\mongodb\ActiveRecord
 {
+    protected static $listCurrency = [
+        'usd' => 'usd',
+        'uah' => 'uah',
+        'rub' => 'rub'
+    ];
+    
     /**
      * @return string
      */
@@ -28,5 +34,11 @@ class CurrencyRate extends \yii2tech\embedded\mongodb\ActiveRecord
             'rub',
             'dateCreate'
         ];
+    }
+    
+    
+    public static function getListCurrency()
+    {
+        return self::$listCurrency;
     }
 }
