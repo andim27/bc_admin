@@ -422,6 +422,41 @@ class StatusSalesController extends BaseController {
         ]);
     }
 
+    public function actionReportSalesAdmins()
+    {
+
+        $request =  Yii::$app->request->post();
+
+        if(empty($request)){
+            $listAdmin = [];
+            $request['infoWarehouse'] = '';
+            $request['to'] = date("Y-m-d");
+            $request['from'] = date("Y-01-01");
+        } else {
+            $listAdmin = [$request['infoWarehouse']];
+        }
+
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->all();
+
+
+        return $this->render('report-sales-admins',[
+            'language'          => Yii::$app->language,
+            'request'           => $request,
+            'model'             => $model,
+            'listAdmin'        => $listAdmin,
+        ]);
+    }
+
+
     /**
      * looking comment for sales
      * @return bool|string
