@@ -16,9 +16,10 @@ use app\models\PartsAccessories;
                                 'options' => [
                                 ]
                             ])?>
-
+                        <?=Html::hiddenInput('number[]',$item['number'],[]);?>
                     <?php } else {?>
                         <?=Html::hiddenInput('complect[]',(string)$item['_id'],[]);?>
+                        <?=Html::hiddenInput('number[]',$item['number'],[]);?>
                         <?=Html::input('text','',PartsAccessories::getNamePartsAccessories((string)$item['_id']),['class'=>'form-control','disabled'=>'disabled']);?>
 
                     <?php } ?>

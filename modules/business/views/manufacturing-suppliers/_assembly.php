@@ -15,13 +15,13 @@ use app\models\PartsAccessories;
 
         <div class="modal-body">
             <?php $formCom = ActiveForm::begin([
-                'action' => '/' . $language . '/business/manufacturing-suppliers/save-cancellation',
+                'action' => '/' . $language . '/business/manufacturing-suppliers/save-assembly',
                 'options' => ['name' => 'savePartsAccessories'],
             ]); ?>
 
             <div class="form-group">
                     <?=Html::label(THelper::t('goods'))?>
-                    <?=Html::dropDownList('id','',ArrayHelper::merge([''=>'выберите товар'],PartsAccessories::getListPartsAccessories()),[
+                    <?=Html::dropDownList('parts_accessories_id','',ArrayHelper::merge([''=>'выберите товар'],PartsAccessories::getListPartsAccessoriesWithComposite()),[
                         'class'=>'form-control',
                         'id'=>'selectGoods',
                         'required'=>'required',
@@ -37,7 +37,7 @@ use app\models\PartsAccessories;
 
             <div class="row">
                 <div class="col-md-12 text-right">
-                    <?= Html::submitButton(THelper::t('cancellation'), ['class' => 'btn btn-success']) ?>
+                    <?= Html::submitButton(THelper::t('assembly'), ['class' => 'btn btn-success']) ?>
                 </div>
             </div>
             <?php ActiveForm::end(); ?>

@@ -343,6 +343,22 @@ Class Menu
                 ]
             ],
 
+
+//            [
+//                'key'   =>  'sidebar_submit_execution_posting',
+//                'label' => THelper::t('sidebar_submit_execution_posting'),
+//                'url' => '#',
+//                'controller' => 'submit-execution-posting',
+//                'items' => [
+//                    [
+//                        'key'   =>  'sidebar_execution_posting',
+//                        'label' => THelper::t('sidebar_execution_posting'),
+//                        'url' => ['submit-execution-posting/execution-posting'],
+//                        'action' => 'execution-posting',
+//                    ],
+//                ]
+//            ]
+
         ];
         
         return $itemMenu;

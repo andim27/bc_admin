@@ -477,6 +477,12 @@ class ManufacturingSuppliersController extends BaseController {
     public function actionSavePostingOrdering(){
         $request = Yii::$app->request->post();
 
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'the changes are not saved'
+            ]
+        );
+
         if(!empty($request)){
 
             $modelPartsAccessories = PartsAccessories::findOne(['_id'=>$request['parts_accessories_id']]);
@@ -492,13 +498,17 @@ class ManufacturingSuppliersController extends BaseController {
                 ];
                 $modelPartsAccessories->log = $log;
                 if($modelPartsAccessories->save()){
-                    
+                    Yii::$app->session->setFlash('alert' ,[
+                            'typeAlert'=>'success',
+                            'message'=>'the changes are saved'
+                        ]
+                    );
                 }
             }
 
         }
 
-        $this->redirect(['parts-accessories']);
+        return $this->redirect(['parts-accessories']);
     }
 
 
@@ -511,6 +521,12 @@ class ManufacturingSuppliersController extends BaseController {
     
     public function actionSavePostingPreOrdering(){
         $request = Yii::$app->request->post();
+
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'the changes not saved'
+            ]
+        );
 
         if(!empty($request['id'])){
             $modelPreOrder = PartsOrdering::findOne(['_id'=>new ObjectID($request['id'])]);
@@ -529,12 +545,18 @@ class ManufacturingSuppliersController extends BaseController {
                 $modelPartsAccessories->log = $log;
                 if($modelPartsAccessories->save()){
                     $modelPreOrder->delete();
+
+                    Yii::$app->session->setFlash('alert' ,[
+                            'typeAlert'=>'success',
+                            'message'=>'the changes are saved'
+                        ]
+                    );
                 }
             }
 
         }
 
-        $this->redirect(['parts-accessories']);
+        return $this->redirect(['parts-accessories']);
     }
     
     
@@ -548,13 +570,42 @@ class ManufacturingSuppliersController extends BaseController {
     public function actionSaveCancellation()
     {
         $request = Yii::$app->request->post();
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r($request);
-        echo "</xmp>";
-        die();
 
-        $this->redirect(['parts-accessories']);
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'the changes are not saved'
+            ]
+        );
+
+        if(!empty($request)){
+
+            $modelPartsAccessories = PartsAccessories::findOne(['_id'=>$request['parts_accessories_id']]);
+
+            if(!empty($modelPartsAccessories->_id)){
+
+                if($modelPartsAccessories->number >= $request['number']){
+                    $modelPartsAccessories->number -= $request['number'];
+
+                    $log = $modelPartsAccessories->log;
+                    $log[] = [
+                        'log' => 'списание ' . PartsAccessories::getNamePartsAccessories((string)$request['parts_accessories_id']) . '('.$request['number'].') от ' .
+                            SuppliersPerformers::getNameSuppliersPerformers((string)$request['suppliers_performers_id']),
+                        'dateCreate' => new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)
+                    ];
+                    $modelPartsAccessories->log = $log;
+                    if($modelPartsAccessories->save()){
+                        Yii::$app->session->setFlash('alert' ,[
+                                'typeAlert'=>'success',
+                                'message'=>'the changes are saved'
+                            ]
+                        );
+                    }
+                }
+            }
+
+        }
+
+        return $this->redirect(['parts-accessories']);
     }
 
 
@@ -579,5 +630,82 @@ class ManufacturingSuppliersController extends BaseController {
         return false;
     }
 
+    public function actionSaveAssembly()
+    {
+        $request = Yii::$app->request->post();
 
+        if(!empty($request)){
+
+            $modelPartsAccessories = PartsAccessories::findOne(['_id'=>$request['parts_accessories_id']]);
+
+            if(!empty($modelPartsAccessories->_id)){
+
+                $infoComplect = [];
+                if(!empty($request['complect'])){
+                    foreach ($request['complect'] as $k=>$item){
+
+                        $modelComplect = PartsAccessories::findOne(['_id'=>new ObjectID($item)]);
+                        if($modelComplect->number < $request['number'][$k]){
+                            Yii::$app->session->setFlash('alert' ,[
+                                    'typeAlert'=>'danger',
+                                    'message'=>'the changes are not saved. not enough components'
+                                ]
+                            );
+
+                            return $this->redirect(['parts-accessories']);
+                        }
+
+
+                        $infoComplect[$item] = [
+                            'id' => $item,
+                            'number' => $request['number'][$k]
+                        ];
+                    }
+
+                    $infoComponentForLog = [];
+                    foreach($infoComplect as $item){
+                        $modelComplect = PartsAccessories::findOne(['_id'=>new ObjectID($item['id'])]);
+
+                        $modelComplect->number -= $item['number'];
+
+
+                        $log = $modelComplect->log;
+                        $log[] = [
+                            'log' => 'Использован  ' . $modelComplect->title . '('.$item['number'].') для сборки ' .
+                                PartsAccessories::getNamePartsAccessories((string)$request['parts_accessories_id']) . '(1)' ,
+                            'dateCreate' => new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)
+                        ];
+                        $modelComplect->log = $log;
+                        if($modelComplect->save()){
+                            $infoComponentForLog[] = $modelComplect->title . ' ('.$item['number'].')';
+                        }
+
+                    }
+
+                    $modelPartsAccessories->number++;
+
+
+                    $log = $modelPartsAccessories->log;
+                    $log[] = [
+                        'log' => 'Собран ' . PartsAccessories::getNamePartsAccessories((string)$request['parts_accessories_id']) . '(1) из ' .
+                            implode(', ',$infoComponentForLog) ,
+                        'dateCreate' => new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)
+                    ];
+                    $modelPartsAccessories->log = $log;
+                    if($modelPartsAccessories->save()){
+                        Yii::$app->session->setFlash('alert' ,[
+                                'typeAlert'=>'success',
+                                'message'=>'the changes are saved'
+                            ]
+                        );
+                    }
+
+                }
+
+            }
+
+        }
+
+        $this->redirect(['parts-accessories']);
+    }
 }

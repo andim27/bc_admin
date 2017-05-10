@@ -29,6 +29,13 @@
             'id'=>'infoWarehouse',
         ])?>
     </div>
+    <div class="col-md-2 m-b">
+        <?=Html::dropDownList('infoCity', (!empty($request['infoCity']) ? $request['infoCity'] : 'all'),
+            $listCity,[
+            'class'=>'form-control infoCity',
+            'id'=>'infoCity',
+        ])?>
+    </div>
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
     </div>
@@ -52,6 +59,9 @@
                         <?=THelper::t('login')?>
                     </th>
                     <th>
+                        <?=THelper::t('city')?>
+                    </th>
+                    <th>
                         <?=THelper::t('goods')?>
                     </th>
                     <th>
@@ -67,10 +77,12 @@
                 <?php if(!empty($model)) {?>
                     <?php foreach($model as $item) {?>
                         <?php if (!empty($item->statusSale) && count($item->statusSale->set)>0 && $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {?>
+                        <?php if (empty($request['infoCity'])  || $request['infoCity'] == $item->infoUser->city || (empty($item->infoUser->city) && $request['infoCity']=='None')) {?>
                         <tr>
                             <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
                             <td><?=$item->infoUser->secondName?> <?=$item->infoUser->firstName?></td>
                             <td><?=$item->username?></td>
+                            <td><?=$item->infoUser->city.'('.$item->infoUser->country.')'?></td>
                             <td><?=$item->productName?></td>
                             <td><?=$item->price?></td>
                             <td>
@@ -95,6 +107,7 @@
                             <td>
                                 <?= Html::a('<i class="fa fa-comment"></i>', ['/business/status-sales/look-comment','idSale'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                             </td>
+                        <?php } ?>
                         <?php } ?>
                     <?php } ?>
                 <?php } ?>

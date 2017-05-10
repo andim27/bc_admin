@@ -447,12 +447,30 @@ class StatusSalesController extends BaseController {
             ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
 
+        /** get list city */
+        $listCity = [];
+        $listCity[''] = 'Выберите город';
+        if(!empty($model)){
+            foreach ($model as $item){
+                if($item->statusSale->checkSalesForUserChange($listAdmin)){
+                    
+                    $city = $item->infoUser->city;
+                    if (empty($item->infoUser->city)){
+                        $city = 'None';
+                    }
+                    
+                    $listCity[$city] = $city . '('.$item->infoUser->country.')';                    
+                }
+
+            }
+        }
 
         return $this->render('report-sales-admins',[
             'language'          => Yii::$app->language,
             'request'           => $request,
             'model'             => $model,
             'listAdmin'        => $listAdmin,
+            'listCity'        => $listCity,
         ]);
     }
 
