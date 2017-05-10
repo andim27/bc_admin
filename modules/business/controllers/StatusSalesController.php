@@ -453,16 +453,18 @@ class StatusSalesController extends BaseController {
         if(!empty($model)){
             foreach ($model as $item){
                 if($item->statusSale->checkSalesForUserChange($listAdmin)){
-                    
-                    $city = $item->infoUser->city;
+
                     if (empty($item->infoUser->city)){
-                        $city = 'None';
+                        $listCity['None('.$item->infoUser->country.')'] = 'None('.$item->infoUser->country.')';
+                    } else{
+                        $listCity[$item->infoUser->city] = $item->infoUser->city . '('.$item->infoUser->country.')';
                     }
                     
-                    $listCity[$city] = $city . '('.$item->infoUser->country.')';                    
-                }
 
+                }
             }
+
+            ksort($listCity);
         }
 
         return $this->render('report-sales-admins',[

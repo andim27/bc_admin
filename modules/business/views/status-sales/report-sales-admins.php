@@ -74,10 +74,12 @@
                 </tr>
             </thead>
             <tbody>
+                <?php $totalSum = 0;?>
                 <?php if(!empty($model)) {?>
                     <?php foreach($model as $item) {?>
                         <?php if (!empty($item->statusSale) && count($item->statusSale->set)>0 && $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {?>
-                        <?php if (empty($request['infoCity'])  || $request['infoCity'] == $item->infoUser->city || (empty($item->infoUser->city) && $request['infoCity']=='None')) {?>
+                        <?php if (empty($request['infoCity'])  || $request['infoCity'] == $item->infoUser->city || (empty($item->infoUser->city) && $request['infoCity']=='None('.$item->infoUser->country.')')) {?>
+                        <?php $totalSum += $item->price;?>
                         <tr>
                             <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
                             <td><?=$item->infoUser->secondName?> <?=$item->infoUser->firstName?></td>
@@ -112,6 +114,22 @@
                     <?php } ?>
                 <?php } ?>
             </tbody>
+            <thead>
+            <tr>
+                <th>
+                    <?=THelper::t('total')?>
+                </th>
+                <th>
+                    <?=$totalSum?>
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
         </table>
     </div>
 </section>
