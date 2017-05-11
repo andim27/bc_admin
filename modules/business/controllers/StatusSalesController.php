@@ -1105,15 +1105,7 @@ class StatusSalesController extends BaseController {
                     $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
 
                     $flUse = 0;
-                    if(!empty($request['listWarehouse']) && $request['listWarehouse']!='all'){
-                        if(in_array((string)$itemSet['idUserChange'],$listAdmin)) {
-                            $flUse = 1;
-                        }
-                    } else if(!empty($request['listAdmin']) && $request['listAdmin']!='placeh'){
-                        if(in_array((string)$itemSet['idUserChange'],$listAdmin)) {
-                            $flUse = 1;
-                        }
-                    } else{
+                    if(in_array((string)$itemSet['idUserChange'],$listAdmin)) {
                         $flUse = 1;
                     }
 
