@@ -1030,10 +1030,6 @@ class StatusSalesController extends BaseController {
             }
         }
 
-        if(empty($listAdmin)){
-            $listAdmin[] = \Yii::$app->view->params['user']->id;
-        }
-
 
         $model = Sales::find()
             ->where([
@@ -1046,7 +1042,7 @@ class StatusSalesController extends BaseController {
             ->all();
 
         $infoGoods = $infoSetGoods = [];
-        if(!empty($model)){
+        if(!empty($model) && !empty($listAdmin)){
             foreach ($model as $item){
 
                 // info pack
@@ -1101,7 +1097,7 @@ class StatusSalesController extends BaseController {
                 ]
             ])
             ->all();
-        if(!empty($modelLastChangeStatus)){
+        if(!empty($modelLastChangeStatus) && !empty($listAdmin)){
             $from = strtotime($dateInterval['from']);
             $to = strtotime($dateInterval['to']);
             foreach ($modelLastChangeStatus as $item){
