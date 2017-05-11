@@ -473,26 +473,6 @@ class StatusSalesController extends BaseController {
             }
         }
 
-        
-
-
-
-//        $modelLastChangeStatus = StatusSales::find()
-//            ->where([
-//                'setSales.dateChange' => [
-//                    '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
-//                    '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
-//                ]
-//            ])
-//            ->all();
-//
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo "<xmp>";
-//        print_r(new UTCDateTime(strtotime($request['from']) * 1000));
-//        print_r(new UTCDateTime(strtotime($request['to']) * 1000));
-//        print_r($modelLastChangeStatus);
-//        echo "</xmp>";
-
         /** get list city */
         $listCity = [];
         $listCity[''] = 'Выберите город';
@@ -673,6 +653,8 @@ class StatusSalesController extends BaseController {
             ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
 
+
+
         $infoGoods = $infoSetGoods = [];
         if(!empty($model)){
             foreach ($model as $item){
@@ -710,17 +692,59 @@ class StatusSalesController extends BaseController {
                             $infoSetGoods[$itemSet->title]['issue'] = 0;
                         }
 
-                        if($itemSet->status == 'status_sale_issued'){
-                            $infoSetGoods[$itemSet->title]['issue']++;
-                        }
+//                        if($itemSet->status == 'status_sale_issued'){
+//                            $infoSetGoods[$itemSet->title]['issue']++;
+//                        }
 
                         $infoSetGoods[$itemSet->title]['books']++;
                     }
 
                 }
+
             }
         }
-        
+
+        $modelLastChangeStatus = StatusSales::find()
+            ->where([
+                'setSales.dateChange' => [
+                    '$gte' => new UTCDateTime(strtotime($dateInterval['from']) * 1000),
+                    '$lt' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->all();
+        if(!empty($modelLastChangeStatus)){
+            $from = strtotime($dateInterval['from']);
+            $to = strtotime($dateInterval['to']);
+            foreach ($modelLastChangeStatus as $item){
+                foreach($item->setSales as $itemSet){
+                    $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
+
+                    $flUse = 0;
+                    if(!empty($request['listWarehouse']) && $request['listWarehouse']!='all'){
+                        if(in_array((string)$itemSet['idUserChange'],$listAdmin)) {
+                            $flUse = 1;
+                        }
+                    } else if(!empty($request['listAdmin']) && $request['listAdmin']!='placeh'){
+                        if(in_array((string)$itemSet['idUserChange'],$listAdmin)) {
+                            $flUse = 1;
+                        }
+                    } else{
+                        $flUse = 1;
+                    }
+
+                    if($itemSet['status'] == 'status_sale_issued' && $dateChange>=$from && $dateChange<=$to && $flUse==1){
+                        if(empty($infoSetGoods[$itemSet['title']]['books'])){
+                            $infoSetGoods[$itemSet['title']]['books'] = 0;
+                            $infoSetGoods[$itemSet['title']]['issue'] = 0;
+                        }
+
+                        $infoSetGoods[$itemSet['title']]['issue']++;
+                    }
+                }
+
+            }
+        }
+
         return $this->render('consolidated-report-sales',[
             'language' => Yii::$app->language,
             'dateInterval' => $dateInterval,

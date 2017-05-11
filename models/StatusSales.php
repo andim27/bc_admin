@@ -6,6 +6,9 @@ use yii\base\Model;
 use app\components\THelper;
 
 /**
+ * @inheritdoc
+ * @property Sales $sales
+ * 
  * Class StatusSales
  * @package app\models
  */
@@ -59,6 +62,13 @@ class StatusSales extends \yii2tech\embedded\mongodb\ActiveRecord
     public function embedSet()
     {
         return $this->mapEmbeddedList('setSales',SetSales::className());
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getSales(){
+        return $this->hasOne(Sales::className(),['_id'=>'idSale']);
     }
 
     /**
