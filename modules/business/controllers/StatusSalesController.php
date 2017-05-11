@@ -394,6 +394,7 @@ class StatusSalesController extends BaseController {
             $request['infoWarehouse'] = 'for_me';
             $request['to'] = date("Y-m-d");
             $request['from'] = date("Y-01-01");
+            $request['infoTypeDate'] = 'create';
         }
 
         if( $request['infoWarehouse'] == 'for_me'){
@@ -403,15 +404,40 @@ class StatusSalesController extends BaseController {
             $listAdmin = $infoWarehouse->idUsers;
         }
 
-        $model = Sales::find()
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
-                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
-                ]
-            ])
-            ->andWhere(['in','product',Products::productIDWithSet()])
-            ->all();
+        $model = [];
+        if($request['infoTypeDate'] == 'create'){
+            $model = Sales::find()
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                    ]
+                ])
+                ->andWhere(['in','product',Products::productIDWithSet()])
+                ->all();
+
+        } else {
+
+            $modelLastChangeStatus = StatusSales::find()
+                ->where([
+                    'setSales.dateChange' => [
+                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                        '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                    ]
+                ])
+                ->all();
+            $listOrdderId = [];
+            if(!empty($modelLastChangeStatus)){
+                foreach ($modelLastChangeStatus as $item){
+                    $listOrdderId[] = $item->idSale;
+                }
+
+
+                $model = Sales::find()
+                    ->andWhere(['in','_id',$listOrdderId])
+                    ->all();
+            }
+        }
 
 
         return $this->render('report-sales',[
@@ -548,19 +574,44 @@ class StatusSalesController extends BaseController {
      * @param $from
      * @param $to
      */
-    public function actionExportReport($from,$to,$infoUser)
+    public function actionExportReport($from,$to,$infoUser,$infoTypeDate)
     {
         $language = Yii::$app->language;
 
-        $model = Sales::find()
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime($from) * 1000),
-                    '$lte' => new UTCDatetime(strtotime($to) *1000)
-                ]
-            ])
-            ->andWhere(['in','product',Products::productIDWithSet()])
-            ->all();
+        $model = [];
+        if($infoTypeDate == 'create'){
+            $model = Sales::find()
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDateTime(strtotime($from) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($to . ' 23:59:59') * 1000)
+                    ]
+                ])
+                ->andWhere(['in','product',Products::productIDWithSet()])
+                ->all();
+
+        } else {
+
+            $modelLastChangeStatus = StatusSales::find()
+                ->where([
+                    'setSales.dateChange' => [
+                        '$gte' => new UTCDateTime(strtotime($from) * 1000),
+                        '$lt' => new UTCDateTime(strtotime($to . ' 23:59:59') * 1000)
+                    ]
+                ])
+                ->all();
+            $listOrdderId = [];
+            if(!empty($modelLastChangeStatus)){
+                foreach ($modelLastChangeStatus as $item){
+                    $listOrdderId[] = $item->idSale;
+                }
+
+
+                $model = Sales::find()
+                    ->andWhere(['in','_id',$listOrdderId])
+                    ->all();
+            }
+        }
 
         if( $infoUser == 'for_me'){
             $listAdmin = [$this->user->id];
@@ -571,12 +622,27 @@ class StatusSalesController extends BaseController {
 
         $infoExport = [];
         if(!empty($model)){
+            $fromT = strtotime($from);
+            $toT = strtotime($to);
             foreach ($model as $item) {
 
                 $status_sale = [];
                 if (!empty($item->statusSale) && count($item->statusSale->set)>0 && $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {
                     foreach ($item->statusSale->set as $itemSet) {
-                        $status_sale[] = $itemSet->title . '(' . THelper::t($itemSet->status) . ')';
+                        $dateChange = strtotime($itemSet->dateChange->toDateTime()->format('Y-m-d'));
+
+                        $show = 0;
+                        if($infoTypeDate == 'update') {
+                            if($dateChange>=$fromT && $dateChange<=$toT) {
+                                $show = 1;
+                            }
+                        } else {
+                            $show = 1;
+                        }
+
+                        if($show == 1) {
+                            $status_sale[] = $itemSet->title . '(' . THelper::t($itemSet->status) . ') - ' . $itemSet->dateChange->toDateTime()->format('Y-m-d H:i:s');
+                        }
                     }
 
                     $infoExport[] = [
