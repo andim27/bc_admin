@@ -432,20 +432,66 @@ class StatusSalesController extends BaseController {
             $request['infoWarehouse'] = '';
             $request['to'] = date("Y-m-d");
             $request['from'] = date("Y-01-01");
+            $request['infoTypeDate'] = 'create';
         } else {
             $listAdmin = [$request['infoWarehouse']];
         }
 
 
-        $model = Sales::find()
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
-                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
-                ]
-            ])
-            ->andWhere(['in','product',Products::productIDWithSet()])
-            ->all();
+        $model = [];
+        if($request['infoTypeDate'] == 'create'){
+            $model = Sales::find()
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                    ]
+                ])
+                ->andWhere(['in','product',Products::productIDWithSet()])
+                ->all();
+            
+        } else {
+
+            $modelLastChangeStatus = StatusSales::find()
+                ->where([
+                    'setSales.dateChange' => [
+                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                        '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                    ]
+                ])
+                ->all();
+            $listOrdderId = [];
+            if(!empty($modelLastChangeStatus)){
+                foreach ($modelLastChangeStatus as $item){
+                    $listOrdderId[] = $item->idSale;
+                }
+
+
+                $model = Sales::find()
+                    ->andWhere(['in','_id',$listOrdderId])
+                    ->all();
+            }
+        }
+
+        
+
+
+
+//        $modelLastChangeStatus = StatusSales::find()
+//            ->where([
+//                'setSales.dateChange' => [
+//                    '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+//                    '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+//                ]
+//            ])
+//            ->all();
+//
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo "<xmp>";
+//        print_r(new UTCDateTime(strtotime($request['from']) * 1000));
+//        print_r(new UTCDateTime(strtotime($request['to']) * 1000));
+//        print_r($modelLastChangeStatus);
+//        echo "</xmp>";
 
         /** get list city */
         $listCity = [];
