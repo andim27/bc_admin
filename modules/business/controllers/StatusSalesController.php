@@ -1218,22 +1218,22 @@ class StatusSalesController extends BaseController {
 
     public function actionFix()
     {
-//        $idOrder = '589b6db757fa3aa166da476f';
+//        $idOrder = '58f7208d3b04cb6703820562';
 //
-//        $nameGoods = 'Прибор Life Expert';
+//        $nameGoods = 'Прибор Life Expert PROFI';
 //
-//
-//        $model = StatusSales::find()->where(['idSale'=>new ObjectID($idOrder)])->one();
+//        $model = StatusSales::findOne(['idSale'=>new ObjectID($idOrder)]);
 //
 //        foreach ($model->set as $item) {
 //            if($item->title == $nameGoods){
-//                $item->idUserChange = new ObjectID('5888f28d1747fc8676e8d579');
+//                $item->status = 'status_sale_new';
+//                $item->idUserChange = null;
 //            }
 //        }
 //
-//        foreach ($model->reviews as $review) {
-//            $review->idUser = new ObjectID('5888f28d1747fc8676e8d579');
-//        }
+//        $reviews = $model->reviews;
+//        unset($reviews['0'],$reviews['2']);
+//        $model->reviews = $reviews;
 //
 //        $model->save();
 

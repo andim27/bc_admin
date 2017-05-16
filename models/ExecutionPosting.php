@@ -3,17 +3,17 @@
 namespace app\models;
 
 /**
- * Class SuppliersPerformers
+ * Class ExecutionPosting
  * @package app\models
  */
-class SuppliersPerformers extends \yii2tech\embedded\mongodb\ActiveRecord
+class ExecutionPosting extends \yii2tech\embedded\mongodb\ActiveRecord
 {
     /**
      * @return string
      */
     public static function collectionName()
     {
-        return 'suppliers_performers';
+        return 'execution_posting';
     }
 
     /**
@@ -23,8 +23,16 @@ class SuppliersPerformers extends \yii2tech\embedded\mongodb\ActiveRecord
     {
         return [
             '_id',
-            'title',
-            'coordinates'
+            'parts_accessories_id',
+            'number',
+
+            'list_component',
+
+            'suppliers_performers_id',
+            'date_execution',
+            'date_create',
+            
+            'log'
         ];
     }
 
