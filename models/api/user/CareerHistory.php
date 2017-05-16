@@ -8,6 +8,11 @@ use app\models\api;
 class CareerHistory {
 
     public $username;
+    public $firstName;
+    public $secondName;
+    public $country;
+    public $city;
+    public $avatar;
     public $careerRank;
     public $careerDate;
 
@@ -34,7 +39,11 @@ class CareerHistory {
 
                 $careerHistory->username = $object->username;
                 $careerHistory->careerRank = $object->career->rank;
-
+                $careerHistory->firstName = $object->firstName;
+                $careerHistory->secondName = $object->secondName;
+                $careerHistory->country = $object->country;
+                $careerHistory->city = $object->city;
+                $careerHistory->avatar = $object->avatar;
                 $careerHistory->careerDate = strtotime($object->career->date);
 
                 $result[] = $careerHistory;

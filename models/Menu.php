@@ -62,6 +62,12 @@ Class Menu
                         'url' => ['/business/user/docs'],
                         'action' => 'docs',
                     ],
+                    [
+                        'key'   =>  'sidebar_users_career_history',
+                        'label' => THelper::t('sidebar_users_career_history'),
+                        'url' => ['/business/career-history'],
+                        'action' => 'index',
+                    ],
 
                 ]
             ],
