@@ -107,17 +107,28 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
     }
 
 
-    public static function getHowMuchCanCollect($id)
+    public static function getHowMuchCanCollect($id,$listComponents = [])
     {
         
         $model = self::findOne(['_id'=>new ObjectID($id)]);
 
         $composite = [];
         foreach ($model->composite as $item){
-
             $modelComposite = self::findOne(['_id'=>$item['_id']]);
 
-            $composite[(string)$item['_id']]=intval($modelComposite->number/$item['number']);
+            if(empty($listComponents) || (!empty($listComponents) && in_array((string)$item['_id'],$listComponents))){
+
+                $composite[(string)$item['_id']]=intval($modelComposite->number/$item['number']);
+            } elseif (!empty($listComponents) && !in_array((string)$item['_id'],$listComponents)){
+
+                foreach ($modelComposite->interchangeable as $itemInterchangeable) {
+                    if(!empty($listComponents) && in_array($itemInterchangeable,$listComponents)){
+                        $modelComposite = self::findOne(['_id'=>new ObjectID($itemInterchangeable)]);
+                        $composite[$itemInterchangeable]=intval($modelComposite->number/$item['number']);
+                    }
+                }
+            }
+
         }
 
         $number = min($composite);

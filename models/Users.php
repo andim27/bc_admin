@@ -84,6 +84,12 @@ class Users extends ActiveRecord
             
     }
 
+    public static function getAllAdmin(){
+        return self::find()
+            ->where(['isAdmin' => 1])
+            ->all();
+    }
+
     public static function getListAdmin()
     {
         $listAdmin['placeh'] = 'Выберите пользователя';

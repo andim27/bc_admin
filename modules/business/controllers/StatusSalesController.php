@@ -1218,24 +1218,24 @@ class StatusSalesController extends BaseController {
 
     public function actionFix()
     {
-//        $idOrder = '589b6db757fa3aa166da476f';
-//
-//        $nameGoods = 'Прибор Life Expert';
-//
-//
-//        $model = StatusSales::find()->where(['idSale'=>new ObjectID($idOrder)])->one();
-//
-//        foreach ($model->set as $item) {
-//            if($item->title == $nameGoods){
-//                $item->idUserChange = new ObjectID('5888f28d1747fc8676e8d579');
-//            }
-//        }
-//
-//        foreach ($model->reviews as $review) {
-//            $review->idUser = new ObjectID('5888f28d1747fc8676e8d579');
-//        }
-//
-//        $model->save();
+        $idOrder = '58e5727c1c5b986e62818029';
+
+        $nameGoods = 'Прибор Life Expert PROFI';
+
+        $model = StatusSales::findOne(['idSale'=>new ObjectID($idOrder)]);
+
+        foreach ($model->set as $item) {
+            if($item->title == $nameGoods){
+                $item->status = 'status_sale_new';
+                $item->idUserChange = null;
+            }
+        }
+
+        $reviews = $model->reviews;
+        unset($reviews['0']);
+        $model->reviews = $reviews;
+
+        $model->save();
 
         header('Content-Type: text/html; charset=utf-8');
         echo "<xmp>";

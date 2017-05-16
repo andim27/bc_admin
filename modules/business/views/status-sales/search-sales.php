@@ -100,30 +100,28 @@
                     <td class="text-center">
 
                         <?php if($item->type == '-1') { ?>
-                            <div>Отменен заказ</div>
+                            <div  class="label label-danger">Отменен заказ</div>
+                        <?php } else { ?>
+                            <table>
+                                <?php foreach ($infoSet as $itemSet) {?>
+                                    <tr data-set="<?= $itemSet->title ?>">
+                                        <td>
+                                            <?= $itemSet->title ?>
+                                        </td>
+                                        <td>
+                                            <span class="label label-default statusOrder">
+                                                <?= THelper::t($itemSet->status) ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="actionOrder">
+                                                <?= Html::a(THelper::t('change_status'), ['/business/status-sales/change-status','idSale'=>$item->_id->__toString(),'title'=>$itemSet->title], [ 'class' => 'btn btn-success', 'data-toggle'=>'ajaxModal']) ?>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </table>
                         <?php } ?>
-
-                        <table>
-                            <?php foreach ($infoSet as $itemSet) {?>
-                                <tr data-set="<?= $itemSet->title ?>">
-                                    <td>
-                                        <?= $itemSet->title ?>
-                                    </td>
-                                    <td>
-                                        <span class="label label-default statusOrder">
-                                            <?= THelper::t($itemSet->status) ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="actionOrder">
-                                            <?= Html::a(THelper::t('change_status'), ['/business/status-sales/change-status','idSale'=>$item->_id->__toString(),'title'=>$itemSet->title], [ 'class' => 'btn btn-success', 'data-toggle'=>'ajaxModal']) ?>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                            <?php } ?>
-
-                        </table>
 
                     </td>
                     <td>
