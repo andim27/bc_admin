@@ -1218,7 +1218,7 @@ class StatusSalesController extends BaseController {
 
     public function actionFix()
     {
-        $idOrder = '58e5727c1c5b986e62818029';
+        $idOrder = '58f7208d3b04cb6703820562';
 
         $nameGoods = 'Прибор Life Expert PROFI';
 
@@ -1232,7 +1232,7 @@ class StatusSalesController extends BaseController {
         }
 
         $reviews = $model->reviews;
-        unset($reviews['0']);
+        unset($reviews['0'],$reviews['2']);
         $model->reviews = $reviews;
 
         $model->save();
