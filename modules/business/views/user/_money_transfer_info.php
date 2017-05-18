@@ -47,7 +47,7 @@
 <?php if ($userFrom && $userTo) { ?>
     <div class="row">
         <div class="col-md-6">
-            <input type="text" class="form-control money-transfer-moneys-number" placeholder="<?= THelper::t('money_transfer_moneys') ?>">
+            <input type="text" class="form-control money-transfer-moneys-number" placeholder="<?= THelper::t('money_transfer_moneys_number') ?>">
         </div>
         <div class="col-md-1 m-b">
             <a href="javascript:void(0);" class="btn btn-s-md btn-info money-transfer-send-money"><?= THelper::t('money_transfer_send_money') ?></a>
