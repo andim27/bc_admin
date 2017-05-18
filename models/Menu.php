@@ -68,7 +68,12 @@ Class Menu
                         'url' => ['/business/career-history'],
                         'action' => 'index',
                     ],
-
+                    [
+                        'key'   =>  'sidebar_users_money_transfer',
+                        'label' => THelper::t('sidebar_users_money_transfer'),
+                        'url' => ['/business/user/money-transfer'],
+                        'action' => 'money-transfer',
+                    ],
                 ]
             ],
             [
