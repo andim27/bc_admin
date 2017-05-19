@@ -568,4 +568,11 @@ class UserController extends BaseController
         return $result;
     }
 
+    public function actionMoneyTransferLog()
+    {
+        return $this->render('money_transfer_log', [
+            'moneyTransfers' => MoneyTransfer::find()->orderBy('date desc')->all()
+        ]);
+    }
+
 }

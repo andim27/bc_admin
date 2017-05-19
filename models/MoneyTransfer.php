@@ -35,4 +35,28 @@ class MoneyTransfer extends ActiveRecord
         ];
     }
 
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getUserFrom()
+    {
+        return $this->hasOne(Users::className(), ['_id' => 'idFrom']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getUserTo()
+    {
+        return $this->hasOne(Users::className(), ['_id' => 'idTo']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getAdmin()
+    {
+        return $this->hasOne(Users::className(), ['_id' => 'admin']);
+    }
+
 }

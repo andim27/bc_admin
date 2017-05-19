@@ -74,6 +74,12 @@ Class Menu
                         'url' => ['/business/user/money-transfer'],
                         'action' => 'money-transfer',
                     ],
+                    [
+                        'key'   =>  'sidebar_users_money_transfer_log',
+                        'label' => THelper::t('sidebar_users_money_transfer_log'),
+                        'url' => ['/business/user/money-transfer-log'],
+                        'action' => 'money-transfer-log',
+                    ],
                 ]
             ],
             [
