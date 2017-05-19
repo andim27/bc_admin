@@ -3,6 +3,7 @@
 namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
+use app\models\MoneyTransfer;
 use app\models\Transaction;
 use app\models\Users;
 use app\modules\business\models\ProfileForm;
@@ -520,23 +521,40 @@ class UserController extends BaseController
         } else {
             $transaction = new Transaction();
 
+            $date = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
             $transaction->idFrom = new ObjectID($userFrom->_id);
             $transaction->idTo = new ObjectID($userTo->_id);
             $transaction->amount = $money;
             $transaction->forWhat = THelper::t('money_transfer_for_what');
             $transaction->type = Transaction::TYPE_MONEY;
             $transaction->reduced = true;
-            $transaction->dateCreate = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+            $transaction->dateCreate = $date;
             $transaction->usernameTo = $userTo->username;
-            $transaction->dateReduce = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
-            $transaction->saldoFrom = $userFrom->moneys - $money;
-            $transaction->saldoTo = $userTo->moneys + $money;
+            $transaction->dateReduce = $date;
+
+            $balanceFrom = $userFrom->moneys;
+            $transaction->saldoFrom = $balanceFrom - $money;
+            $balanceTo = $userTo->moneys;
+            $transaction->saldoTo = $balanceTo + $money;
             $transaction->__v = 0;
 
             if ($transaction->save()) {
                 $userFrom->moneys -= $money;
                 $userTo->moneys += $money;
-                if ($userFrom->update() && $userTo->save()) {
+                if ($userFrom->save() && $userTo->save()) {
+                    $moneyTransfer = new MoneyTransfer();
+
+                    $moneyTransfer->idFrom = new ObjectID($userFrom->_id);
+                    $moneyTransfer->balanceFrom = $balanceFrom;
+                    $moneyTransfer->idTo = new ObjectID($userTo->_id);
+                    $moneyTransfer->balanceTo = $balanceTo;
+                    $moneyTransfer->amount = $money;
+                    $moneyTransfer->admin = new ObjectID($this->user->id);
+                    $moneyTransfer->date = $date;
+
+                    $moneyTransfer->save();
+
                     $result = ['success' => true, 'data' => $transaction];
                 } else {
                     $transaction->delete();
