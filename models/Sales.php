@@ -47,6 +47,7 @@ class Sales extends ActiveRecord
             'username',
             '__v',
             'dateReduce',
+            'dateCreate',
         ];
     }
 
@@ -103,12 +104,12 @@ class Sales extends ActiveRecord
     
     public function getInfoUser()
     {
-        return $this->hasOne(Users::className(),['_id'=>'idUser']);
+        return $this->hasOne(Users::className(), ['_id' => 'idUser']);
     }
 
     public function getInfoProduct()
     {
-        return $this->hasOne(Products::className(),['product'=>'product']);
+        return $this->hasOne(Products::className(),['product' => 'product']);
     }
 
 

@@ -4,6 +4,7 @@ namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
 use app\models\MoneyTransfer;
+use app\models\Sales;
 use app\models\Transaction;
 use app\models\Users;
 use app\modules\business\models\ProfileForm;
@@ -283,9 +284,10 @@ class UserController extends BaseController
 
             }
         }
+
         return $this->render('purchase', [
             'model' => $this->user,
-            'purchases' => api\Sale::all()
+            'purchases' => Sales::find()->all()
         ]);
     }
 

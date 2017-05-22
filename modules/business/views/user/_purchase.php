@@ -64,7 +64,11 @@
                     <?= $purcahseUser->firstName . ' ' . $purcahseUser->secondName ?>
                 </td>
                 <td>
-                    <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/user/cancel-purchase', 'id' => $purchase->id], ['onclick' => 'return confirmCancellation();']) ?>
+                    <?php if ($purchase->type == 1) { ?>
+                        <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/user/cancel-purchase', 'id' => $purchase->id], ['onclick' => 'return confirmCancellation();']) ?>
+                    <?php } else { ?>
+                        <?= THelper::t('users_purchase_deleted') ?>
+                    <?php } ?>
                 </td>
             </tr>
         <?php }

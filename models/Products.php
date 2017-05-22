@@ -31,7 +31,7 @@ class Products extends ActiveRecord
             'name',
             'productName',
             'productSet',
-            
+            'price'
         ];
     }
 

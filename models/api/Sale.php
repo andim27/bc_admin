@@ -17,6 +17,7 @@ class Sale {
     public $dateCreate;
     public $productName;
     public $username;
+    public $type;
 
     /**
      * Returns sales
@@ -77,6 +78,7 @@ class Sale {
                 $sale->dateCreate = strtotime($object->dateCreate);
                 $sale->productName = $object->productName;
                 $sale->username = $object->username;
+                $sale->type = $object->type;
 
                 $result[] = $sale;
             }

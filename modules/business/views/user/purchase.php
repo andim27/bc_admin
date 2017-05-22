@@ -71,20 +71,23 @@
                             <tbody>
                             <?php if ($purchases) {
                                 foreach ($purchases as $purchase) {
+
                                     if (! isset($products[$purchase->product])) {
-                                        $product = $products[$purchase->product] = $purchase->getProduct();
+                                        $product = $products[$purchase->product] = $purchase->getInfoProduct()->one();
                                     } else {
                                         $product = $products[$purchase->product];
                                     }
-                                    if (! isset($users[$purchase->idUser])) {
-                                        $purcahseUser = $users[$purchase->idUser] = $purchase->getUser();
+
+                                    $idUser = strval($purchase->idUser);
+                                    if (! isset($users[$idUser])) {
+                                        $purcahseUser = $users[$idUser] = $purchase->getInfoUser()->one();
                                     } else {
-                                        $purcahseUser = $users[$purchase->idUser];
+                                        $purcahseUser = $users[$idUser];
                                     }
                                     ?>
                                     <tr>
                                         <td>
-                                            <?= gmdate('d.m.Y', $purchase->dateCreate) ?>
+                                            <?= ($purchase->dateCreate) ?>
                                         </td>
                                         <td>
                                             <?= $product->product ?>
@@ -105,7 +108,11 @@
                                             <?= $purcahseUser->firstName . ' ' . $purcahseUser->secondName ?>
                                         </td>
                                         <td>
-                                            <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/user/cancel-purchase', 'id' => $purchase->id], ['onclick' => 'return confirmCancellation();']) ?>
+                                            <?php if ($purchase->type == 1) { ?>
+                                            <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/user/cancel-purchase', 'id' => $purchase->_id], ['onclick' => 'return confirmCancellation();']) ?>
+                                            <?php } else { ?>
+                                                <?= THelper::t('users_purchase_deleted') ?>
+                                            <?php } ?>
                                         </td>
                                     </tr>
                                 <?php }
