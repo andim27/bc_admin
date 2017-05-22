@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use yii\helpers\ArrayHelper;
 
 /**
  * Class CurrencyRate
@@ -29,6 +30,7 @@ class CurrencyRate extends \yii2tech\embedded\mongodb\ActiveRecord
     {
         return [
             '_id',
+            'eur',
             'usd',
             'uah',
             'rub',
@@ -40,5 +42,12 @@ class CurrencyRate extends \yii2tech\embedded\mongodb\ActiveRecord
     public static function getListCurrency()
     {
         return self::$listCurrency;
+    }
+
+    public static function getActualCurrency()
+    {
+        $model = self::find()->orderBy(['dateCreate'>SORT_DESC])->one()->toArray();
+
+        return $model;
     }
 }

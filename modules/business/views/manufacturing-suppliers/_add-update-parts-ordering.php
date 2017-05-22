@@ -1,10 +1,18 @@
 <?php
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use app\components\THelper;
 use app\models\PartsAccessories;
 use app\models\SuppliersPerformers;
 use app\models\CurrencyRate;
+
+
+$listGoods = PartsAccessories::getListPartsAccessories();
+$listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
+
+$listSuppliersPerformers=SuppliersPerformers::getListSuppliersPerformers();
+$listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поставщика-испонителя'],$listSuppliersPerformers);
 ?>
 
 <div class="modal-dialog">
@@ -27,7 +35,7 @@ use app\models\CurrencyRate;
                     <?=Html::label(THelper::t('goods'))?>
                     <?=Html::dropDownList('parts_accessories_id',
                         (!empty((string)$model->parts_accessories_id) ? (string)$model->parts_accessories_id: ''),
-                        PartsAccessories::getListPartsAccessories(),[
+                        $listGoods,[
                             'class'=>'form-control',
                             'id'=>'selectChangeStatus',
                             'required'=>'required',
@@ -43,7 +51,7 @@ use app\models\CurrencyRate;
                     <?=Html::label(THelper::t('sidebar_suppliers_performers'))?>
                     <?=Html::dropDownList('suppliers_performers_id',
                         (!empty((string)$model->suppliers_performers_id) ? (string)$model->suppliers_performers_id: ''),
-                        SuppliersPerformers::getListSuppliersPerformers(),[
+                        $listSuppliersPerformers,[
                             'class'=>'form-control',
                             'id'=>'selectChangeStatus',
                             'required'=>'required',
@@ -57,7 +65,7 @@ use app\models\CurrencyRate;
             <div class="row">
                 <div class="col-md-3">
                     <?=Html::label('count_goods')?>
-                    <?=Html::input('number','number', (!empty($model->number) ? $model->number: '0'),[
+                    <?=Html::input('number','number', (!empty($model->number) ? $model->number: '1'),[
                         'class'=>'form-control',
                         'min'=>'1',
                         'step'=>'1',

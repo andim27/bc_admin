@@ -30,9 +30,13 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         ];
     }
 
+    /**
+     * gwt array all warehouse
+     * @return array
+     */
     public static function getArrayWarehouse()
     {
-        $listAdmin['all'] = 'Все склады';
+        $listAdmin = [];
 
         $model = self::find()->all();
         
@@ -42,10 +46,13 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             }
         }
 
-
         return $listAdmin;
     }
 
+    /**
+     * get all warehouse head admin
+     * @return mixed
+     */
     public static function getListHeadAdminWarehouse()
     {
         $listWarehouse['all'] = 'Мои склады';
@@ -61,7 +68,29 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         return $listWarehouse;
     }
 
+    /**
+     * return id Warehouse user
+     * @return bool|string
+     */
+    public static function getIdMyWarehouse($idUser = ''){
+        
+        if(empty($id)){
+            $idUser = \Yii::$app->view->params['user']->id;
+        }       
 
+        $infoWarehous = self::findOne(['idUsers'=>$idUser]);
+        if(!empty($infoWarehous)){
+            return (string)$infoWarehous->_id;
+        }
+            
+
+        return false;
+    }
+
+
+    /**
+     * @return mixed
+     */
     public static function getMyWarehouse()
     {
         $idUser = \Yii::$app->view->params['user']->id;

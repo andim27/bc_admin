@@ -3,16 +3,35 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use app\components\THelper;
+use app\models\Warehouse;
+use app\models\PartsAccessoriesInWarehouse;
+use app\models\PartsAccessories;
 
-$listWarehouse = ArrayHelper::map($infoWarehouse,'id','warehouse');
+$listWarehouse = Warehouse::getArrayWarehouse();
 $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWarehouse);
+
+$listGoods = PartsAccessories::getListPartsAccessories();
+
+$listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getListGoodsFromMyWarehouse();
+$listGoodsFromMyWarehouse = ArrayHelper::merge([''=>'Выберите товар'],$listGoodsFromMyWarehouse);
+
+$countGoodsFromMyWarehouse = json_encode(PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse());
+
+$countGoodsInParcel = [];
+if(!empty($model->part_parcel)) {
+    foreach($model->part_parcel as $item) {
+        $countGoodsInParcel[$item['goods_id']] = $item['goods_count'];
+    }
+}
+$countGoodsInParcel = json_encode($countGoodsInParcel);
+
 ?>
 
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
-            <h4 class="modal-title">Посылка</h4>
+            <h4 class="modal-title">Посылка <?=(!empty($model->id) ? '№'.$model->id : '')?></h4>
         </div>
 
 
@@ -23,18 +42,38 @@ $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWar
                     'options' => ['enctype' => 'multipart/form-data'],
                 ]); ?>
 
+                <?=Html::hiddenInput('id',(!empty($model->id) ? $model->id : ''))?>
+
+                <div class="form-group row infoDanger"></div>
+
                 <div class="panel panel-default">
-                    <div class="panel-body complectPack"></div>
+                    <div class="panel-body complectPack">
+                        <?php if(!empty($model->part_parcel)) { ?>
+                            <?php foreach($model->part_parcel as $item) { ?>
+                                <div class="form-group row">
+                                    <div class="col-md-7">
+                                        <input type="text" class="form-control" value="<?=$listGoods[$item['goods_id']]?>" disabled="disabled" >
+                                        <input type="hidden" class="form-control" name="complect[id][]" value="<?=$item['goods_id']?>"  >
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" name="complect[count][]"  value="<?=$item['goods_count']?>" >
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-default btn-block removeGoods"><i class="fa fa-trash-o"></i></button>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                        <?php } ?>
+                    </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-md-7">
                         <?=Html::dropDownList('',
                             '',
-                            [''=>'выберите товар','1'=>'goods1','2'=>'goods2'],[
+                            $listGoodsFromMyWarehouse,[
                                 'class'=>'form-control',
                                 'id'=>'selectGoods',
-                                'required'=>'required',
                                 'options' => [
                                     '' => ['disabled' => true]
                                 ],
@@ -61,8 +100,8 @@ $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWar
 
                 <div class="form-group row">
                     <div class="col-md-7">
-                        <?=Html::dropDownList('who_gets',
-                            '',
+                        <?=Html::dropDownList('where_sent',
+                            (!empty($model->where_sent) ? (string)$model->where_sent : ''),
                             $listWarehouse,[
                                 'class'=>'form-control',
                                 'id'=>'whereSend',
@@ -75,7 +114,7 @@ $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWar
                         )?>
                     </div>
                     <div class="col-md-5">
-                        <?=Html::input('text','comment', '',[
+                        <?=Html::input('text','comment', (!empty($model->comment) ? (string)$model->comment : ''),[
                             'class'=>'form-control',
                             'placeholder'=>'Комментарий',
                         ])?>
@@ -84,10 +123,9 @@ $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWar
 
                 <div class="form-group row">
                     <div class="col-md-12">
-                        <?=Html::input('text','', '',[
+                        <?=Html::input('text','who_gets', (!empty($model->who_gets) ? (string)$model->who_gets : ''),[
                             'class'=>'form-control',
                             'placeholder'=>'Кто получает',
-                            'disabled' => true,
                             'id' => 'whoGets'
                         ])?>
                     </div>
@@ -95,7 +133,7 @@ $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWar
 
                 <div class="form-group row">
                     <div class="col-md-12">
-                        <?=Html::input('text','delivery', '',[
+                        <?=Html::input('text','delivery', (!empty($model->delivery) ? (string)$model->delivery : ''),[
                             'class'=>'form-control',
                             'placeholder'=>'Чем отправленна',
                         ])?>
@@ -104,7 +142,7 @@ $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWar
 
                 <div class="form-group row">
                     <div class="col-md-12">
-                        <?=Html::fileInput('document', '',[
+                        <?=Html::fileInput('documents', '',[
                             'class'=>'form-control',
                             'placeholder'=>'Документы',
                         ])?>
@@ -113,11 +151,13 @@ $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWar
 
 
                 <div class="row">
+                    <?php if(!empty($model->id)) { ?>
                     <div class="col-md-3 text-left">
-                        <?= Html::submitButton(THelper::t('delete'), ['class' => 'btn btn-danger assemblyBtn']) ?>
+                        <?= Html::a(THelper::t('delete'),['/business/sending-waiting-parcel/remove-parcel','id'=>$model->id],['class' => 'btn btn-danger removeBtn'])?>
                     </div>
+                    <?php } ?>
                     <div class="col-md-9 text-right">
-                        <?= Html::submitButton(THelper::t('assembly'), ['class' => 'btn btn-success assemblyBtn']) ?>
+                        <?= Html::submitButton(THelper::t('assembly'), ['class' => 'btn btn-success sendBtn']) ?>
                     </div>
                 </div>
 
@@ -128,12 +168,9 @@ $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWar
 </div>
 
 <script>
-    infoWarehouse = <?=json_encode($infoWarehouse)?>
 
-    $('#whereSend').on('change',function(){
-        whereSend = $(this).val();
-        $('#whoGets').val(infoWarehouse[whereSend]['adminName']);
-    })
+    var listCountGoods = <?=$countGoodsFromMyWarehouse?>;
+    var listCountGoodsParcel = <?=$countGoodsInParcel?>
 
     $('#addGoods').on('click',function () {
         var flAddNow = 1;
@@ -164,6 +201,11 @@ $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWar
             return;
         }
 
+        warehouseCount = parseInt((listCountGoods[goodsID] ? listCountGoods[goodsID] : 0));
+        if(warehouseCount < goodsCount) {
+            goodsCount = warehouseCount;
+        }
+
         $(".complectPack").append(
             '<div class="form-group row">' +
                 '<div class="col-md-7">' +
@@ -183,4 +225,32 @@ $listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWar
     $('.complectPack').on('click','.removeGoods',function () {
         $(this).closest(".row").remove();
     });
+
+
+    $('.complectPack').on('change','input[name="complect[count][]"]',function () {
+        $(".infoDanger").html('');
+
+        goodsId = $(this).closest(".row").find('input[name="complect[id][]"]').val();
+        newCount = parseInt($(this).val());
+        warehouseCount = parseInt((listCountGoods[goodsId] ? listCountGoods[goodsId] : 0));
+        countGoodsInParcel = parseInt((listCountGoodsParcel[goodsId] ? listCountGoodsParcel[goodsId] : 0));
+
+        if((warehouseCount + countGoodsInParcel - newCount) < 0){
+            $(".infoDanger").html(
+                '<div class="alert alert-danger fade in">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                    'Такого количества нет на складе. Доступно ' + (warehouseCount + countGoodsInParcel) + 'шт.' +
+                '</div>'
+            );
+
+            $('.sendBtn').hide();
+        } else {
+            $('.sendBtn').show();
+        }
+    });
+
+    function howGoodsNeed() {
+
+    }
+
 </script>

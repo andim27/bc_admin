@@ -2,6 +2,9 @@
 use app\components\THelper;
 use yii\helpers\Html;
 use app\components\AlertWidget;
+use app\models\PartsAccessoriesInWarehouse;
+
+$countGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
 ?>
 
 <div class="row">
@@ -57,19 +60,20 @@ use app\components\AlertWidget;
                     <tr>
                         <td><?=($k+1)?></td>
                         <td><?=$item->title?></td>
-                        <td><?= (!empty($item->number) ? $item->number : '0') ?></td>
+                        <td><?=(!empty($countGoodsFromMyWarehouse[$item->_id->__toString()]) ? $countGoodsFromMyWarehouse[$item->_id->__toString()] : '0');?></td>
                         <td><?=THelper::t($item->unit)?></td>
                         <td>
                             <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                         </td>
                         <td>
-                            <?php
-                                if(empty($item->log)){
-                                   echo Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-parts-accessories','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]);
-                                } else {
-                                   echo Html::a('<i class="fa fa-comment"></i>', ['/business/manufacturing-suppliers/log-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']);
-                                }
-                            ?>
+                            <i class="fa fa-clock-o" title="in process"></i>
+<!--                            --><?php
+//                                if(empty($item->log)){
+//                                   echo Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-parts-accessories','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]);
+//                                } else {
+//                                   echo Html::a('<i class="fa fa-comment"></i>', ['/business/manufacturing-suppliers/log-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']);
+//                                }
+//                            ?>
                         </td>
                     </tr>
                 <?php } ?>

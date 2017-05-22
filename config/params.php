@@ -2,8 +2,9 @@
 
 return [
     'adminEmail' => 'admin@example.com',
-    'apiAddress' => 'http://api.businessprocess.biz/api/',
-    //'apiAddress' => 'http://172.17.0.40:3000/api/',
+    //'apiAddress' => 'http://api.businessprocess.biz/api/',
+    'apiAddress' => 'http://172.18.0.3:3000/api/',
+    'apiAddress' => 'http://172.17.0.57:3000/api/',
     'defaultCountry' => 'RU',
     'useCache' => false,
     'certificate' => [

@@ -5,6 +5,8 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use app\models\PartsAccessories;
 use app\models\SuppliersPerformers;
+use app\components\AlertWidget;
+
 
 $listGoods = PartsAccessories::getListPartsAccessories();
 $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
@@ -13,6 +15,9 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
         <h3 class="m-b-none"><?= THelper::t('sidebar_execution_posting') ?></h3>
     </div>
 
+    <div class="row">
+        <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
+    </div>
 
 
     <div class="row">
@@ -21,7 +26,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 <header class="panel-heading bg-light">
                     <ul class="nav nav-tabs nav-justified">
                         <li class="active">
-                            <a href="#by-sending-execution" class="tab-sending-execution" data-toggle="tab">Ожидание</a>
+                            <a href="#by-waiting-parcel" class="tab-sending-execution" data-toggle="tab">Ожидание</a>
                         </li>
                         <li class="">
                             <a href="#by-posting-executed" class="tab-posting-executed" data-toggle="tab">Отправка</a>
@@ -30,16 +35,16 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 </header>
                 <div class="panel-body">
                     <div class="tab-content">
-                        <div class="tab-pane active" id="by-sending-execution">
-                            <?= $this->render('_sending-parcel',[
-                                'language'  => $language,
-                                'model'     => $model
+                        <div class="tab-pane active" id="by-waiting-parcel">
+                            <?= $this->render('_waiting-parcel',[
+                                'language'      => $language,
+                                'modelWaiting'  => $modelWaiting
                             ]); ?>
                         </div>
                         <div class="tab-pane" id="by-posting-executed">
-                            <?= $this->render('_waiting-parcel',[
-                                'language'  => $language,
-                                'model'     => $model
+                            <?= $this->render('_sending-parcel',[
+                                'language'      => $language,
+                                'modelSending'  => $modelSending
                             ]); ?>
                         </div>
                     </div>

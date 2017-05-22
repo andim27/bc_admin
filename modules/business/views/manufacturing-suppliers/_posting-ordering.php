@@ -1,10 +1,17 @@
 <?php
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use app\components\THelper;
 use app\models\PartsAccessories;
 use app\models\SuppliersPerformers;
 use app\models\CurrencyRate;
+
+$listGoods = PartsAccessories::getListPartsAccessories();
+$listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
+
+$listSuppliersPerformers=SuppliersPerformers::getListSuppliersPerformers();
+$listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поставщика-испонителя'],$listSuppliersPerformers);
 ?>
 
 <div class="modal-dialog">
@@ -22,9 +29,9 @@ use app\models\CurrencyRate;
 
             <div class="form-group">
                 <?=Html::label(THelper::t('goods'))?>
-                <?=Html::dropDownList('parts_accessories_id',
-                    '',
-                    PartsAccessories::getListPartsAccessories(),[
+                <?=Html::dropDownList('parts_accessories_id','',
+                    $listGoods,
+                    [
                         'class'=>'form-control',
                         'id'=>'selectChangeStatus',
                         'required'=>'required',
@@ -36,9 +43,8 @@ use app\models\CurrencyRate;
 
             <div class="form-group">
                 <?=Html::label(THelper::t('sidebar_suppliers_performers'))?>
-                <?=Html::dropDownList('suppliers_performers_id',
-                    '',
-                    SuppliersPerformers::getListSuppliersPerformers(),[
+                <?=Html::dropDownList('suppliers_performers_id','',
+                    $listSuppliersPerformers,[
                         'class'=>'form-control',
                         'id'=>'selectChangeStatus',
                         'required'=>'required',

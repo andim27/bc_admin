@@ -31,6 +31,7 @@ class SendingWaitingParcel extends \yii2tech\embedded\mongodb\ActiveRecord
 
             'part_parcel',
 
+            'where_sent',
             'who_gets',
             'comment',
 
@@ -39,7 +40,9 @@ class SendingWaitingParcel extends \yii2tech\embedded\mongodb\ActiveRecord
             'documents',
 
             'date_update',
-            'date_create'
+            'date_create',
+            
+            'is_posting'
         ];
     }
 

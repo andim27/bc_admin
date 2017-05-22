@@ -4,17 +4,24 @@ namespace app\modules\business\controllers;
 
 
 
+use app\models\CurrencyRate;
+use app\models\LogWarehouse;
 use app\models\PartsAccessories;
+use app\models\PartsAccessoriesInWarehouse;
 use app\models\PartsOrdering;
 use app\models\SuppliersPerformers;
+use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
 use app\controllers\BaseController;
-use yii\helpers\ArrayHelper;
 
 class ManufacturingSuppliersController extends BaseController {
 
+    /**
+     * info Suppliers and Performers 
+     * @return string
+     */
     public function actionSuppliersPerformers()
     {
         
@@ -25,7 +32,12 @@ class ManufacturingSuppliersController extends BaseController {
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
-    
+
+    /**
+     * popup for  add or edit Suppliers and Performers
+     * @param string $id
+     * @return string
+     */
     public function actionAddUpdateSuppliersPerformers($id = '')
     {
         $model = new SuppliersPerformers();
@@ -40,6 +52,10 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    /**
+     * save info Suppliers and Performers 
+     * @return \yii\web\Response
+     */
     public function actionSaveSuppliersPerformers()
     {
         $request = Yii::$app->request->post();
@@ -76,6 +92,11 @@ class ManufacturingSuppliersController extends BaseController {
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/suppliers-performers');
     }
 
+    /**
+     * remove info Suppliers and Performers
+     * @param $id
+     * @return \yii\web\Response
+     */
     public function actionRemoveSuppliersPerformers($id)
     {
         if(SuppliersPerformers::findOne(['_id'=>new ObjectID($id)])->delete()){
@@ -88,8 +109,11 @@ class ManufacturingSuppliersController extends BaseController {
 
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/suppliers-performers');
     }
-    
-    
+
+    /**
+     * info Parts and Accessories
+     * @return string
+     */
     public function actionPartsAccessories()
     {
         $model = PartsAccessories::find()->all();
@@ -99,25 +123,33 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    //TODO:KAA
     public function actionLogPartsAccessories($id = '')
     {
-        $model = new PartsAccessories();
-
-        if(!empty($id)){
-            $model = $model::findOne(['_id'=>new ObjectID($id)]);
-            
-            $infoLog = [];
-            if(!empty($model->log)){
-                $infoLog = $model->log;
-            }
-        }
-
-        return $this->renderAjax('_log-parts-accessories', [
-            'language' => Yii::$app->language,
-            'infoLog' => $infoLog,
-        ]);
+        return 'TODO';
+        
+//        $model = new PartsAccessories();
+//
+//        if(!empty($id)){
+//            $model = $model::findOne(['_id'=>new ObjectID($id)]);
+//            
+//            $infoLog = [];
+//            if(!empty($model->log)){
+//                $infoLog = $model->log;
+//            }
+//        }
+//
+//        return $this->renderAjax('_log-parts-accessories', [
+//            'language' => Yii::$app->language,
+//            'infoLog' => $infoLog,
+//        ]);
     }
 
+    /**
+     * popup for  add or edit Parts and Accessories
+     * @param string $id
+     * @return string
+     */
     public function actionAddUpdatePartsAccessories($id = '')
     {
         $model = new PartsAccessories();
@@ -132,6 +164,10 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    /**
+     * save info Parts and Accessories
+     * @return \yii\web\Response
+     */
     public function actionSavePartsAccessories()
     {
         $request = Yii::$app->request->post();
@@ -168,20 +204,22 @@ class ManufacturingSuppliersController extends BaseController {
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
     }
 
+    //TODO:KAA
     public function actionRemovePartsAccessories($id)
     {
-        if(PartsAccessories::findOne(['_id'=>new ObjectID($id)])->delete()){
-            Yii::$app->session->setFlash('alert' ,[
-                    'typeAlert'=>'success',
-                    'message'=>'remove item'
-                ]
-            );
-        }
-
-        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
+        return 'TODO';
+//        if(PartsAccessories::findOne(['_id'=>new ObjectID($id)])->delete()){
+//            Yii::$app->session->setFlash('alert' ,[
+//                    'typeAlert'=>'success',
+//                    'message'=>'remove item'
+//                ]
+//            );
+//        }
+//
+//        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
     }
 
-
+//TODO:KAA
     public function actionInterchangeableGoods()
     {
         $model = PartsAccessories::find()->all();
@@ -205,7 +243,7 @@ class ManufacturingSuppliersController extends BaseController {
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
-
+//TODO:KAA
     public function actionAddUpdateInterchangeableGoods($id = '',$idInterchangeable = '')
     {
         return $this->renderAjax('_add-update-interchangeable-goods', [
@@ -214,7 +252,7 @@ class ManufacturingSuppliersController extends BaseController {
             'idInterchangeable' => $idInterchangeable,
         ]);
     }
-
+//TODO:KAA
     public function actionSaveInterchangeableGoods()
     {
         $request = Yii::$app->request->post();
@@ -276,7 +314,7 @@ class ManufacturingSuppliersController extends BaseController {
 
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/interchangeable-goods');
     }
-
+//TODO:KAA
     public function actionRemoveInterchangeableGoods($id,$idInterchangeable)
     {
 
@@ -311,8 +349,8 @@ class ManufacturingSuppliersController extends BaseController {
 
         }
     }
-    
 
+//TODO:KAA
     public function actionCompositeProducts()
     {
         $model = PartsAccessories::find()->all();
@@ -323,7 +361,7 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
 
     }
-
+//TODO:KAA
     public function actionAddUpdateCompositeProducts($id = '')
     {
         $model = new PartsAccessories();
@@ -336,7 +374,7 @@ class ManufacturingSuppliersController extends BaseController {
             'model' => $model,
         ]);
     }
-
+//TODO:KAA
     public function actionSaveCompositeProducts()
     {
         $request = Yii::$app->request->post();
@@ -383,8 +421,12 @@ class ManufacturingSuppliersController extends BaseController {
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/composite-productss');
 
     }
-    
 
+
+    /**
+     * look all parts ordering
+     * @return string
+     */
     public function actionPartsOrdering()
     {
         $model = PartsOrdering::find()->all();
@@ -396,6 +438,11 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    /**
+     * popup create and edit ordering
+     * @param string $id
+     * @return string
+     */
     public function actionAddUpdatePartsOrdering($id = '')
     {
         $model = new PartsOrdering();
@@ -409,55 +456,100 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    /**
+     * save parts ordering
+     * @return \yii\web\Response
+     */
     public function actionSavePartsOrdering()
     {
         $request = Yii::$app->request->post();
 
-        $model = new PartsOrdering();
-
-        if(!empty($request['id'])) {
-            $model = $model::findOne(['_id' => new ObjectID($request['id'])]);
-        }
-
-        $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
-        $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
-        $model->number = $request['number'];
-        $model->price = $request['price'];
-        $model->currency = $request['currency'];
-        $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);
-        $model->dateCreate = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
-        
-        if($model->save()){
-            
-            Yii::$app->session->setFlash('alert' ,[
-                    'typeAlert'=>'success',
-                    'message'=>'the changes are saved'
-                ]
-            );
-
-            return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-ordering');
-        }
-
-
-
         Yii::$app->session->setFlash('alert' ,[
-                'typeAlert' => 'danger',
-                'message' => 'the changes are not saved'
+                'typeAlert'=>'danger',
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
             ]
         );
+
+        if(!empty($request)){
+
+            $model = new PartsOrdering();
+
+            if(!empty($request['id'])) {
+                $model = $model::findOne(['_id' => new ObjectID($request['id'])]);
+            }
+
+            $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
+            $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
+            $model->number = (int)$request['number'];
+            $model->price = (double)$request['price'];
+            $model->currency = $request['currency'];
+            $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);
+            $model->dateCreate = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            if($model->save()){
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'success',
+                        'message'=>'Сохранения применились!!!'
+                    ]
+                );
+
+                $ActualCurrency = CurrencyRate::getActualCurrency();
+                // add log
+                LogWarehouse::setInfoLog([
+                    'action'                    =>  (empty($request['id']) ? 'parts_ordering' : 'update_parts_ordering'),
+                    'parts_accessories_id'      =>  $request['parts_accessories_id'],
+                    'number'                    =>  $request['number'],
+
+                    'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
+
+                    'money'                     =>  round($request['price'] / $ActualCurrency[$request['currency']],2),
+                ]);
+            }
+
+
+        }
+
+
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-ordering');
 
     }
 
+    /**
+     * remove parts ordering
+     * @param $id
+     * @return \yii\web\Response
+     */
     public function actionRemovePartsOrdering($id)
     {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
 
-        if(PartsOrdering::findOne(['_id'=>new ObjectID($id)])->delete()){
+        $model = PartsOrdering::findOne(['_id'=>new ObjectID($id)]);
+
+        if(!empty($model)){
+            $parts_accessories_id = (string)$model->parts_accessories_id;
+            $number = (int)$model->number;
+            $suppliers_performers_id = (string)$model->parts_accessories_id;
+            $model->delete();
+
             Yii::$app->session->setFlash('alert' ,[
                     'typeAlert'=>'success',
-                    'message'=>'remove item'
+                    'message'=>'Сохранения применились!!!'
                 ]
             );
+
+            // add log
+            LogWarehouse::setInfoLog([
+                'action'                    =>  'remove_parts_ordering',
+                'parts_accessories_id'      =>  $parts_accessories_id,
+                'number'                    =>  $number,
+
+                'suppliers_performers_id'   =>  $suppliers_performers_id,
+
+            ]);
         }
 
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-ordering');
@@ -465,8 +557,10 @@ class ManufacturingSuppliersController extends BaseController {
     }
 
 
-
-
+    /**
+     * popup for posting ordering
+     * @return string
+     */
     public function actionPostingOrdering()
     {
         return $this->renderAjax('_posting-ordering', [
@@ -474,36 +568,57 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    /**
+     * save posting ordering
+     * @return \yii\web\Response
+     */
     public function actionSavePostingOrdering(){
         $request = Yii::$app->request->post();
 
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert'=>'danger',
-                'message'=>'the changes are not saved'
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
             ]
         );
 
         if(!empty($request)){
 
-            $modelPartsAccessories = PartsAccessories::findOne(['_id'=>$request['parts_accessories_id']]);
+            $myWarehouse = Warehouse::getIdMyWarehouse();
 
-            if(!empty($modelPartsAccessories->_id)){
-                $modelPartsAccessories->number += $request['number'];
+            $model = PartsAccessoriesInWarehouse::findOne([
+                'parts_accessories_id'  =>  new ObjectID($request['parts_accessories_id']),
+                'warehouse_id'          =>  new ObjectID($myWarehouse)
+            ]);
 
-                $log = $modelPartsAccessories->log;
-                $log[] = [
-                    'log' => 'оприходования заказанного ' . PartsAccessories::getNamePartsAccessories((string)$request['parts_accessories_id']) . '('.$request['number'].') от ' .
-                        SuppliersPerformers::getNameSuppliersPerformers((string)$request['suppliers_performers_id']),
-                    'dateCreate' => new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)
-                ];
-                $modelPartsAccessories->log = $log;
-                if($modelPartsAccessories->save()){
-                    Yii::$app->session->setFlash('alert' ,[
-                            'typeAlert'=>'success',
-                            'message'=>'the changes are saved'
-                        ]
-                    );
-                }
+            if(empty($model)){
+                $model = new PartsAccessoriesInWarehouse();
+
+                $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
+                $model->warehouse_id = new ObjectID($myWarehouse);
+                $model->number = (int)$request['number'];
+            } else {
+                $model->number += $request['number'];
+            }
+
+            if($model->save()){
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'success',
+                        'message'=>'Сохранения применились!!!'
+                    ]
+                );
+
+                $ActualCurrency = CurrencyRate::getActualCurrency();
+                // add log
+                LogWarehouse::setInfoLog([
+                    'action'                    =>  'posting_ordering',
+                    'parts_accessories_id'      =>  $request['parts_accessories_id'],
+                    'number'                    =>  $request['number'],
+
+                    'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
+
+                    'money'                     =>  round($request['price'] / $ActualCurrency[$request['currency']],2),
+                ]);
+
             }
 
         }
@@ -511,110 +626,158 @@ class ManufacturingSuppliersController extends BaseController {
         return $this->redirect(['parts-accessories']);
     }
 
-
+    /**
+     * popup for posting pre ordering
+     * @return string
+     */
     public function actionPostingPreOrdering()
     {
         return $this->renderAjax('_posting-pre-ordering', [
             'language' => Yii::$app->language,
         ]);
     }
-    
+
+    /**
+     * save posting pre ordering
+     * @return \yii\web\Response
+     */
     public function actionSavePostingPreOrdering(){
         $request = Yii::$app->request->post();
 
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert'=>'danger',
-                'message'=>'the changes not saved'
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
             ]
         );
 
-        if(!empty($request['id'])){
+        if(!empty($request)){
+
             $modelPreOrder = PartsOrdering::findOne(['_id'=>new ObjectID($request['id'])]);
 
-            $modelPartsAccessories = PartsAccessories::findOne(['_id'=>$modelPreOrder->parts_accessories_id]);
+            $myWarehouse = Warehouse::getIdMyWarehouse();
 
-            if(!empty($modelPartsAccessories->_id)){
-                $modelPartsAccessories->number += $modelPreOrder->number;
+            $model = PartsAccessoriesInWarehouse::findOne([
+                'parts_accessories_id'  =>  $modelPreOrder->parts_accessories_id,
+                'warehouse_id'          =>  new ObjectID($myWarehouse)
+            ]);
 
-                $log = $modelPartsAccessories->log;
-                $log[] = [
-                    'log' => 'оприходования предварительно заказанного ' . PartsAccessories::getNamePartsAccessories((string)$modelPreOrder->parts_accessories_id) . '('.$modelPreOrder->number.') от ' .
-                        SuppliersPerformers::getNameSuppliersPerformers((string)$modelPreOrder->suppliers_performers_id),
-                    'dateCreate' => new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)
-                ];
-                $modelPartsAccessories->log = $log;
-                if($modelPartsAccessories->save()){
-                    $modelPreOrder->delete();
 
-                    Yii::$app->session->setFlash('alert' ,[
-                            'typeAlert'=>'success',
-                            'message'=>'the changes are saved'
-                        ]
-                    );
-                }
+            if(empty($model)){
+                $model = new PartsAccessoriesInWarehouse();
+
+                $model->parts_accessories_id = $modelPreOrder->parts_accessories_id;
+                $model->warehouse_id = new ObjectID($myWarehouse);
+                $model->number = (int)$modelPreOrder->number;
+            } else {
+                $model->number += $modelPreOrder->number;
+            }
+
+            if($model->save()){
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'success',
+                        'message'=>'Сохранения применились.'
+                    ]
+                );
+
+                $modelPreOrder->delete();
+
+                // add log
+                LogWarehouse::setInfoLog([
+                    'action'                    =>  'posting_pre_ordering',
+                    'parts_accessories_id'      =>  (string)$modelPreOrder->parts_accessories_id,
+                    'number'                    =>  $modelPreOrder->number,
+
+                    'suppliers_performers_id'   =>  (string)$modelPreOrder->suppliers_performers_id,
+
+                ]);
+
             }
 
         }
 
         return $this->redirect(['parts-accessories']);
     }
-    
-    
+
+    /**
+     * popup for cancellation goods
+     * @return string
+     */
     public function actionCancellation()
     {
         return $this->renderAjax('_cancellation', [
             'language' => Yii::$app->language,
         ]);
     }
-    
+
+    /**
+     * save cancellation
+     * @return \yii\web\Response
+     */
     public function actionSaveCancellation()
     {
         $request = Yii::$app->request->post();
 
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert'=>'danger',
-                'message'=>'the changes are not saved'
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
             ]
         );
 
         if(!empty($request)){
 
-            $modelPartsAccessories = PartsAccessories::findOne(['_id'=>$request['parts_accessories_id']]);
+            $myWarehouse = Warehouse::getIdMyWarehouse();
 
-            if(!empty($modelPartsAccessories->_id)){
+            $model = PartsAccessoriesInWarehouse::findOne([
+                'parts_accessories_id'  =>  new ObjectID($request['parts_accessories_id']),
+                'warehouse_id'          =>  new ObjectID($myWarehouse)
+            ]);
 
-                if($modelPartsAccessories->number >= $request['number']){
-                    $modelPartsAccessories->number -= $request['number'];
+            if(!empty($model->number) && $model->number < $request['number']){
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'danger',
+                        'message'=>'На складе меньше чем хотят списать!!!'
+                    ]
+                );
 
-                    $log = $modelPartsAccessories->log;
-                    $log[] = [
-                        'log' => 'списание ' . PartsAccessories::getNamePartsAccessories((string)$request['parts_accessories_id']) . '('.$request['number'].') от ' .
-                            SuppliersPerformers::getNameSuppliersPerformers((string)$request['suppliers_performers_id']),
-                        'dateCreate' => new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)
-                    ];
-                    $modelPartsAccessories->log = $log;
-                    if($modelPartsAccessories->save()){
-                        Yii::$app->session->setFlash('alert' ,[
-                                'typeAlert'=>'success',
-                                'message'=>'the changes are saved'
-                            ]
-                        );
-                    }
-                }
+                return $this->redirect(['parts-accessories']);
+            } else {
+                $model->number -= $request['number'];
             }
+
+            if($model->save()){
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'success',
+                        'message'=>'Сохранения применились!!!'
+                    ]
+                );
+
+                // add log
+                LogWarehouse::setInfoLog([
+                    'action'                    =>  'cancellation',
+                    'parts_accessories_id'      =>  $request['parts_accessories_id'],
+                    'number'                    =>  $request['number'],
+                    'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
+
+                    'comment'   =>  $request['comment'],
+                ]);
+
+            }
+
 
         }
 
         return $this->redirect(['parts-accessories']);
     }
 
-
+    //TODO::KAA
     public function actionAssembly()
     {
-        return $this->renderAjax('_assembly', [
-            'language' => Yii::$app->language,
-        ]);
+        return 'TODO';
+//        return $this->renderAjax('_assembly', [
+//            'language' => Yii::$app->language,
+//        ]);
     }
+    //TODO::KAA
     public function actionKitForAccessories(){
 
         $request = Yii::$app->request->post();
@@ -629,7 +792,7 @@ class ManufacturingSuppliersController extends BaseController {
 
         return false;
     }
-
+    //TODO::KAA
     public function actionSaveAssembly()
     {
         $request = Yii::$app->request->post();

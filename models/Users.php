@@ -96,11 +96,11 @@ class Users extends ActiveRecord
 
         $model = self::find()
             ->where(['isAdmin' => 1])
-            ->andWhere(['!=','username','main'])
+            //->andWhere(['!=','username','main'])
             ->all();
         if(!empty($model)){
             foreach ($model as $item) {
-                $listAdmin[(string)$item->_id] = $item->username . '('.$item->secondName.' '.$item->firstName.')';
+                $listAdmin[(string)$item->_id] = $item->username . ' ('.$item->secondName.' '.$item->firstName.')';
             }
         }
 
