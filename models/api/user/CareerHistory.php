@@ -35,10 +35,11 @@ class CareerHistory {
             }
 
             foreach ($data as $object) {
+                var_dump($object);
                 $careerHistory = new self;
 
                 $careerHistory->username = $object->username;
-                $careerHistory->careerRank = isset($object->career->rank) && $object->career->rank ? $object->career->rank : isset($object->rank) && $object->rank ? $object->rank : '';
+                $careerHistory->careerRank = (isset($object->career->rank) && $object->career->rank) ? $object->career->rank : (isset($object->rank) && $object->rank) ? $object->rank : '';
                 $careerHistory->firstName = $object->firstName;
                 $careerHistory->secondName = $object->secondName;
                 $careerHistory->country = $object->country;
