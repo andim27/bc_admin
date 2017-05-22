@@ -38,7 +38,7 @@ class CareerHistory {
                 $careerHistory = new self;
 
                 $careerHistory->username = $object->username;
-                $careerHistory->careerRank = isset($object->career->rank) ? $object->career->rank : '';
+                $careerHistory->careerRank = isset($object->career->rank) && $object->career->rank ? $object->career->rank : isset($object->rank) && $object->rank ? $object->rank : '';
                 $careerHistory->firstName = $object->firstName;
                 $careerHistory->secondName = $object->secondName;
                 $careerHistory->country = $object->country;
