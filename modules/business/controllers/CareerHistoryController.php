@@ -16,10 +16,10 @@ class CareerHistoryController extends BaseController
         $dateFrom = isset($request['from']) ? strtotime($request['from']) : time();
         $dateTo = isset($request['to']) ? strtotime($request['to']) : time();
 
-        $careeHistory = CareerHistory::get(gmdate('d.m.Y', $dateFrom), gmdate('d.m.Y', $dateTo));
+        $careerHistory = CareerHistory::get(gmdate('d.m.Y', $dateFrom), gmdate('d.m.Y', $dateTo));
 
         return $this->render('index', [
-            'careerHistory' => $careeHistory,
+            'careerHistory' => $careerHistory,
             'from' => $dateFrom,
             'to' => $dateTo
         ]);

@@ -62,7 +62,24 @@ Class Menu
                         'url' => ['/business/user/docs'],
                         'action' => 'docs',
                     ],
-
+                    [
+                        'key'   =>  'sidebar_users_career_history',
+                        'label' => THelper::t('sidebar_users_career_history'),
+                        'url' => ['/business/career-history'],
+                        'action' => 'index',
+                    ],
+                    [
+                        'key'   =>  'sidebar_users_money_transfer',
+                        'label' => THelper::t('sidebar_users_money_transfer'),
+                        'url' => ['/business/user/money-transfer'],
+                        'action' => 'money-transfer',
+                    ],
+                    [
+                        'key'   =>  'sidebar_users_money_transfer_log',
+                        'label' => THelper::t('sidebar_users_money_transfer_log'),
+                        'url' => ['/business/user/money-transfer-log'],
+                        'action' => 'money-transfer-log',
+                    ],
                 ]
             ],
             [

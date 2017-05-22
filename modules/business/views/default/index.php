@@ -6,6 +6,7 @@
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('main_title'); ?></h3>
 </div>
+<?php /*
 <div class="row">
     <div class="col-md-12">
 
@@ -172,6 +173,7 @@
         график 4
     </div>
 </div>
+ */ ?>
 <div class="row">
     <div class="col-md-4">
         <ul class="list-group no-radius">
@@ -224,6 +226,7 @@
         </div>
     </div>
 </div>
+<?php /*
 <div class="row">
     <div class="col-md-4">
         <section class="panel panel-default m-b-20">
@@ -278,6 +281,7 @@
         таблица 2
     </div>
 </div>
+ */ ?>
 <script>
     var months = {
         "01":"<?=tHelper::t('january')?>",

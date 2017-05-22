@@ -3,6 +3,9 @@
 namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
+use app\models\MoneyTransfer;
+use app\models\Transaction;
+use app\models\Users;
 use app\modules\business\models\ProfileForm;
 use app\modules\business\models\PurchaseForm;
 use Yii;
@@ -15,6 +18,8 @@ use app\components\THelper;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 use yii\web\UploadedFile;
+use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDatetime;
 
 class UserController extends BaseController
 {
@@ -479,6 +484,94 @@ class UserController extends BaseController
 
         return $this->render('point', [
             'user' => $response
+        ]);
+    }
+
+    public function actionMoneyTransfer()
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isAjax) {
+            return $this->renderAjax('_money_transfer_info', [
+                'userFrom' => Users::find()->where(['username' => $request->post('u1')])->one(),
+                'userTo' => Users::find()->where(['username' => $request->post('u2')])->one()
+            ]);
+        } else {
+            return $this->render('money-transfer');
+        }
+    }
+
+    public function actionMoneyTransferSend()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $request = Yii::$app->request;
+
+        $userFrom = Users::find()->where(['username' => $request->post('u1')])->one();
+        $userTo = Users::find()->where(['username' => $request->post('u2')])->one();
+
+        if ($userFrom->_id == $userTo->_id) {
+            return ['success' => false, 'error' => THelper::t('money_transfer_one_user_error')];
+        }
+
+        $money = floatval(trim($request->post('money')));
+
+        if ($userFrom->moneys < $money) {
+            $result = ['success' => false, 'error' => THelper::t('money_transfer_no_money')];
+        } else {
+            $transaction = new Transaction();
+
+            $date = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            $transaction->idFrom = new ObjectID($userFrom->_id);
+            $transaction->idTo = new ObjectID($userTo->_id);
+            $transaction->amount = $money;
+            $transaction->forWhat = THelper::t('money_transfer_for_what');
+            $transaction->type = Transaction::TYPE_MONEY;
+            $transaction->reduced = true;
+            $transaction->dateCreate = $date;
+            $transaction->usernameTo = $userTo->username;
+            $transaction->dateReduce = $date;
+
+            $balanceFrom = $userFrom->moneys;
+            $transaction->saldoFrom = $balanceFrom - $money;
+            $balanceTo = $userTo->moneys;
+            $transaction->saldoTo = $balanceTo + $money;
+            $transaction->__v = 0;
+
+            if ($transaction->save()) {
+                $userFrom->moneys -= $money;
+                $userTo->moneys += $money;
+                if ($userFrom->save() && $userTo->save()) {
+                    $moneyTransfer = new MoneyTransfer();
+
+                    $moneyTransfer->idFrom = new ObjectID($userFrom->_id);
+                    $moneyTransfer->balanceFrom = $balanceFrom;
+                    $moneyTransfer->idTo = new ObjectID($userTo->_id);
+                    $moneyTransfer->balanceTo = $balanceTo;
+                    $moneyTransfer->amount = $money;
+                    $moneyTransfer->admin = new ObjectID($this->user->id);
+                    $moneyTransfer->date = $date;
+
+                    $moneyTransfer->save();
+
+                    $result = ['success' => true, 'data' => $transaction];
+                } else {
+                    $transaction->delete();
+                    $result = ['success' => false, 'error' => THelper::t('money_transfer_error')];
+                }
+            } else {
+                $result = ['success' => false, 'error' => THelper::t('money_transfer_error')];
+            }
+        }
+
+        return $result;
+    }
+
+    public function actionMoneyTransferLog()
+    {
+        return $this->render('money_transfer_log', [
+            'moneyTransfers' => MoneyTransfer::find()->orderBy('date desc')->all()
         ]);
     }
 

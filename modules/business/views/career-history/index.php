@@ -32,7 +32,22 @@
                 <thead>
                     <tr>
                         <th>
+                            <?= THelper::t('career_history_avatar') ?>
+                        </th>
+                        <th>
                             <?= THelper::t('career_history_username') ?>
+                        </th>
+                        <th>
+                            <?= THelper::t('career_history_firstname') ?>
+                        </th>
+                        <th>
+                            <?= THelper::t('career_history_secondname') ?>
+                        </th>
+                        <th>
+                            <?= THelper::t('career_history_country') ?>
+                        </th>
+                        <th>
+                            <?= THelper::t('career_history_city') ?>
                         </th>
                         <th>
                             <?= THelper::t('career_history_career_rank') ?>
@@ -45,7 +60,12 @@
                 <tbody>
                     <?php foreach ($careerHistory as $ch) { ?>
                         <tr>
+                            <td><img src="<?= $ch->avatar ? $ch->avatar : '/images/avatar_default.png'; ?>" width="32" height="32"></td>
                             <td><?= $ch->username ?></td>
+                            <td><?= $ch->firstName ?></td>
+                            <td><?= $ch->secondName ?></td>
+                            <td><?= $ch->country ?></td>
+                            <td><?= $ch->city ?></td>
                             <td><?= THelper::t('rank_' . $ch->careerRank) ?></td>
                             <td><?= date('d.m.Y H:i:s', $ch->careerDate) ?></td>
                         </tr>
