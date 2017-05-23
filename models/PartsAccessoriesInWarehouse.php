@@ -73,22 +73,23 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
 
         $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
-        $model = self::find()
-            ->where(['warehouse_id'=>new ObjectID($idMyWarehouse)])
-            ->andWhere([
-                'number' => [
-                    '$gte' => 1
-                ]
-            ])
-            ->all();
+        if(!empty($idMyWarehouse)){
+            $model = self::find()
+                ->where(['warehouse_id'=>new ObjectID($idMyWarehouse)])
+                ->andWhere([
+                    'number' => [
+                        '$gte' => 1
+                    ]
+                ])
+                ->all();
 
-        if(!empty($model)){
-            $listGoods = PartsAccessories::getListPartsAccessories();
-
-            foreach ($model as $item){
-                $list[(string)$item->parts_accessories_id] = $item->number;
+            if(!empty($model)){                
+                foreach ($model as $item){
+                    $list[(string)$item->parts_accessories_id] = $item->number;
+                }
             }
         }
+        
 
         return $list;
     }

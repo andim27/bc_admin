@@ -82,10 +82,10 @@ $config = [
         // for mongodb
         'mongodb' => [
             'class' => '\yii\mongodb\Connection',
-            //'dsn' => 'mongodb://mongo/gnc',
             'dsn' => 'mongodb://localhost/gnc',
+            //'dsn' => 'mongodb://mongo/gnc',
         ],
-    
+
         'urlManager' => [
             'class' => 'app\components\LangUrlManager',
             'showScriptName' => false,
