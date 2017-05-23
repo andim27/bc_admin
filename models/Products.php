@@ -91,12 +91,12 @@ class Products extends ActiveRecord
 
 class ProductSet extends Model
 {
-    public $setName;
+    public $setName,$setId;
 
     public function rules()
     {
         return [
-            [['setName'], 'required'],
+            [['setName','setId'], 'required'],
         ];
     }
 }

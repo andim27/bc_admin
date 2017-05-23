@@ -1,7 +1,12 @@
 <?php
-    use app\components\THelper;
-    use yii\widgets\ActiveForm;
-    use yii\helpers\Html;
+use app\components\THelper;
+use yii\helpers\Html;
+use app\models\PartsAccessories;
+use yii\helpers\ArrayHelper;
+
+$listGoods = PartsAccessories::getListPartsAccessories();
+
+$listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
 ?>
 
 <div class="m-b-md">
@@ -47,22 +52,34 @@
                                         <div class="input-group m-t-sm m-b-sm blItem">
                                             <span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>
                                             <input type="text" class="form-control input-sm" name="setName[]" placeholder="Входит в состав" value="<?= $itemSet->setName; ?>">
+                                            <input type="hidden" name="setId[]"  value="<?= (!empty($itemSet->setId) ? $itemSet->setId : array_search($itemSet->setName,$listGoods)); ?>">
                                         </div>
                                     <?php } ?>
                                 <?php } ?>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-
+                            <div class="col-md-3"></div>
+                            <div class="col-md-6 ">
+                                <?=Html::dropDownList('parts_accessories_id','',
+                                    $listGoods,
+                                    [
+                                        'class'=>'form-control listGoods',
+                                        'required'=>'required',
+                                        'options' => [
+                                            '' => ['disabled' => true]
+                                        ]
+                                        ])?>
+                            </div>
+                            <div class="col-md-1">
                                 <a href="javascript:void(0);" class="btn btn-dark btn-sm btn-icon addItemSet" data-toggle="tooltip" data-placement="right" title="" data-original-title="Добавить в состав">
                                     <i class="fa fa-plus"></i>
                                 </a>
-
+                            </div>
+                            <div class="col-md-1">
                                 <a href="javascript:void(0);" class="btn btn-sm btn-icon saveItemSet" data-toggle="tooltip" data-placement="right" title="" data-original-title="Применить правки">
                                     <i class="fa fa-save"></i>
                                 </a>
-
                             </div>
                         </div>
                     </td>
@@ -82,10 +99,21 @@
     });
 
     $(document).on('click','.addItemSet',function () {
-        $(this).closest('.infoSet').find('.descrItem').append(
-            '<div class="input-group m-t-sm m-b-sm blItem">'+
-                '<span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>'+
-                '<input type="text" class="form-control input-sm" name="setName[]" placeholder="Входит в состав">'+
+        bl = $(this).closest('.infoSet');
+
+        goodsName = bl.find('.listGoods :selected').text();
+        goodsId = bl.find('.listGoods :selected').val();
+
+        if(goodsId == ''){
+            alert('Нельзя добавить! Товар не выбран!');
+            return;
+        }
+
+        bl.find('.descrItem').append(
+            '<div class="input-group m-t-sm m-b-sm blItem">' +
+                '<span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>' +
+                '<input type="text" class="form-control input-sm" name="setName[]" placeholder="Входит в состав" value="' + goodsName + '">' +
+                '<input type="hidden" name="setId[]" value="' + goodsId + '">' +
             '</div>'
         );
     });
@@ -108,6 +136,9 @@
                 data: {
                     id : changeBl.find('input[name="id"]').val(),
                     setName : changeBl.find('input[name="setName[]"]').map(function(){
+                        return this.value;
+                    }).get(),
+                    setId : changeBl.find('input[name="setId[]"]').map(function(){
                         return this.value;
                     }).get(),
                 },

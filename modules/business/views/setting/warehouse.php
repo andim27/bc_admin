@@ -60,7 +60,9 @@ $userArray = Users::getListAdmin();
 
                 <tr>
                     <td>
-                        <?=Html::a('<i class="fa fa-trash-o"></i>',['/business/setting/remove-warehouse','id'=>$item->_id->__toString()],['class'=>'btn btn-default'])?>
+                        <?php
+                        //=Html::a('<i class="fa fa-trash-o"></i>',['/business/setting/remove-warehouse','id'=>$item->_id->__toString()],['class'=>'btn btn-default'])
+                        ?>
                         <?=$item->title?>
                     </td>
                     <td class="text-center infoWarehouse">

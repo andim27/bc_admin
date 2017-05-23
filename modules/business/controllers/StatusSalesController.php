@@ -1164,11 +1164,12 @@ class StatusSalesController extends BaseController {
 
 
             if(!empty($request['setName'])){
-                foreach($request['setName'] as $item){
+                foreach($request['setName'] as $k=>$item){
                     if(!empty($item)){
                         $modelSet = new ProductSet();
 
                         $modelSet->setName = $item;
+                        $modelSet->setId = $request['setId'][$k];
 
                         $infoProduct->set[] = $modelSet;
                     }
