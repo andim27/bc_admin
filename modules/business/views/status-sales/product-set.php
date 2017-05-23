@@ -51,7 +51,8 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
                                     <?php foreach($item->set as $itemSet) { ?>
                                         <div class="input-group m-t-sm m-b-sm blItem">
                                             <span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>
-                                            <input type="text" class="form-control input-sm" name="setName[]" placeholder="Входит в состав" value="<?= $itemSet->setName; ?>">
+                                            <input type="text" class="form-control input-sm" disabled="disabled" value="<?= $itemSet->setName; ?>">
+                                            <input type="hidden" name="setName[]"  value="<?= $itemSet->setName ?>">
                                             <input type="hidden" name="setId[]"  value="<?= (!empty($itemSet->setId) ? $itemSet->setId : array_search($itemSet->setName,$listGoods)); ?>">
                                         </div>
                                     <?php } ?>
@@ -112,7 +113,8 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
         bl.find('.descrItem').append(
             '<div class="input-group m-t-sm m-b-sm blItem">' +
                 '<span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>' +
-                '<input type="text" class="form-control input-sm" name="setName[]" placeholder="Входит в состав" value="' + goodsName + '">' +
+                '<input type="text" class="form-control input-sm" value="' + goodsName + '">' +
+                '<input type="hidden" name="setName[]"  value="' + goodsName + '">' +
                 '<input type="hidden" name="setId[]" value="' + goodsId + '">' +
             '</div>'
         );
