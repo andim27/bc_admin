@@ -1,6 +1,7 @@
 <?php
     use app\components\THelper;
     use yii\helpers\Html;
+use MongoDB\BSON\UTCDatetime;
 ?>
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('users_purchase_title'); ?></h3>
@@ -87,7 +88,7 @@
                                     ?>
                                     <tr>
                                         <td>
-                                            <?= ($purchase->dateCreate) ?>
+                                            <?= gmdate('d.m.Y', strval($purchase->dateCreate) / 1000) ?>
                                         </td>
                                         <td>
                                             <?= $product->product ?>
@@ -96,7 +97,7 @@
                                             <?= $product->productName ?>
                                         </td>
                                         <td>
-                                            <?= $product->price ?>
+                                            <?= $purchase->price ?>
                                         </td>
                                         <td>
                                             <?= $purchase->bonusPoints ?>
