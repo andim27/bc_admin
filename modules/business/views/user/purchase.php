@@ -110,7 +110,7 @@ use MongoDB\BSON\UTCDatetime;
                                         </td>
                                         <td>
                                             <?php if ($purchase->type == 1) { ?>
-                                            <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/user/cancel-purchase', 'id' => $purchase->_id], ['onclick' => 'return confirmCancellation();']) ?>
+                                            <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/user/cancel-purchase', 'id' => strval($purchase->_id)], ['onclick' => 'return confirmCancellation();']) ?>
                                             <?php } else { ?>
                                                 <?= THelper::t('users_purchase_deleted') ?>
                                             <?php } ?>
