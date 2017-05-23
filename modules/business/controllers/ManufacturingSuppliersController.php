@@ -116,6 +116,7 @@ class ManufacturingSuppliersController extends BaseController {
      */
     public function actionPartsAccessories()
     {
+            
         $model = PartsAccessories::find()->all();
         return $this->render('parts-accessories',[
             'model' => $model,

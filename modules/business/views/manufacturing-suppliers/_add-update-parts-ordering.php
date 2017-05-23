@@ -64,7 +64,7 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
 
             <div class="row">
                 <div class="col-md-3">
-                    <?=Html::label('count_goods')?>
+                    Количество
                     <?=Html::input('number','number', (!empty($model->number) ? $model->number: '1'),[
                         'class'=>'form-control',
                         'min'=>'1',
@@ -72,7 +72,7 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
                     ])?>
                 </div>
                 <div class="col-md-3">
-                    <?=Html::label('currency')?>
+                    Валюта
                     <?=Html::dropDownList('currency',
                         (!empty((string)$model->currency) ? (string)$model->currency: ''),
                         CurrencyRate::getListCurrency(),[
@@ -86,7 +86,7 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
                 </div>
 
                 <div class="col-md-3">
-                    <?=Html::label('price')?>
+                    Полная стоимость
                     <?=Html::input('number','price', (!empty($model->price) ? $model->price: '0'),[
                         'class'=>'form-control',
                         'min'=>'0.01',
@@ -95,7 +95,7 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
                 </div>
 
                 <div class="col-md-3">
-                    <?=Html::label('date_receipt')?>
+                    Дата прибития
                     <?=Html::input('text','dateReceipt',
                         (!empty($model->dateReceipt) ? $model->dateReceipt->toDateTime()->format('Y-m-d') : date('Y-m-d')),
                         [
