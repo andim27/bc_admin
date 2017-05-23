@@ -13,6 +13,7 @@ use Yii;
 use app\models\api;
 use app\modules\business\models\UsersReferrals;
 use app\models\User;
+use yii\base\Object;
 use yii\web\Response;
 use yii\helpers\Html;
 use app\components\THelper;
@@ -321,12 +322,30 @@ class UserController extends BaseController
     {
         $id = Yii::$app->request->get('id');
         if ($id) {
-            $result = api\Sale::cancel($id);
-
-            if ($result) {
-                Yii::$app->session->setFlash('success', THelper::t('user_purchase_cancellation_success'));
+            $sale = Sales::findOne(['_id' => new ObjectId($id)]);
+            if ($sale) {
+                $user = api\User::get($sale->getAttribute('idUser'));
+                if ($user) {
+                    $sponsor = api\User::get($user->sponsor->_id);
+                    if ($sponsor) {
+                        if ($sponsor->moneys - $sale->getAttribute('bonusMoney') >= 0) {
+                            $result = api\Sale::cancel($id);
+                            if ($result) {
+                                Yii::$app->session->setFlash('success', THelper::t('user_purchase_cancellation_success'));
+                            } else {
+                                Yii::$app->session->setFlash('danger', THelper::t('user_purchase_cancellation_error'));
+                            }
+                        } else {
+                            Yii::$app->session->setFlash('danger', THelper::t('user_purchase_cancellation_sponsor_no_money'));
+                        }
+                    } else {
+                        Yii::$app->session->setFlash('danger', THelper::t('user_purchase_cancellation_sponsor_not_founds'));
+                    }
+                } else {
+                    Yii::$app->session->setFlash('danger', THelper::t('user_purchase_cancellation_user_not_founds'));
+                }
             } else {
-                Yii::$app->session->setFlash('danger', THelper::t('user_purchase_cancellation_error'));
+                Yii::$app->session->setFlash('danger', THelper::t('user_purchase_cancellation_sale_not_founds'));
             }
         }
 
