@@ -11,7 +11,7 @@ use app\components\AlertWidget;
 
 <div class="row">
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
-    
+
     <div class="col-md-offset-9 col-md-3 form-group">
         <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-suppliers-performers'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
     </div>
@@ -25,7 +25,7 @@ use app\components\AlertWidget;
                 <tr>
                     <th>№</th>
                     <th>
-                        <?=THelper::t('title/name')?>
+                        <?=THelper::t('title_name')?>
                     </th>
                     <th>
                         <?=THelper::t('coordinates')?>

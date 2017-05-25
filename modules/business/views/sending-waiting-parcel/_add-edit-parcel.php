@@ -46,6 +46,28 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
 
                 <div class="form-group row infoDanger"></div>
 
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <?=Html::dropDownList('',
+                            '',
+                            $listGoodsFromMyWarehouse,[
+                                'class'=>'form-control',
+                                'id'=>'selectGoods',
+                                'options' => [
+                                    '' => ['disabled' => true]
+                                ],
+                                'placeholder'=>'Товар',
+                            ]
+                        )?>
+                    </div>
+                    <div class="col-md-2">
+                        <?=Html::button('<i class="fa fa-plus"></i>',[
+                            'id' => 'addGoods',
+                            'class'=>'btn btn-default btn-block',
+                            'type'=>'button'])?>
+                    </div>
+                </div>
+
                 <div class="panel panel-default">
                     <div class="panel-body complectPack">
                         <?php if(!empty($model->part_parcel)) { ?>
@@ -64,37 +86,6 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                                 </div>
                             <?php } ?>
                         <?php } ?>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-md-7">
-                        <?=Html::dropDownList('',
-                            '',
-                            $listGoodsFromMyWarehouse,[
-                                'class'=>'form-control',
-                                'id'=>'selectGoods',
-                                'options' => [
-                                    '' => ['disabled' => true]
-                                ],
-                                'placeholder'=>'Товар',
-                            ]
-                        )?>
-                    </div>
-                    <div class="col-md-3">
-                        <?=Html::input('number','', 1,[
-                            'class'=>'form-control',
-                            'id'=>'countGoods',
-                            'min'=>'1',
-                            'step'=>'1',
-                            'placeholder'=>'Количество',
-                        ])?>
-                    </div>
-                    <div class="col-md-2">
-                        <?=Html::button('<i class="fa fa-plus"></i>',[
-                            'id' => 'addGoods',
-                            'class'=>'btn btn-default btn-block',
-                            'type'=>'button'])?>
                     </div>
                 </div>
 
@@ -183,15 +174,10 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
 
         goodsID = $('#selectGoods :selected').val();
         goodsName = $('#selectGoods :selected').text();
-        goodsCount = parseInt($('#countGoods ').val());
+        goodsCount = 1;
 
         if(goodsID==''){
             alert('Выберите товар!');
-            flAddNow = 0;
-        }
-
-        if(goodsCount < 0){
-            alert('Количество должно быть больше 0!');
             flAddNow = 0;
         }
 
