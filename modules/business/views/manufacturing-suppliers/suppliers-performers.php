@@ -48,11 +48,12 @@ use app\components\AlertWidget;
                             <?=Html::a('<i class="fa fa-clock-o" title="история"></i>',['/business/manufacturing-suppliers/log-suppliers-performers','id'=>$item->_id->__toString()]) ?>
                         </td>
                         <td>
-                            <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-suppliers-performers','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
+                            <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/manufacturing-suppliers/add-update-suppliers-performers','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                         </td>
                         <td>
-                            ???
-<!--                            --><?php //= Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-suppliers-performers','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]) ?>
+                            <?= ($item->checkTransaction() ?
+                                '' :
+                                Html::a('<i class="fa fa-trash-o" title="удалить"></i>', ['/business/manufacturing-suppliers/remove-suppliers-performers','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']])) ?>
                         </td>
                     </tr>
                 <?php } ?>

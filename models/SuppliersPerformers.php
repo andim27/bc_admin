@@ -28,6 +28,20 @@ class SuppliersPerformers extends \yii2tech\embedded\mongodb\ActiveRecord
         ];
     }
 
+    /**
+     * have transaction or not this suppliers or performers
+     * @return bool
+     */
+    public function checkTransaction()
+    {        
+        $model = $this->hasMany(LogWarehouse::className(),['suppliers_performers_id'=>'_id'])->count();
+        if($model>0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     public static function getListSuppliersPerformers()
     {
         $list = [];
@@ -52,4 +66,6 @@ class SuppliersPerformers extends \yii2tech\embedded\mongodb\ActiveRecord
             return false;
         }
     }
+
+    
 }

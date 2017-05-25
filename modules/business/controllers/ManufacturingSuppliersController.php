@@ -58,6 +58,12 @@ class ManufacturingSuppliersController extends BaseController {
      */
     public function actionSaveSuppliersPerformers()
     {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert' => 'danger',
+                'message' => 'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
         $request = Yii::$app->request->post();
 
         $model = new SuppliersPerformers();
@@ -74,21 +80,16 @@ class ManufacturingSuppliersController extends BaseController {
 
                 Yii::$app->session->setFlash('alert' ,[
                     'typeAlert'=>'success',
-                    'message'=>'the changes are saved'
+                    'message'=>'Сохранения применились.'
                     ]
                 );
 
-                return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/suppliers-performers');
             }
 
 
         }
 
-        Yii::$app->session->setFlash('alert' ,[
-                'typeAlert' => 'danger',
-                'message' => 'the changes are not saved'
-            ]
-        );
+
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/suppliers-performers');
     }
 
@@ -102,7 +103,7 @@ class ManufacturingSuppliersController extends BaseController {
         if(SuppliersPerformers::findOne(['_id'=>new ObjectID($id)])->delete()){
             Yii::$app->session->setFlash('alert' ,[
                     'typeAlert'=>'success',
-                    'message'=>'remove item'
+                    'message'=>'Удаление прошло успешно.'
                 ]
             );
         }
