@@ -52,6 +52,7 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
             ])
             ->all();
 
+
         if(!empty($model)){
             $listGoods = PartsAccessories::getListPartsAccessories();
 

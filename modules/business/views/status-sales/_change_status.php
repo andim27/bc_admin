@@ -4,6 +4,20 @@ use yii\widgets\ActiveForm;
 use app\components\THelper;
 use yii\widgets\Pjax;
 use app\models\StatusSales;
+use app\models\PartsAccessoriesInWarehouse;
+use app\models\PartsAccessories;
+
+$listGoods = PartsAccessories::getListPartsAccessories();
+$countGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
+
+$goodsCount = 0;
+
+$goodsID = array_search($set,$listGoods);
+if(!empty($goodsID)){
+    if(!empty($countGoodsFromMyWarehouse[$goodsID])){
+        $goodsCount = $countGoodsFromMyWarehouse[$goodsID];
+    }
+}
 
 $unicBtn = rand();
 ?>
@@ -16,6 +30,14 @@ $unicBtn = rand();
 
         <?php Pjax::begin(['enablePushState' => false]); ?>
         <div class="modal-body">
+
+<!--            --><?php //if($goodsCount==0) { ?>
+<!--                <div class="alert alert-danger fade in">-->
+<!--                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>-->
+<!--                    Товара нет на складе!-->
+<!--                </div>-->
+<!--            --><?php //} ?>
+
             <?php $formStatus = ActiveForm::begin([
                 'action' => '/' . $language . '/business/status-sales/save-status',
                 'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
@@ -25,6 +47,8 @@ $unicBtn = rand();
             <?=Html::input('hidden','oldStatus',$statusNow)?>
             <?=Html::input('hidden','set',$set)?>
 
+
+
             <div class="row">
                 <div class="col-md-9">
                     <?=Html::dropDownList('status',$statusNow,StatusSales::getListAvailableStatusSales($statusNow),[
@@ -32,7 +56,8 @@ $unicBtn = rand();
                         'id'=>'selectChangeStatus',
                         'options' => [
                             'status_sale_new' => ['disabled' => true,'style'=>'display:none'],
-                            $statusNow => ['disabled' => true]
+                            $statusNow => ['disabled' => true],
+                           // 'status_sale_issued' => [($goodsCount>0) ? '':'disabled' => true]
                         ]
                     ])?>
                 </div>

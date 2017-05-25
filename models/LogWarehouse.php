@@ -48,6 +48,11 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
 
         ];
     }
+    
+    public function getAdminInfo()
+    {
+        return $this->hasOne(Users::className(),['_id'=>'who_performed_action']);
+    }
 
     public static function setInfoLog($info)
     {

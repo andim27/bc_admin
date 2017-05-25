@@ -389,9 +389,34 @@ Class Menu
                         'action' => 'sending-waiting-parcel',
                     ],
                 ]
+            ],
+
+            [
+                'key'   =>  'parts_accessories_in_warehouse',
+                'label' => THelper::t('parts_accessories_in_warehouse'),
+                'url' => '#',
+                'controller' => 'parts-accessories-in-warehouse',
+                'items' => [
+                    [
+                        'key'   =>  'in_warehouse',
+                        'label' => THelper::t('in_warehouse'),
+                        'url' => ['parts-accessories-in-warehouse/in-warehouse'],
+                        'action' => 'in-warehouse',
+                    ],
+                    [
+                        'key'   =>  'cancellation_warehouse',
+                        'label' => THelper::t('cancellation_warehouse'),
+                        'url' => ['parts-accessories-in-warehouse/cancellation-warehouse'],
+                        'action' => 'cancellation-warehouse',
+                    ],
+                    [
+                        'key'   =>  'all_cancellation_warehouse',
+                        'label' => THelper::t('all_cancellation_warehouse'),
+                        'url' => ['parts-accessories-in-warehouse/all-cancellation-warehouse'],
+                        'action' => 'all-cancellation-warehouse',
+                    ],
+                ]
             ]
-
-
 
         ];
         

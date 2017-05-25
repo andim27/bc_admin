@@ -110,6 +110,47 @@ class ManufacturingSuppliersController extends BaseController {
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/suppliers-performers');
     }
 
+
+    /**
+     * log transactions for Suppliers and Performers
+     * @param $id
+     * @return string|\yii\web\Response
+     */
+    public function actionLogSuppliersPerformers($id){
+        if(!empty($id)){
+            $request =  Yii::$app->request->post();
+
+            if(!empty($request)){
+                $dateInterval['to'] = $request['to'];
+                $dateInterval['from'] =  $request['from'];
+            } else {
+                $dateInterval['to'] = date("Y-m-d");
+                $dateInterval['from'] = date("Y-01-01");
+            }
+
+            $model = LogWarehouse::find()
+                ->where(['suppliers_performers_id'=> new ObjectID($id)])
+                ->andWhere([
+                    'date_create' => [
+                        '$gte' => new UTCDatetime(strtotime($dateInterval['from']) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                    ]
+                ])
+                ->orderBy(['date_create'=>SORT_DESC])
+                ->all();
+            
+            return $this->render('log-suppliers-performers',[
+                'language' => Yii::$app->language,
+                'id' => $id,
+                'model' => $model,
+                'dateInterval' => $dateInterval,
+            ]);
+        }
+        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/suppliers-performers');
+    }
+
+
+
     /**
      * info Parts and Accessories
      * @return string
@@ -124,26 +165,38 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
-    //TODO:KAA
-    public function actionLogPartsAccessories($id = '')
+    public function actionLogPartsAccessories($id)
     {
-        return 'TODO';
-        
-//        $model = new PartsAccessories();
-//
-//        if(!empty($id)){
-//            $model = $model::findOne(['_id'=>new ObjectID($id)]);
-//            
-//            $infoLog = [];
-//            if(!empty($model->log)){
-//                $infoLog = $model->log;
-//            }
-//        }
-//
-//        return $this->renderAjax('_log-parts-accessories', [
-//            'language' => Yii::$app->language,
-//            'infoLog' => $infoLog,
-//        ]);
+        if(!empty($id)){
+            $request =  Yii::$app->request->post();
+
+            if(!empty($request)){
+                $dateInterval['to'] = $request['to'];
+                $dateInterval['from'] =  $request['from'];
+            } else {
+                $dateInterval['to'] = date("Y-m-d");
+                $dateInterval['from'] = date("Y-01-01");
+            }
+
+            $model = LogWarehouse::find()
+                ->where(['parts_accessories_id'=> new ObjectID($id)])
+                ->andWhere([
+                    'date_create' => [
+                        '$gte' => new UTCDatetime(strtotime($dateInterval['from']) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                    ]
+                ])
+                ->orderBy(['date_create'=>SORT_DESC])
+                ->all();
+
+            return $this->render('log-parts-accessories',[
+                'language' => Yii::$app->language,
+                'id' => $id,
+                'model' => $model,
+                'dateInterval' => $dateInterval,
+            ]);
+        }
+        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/suppliers-performers');
     }
 
     /**

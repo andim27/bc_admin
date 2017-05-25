@@ -44,7 +44,9 @@ use app\components\AlertWidget;
                         <td><?=($k+1)?></td>
                         <td><?=$item->title?></td>
                         <td><?=$item->coordinates?></td>
-                        <td>????</td>
+                        <td>
+                            <?=Html::a('<i class="fa fa-clock-o" title="история"></i>',['/business/manufacturing-suppliers/log-suppliers-performers','id'=>$item->_id->__toString()]) ?>
+                        </td>
                         <td>
                             <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-suppliers-performers','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                         </td>

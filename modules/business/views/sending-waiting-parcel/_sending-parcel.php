@@ -50,7 +50,11 @@ $listAdmin = Users::getListAdmin();
                                 <td><?=$listWarehouse[$item->where_sent]?></td>
                                 <td><?=(!empty($item->who_gets) ? $item->who_gets : '')?></td>
                                 <td><?=(!empty($item->delivery) ? $item->delivery : '')?></td>
-                                <td><i class="fa fa-file-text"></i></td>
+                                <td>
+                                    <?=(!empty($item->documents) ?
+                                        Html::a('<i class="fa fa-file-text text-success"></i></td>',Yii::getAlias('@parcelDocumentsUrl') . '/' . $item->id . '/' .$item->documents,['target'=>'_blank','title'=>$item->documents]) :
+                                        '<i class="fa fa-file-text text-danger"></i></td>')?>
+                                </td>
                                 <td><?=($item->is_posting == 0  ? 'Отправлено' : 'Оприходовано')?></td>
                                 <td>
                                     <?=($item->is_posting == 0  ?

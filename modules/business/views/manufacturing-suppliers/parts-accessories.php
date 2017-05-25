@@ -80,7 +80,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
                                 <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                             </td>
                             <td>
-                                <i class="fa fa-clock-o" title="in process"></i>
+                                <?=Html::a('<i class="fa fa-clock-o" title="история"></i>',['/business/manufacturing-suppliers/log-parts-accessories','id'=>$item->_id->__toString()]) ?>
     <!--                            --><?php
     //                                if(empty($item->log)){
     //                                   echo Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-parts-accessories','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]);

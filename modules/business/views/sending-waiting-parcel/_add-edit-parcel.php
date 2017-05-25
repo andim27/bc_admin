@@ -141,7 +141,13 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                 </div>
 
                 <div class="form-group row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
+                        <?=Html::input('text','', (!empty($model->documents) ? $model->documents : 'файл не загружен'),[
+                            'class'=>'form-control',
+                            'disabled' => true
+                        ])?>
+                    </div>
+                    <div class="col-md-6">
                         <?=Html::fileInput('documents', '',[
                             'class'=>'form-control',
                             'placeholder'=>'Документы',
