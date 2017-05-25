@@ -77,17 +77,15 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
                             <td><?=(!empty($countGoodsFromMyWarehouse[$item->_id->__toString()]) ? $countGoodsFromMyWarehouse[$item->_id->__toString()] : '0');?></td>
                             <td><?=THelper::t($item->unit)?></td>
                             <td>
-                                <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
+                                <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/manufacturing-suppliers/add-update-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                             </td>
                             <td>
                                 <?=Html::a('<i class="fa fa-clock-o" title="история"></i>',['/business/manufacturing-suppliers/log-parts-accessories','id'=>$item->_id->__toString()]) ?>
-    <!--                            --><?php
-    //                                if(empty($item->log)){
-    //                                   echo Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-parts-accessories','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]);
-    //                                } else {
-    //                                   echo Html::a('<i class="fa fa-comment"></i>', ['/business/manufacturing-suppliers/log-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']);
-    //                                }
-    //                            ?>
+
+                                <?= ($item->checkTransaction() ?
+                                    '' :
+                                    Html::a('<i class="fa fa-trash-o" title="удалить"></i>', ['/business/manufacturing-suppliers/remove-suppliers-performers','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']])) ?>
+
                             </td>
                         </tr>
                     <?php } ?>

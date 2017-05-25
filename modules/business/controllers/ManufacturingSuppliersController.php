@@ -166,6 +166,11 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    /**
+     * log transactions for Parts and Accessories
+     * @param $id
+     * @return string|\yii\web\Response
+     */
     public function actionLogPartsAccessories($id)
     {
         if(!empty($id)){
@@ -259,19 +264,22 @@ class ManufacturingSuppliersController extends BaseController {
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
     }
 
-    //TODO:KAA
+    /**
+     * remove info Suppliers and Performers
+     * @param $id
+     * @return \yii\web\Response
+     */
     public function actionRemovePartsAccessories($id)
     {
-        return 'TODO';
-//        if(PartsAccessories::findOne(['_id'=>new ObjectID($id)])->delete()){
-//            Yii::$app->session->setFlash('alert' ,[
-//                    'typeAlert'=>'success',
-//                    'message'=>'remove item'
-//                ]
-//            );
-//        }
-//
-//        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
+        if(PartsAccessories::findOne(['_id'=>new ObjectID($id)])->delete()){
+            Yii::$app->session->setFlash('alert' ,[
+                    'typeAlert'=>'success',
+                    'message'=>'remove item'
+                ]
+            );
+        }
+
+        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
     }
 
 //TODO:KAA

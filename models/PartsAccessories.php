@@ -42,6 +42,20 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         ];
     }
 
+    /**
+     * have transaction or not this parts or accessories
+     * @return bool
+     */
+    public function checkTransaction()
+    {
+        $model = $this->hasMany(LogWarehouse::className(),['parts_accessories_id'=>'_id'])->count();
+        if($model>0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static function getListUnit()
     {
         $typesUnit = self::$typesUnit;
