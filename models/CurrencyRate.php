@@ -1,7 +1,6 @@
 <?php
 
 namespace app\models;
-use yii\helpers\ArrayHelper;
 
 /**
  * Class CurrencyRate
@@ -10,6 +9,7 @@ use yii\helpers\ArrayHelper;
 class CurrencyRate extends \yii2tech\embedded\mongodb\ActiveRecord
 {
     protected static $listCurrency = [
+        'eur' => 'eur',
         'usd' => 'usd',
         'uah' => 'uah',
         'rub' => 'rub'
@@ -47,6 +47,8 @@ class CurrencyRate extends \yii2tech\embedded\mongodb\ActiveRecord
     public static function getActualCurrency()
     {
         $model = self::find()->orderBy(['dateCreate'>SORT_DESC])->one()->toArray();
+
+        $model['eur'] = 1;
 
         return $model;
     }

@@ -12,7 +12,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 ?>
 
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('in_warehouse') ?></h3>
+    <h3 class="m-b-none"><?= THelper::t('cancellation_warehouse') ?></h3>
 </div>
 
 
