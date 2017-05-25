@@ -274,7 +274,7 @@ class ManufacturingSuppliersController extends BaseController {
         if(PartsAccessories::findOne(['_id'=>new ObjectID($id)])->delete()){
             Yii::$app->session->setFlash('alert' ,[
                     'typeAlert'=>'success',
-                    'message'=>'remove item'
+                    'message'=>'Удаление прошло успешно.'
                 ]
             );
         }
@@ -282,7 +282,10 @@ class ManufacturingSuppliersController extends BaseController {
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
     }
 
-//TODO:KAA
+    /**
+     * info Interchangeable Goods
+     * @return string
+     */
     public function actionInterchangeableGoods()
     {
         $model = PartsAccessories::find()->all();
@@ -306,7 +309,13 @@ class ManufacturingSuppliersController extends BaseController {
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
-//TODO:KAA
+
+    /**
+     * popup for add or update Interchangeable Goods
+     * @param string $id
+     * @param string $idInterchangeable
+     * @return string
+     */
     public function actionAddUpdateInterchangeableGoods($id = '',$idInterchangeable = '')
     {
         return $this->renderAjax('_add-update-interchangeable-goods', [
@@ -315,9 +324,19 @@ class ManufacturingSuppliersController extends BaseController {
             'idInterchangeable' => $idInterchangeable,
         ]);
     }
-//TODO:KAA
+
+    /**
+     * save info Interchangeable Goods
+     * @return \yii\web\Response
+     */
     public function actionSaveInterchangeableGoods()
     {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
         $request = Yii::$app->request->post();
 
         $model = new PartsAccessories();
@@ -326,15 +345,13 @@ class ManufacturingSuppliersController extends BaseController {
 
             if($request['id']==$request['idInterchangeable']){
                 Yii::$app->session->setFlash('alert' ,[
-                        'typeAlert' => 'danger',
-                        'message' => 'error goods = goods'
+                        'typeAlert'=>'danger',
+                        'message'=>'Сохранения не применились, товары были одинаковые!!!'
                     ]
                 );
 
                 return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/interchangeable-goods');
             }
-
-
 
             $model = $model::findOne(['_id'=>new ObjectID($request['id'])]);
 
@@ -347,8 +364,8 @@ class ManufacturingSuppliersController extends BaseController {
                 $tempArrayInterchangeable[] = $request['idInterchangeable'];
             } else {
                 Yii::$app->session->setFlash('alert' ,[
-                        'typeAlert' => 'danger',
-                        'message' => 'this item have'
+                        'typeAlert'=>'danger',
+                        'message'=>'Сохранения не применились, такая комбинация существует!!!'
                     ]
                 );
 
@@ -361,33 +378,28 @@ class ManufacturingSuppliersController extends BaseController {
 
                 Yii::$app->session->setFlash('alert' ,[
                         'typeAlert'=>'success',
-                        'message'=>'the changes are saved'
+                        'message'=>'Сохранения применились.'
                     ]
                 );
 
-                return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/interchangeable-goods');
             }
         }
 
-        Yii::$app->session->setFlash('alert' ,[
-                'typeAlert' => 'danger',
-                'message' => 'the changes are not saved'
-            ]
-        );
-
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/interchangeable-goods');
     }
-//TODO:KAA
+
+    /**
+     * remove info Interchangeable Goods
+     * @param $id
+     * @param $idInterchangeable
+     * @return \yii\web\Response
+     */
     public function actionRemoveInterchangeableGoods($id,$idInterchangeable)
     {
-
         if(!empty($id)) {
-
-
             $model = PartsAccessories::findOne(['_id' => new ObjectID($id)]);
 
             $tempArrayInterchangeable = [];
-
 
             if (!empty($model->interchangeable)) {
                 foreach ($model->interchangeable as $item) {
@@ -402,7 +414,7 @@ class ManufacturingSuppliersController extends BaseController {
 
                     Yii::$app->session->setFlash('alert', [
                             'typeAlert' => 'success',
-                            'message' => 'remove item'
+                            'message' => 'Удаление прошло успешно.'
                         ]
                     );
 

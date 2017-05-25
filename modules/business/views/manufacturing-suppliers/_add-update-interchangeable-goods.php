@@ -19,7 +19,7 @@ use app\models\PartsAccessories;
                 'options' => ['name' => 'savePartsAccessories'],
             ]); ?>
 
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-md-12">
                     <?=Html::label(THelper::t('goods'))?>
                     <?=Html::dropDownList('id',(!empty($id) ? $id : ''),PartsAccessories::getListPartsAccessories(),[
@@ -33,7 +33,7 @@ use app\models\PartsAccessories;
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-md-12">
                     <?=Html::label(THelper::t('goods'))?>
                     <?=Html::dropDownList('idInterchangeable',(!empty($idInterchangeable) ? $idInterchangeable : ''),PartsAccessories::getListPartsAccessories() ,[
@@ -47,7 +47,7 @@ use app\models\PartsAccessories;
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-md-12 text-right">
                     <?= Html::submitButton(THelper::t('settings_translation_edit_save'), ['class' => 'btn btn-success']) ?>
                 </div>

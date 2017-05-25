@@ -333,12 +333,12 @@ Class Menu
                         'url' => ['manufacturing-suppliers/parts-accessories'],
                         'action' => 'parts-accessories',
                     ],
-//                    [
-//                        'key'   =>  'sidebar_interchangeable_goods',
-//                        'label' => THelper::t('sidebar_interchangeable_goods'),
-//                        'url' => ['manufacturing-suppliers/interchangeable-goods'],
-//                        'action' => 'interchangeable-goods',
-//                    ],
+                    [
+                        'key'   =>  'sidebar_interchangeable_goods',
+                        'label' => THelper::t('sidebar_interchangeable_goods'),
+                        'url' => ['manufacturing-suppliers/interchangeable-goods'],
+                        'action' => 'interchangeable-goods',
+                    ],
 //                    [
 //                        'key'   =>  'sidebar_composite_products',
 //                        'label' => THelper::t('sidebar_composite_products'),
