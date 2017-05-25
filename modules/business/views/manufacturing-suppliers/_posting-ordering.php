@@ -57,7 +57,7 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-4">
-                        <?=Html::label('count_goods')?>
+                        <?=Html::label('Количество')?>
                         <?=Html::input('number','number', '0',[
                             'class'=>'form-control',
                             'pattern'=>'\d*',
@@ -66,7 +66,7 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
                         ])?>
                     </div>
                     <div class="col-md-4">
-                        <?=Html::label('currency')?>
+                        <?=Html::label('Валюта')?>
                         <?=Html::dropDownList('currency',
                             '',
                             CurrencyRate::getListCurrency(),[
@@ -80,7 +80,7 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
                     </div>
 
                     <div class="col-md-4">
-                        <?=Html::label('price')?>
+                        <?=Html::label('Полная стоимость')?>
                         <?=Html::input('number','price', '0',[
                             'class'=>'form-control',
                             'min'=>'0.01',

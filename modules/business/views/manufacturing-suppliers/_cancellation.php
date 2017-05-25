@@ -59,7 +59,7 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
 
 
             <div class="form-group">
-                <?=Html::label(THelper::t('number'))?>
+                <?=Html::label(THelper::t('count'))?>
                 <?=Html::input('number','number','0',[
                     'class'=>'form-control',
                     'min'=>'1',

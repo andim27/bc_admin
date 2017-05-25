@@ -31,7 +31,7 @@ use app\models\PartsOrdering;
 
             <div class="row">
                 <div class="col-md-12 text-right">
-                    <?= Html::submitButton(THelper::t('posting_pre_ordering'), ['class' => 'btn btn-success']) ?>
+                    <?= Html::submitButton(THelper::t('posting_ordering'), ['class' => 'btn btn-success']) ?>
                 </div>
             </div>
             <?php ActiveForm::end(); ?>

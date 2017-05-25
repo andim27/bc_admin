@@ -12,7 +12,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
 ?>
     <div class="m-b-md">
-        <h3 class="m-b-none"><?= THelper::t('sidebar_execution_posting') ?></h3>
+        <h3 class="m-b-none"><?= THelper::t('sending_waiting_parcel') ?></h3>
     </div>
 
     <div class="row">

@@ -28,7 +28,7 @@ $countGoods = $countGoodsFromMyWarehouse[$goodsID];
             <?=Html::hiddenInput('parts_accessories_id',$goodsID)?>
 
             <div class="form-group">
-                <?=Html::label(THelper::t('number'))?>
+                <?=Html::label(THelper::t('Количество'))?>
                 <?=Html::input('number','number','0',[
                     'class'=>'form-control wantCancellations',
                     'min'=>'1',
