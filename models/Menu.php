@@ -339,12 +339,12 @@ Class Menu
                         'url' => ['manufacturing-suppliers/interchangeable-goods'],
                         'action' => 'interchangeable-goods',
                     ],
-//                    [
-//                        'key'   =>  'sidebar_composite_products',
-//                        'label' => THelper::t('sidebar_composite_products'),
-//                        'url' => ['manufacturing-suppliers/composite-products'],
-//                        'action' => 'composite-products',
-//                    ],
+                    [
+                        'key'   =>  'sidebar_composite_products',
+                        'label' => THelper::t('sidebar_composite_products'),
+                        'url' => ['manufacturing-suppliers/composite-products'],
+                        'action' => 'composite-products',
+                    ],
                     [
                         'key'   =>  'sidebar_parts_ordering',
                         'label' => THelper::t('sidebar_parts_ordering'),

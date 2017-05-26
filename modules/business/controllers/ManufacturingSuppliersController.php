@@ -425,7 +425,10 @@ class ManufacturingSuppliersController extends BaseController {
         }
     }
 
-//TODO:KAA
+    /**
+     * info Composite Products
+     * @return string
+     */
     public function actionCompositeProducts()
     {
         $model = PartsAccessories::find()->all();
@@ -436,7 +439,12 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
 
     }
-//TODO:KAA
+
+    /**
+     * popup for Composite Products
+     * @param string $id
+     * @return string
+     */
     public function actionAddUpdateCompositeProducts($id = '')
     {
         $model = new PartsAccessories();
@@ -449,9 +457,20 @@ class ManufacturingSuppliersController extends BaseController {
             'model' => $model,
         ]);
     }
-//TODO:KAA
+
+    /**
+     * save info Composite Products
+     * @return \yii\web\Response
+     */
     public function actionSaveCompositeProducts()
     {
+
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
         $request = Yii::$app->request->post();
 
         $model = new PartsAccessories();
@@ -474,26 +493,16 @@ class ManufacturingSuppliersController extends BaseController {
             $model->composite = $arrayComposite;
 
             if($model->save()){
-
                 Yii::$app->session->setFlash('alert' ,[
                         'typeAlert'=>'success',
-                        'message'=>'the changes are saved'
+                        'message'=>'Сохранения применились.'
                     ]
                 );
-
-                return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/composite-products');
             }
             
         }
 
-
-
-        Yii::$app->session->setFlash('alert' ,[
-                'typeAlert' => 'danger',
-                'message' => 'the changes are not saved'
-            ]
-        );
-        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/composite-productss');
+        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/composite-products');
 
     }
 

@@ -60,7 +60,7 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
     {
         $typesUnit = self::$typesUnit;
 
-        $list[''] = 'Выберите единицу измерения';
+        $list = [];
 
         foreach ($typesUnit as $item){
             $list[$item] = THelper::t($item);

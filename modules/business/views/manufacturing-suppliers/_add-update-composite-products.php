@@ -3,7 +3,10 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use app\components\THelper;
 use app\models\PartsAccessories;
+
 $listGoods = PartsAccessories::getListPartsAccessories();
+
+$listUnit = PartsAccessories::getListUnit();
 ?>
 
 <div class="modal-dialog">
@@ -16,13 +19,13 @@ $listGoods = PartsAccessories::getListPartsAccessories();
         <div class="modal-body">
             <?php $formCom = ActiveForm::begin([
                 'action' => '/' . $language . '/business/manufacturing-suppliers/save-composite-products',
-                'options' => ['name' => 'savePartsAccessories'],
+                'options' => ['name' => 'saveComposite'],
             ]); ?>
 
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-md-12">
                     <?=Html::label(THelper::t('goods'))?>
-                    <?=Html::dropDownList('id',(!empty($model->id) ? $model->id : ''),$listGoods,[
+                    <?=Html::dropDownList('id',(!empty($model->_id) ? (string)$model->_id : ''),$listGoods,[
                         'class'=>'form-control',
                         'id'=>'selectChangeStatus',
                         'required'=>'required',
@@ -62,7 +65,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
             </div>
 
 
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-md-5">
                     <?=Html::dropDownList('',(!empty($model->id) ? $model->id : ''),$listGoods,[
                         'class'=>'form-control compositeID',
@@ -74,10 +77,14 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                     ])?>
                 </div>
                 <div class="col-md-3">
-                    <?=Html::input('text','','',['class'=>'form-control compositeNumber'])?>
+                    <?=Html::input('number','','1',[
+                        'class'=>'form-control compositeNumber',
+                        'min'=>'1',
+                        'step'=>'1',
+                    ])?>
                 </div>
                 <div class="col-md-2">
-                    <?=Html::dropDownList('',(!empty($model->unit) ? $model->unit : ''),PartsAccessories::getListUnit(),[
+                    <?=Html::dropDownList('',(!empty($model->unit) ? $model->unit : ''),$listUnit,[
                         'class'=>'form-control compositeUnit',
                         'id'=>'selectChangeStatus',
                         'options' => [
@@ -90,7 +97,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-md-12 text-right">
                     <?= Html::submitButton(THelper::t('settings_translation_edit_save'), ['class' => 'btn btn-success']) ?>
                 </div>
@@ -161,6 +168,19 @@ $listGoods = PartsAccessories::getListPartsAccessories();
     $(document).on('click', '.removeComposite', function(e) {
         $(this).closest(".row").remove();
     });
+
+//    $('[name="saveComposite"]').on('submit',function (event) {
+//        valid = true;
+//
+//        valid = false;
+//
+//        console.log('stop');
+//
+//        if(valid == false){
+//            event.preventDefault();
+//            event.stopImmediatePropagation();
+//        }
+//    });
 
     function alertError(error) {
         $(".blComposite .blError").html(
