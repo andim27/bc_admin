@@ -93,7 +93,7 @@ $listUnit = PartsAccessories::getListUnit();
                     ])?>
                 </div>
                 <div class="col-md-2">
-                    <?=Html::button('<i class="fa fa-plus"></i>',['type'=>'button','class'=>'btn btn-default btn-block addComposite'])?>
+                    <?=Html::button('<i class="fa fa-plus"></i>',['type'=>'button','class'=>'btn btn-default btn-block addComposite','title'=>'редактировать'])?>
                 </div>
             </div>
 

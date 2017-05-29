@@ -37,7 +37,7 @@ use app\models\PartsAccessories;
 
             <div class="row">
                 <div class="col-md-12 text-right">
-                    <?= Html::submitButton(THelper::t('assembly'), ['class' => 'btn btn-success']) ?>
+                    <?= Html::submitButton(THelper::t('assembly'), ['class' => 'btn btn-success btnAssembly']) ?>
                 </div>
             </div>
             <?php ActiveForm::end(); ?>
@@ -49,7 +49,6 @@ use app\models\PartsAccessories;
 
 <script>
     $(document).on('change','#selectGoods',function () {
-
         $.ajax({
             url: '<?=\yii\helpers\Url::to(['manufacturing-suppliers/kit-for-accessories'])?>',
             type: 'POST',
@@ -60,6 +59,6 @@ use app\models\PartsAccessories;
                 $('.blPartsAccessories').html(data);
             }
         });
-
     });
+    
 </script>
