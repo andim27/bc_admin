@@ -1,7 +1,15 @@
 <?php
 use yii\helpers\Html;
 use app\models\PartsAccessories;
+use app\models\PartsAccessoriesInWarehouse;
+
+$listGoods = PartsAccessories::getListPartsAccessories();
+
+$listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
+
+
 ?>
+
 <div class="col-md-12">
 <div class="panel panel-default">
     <div class="panel-body">
@@ -23,19 +31,20 @@ use app\models\PartsAccessories;
                                     'options' => [
                                     ]
                                 ])?>
-                            <?=Html::hiddenInput('number[]',$item['number'],[]);?>
+
                         <?php } else {?>
                             <?=Html::hiddenInput('complect[]',(string)$item['_id'],[]);?>
-                            <?=Html::hiddenInput('number[]',$item['number'],[]);?>
-                            <?=Html::input('text','',PartsAccessories::getNamePartsAccessories((string)$item['_id']),['class'=>'form-control','disabled'=>'disabled']);?>
+                            <?=Html::input('text','',$listGoods[(string)$item['_id']],['class'=>'form-control','disabled'=>'disabled']);?>
 
                         <?php } ?>
                     </div>
                     <div class="col-md-3">
+                        <?=Html::hiddenInput('number[]',$item['number'],[]);?>
                         <?=Html::input('text','',$item['number'],['class'=>'form-control','disabled'=>'disabled']);?>
                     </div>
                     <div class="col-md-3">
-                        <?=Html::input('text','',$item['number'],['class'=>'form-control','disabled'=>'disabled']);?>
+                        <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[(string)$item['_id']]) ? $listGoodsFromMyWarehouse[(string)$item['_id']] : 0 ),['class'=>'numberWarehouse']);?>
+                        <?=Html::input('text','',$item['number'],['class'=>'form-control needSend','disabled'=>'disabled']);?>
                     </div>
                     <div class="col-md-3">
                         <?=Html::input('number','reserve[]','0',[
@@ -54,11 +63,18 @@ use app\models\PartsAccessories;
 </div>
 
 <script>
-    $(document).find('.CanCollect').val('<?=PartsAccessories::getHowMuchCanCollect((string)$model->_id)?>')
+    canCollect = '<?=PartsAccessoriesInWarehouse::getHowMuchCanCollect((string)$model->_id)?>';
 
+    if(canCollect==0){
+        $('.assemblyBtn').hide();
+    } else {
+        $('.assemblyBtn').show();
+    }
+
+    $(document).find('.CanCollect').val(canCollect);
 
     $(document).on('click','select[name="complect[]"]',function () {
-        listComponents = $(".blPartsAccessories").find('[name="complect[]"]').map(function(){
+        listComponents = $(".blPartsAccessories").find('input[name="complect[]"],select[name="complect[]"] option:selected').map(function(){
             return this.value;
         }).get();
 
@@ -70,10 +86,9 @@ use app\models\PartsAccessories;
                 listComponents : listComponents,
             },
             success: function (data) {
-                $(document).find('.CanCollect').val(data)
+                $(document).find('.CanCollect').val(data);
             }
         });
-
 
     })
 

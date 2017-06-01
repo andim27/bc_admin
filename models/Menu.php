@@ -360,21 +360,27 @@ Class Menu
                 ]
             ],
 
+            [
+                'key'   =>  'sidebar_submit_execution_posting',
+                'label' => THelper::t('sidebar_submit_execution_posting'),
+                'url' => '#',
+                'controller' => 'submit-execution-posting',
+                'items' => [
+                    [
+                        'key'   =>  'sidebar_execution_posting',
+                        'label' => THelper::t('sidebar_execution_posting'),
+                        'url' => ['submit-execution-posting/execution-posting'],
+                        'action' => 'execution-posting',
+                    ],
 
-//            [
-//                'key'   =>  'sidebar_submit_execution_posting',
-//                'label' => THelper::t('sidebar_submit_execution_posting'),
-//                'url' => '#',
-//                'controller' => 'submit-execution-posting',
-//                'items' => [
-//                    [
-//                        'key'   =>  'sidebar_execution_posting',
-//                        'label' => THelper::t('sidebar_execution_posting'),
-//                        'url' => ['submit-execution-posting/execution-posting'],
-//                        'action' => 'execution-posting',
-//                    ],
-//                ]
-//            ],
+                    [
+                        'key'   =>  'sidebar_history_cancellation_posting',
+                        'label' => THelper::t('sidebar_history_cancellation_posting'),
+                        'url' => ['submit-execution-posting/history-cancellation-posting'],
+                        'action' => 'history-cancellation-posting',
+                    ],
+                ]
+            ],
 
             [
                 'key'   =>  'sending_waiting_parcel',

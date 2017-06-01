@@ -25,6 +25,7 @@ class ExecutionPosting extends \yii2tech\embedded\mongodb\ActiveRecord
             '_id',
             'parts_accessories_id',
             'number',
+            'received',
 
             'list_component',
 
@@ -32,7 +33,7 @@ class ExecutionPosting extends \yii2tech\embedded\mongodb\ActiveRecord
             'date_execution',
             'date_create',
             
-            'log'
+            'posting'
         ];
     }
 
