@@ -16,13 +16,13 @@ $infoGoods = PartsAccessories::findOne(['_id'=>new \MongoDB\BSON\ObjectID((strin
 ?>
 
 <?php if(!empty(PartsAccessories::getInterchangeableList((string)$infoComposite['_id']))) { ?>
-    <span class="blockComposite">
+<span class="blockComposite">
 <?php } ?>
 
 
-<?php if(!empty($infoGoods->composite)){ ?>
+    <?php if(!empty($infoGoods->composite)){ ?>
 
-    <div class="form-group row headPart">
+        <div class="form-group row headPart">
         <div class="col-md-3 offset-left-<?=$level?>">
             
             <?php if(!empty(PartsAccessories::getInterchangeableList((string)$infoComposite['_id']))) { ?>
@@ -47,23 +47,23 @@ $infoGoods = PartsAccessories::findOne(['_id'=>new \MongoDB\BSON\ObjectID((strin
         <div class="col-md-2"></div>
         <div class="col-md-2"></div>
     </div>
-    <?php $level++; ?>
-    <?php foreach($infoGoods->composite as $item){ ?>
-        <?= $this->render('_complects',[
-            'infoComposite'     => $item,
-            'level'             => $level,
-            'count'             => ($infoComposite['number'] * $count)
-        ]); ?>
-    <?php } ?>
+        <?php $level++; ?>
+        <?php foreach($infoGoods->composite as $item){ ?>
+            <?= $this->render('_complects',[
+                'infoComposite'     => $item,
+                'level'             => $level,
+                'count'             => ($infoComposite['number'] * $count)
+            ]); ?>
+        <?php } ?>
 
-<?php } else { ?>
-    <?php
+    <?php } else { ?>
+        <?php
         $priceOnePiece = LogWarehouse::getPriceOnePiece((string)$infoComposite['_id']);
         $needCount = $infoComposite['number'] * $count;
         $warehouseCount = (!empty($listGoodsFromMyWarehouse[(string)$infoComposite['_id']]) ? $listGoodsFromMyWarehouse[(string)$infoComposite['_id']] : '0');
         $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0');
-    ?>
-<div class="form-group row">
+        ?>
+        <div class="form-group row">
     <div class="col-md-3  offset-left-<?=$level?>">
         
         <?php if(!empty(PartsAccessories::getInterchangeableList((string)$infoComposite['_id']))) { ?>
@@ -103,8 +103,8 @@ $infoGoods = PartsAccessories::findOne(['_id'=>new \MongoDB\BSON\ObjectID((strin
         <?php } ?>
     </div>
 </div>
-<?php } ?>
+    <?php } ?>
 
-<?php if(!empty(PartsAccessories::getInterchangeableList((string)$infoComposite['_id']))) { ?>
+    <?php if(!empty(PartsAccessories::getInterchangeableList((string)$infoComposite['_id']))) { ?>
     </span>
 <?php } ?>

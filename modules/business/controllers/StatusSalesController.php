@@ -5,6 +5,9 @@ namespace app\modules\business\controllers;
 
 use app\components\SendMessageHelper;
 use app\components\THelper;
+use app\models\LogWarehouse;
+use app\models\PartsAccessories;
+use app\models\PartsAccessoriesInWarehouse;
 use app\models\Pins;
 use app\models\Products;
 use app\models\ProductSet;
@@ -264,6 +267,31 @@ class StatusSalesController extends BaseController {
                 $model->isAttributeChanged('reviewsSales');
                 
                 if($model->save()){
+
+                    $listGoods = PartsAccessories::getListPartsAccessories();
+                    $idGoods = array_search($request['set'],$listGoods);
+                    // add log
+                    LogWarehouse::setInfoLog([
+                        'action'                    =>  $request['status'],
+                        'parts_accessories_id'      =>  $idGoods,
+                        'number'                    =>  '1',
+                    ]);
+                    if(!empty($idGoods)){
+                        $myWarehouse = Warehouse::getIdMyWarehouse();
+                        $modelPartsAccessoriesInWarehouse = PartsAccessoriesInWarehouse::findOne([
+                            'parts_accessories_id'  =>  new ObjectID($idGoods),
+                            'warehouse_id'          =>  new ObjectID($myWarehouse)
+                        ]);
+
+                        if(!empty($modelPartsAccessoriesInWarehouse)){
+                            $modelPartsAccessoriesInWarehouse->number -= 1;
+
+                            if($modelPartsAccessoriesInWarehouse->save()){
+
+                            }
+                        }
+                    }
+
                     return $this->renderPartial('_save_status',[
                         'idSale' => $request['idSale'],
                         'idUser' => $this->user->id,

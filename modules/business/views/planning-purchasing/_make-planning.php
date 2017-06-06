@@ -172,43 +172,43 @@ if(!empty($model)){
         });
     });
 
-    $(".WantCollect").on('change',function(){
-        wantC = parseInt($(this).val());
-        canC = parseInt($('.CanCollect').val());
-
-        $('.blPartsAccessories .row').each(function () {
-            needNumber = $(this).find('input[name="number[]"]').val();
-            $(this).find('.needSend').val(needNumber*wantC);
-        });
-
-        if(wantC>canC){
-            $('.assemblyBtn').hide();
-        } else {
-            $('.assemblyBtn').show();
-        }
-    });
-
-    $('.blPartsAccessories').on('change','input[name="reserve[]"]',function(){
-        bl = $(this).closest('.row');
-
-        inWarehouse = parseInt(bl.find('.numberWarehouse').val());
-        need = parseInt(bl.find('.needSend').val());
-        wantReserve = parseInt($(this).val());
-
-        countInfo = inWarehouse - need - wantReserve;
-        if(countInfo >= 0){
-            $('.assemblyBtn').show();
-        } else {
-            $(".infoDanger").html(
-                '<div class="alert alert-danger fade in">' +
-                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-                'Такого количества нет на складе. Доступно ' + inWarehouse + 'шт.' +
-                '</div>'
-            );
-
-            $('.assemblyBtn').hide();
-        }
-    })
+//    $(".WantCollect").on('change',function(){
+//        wantC = parseInt($(this).val());
+//        canC = parseInt($('.CanCollect').val());
+//
+//        $('.blPartsAccessories .row').each(function () {
+//            needNumber = $(this).find('input[name="number[]"]').val();
+//            $(this).find('.needSend').val(needNumber*wantC);
+//        });
+//
+//        if(wantC>canC){
+//            $('.assemblyBtn').hide();
+//        } else {
+//            $('.assemblyBtn').show();
+//        }
+//    });
+//
+//    $('.blPartsAccessories').on('change','input[name="reserve[]"]',function(){
+//        bl = $(this).closest('.row');
+//
+//        inWarehouse = parseInt(bl.find('.numberWarehouse').val());
+//        need = parseInt(bl.find('.needSend').val());
+//        wantReserve = parseInt($(this).val());
+//
+//        countInfo = inWarehouse - need - wantReserve;
+//        if(countInfo >= 0){
+//            $('.assemblyBtn').show();
+//        } else {
+//            $(".infoDanger").html(
+//                '<div class="alert alert-danger fade in">' +
+//                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+//                'Такого количества нет на складе. Доступно ' + inWarehouse + 'шт.' +
+//                '</div>'
+//            );
+//
+//            $('.assemblyBtn').hide();
+//        }
+//    })
 
 
 </script>

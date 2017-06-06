@@ -86,4 +86,29 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
 
         return true;
     }
+
+
+    public static function getPriceOnePiece($goodsID)
+    {
+        $model = LogWarehouse::find()
+            ->where(['parts_accessories_id'=>new ObjectID($goodsID)])
+            ->andWhere(['IN','action',['posting_ordering','posting_pre_ordering']])
+            ->orderBy(['date_create'=>SORT_DESC])
+            ->one();
+
+        $price = 0;
+        if(!empty($model)){
+            $price = round(($model->money / $model->number),2);
+        }
+
+        $infoRate = CurrencyRate::getActualCurrency();
+        $infoCurrency = CurrencyRate::getListCurrency();
+
+        $infoPrice = [];
+        foreach ($infoCurrency as $item){
+            $infoPrice[$item] = $price * $infoRate[$item];
+        }
+        
+        return $infoPrice;
+    }
 }

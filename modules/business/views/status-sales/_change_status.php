@@ -31,12 +31,12 @@ $unicBtn = rand();
         <?php Pjax::begin(['enablePushState' => false]); ?>
         <div class="modal-body">
 
-<!--            --><?php //if($goodsCount==0) { ?>
-<!--                <div class="alert alert-danger fade in">-->
-<!--                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>-->
-<!--                    Товара нет на складе!-->
-<!--                </div>-->
-<!--            --><?php //} ?>
+            <?php if($goodsCount==0) { ?>
+                <div class="alert alert-danger fade in">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    Товара нет на складе!
+                </div>
+            <?php } ?>
 
             <?php $formStatus = ActiveForm::begin([
                 'action' => '/' . $language . '/business/status-sales/save-status',
@@ -57,7 +57,7 @@ $unicBtn = rand();
                         'options' => [
                             'status_sale_new' => ['disabled' => true,'style'=>'display:none'],
                             $statusNow => ['disabled' => true],
-                           // 'status_sale_issued' => [($goodsCount>0) ? '':'disabled' => true]
+                            'status_sale_issued' => [($goodsCount>0) ? '':'disabled' => true]
                         ]
                     ])?>
                 </div>
