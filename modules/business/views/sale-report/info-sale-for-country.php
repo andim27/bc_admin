@@ -76,13 +76,13 @@ $listGoods = Products::getListGoods();
                             <?=((!empty($request['flGoods']) && $request['flGoods']==1) ? THelper::t('business_product') : THelper::t('goods'))?>
                         </th>
                         <th>
-                            <?=THelper::t('number_all')?>
+                            <?=THelper::t('number_all_ordering')?>
                         </th>
                         <th>
                             <?=THelper::t('number_issue')?>
                         </th>
                         <th>
-                            <?=THelper::t('number_wait')?>
+                            <?=THelper::t('number_difference')?>
                         </th>
                         <th>
                             <?=THelper::t('number_repair')?>
