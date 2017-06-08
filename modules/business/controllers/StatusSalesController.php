@@ -268,29 +268,29 @@ class StatusSalesController extends BaseController {
                 
                 if($model->save()){
 
-                    $listGoods = PartsAccessories::getListPartsAccessories();
-                    $idGoods = array_search($request['set'],$listGoods);
-                    // add log
-                    LogWarehouse::setInfoLog([
-                        'action'                    =>  $request['status'],
-                        'parts_accessories_id'      =>  $idGoods,
-                        'number'                    =>  '1',
-                    ]);
-                    if(!empty($idGoods)){
-                        $myWarehouse = Warehouse::getIdMyWarehouse();
-                        $modelPartsAccessoriesInWarehouse = PartsAccessoriesInWarehouse::findOne([
-                            'parts_accessories_id'  =>  new ObjectID($idGoods),
-                            'warehouse_id'          =>  new ObjectID($myWarehouse)
-                        ]);
-
-                        if(!empty($modelPartsAccessoriesInWarehouse)){
-                            $modelPartsAccessoriesInWarehouse->number -= 1;
-
-                            if($modelPartsAccessoriesInWarehouse->save()){
-
-                            }
-                        }
-                    }
+//                    $listGoods = PartsAccessories::getListPartsAccessories();
+//                    $idGoods = array_search($request['set'],$listGoods);
+//                    // add log
+//                    LogWarehouse::setInfoLog([
+//                        'action'                    =>  $request['status'],
+//                        'parts_accessories_id'      =>  $idGoods,
+//                        'number'                    =>  '1',
+//                    ]);
+//                    if(!empty($idGoods)){
+//                        $myWarehouse = Warehouse::getIdMyWarehouse();
+//                        $modelPartsAccessoriesInWarehouse = PartsAccessoriesInWarehouse::findOne([
+//                            'parts_accessories_id'  =>  new ObjectID($idGoods),
+//                            'warehouse_id'          =>  new ObjectID($myWarehouse)
+//                        ]);
+//
+//                        if(!empty($modelPartsAccessoriesInWarehouse)){
+//                            $modelPartsAccessoriesInWarehouse->number -= 1;
+//
+//                            if($modelPartsAccessoriesInWarehouse->save()){
+//
+//                            }
+//                        }
+//                    }
 
                     return $this->renderPartial('_save_status',[
                         'idSale' => $request['idSale'],

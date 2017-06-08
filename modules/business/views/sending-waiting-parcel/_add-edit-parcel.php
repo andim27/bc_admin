@@ -146,13 +146,12 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                     </div>
                 </div>
 
-
                 <div class="row">
-                    <?php if(!empty($model->id)) { ?>
                     <div class="col-md-3 text-left">
+                        <?php if(!empty($model->id)) { ?>
                         <?= Html::a(THelper::t('delete'),['/business/sending-waiting-parcel/remove-parcel','id'=>$model->id],['class' => 'btn btn-danger removeBtn'])?>
+                        <?php } ?>
                     </div>
-                    <?php } ?>
                     <div class="col-md-9 text-right">
                         <?= Html::submitButton(THelper::t('assembly'), ['class' => 'btn btn-success sendBtn']) ?>
                     </div>

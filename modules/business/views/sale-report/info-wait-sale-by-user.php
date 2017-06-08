@@ -2,11 +2,9 @@
 use app\components\THelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\models\Settings;
+use app\models\Products;
 
-$listCountry = Settings::getListCountry();
-
-
+$listGoods = Products::getListGoods()
 ?>
 
 
@@ -20,7 +18,8 @@ $listCountry = Settings::getListCountry();
         'options' => ['name' => 'selectCountry'],
     ]); ?>
 
-    <div class="col-md-7 m-b">
+    <div class="col-md-5 m-b">
+        <label><?=THelper::t('country')?></label>
         <?=Html::dropDownList('countryReport',$request['countryReport'],$listCountry,[
             'class'=>'form-control',
             'id'=>'countryReport',
@@ -28,10 +27,20 @@ $listCountry = Settings::getListCountry();
             ]
         ])?>
     </div>
+    
+    <div class="col-md-5 m-b">
+        <label><?=THelper::t('goods')?></label>
+        <?=Html::dropDownList('goodsReport',$request['goodsReport'],$listGoods,[
+            'class'=>'form-control',
+            'id'=>'goodsReport',
+            'options' => [
+            ]
+        ])?>
+    </div>
 
-
-    <div class="col-md-1 m-b">
-        <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
+    <div class="col-md-2 m-b">
+        <label>&nbsp;</label>
+        <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success btn-block']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -77,7 +86,7 @@ $listCountry = Settings::getListCountry();
                             <?php $i = 1; ?>
                             <?php foreach($infoSale as $item) { ?>
                                 <tr>
-                                    <td><?=$i?></td>
+                                    <td><?=$item['date_create']?></td>
                                     <td><?=$item['name']?></td>
                                     <td><?=$listCountry[$item['country']]?></td>
                                     <td><?=$item['city']?></td>

@@ -6,6 +6,7 @@ use app\controllers\BaseController;
 use app\models\api;
 use app\models\Products;
 use app\models\Sales;
+use app\models\Settings;
 use app\models\StatusSales;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
@@ -21,10 +22,11 @@ class SaleReportController extends BaseController
     public function actionInfoWaitSaleByUser()
     {
 
+        $allListCountry = Settings::getListCountry();
+
         $request =  Yii::$app->request->post();
-        if(empty($request['countryReport'])){
-            $request['countryReport'] = 'all';
-        }
+        $request['countryReport'] = (empty($request['countryReport']) ? 'all' : $request['countryReport']);
+        $request['goodsReport'] = (empty($request['goodsReport']) ? 'all' : $request['goodsReport']);
 
         $infoSale = [];
 
@@ -38,8 +40,15 @@ class SaleReportController extends BaseController
                     '$lte' => new UTCDateTime(strtotime($dateTo . '23:59:59') * 1000)
                 ]
             ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
             ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
+
+        $listCountry['all'] = 'Все страны';
 
         if(!empty($model)){
             /** @var \app\models\Sales $item */
@@ -51,6 +60,9 @@ class SaleReportController extends BaseController
                     $tempInfoUser['city'] = $item->infoUser->city;
                     $tempInfoUser['address'] = $item->infoUser->address;
 
+                    if(empty($listCountry[$item->infoUser->country])){
+                        $listCountry[$item->infoUser->country] = $allListCountry[$item->infoUser->country];
+                    }
 
                     $tempInfoUser['phone']= [];
                     if(!empty($item->infoUser->phoneNumber)){
@@ -72,14 +84,21 @@ class SaleReportController extends BaseController
                         $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],['WhatsApp' => $item->infoUser->settings['phoneWhatsApp']]);
                     }
 
+                    $tempInfoUser['date_create'] = $item->dateCreate->toDateTime()->format('Y-m-d H:i:s');
+                    $tempInfoUser['type'] = $item->type;
+
                     /** @var StatusSales $itemSet */
                     foreach($item->statusSale->set as $itemSet){
-                        $tempInfoGoods = [];
-                        $tempInfoGoods['goods'] = $itemSet->title;
-                        $tempInfoGoods['status'] = $itemSet->status;
+                        if($request['goodsReport'] == 'all' || $request['goodsReport'] == $itemSet->title) {
 
-                        if(!in_array($itemSet->status,['status_sale_issued','status_sale_issued_after_repair'])){
-                            $infoSale[] = ArrayHelper::merge($tempInfoUser,$tempInfoGoods);
+                            $tempInfoGoods = [];
+                            $tempInfoGoods['goods'] = $itemSet->title;
+                            $tempInfoGoods['status'] = $itemSet->status;
+
+
+                            if (!in_array($itemSet->status, ['status_sale_issued', 'status_sale_issued_after_repair'])) {
+                                $infoSale[] = ArrayHelper::merge($tempInfoUser, $tempInfoGoods);
+                            }
                         }
                     }
                 }
@@ -91,7 +110,8 @@ class SaleReportController extends BaseController
         return $this->render('info-wait-sale-by-user',[
             'language' => Yii::$app->language,
             'request' => $request,
-            'infoSale' => $infoSale
+            'infoSale' => $infoSale,
+            'listCountry' => $listCountry,
         ]);
     }
     

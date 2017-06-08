@@ -52,12 +52,13 @@ class PlanningPurchasingController extends BaseController {
     
     public function actionUpdateChangeableList()
     {
-        $request = Yii::$app->request->post();;
+        $request = Yii::$app->request->post();
 
-        return $this->renderPartial('_complects',[
-                'infoComposite'     => ['_id'=>$request['goodsId'],'number'=>1],
-                'level'             => $request['goodsCount'],
-                'count'             => $request['goodsLevel']
+        return $this->renderPartial('_update-changeable-list',[
+                'infoComposite'     =>  ['_id'=>$request['goodsParent'],'number'=>1],
+                'selectedGoodsId'   =>  $request['goodsId'],
+                'level'             =>  $request['goodsCount'],
+                'count'             =>  $request['goodsLevel']
             ]
         );
     }

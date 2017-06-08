@@ -67,7 +67,7 @@ if(!empty($model)){
                     </div>
                     <div class="col-md-2">
                         <?=Html::input('number','need','1',[
-                            'class'=>'form-control',
+                            'class'=>'form-control needPlaning',
                             'placeholder'=>'Необходимое количество',
                             'pattern'=>'\d*',
                             'min'=>'1',
@@ -139,8 +139,25 @@ if(!empty($model)){
                 </div>
 
 
+                <div class="row fullSumma form-group">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2">Итого:</div>
+                    <div class="col-md-2">
+                        <span class="eur"></span> eur /
+                    </div>
+                    <div class="col-md-2">
+                        <span class="usd"></span> usd /
+                    </div>
+                    <div class="col-md-2">
+                        <span class="uah"></span> uah /
+                    </div>
+                    <div class="col-md-2">
+                        <span class="rub"></span> rub
+                    </div>
+                </div>
 
-                <div class="row">
+
+                <div class="row form-group">
                     <div class="col-md-6 text-left">
                         <?= Html::a('Удалить заказ с таблицы','',['class' => 'btn btn-success']) ?>
                     </div>
@@ -170,6 +187,58 @@ if(!empty($model)){
                 $('.blPartsAccessories').html(data);
             }
         });
+    });
+
+    $('.needPlaning').on('change',function () {
+
+        fullSumma = {
+            'eur' : 0,
+            'usd' : 0,
+            'uah' : 0,
+            'rub' : 0,
+        };
+
+        needGoods = $(this).val();
+
+        $('.blPartsAccessories .warehouseCount').each(function(indx){
+            blItem = $(this).closest('.row');
+
+            warehouseCount = parseInt($(this).text());
+
+            needCountForOne = parseInt(blItem.find('.needCountForOne').text());
+
+            needOrdering = (needCountForOne * needGoods) - warehouseCount;
+
+            if(needOrdering <= 0){
+                needOrdering = 0;
+            }
+
+            blItem.find('.needOrdering').text(needOrdering);
+            blItem.find('.needBuy').val(needOrdering);
+
+
+            blItem.find('.onceSumma div span').each(function(indx){
+
+                blItem = $(this).closest('.row');
+
+                price = parseFloat($(this).text());
+                currency = $(this).attr('class');
+
+                allPrice = parseFloat((price*needOrdering).toFixed(2));
+
+                fullSumma[currency] = fullSumma[currency] + allPrice;
+
+                blItem.find('.allSumma div .'+currency).text(allPrice);
+
+            })
+
+        });
+
+        for (key in fullSumma) {
+            $('.fullSumma .'+key).text(fullSumma[key]);
+        }
+
+
     });
 
 //    $(".WantCollect").on('change',function(){

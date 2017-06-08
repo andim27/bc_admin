@@ -11,26 +11,44 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
 
 $infoGoods = PartsAccessories::findOne(['_id'=>new \MongoDB\BSON\ObjectID((string)$infoComposite['_id'])]);
 
+$needCount = $infoComposite['number'] * $count;
 
+$changeableList = PartsAccessories::getInterchangeableList((string)$infoComposite['_id']);
+
+if(!empty($changeableList)){
+    $temp = array_keys($changeableList);
+    $parentChangeableList = $temp['0'];
+}
+
+$priceOnePiece = LogWarehouse::getPriceOnePiece((string)$infoComposite['_id']);
+$warehouseCount = (!empty($listGoodsFromMyWarehouse[(string)$infoComposite['_id']]) ? $listGoodsFromMyWarehouse[(string)$infoComposite['_id']] : '0');
+$needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0');
 
 ?>
 
-<?php if(!empty(PartsAccessories::getInterchangeableList((string)$infoComposite['_id']))) { ?>
+<?php if(!empty($changeableList)) { ?>
     <span class="blockComposite">
 <?php } ?>
 
 
 <?php if(!empty($infoGoods->composite)){ ?>
 
+
+
     <div class="form-group row headPart">
         <div class="col-md-3 offset-left-<?=$level?>">
             
-            <?php if(!empty(PartsAccessories::getInterchangeableList((string)$infoComposite['_id']))) { ?>
+            <?php if(!empty($changeableList)){ ?>
                 <?=Html::dropDownList('complect[]','',
-                    PartsAccessories::getInterchangeableList((string)$infoComposite['_id']),[
-                        'class'=>'form-control',
-                        'required'=>'required',
-                        'options' => [
+                    $changeableList,[
+                        'class'     =>'form-control',
+                        'required'  =>'required',
+                        'data'      => [
+                            'parent'    =>  $parentChangeableList,
+                            'level'     =>  $level,
+                            'count'     =>  $needCount
+                        ],
+                        'options'   => [
                         ]
                     ])?>
 
@@ -57,21 +75,21 @@ $infoGoods = PartsAccessories::findOne(['_id'=>new \MongoDB\BSON\ObjectID((strin
     <?php } ?>
 
 <?php } else { ?>
-    <?php
-        $priceOnePiece = LogWarehouse::getPriceOnePiece((string)$infoComposite['_id']);
-        $needCount = $infoComposite['number'] * $count;
-        $warehouseCount = (!empty($listGoodsFromMyWarehouse[(string)$infoComposite['_id']]) ? $listGoodsFromMyWarehouse[(string)$infoComposite['_id']] : '0');
-        $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0');
-    ?>
+
 <div class="form-group row">
     <div class="col-md-3  offset-left-<?=$level?>">
         
-        <?php if(!empty(PartsAccessories::getInterchangeableList((string)$infoComposite['_id']))) { ?>
+        <?php if(!empty($changeableList)) { ?>
             <?=Html::dropDownList('complect[]','',
-                PartsAccessories::getInterchangeableList((string)$infoComposite['_id']),[
-                    'class'=>'form-control',
-                    'required'=>'required',
-                    'options' => [
+                $changeableList,[
+                    'class'     =>'form-control',
+                    'required'  =>'required',
+                    'data'      => [
+                        'parent'    =>  $parentChangeableList,
+                        'level'     =>  $level,
+                        'count'     =>  $needCount
+                    ],
+                    'options'   => [
                     ]
                 ])?>
 
@@ -81,30 +99,40 @@ $infoGoods = PartsAccessories::findOne(['_id'=>new \MongoDB\BSON\ObjectID((strin
         <?php } ?>
 
     </div>
-    <div class="col-md-1"><?=$needCount?></div>
-    <div class="col-md-1"><?=$warehouseCount?></div>
-    <div class="col-md-1"><?=$needOrder?></div>
-    <div class="col-md-2">
+    <div class="col-md-1 needCountForOne"><?=$needCount?></div>
+    <div class="col-md-1 warehouseCount"><?=$warehouseCount?></div>
+    <div class="col-md-1 needOrdering"><?=$needOrder?></div>
+    <div class="col-md-2 onceSumma">
         <?php foreach ($priceOnePiece as $k=>$item){ ?>
-            <div><?=$item?> <?=THelper::t($k)?></div>
+            <div>
+                <span class="<?=$k?>">
+                    <?=$item?>
+                </span>
+                <?=THelper::t($k)?>
+            </div>
         <?php } ?>
     </div>
     <div class="col-md-2">
         <?=Html::input('number','buy[]',$needOrder,[
-            'class'=>'form-control',
+            'class'=>'form-control needBuy',
             'pattern'=>'\d*',
             'min'=>'1',
             'step'=>'1',
         ])?>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2 allSumma">
         <?php foreach ($priceOnePiece as $k=>$item){ ?>
-            <div><?=($item*$needCount)?> <?=THelper::t($k)?></div>
+            <div>
+                <span class="<?=$k?>">
+                    <?=($item*$needOrder)?>
+                </span>
+                <?=THelper::t($k)?>
+            </div>
         <?php } ?>
     </div>
 </div>
 <?php } ?>
 
-<?php if(!empty(PartsAccessories::getInterchangeableList((string)$infoComposite['_id']))) { ?>
+<?php if(!empty($changeableList)) { ?>
     </span>
 <?php } ?>

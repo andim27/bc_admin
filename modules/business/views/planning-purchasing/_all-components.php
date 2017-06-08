@@ -42,8 +42,9 @@
             type: 'POST',
             data: {
                 goodsId     :   $(this).val(),
-                goodsCount  :   '1',
-                goodsLevel  :   '1'
+                goodsParent :   $(this).data('parent'),
+                goodsCount  :   $(this).data('count'),
+                goodsLevel  :   $(this).data('level')
             },
             success: function (data) {
                 blComposite.html(data);

@@ -19,7 +19,7 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
-            <h4 class="modal-title"><?= THelper::t('sidebar_composite_products') ?></h4>
+            <h4 class="modal-title"><?= THelper::t('sidebar_parts_ordering') ?></h4>
         </div>
 
         <div class="modal-body">
