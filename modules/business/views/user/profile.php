@@ -106,7 +106,7 @@
                                 <?php foreach($model->cards as $kCard => $vCard){?>
                                     <div class="itemCard" data-card="'+cardVal+'">
                                         <div class="col-md-4 labelCard">
-                                            <?=$kCard?>
+                                            <?=THelper::t($kCard);?>
                                         </div>
                                         <div class="col-md-6">
                                             <input type="text" name="ProfileForm[cards][<?=$kCard?>]" value="<?=$vCard?>" class="form-control">
@@ -122,7 +122,12 @@
                         <div class="row">
                             <div class="col-md-10">
                                 <?=Html::dropDownList('listGoods','',
-                                    [''=>THelper::t('selecting_card'),'corporate_card'=>'corporate_card','advcash_card'=>'advcash_card','paysera_card'=>'paysera_card',],
+                                    [
+                                        ''=>THelper::t('selecting_card'),
+                                        'corporate_card'=>THelper::t('corporate_card'),
+                                        'advcash_card'=>THelper::t('advcash_card'),
+                                        'paysera_card'=>THelper::t('paysera_card')
+                                    ],
                                     ['class'=>'form-control listCart']
                                 )?>
                             </div>
