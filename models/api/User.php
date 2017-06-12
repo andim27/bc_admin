@@ -55,6 +55,7 @@ class User
     public $structBonus;
     public $personalBonus;
     public $promotions;
+    public $cards;
 
     /**
      * Return user
@@ -435,6 +436,10 @@ class User
                 }
                 if (isset($object->promotions)) {
                     $user->promotions = $object->promotions;
+                }
+
+                if (isset($object->cards)) {
+                    $user->cards = $object->cards;
                 }
 
                 $result[] = $user;

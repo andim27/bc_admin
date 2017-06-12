@@ -98,6 +98,41 @@
                         <?= $form->field($model, 'youtube')->textInput(['class' => 'form-control'])->label(THelper::t('user_profile_youtube_channel')) ?>
                     </div>
                 </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row infoCard">
+                            <?php if(!empty($model->cards)){?>
+                                <?php foreach($model->cards as $kCard => $vCard){?>
+                                    <div class="itemCard" data-card="'+cardVal+'">
+                                        <div class="col-md-4 labelCard">
+                                            <?=$kCard?>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" name="ProfileForm[cards][<?=$kCard?>]" value="<?=$vCard?>" class="form-control">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <a class="btn btn-default btn-block removeCard" href="javascript:void(0);"><i class="fa fa-trash-o"></i></a>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            <?php } ?>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-10">
+                                <?=Html::dropDownList('listGoods','',
+                                    [''=>THelper::t('selecting_card'),'corporate_card'=>'corporate_card','advcash_card'=>'advcash_card','paysera_card'=>'paysera_card',],
+                                    ['class'=>'form-control listCart']
+                                )?>
+                            </div>
+                            <div class="col-md-2">
+                                <?=Html::a('<i class="fa fa-plus"></i>','javascript:void(0);',['class'=>'btn btn-default btn-block addNewCard'])?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
     </div>
@@ -240,3 +275,48 @@
 </div>
 <?php $this->registerJsFile('/js/main/business_center_notes.js'); ?>
 <?php $this->registerCssFile('/css/main.css'); ?>
+
+
+<script type="text/javascript">
+    $(".addNewCard").on('click',function () {
+        flAddNow = 1;
+
+        cardVal = $(".listCart  :selected").val();
+        cardText = $('.listCart :selected').text();
+
+        if(cardVal==''){
+            alert('<?=THelper::t('not_selecting_card')?>');
+            flAddNow = 0;
+        }
+
+        $('.infoCard .itemCard').each(function () {
+            if($(this).data('card') == cardVal) {
+                alert('<?=THelper::t('card_exists_already')?>');
+                flAddNow = 0;
+            }
+        });
+
+        if(flAddNow != 1){
+            return;
+        }
+
+        $(".infoCard").append(
+            '<div class="itemCard" data-card="'+cardVal+'">' +
+                '<div class="col-md-4 labelCard">' +
+                     cardText +
+                '</div>' +
+                '<div class="col-md-6">' +
+                    '<input type="text" name="ProfileForm[cards]['+cardVal+']" value="" class="form-control">' +
+                '</div>' +
+                '<div class="col-md-2">' +
+                    '<a class="btn btn-default btn-block removeCard" href="javascript:void(0);"><i class="fa fa-trash-o"></i></a>' +
+                '</div>' +
+            '</div>'
+        );
+    });
+
+    $('.infoCard').on('click','.removeCard',function () {
+       $(this).closest('.itemCard').remove();
+    });
+
+</script>

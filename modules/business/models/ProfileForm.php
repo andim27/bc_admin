@@ -47,6 +47,8 @@ class ProfileForm extends Model {
     public $notifyAboutEndActivity;
     public $notifyAboutOtherNews;
 
+    public $cards;
+
     public function rules() {
         return [
             [['name', 'surname', 'login', 'email', 'mobile', 'id'], 'required', 'message' => THelper::t('required_field')],
@@ -60,6 +62,7 @@ class ProfileForm extends Model {
             ['email', 'email', 'message' => THelper::t('email_field')],
             ['avatar', 'image', 'extensions' => ['jpg', 'jpeg', 'png', 'gif'], 'mimeTypes' => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif'], 'maxSize' => 1024 * 1024 * 1],
             ['crop_info', 'safe'],
+            ['cards', 'safe'],
             ['phoneWhatsApp', 'match', 'pattern' => '/^\+?\d*$/u', 'message' => THelper::t('only_numbers')],
             ['phoneViber', 'match', 'pattern' => '/^\+?\d*$/u', 'message' => THelper::t('only_numbers')],
             ['phoneTelegram', 'match', 'pattern' => '/^\+?\d*$/u', 'message' => THelper::t('only_numbers')],

@@ -41,32 +41,33 @@ class UserController extends BaseController
             }
 
             if (isset($user)) {
-                $model->id      = $user->id;
-                $model->name    = $user->firstName;
-                $model->surname = $user->secondName;
-                $model->email   = $user->email;
-                $model->mobile  = $user->phoneNumber;
-                $model->smobile = $user->phoneNumber2;
-                $model->skype   = $user->skype;
-                $model->state   = $user->state;
-                $model->city    = $user->city;
-                $model->address = $user->address;
-                $model->site    = $user->links->site;
-                $model->odnoklassniki = $user->links->odnoklassniki;
-                $model->vk            = $user->links->vk;
-                $model->fb            = $user->links->fb;
-                $model->youtube       = $user->links->youtube;
-                $model->login = $user->username;
-                $model->notifyAboutJoinPartner = $user->settings->notifyAboutJoinPartner;
-                $model->notifyAboutReceiptsMoney = $user->settings->notifyAboutReceiptsMoney;
-                $model->notifyAboutReceiptsPoints = $user->settings->notifyAboutReceiptsPoints;
-                $model->notifyAboutEndActivity = $user->settings->notifyAboutEndActivity;
-                $model->notifyAboutOtherNews = $user->settings->notifyAboutOtherNews;
-                $model->phoneTelegram = $user->settings->phoneTelegram;
-                $model->phoneViber = $user->settings->phoneViber;
-                $model->phoneWhatsApp = $user->settings->phoneWhatsApp;
-                $model->phoneFB = $user->settings->phoneFB;
-                $model->selectedLang = $user->settings->selectedLang;
+                $model->id                          = $user->id;
+                $model->name                        = $user->firstName;
+                $model->surname                     = $user->secondName;
+                $model->email                       = $user->email;
+                $model->mobile                      = $user->phoneNumber;
+                $model->smobile                     = $user->phoneNumber2;
+                $model->skype                       = $user->skype;
+                $model->state                       = $user->state;
+                $model->city                        = $user->city;
+                $model->address                     = $user->address;
+                $model->site                        = $user->links->site;
+                $model->odnoklassniki               = $user->links->odnoklassniki;
+                $model->vk                          = $user->links->vk;
+                $model->fb                          = $user->links->fb;
+                $model->youtube                     = $user->links->youtube;
+                $model->login                       = $user->username;
+                $model->notifyAboutJoinPartner      = $user->settings->notifyAboutJoinPartner;
+                $model->notifyAboutReceiptsMoney    = $user->settings->notifyAboutReceiptsMoney;
+                $model->notifyAboutReceiptsPoints   = $user->settings->notifyAboutReceiptsPoints;
+                $model->notifyAboutEndActivity      = $user->settings->notifyAboutEndActivity;
+                $model->notifyAboutOtherNews        = $user->settings->notifyAboutOtherNews;
+                $model->phoneTelegram               = $user->settings->phoneTelegram;
+                $model->phoneViber                  = $user->settings->phoneViber;
+                $model->phoneWhatsApp               = $user->settings->phoneWhatsApp;
+                $model->phoneFB                     = $user->settings->phoneFB;
+                $model->selectedLang                = $user->settings->selectedLang;
+                $model->cards                       = (!empty($user->cards) ? ArrayHelper::toArray($user->cards) : '');
 
                 return $this->render('profile', [
                     'user' => $user,
@@ -82,7 +83,9 @@ class UserController extends BaseController
             }
         } else if ($request->isPost) {
             if ($model->load($request->post())) {
+
                 $user = api\User::get($model->id);
+
 
                 $phoneTelegram = str_replace('+', '', trim($model->phoneTelegram));
                 $phoneTelegram = $phoneTelegram ? '+' . $phoneTelegram : '';
@@ -122,7 +125,9 @@ class UserController extends BaseController
                     'phoneViber'                => $phoneViber,
                     'phoneWhatsApp'             => $phoneWhatsApp,
                     'phoneFB'                   => $phoneFB,
-                    'selectedLang'              => $model->selectedLang
+                    'selectedLang'              => $model->selectedLang,
+
+                    'cards'                     => $model->cards
                 ];
 
                 if ($user) {

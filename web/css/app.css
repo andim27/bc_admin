@@ -3584,3 +3584,11 @@ fieldset[disabled] .btn-gplus.active {
 .headPart{
   background-color: #eee;
 }
+
+.infoCard .itemCard{
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+.infoCard .itemCard .labelCard{
+  padding-top: 5px;
+}
