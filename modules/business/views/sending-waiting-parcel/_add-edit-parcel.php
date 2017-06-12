@@ -153,7 +153,7 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                         <?php } ?>
                     </div>
                     <div class="col-md-9 text-right">
-                        <?= Html::submitButton(THelper::t('assembly'), ['class' => 'btn btn-success sendBtn']) ?>
+                        <?= Html::submitButton(THelper::t('send_parcel'), ['class' => 'btn btn-success sendBtn']) ?>
                     </div>
                 </div>
 
