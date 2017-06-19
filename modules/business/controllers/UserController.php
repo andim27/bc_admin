@@ -69,6 +69,7 @@ class UserController extends BaseController
                 $model->selectedLang                = $user->settings->selectedLang;
                 $model->cards                       = (!empty($user->cards) ? ArrayHelper::toArray($user->cards) : '');
 
+
                 return $this->render('profile', [
                     'user' => $user,
                     'model' => $model,
@@ -85,7 +86,6 @@ class UserController extends BaseController
             if ($model->load($request->post())) {
 
                 $user = api\User::get($model->id);
-
 
                 $phoneTelegram = str_replace('+', '', trim($model->phoneTelegram));
                 $phoneTelegram = $phoneTelegram ? '+' . $phoneTelegram : '';
@@ -127,7 +127,7 @@ class UserController extends BaseController
                     'phoneFB'                   => $phoneFB,
                     'selectedLang'              => $model->selectedLang,
 
-                    'cards'                     => $model->cards
+                    'cards'                     => (object)$request->post()['ProfileForm']['cards']
                 ];
 
                 if ($user) {

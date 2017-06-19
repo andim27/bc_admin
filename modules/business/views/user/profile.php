@@ -2,6 +2,10 @@
     use app\components\THelper;
     use yii\widgets\ActiveForm;
     use yii\helpers\Html;
+    use yii\helpers\ArrayHelper;
+    use app\models\PaymentCard;
+
+    $listPaymentCards = PaymentCard::getListCards();
 ?>
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('users_profile_title'); ?></h3>
@@ -101,20 +105,27 @@
 
                 <div class="panel panel-default">
                     <div class="panel-body">
+
                         <div class="row infoCard">
+                            <input type="hidden" name="ProfileForm[cards][1][card_type]" value="">
+                            <input type="hidden" name="ProfileForm[cards][1][card_value]" value="">
                             <?php if(!empty($model->cards)){?>
-                                <?php foreach($model->cards as $kCard => $vCard){?>
-                                    <div class="itemCard" data-card="'+cardVal+'">
-                                        <div class="col-md-4 labelCard">
-                                            <?=THelper::t($kCard);?>
+                                <?php foreach($model->cards as $vCard){?>
+                                    <?php if(!empty($vCard['card_value'])) {?>
+                                        <div class="itemCard" data-card="'+cardVal+'">
+                                            <div class="col-md-4 labelCard">
+                                                <?=THelper::t($listPaymentCards[$vCard['card_type']]);?>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="hidden" name="ProfileForm[cards][<?=$vCard['card_type']?>][card_type]" value="<?=$vCard['card_type']?>">
+                                                <input type="hidden" name="ProfileForm[cards][<?=$vCard['card_type']?>][card_label]" value="<?=$listPaymentCards[$vCard['card_type']]?>">
+                                                <input type="text" name="ProfileForm[cards][<?=$vCard['card_type']?>][card_value]" value="<?=$vCard['card_value']?>" class="form-control">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <a class="btn btn-default btn-block removeCard" href="javascript:void(0);"><i class="fa fa-trash-o"></i></a>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <input type="text" name="ProfileForm[cards][<?=$kCard?>]" value="<?=$vCard?>" class="form-control">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <a class="btn btn-default btn-block removeCard" href="javascript:void(0);"><i class="fa fa-trash-o"></i></a>
-                                        </div>
-                                    </div>
+                                    <?php } ?>
                                 <?php } ?>
                             <?php } ?>
                         </div>
@@ -122,12 +133,7 @@
                         <div class="row">
                             <div class="col-md-10">
                                 <?=Html::dropDownList('listGoods','',
-                                    [
-                                        ''=>THelper::t('selecting_card'),
-                                        'corporate_card'=>THelper::t('corporate_card'),
-                                        'advcash_card'=>THelper::t('advcash_card'),
-                                        'paysera_card'=>THelper::t('paysera_card')
-                                    ],
+                                    ArrayHelper::merge([''=>THelper::t('selecting_card')],$listPaymentCards),
                                     ['class'=>'form-control listCart']
                                 )?>
                             </div>
@@ -283,6 +289,8 @@
 
 
 <script type="text/javascript">
+    listPaymentCard = <?=json_encode($listPaymentCards)?>;
+
     $(".addNewCard").on('click',function () {
         flAddNow = 1;
 
@@ -311,7 +319,9 @@
                      cardText +
                 '</div>' +
                 '<div class="col-md-6">' +
-                    '<input type="text" name="ProfileForm[cards]['+cardVal+']" value="" class="form-control">' +
+                    '<input type="hidden" name="ProfileForm[cards]['+cardVal+'][card_type]" value="'+cardVal+'" class="form-control">' +
+                    '<input type="hidden" name="ProfileForm[cards]['+cardVal+'][card_label]" value="'+listPaymentCard[cardVal]+'" class="form-control">' +
+                    '<input type="text" name="ProfileForm[cards]['+cardVal+'][card_value]" value="" class="form-control">' +
                 '</div>' +
                 '<div class="col-md-2">' +
                     '<a class="btn btn-default btn-block removeCard" href="javascript:void(0);"><i class="fa fa-trash-o"></i></a>' +

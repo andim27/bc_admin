@@ -212,6 +212,28 @@ Class Menu
                     ],
                 ]
             ],
+
+            [
+                'key'   =>  'sidebar_transactions',
+                'label' => THelper::t('sidebar_transactions'),
+                'url' => '#',
+                'controller' => 'transactions',
+                'items' => [
+                    [
+                        'key'   =>  'sidebar_payment_card',
+                        'label' => THelper::t('sidebar_payment_card'),
+                        'url' => ['/business/transactions/payment-card'],
+                        'action' => 'payment-card',
+                    ],
+                    [
+                        'key'   =>  'sidebar_withdrawal',
+                        'label' => THelper::t('sidebar_withdrawal'),
+                        'url' => ['/business/transactions/withdrawal'],
+                        'action' => 'withdrawal',
+                    ],
+                ]
+            ],
+            
             [
                 'key'   =>  'sidebar_lottery',
                 'label' => THelper::t('sidebar_lottery'),
