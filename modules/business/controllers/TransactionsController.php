@@ -89,6 +89,10 @@ class TransactionsController extends BaseController
     }
 
 
+    /**
+     * get info all withdrawal
+     * @return string
+     */
     public function actionWithdrawal()
     {
         $model = Transaction::find()
@@ -104,6 +108,11 @@ class TransactionsController extends BaseController
         ]);
     }
 
+    /**
+     * popup with info withdrawal 
+     * @param $id
+     * @return string
+     */
     public function actionUpdateWithdrawal($id)
     {
         $model = Transaction::findOne(['_id'=>new ObjectID($id)]);
@@ -114,6 +123,10 @@ class TransactionsController extends BaseController
         ]);
     }
 
+    /**
+     * save transaction for withdrawal
+     * @return \yii\web\Response
+     */
     public function actionSaveWithdrawal()
     {
         Yii::$app->session->setFlash('alert' ,[
@@ -154,7 +167,12 @@ class TransactionsController extends BaseController
 
         return $this->redirect('/' . Yii::$app->language .'/business/transactions/withdrawal');
     }
-    
+
+    /**
+     * canceled transaction for withdrawal
+     * @param $id
+     * @return \yii\web\Response
+     */
     public function actionCanceledWithdrawal($id)
     {
         Yii::$app->session->setFlash('alert' ,[
