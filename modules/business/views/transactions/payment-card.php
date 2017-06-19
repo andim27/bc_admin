@@ -35,7 +35,7 @@ use app\components\AlertWidget;
                 <?php foreach ($model as $k=>$item) { ?>
                     <tr>
                         <td><?=($k+1)?></td>
-                        <td><?=$item->title?></td>
+                        <td><?=THelper::t($item->title)?></td>
                         <td>
                             <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/transactions/add-update-payment-card','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                         </td>
