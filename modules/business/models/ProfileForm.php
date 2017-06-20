@@ -21,6 +21,7 @@ class ProfileForm extends Model {
     public $skype;
     public $mobile;
     public $smobile;
+    public $phoneWellness;
     public $address;
     public $avatar;
     public $crop_info;
@@ -54,6 +55,7 @@ class ProfileForm extends Model {
             [['name', 'surname', 'login', 'email', 'mobile', 'id'], 'required', 'message' => THelper::t('required_field')],
             ['mobile', 'match', 'pattern' => '/^\+?\d*$/u', 'message' => THelper::t('only_numbers')],
             ['smobile', 'match', 'pattern' => '/^\+?\d*$/u', 'message' => THelper::t('only_numbers')],
+            ['phoneWellness', 'match', 'pattern' => '/^\+?\d*$/u', 'message' => THelper::t('only_numbers')],
             [['country_id', 'site', 'odnoklassniki', 'vk', 'fb', 'youtube'], 'string'],
             ['login', 'match', 'pattern' => '/^([a-zA-Z0-9]*)([a-zA-Z0-9_\-]*)([a-z0-9]+)$/', 'message' => THelper::t('only_latin_characters_numbers_and')],
             ['name', 'match', 'pattern' => '/^[a-zA-Zа-яА-яё0-9]*$/u', 'message' => THelper::t('only_the_characters')],

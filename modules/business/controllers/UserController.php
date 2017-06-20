@@ -47,6 +47,7 @@ class UserController extends BaseController
                 $model->email                       = $user->email;
                 $model->mobile                      = $user->phoneNumber;
                 $model->smobile                     = $user->phoneNumber2;
+                $model->phoneWellness               = $user->phoneWellness;
                 $model->skype                       = $user->skype;
                 $model->state                       = $user->state;
                 $model->city                        = $user->city;
@@ -104,6 +105,7 @@ class UserController extends BaseController
                     'skype'                     => $model->skype,
                     'phone'                     => $model->mobile,
                     'phone2'                    => $model->smobile,
+                    'phoneWellness'             => $model->phoneWellness,
                     'country'                   => $request->post('country'),
                     'address'                   => $model->address,
                     'city'                      => $model->city,

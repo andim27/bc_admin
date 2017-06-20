@@ -26,6 +26,7 @@ class User
     public $firstPurchase;
     public $phoneNumber;
     public $phoneNumber2;
+    public $phoneWellness;
     public $created;
     public $rank;
     public $expirationDateBS;
@@ -336,6 +337,9 @@ class User
                 }
                 if (isset($object->phoneNumber2)) {
                     $user->phoneNumber2 = $object->phoneNumber2;
+                }
+                if (isset($object->phoneWellness)) {
+                    $user->phoneWellness = $object->phoneWellness;
                 }
                 if (isset($object->rank)) {
                     $user->rank = $object->rank;

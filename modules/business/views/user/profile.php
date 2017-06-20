@@ -45,6 +45,13 @@
                         <?= $form->field($model, 'smobile')->textInput(['maxlength' => 16, 'class' => 'form-control'])->label(THelper::t('user_profile_another_mobile')) ?>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <?= $form->field($model, 'phoneWellness')->textInput(['class' => 'form-control'])->label(THelper::t('profile_phone_wellness')) ?>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-md-12">
                         <?= $form->field($model, 'skype')->textInput(['class' => 'form-control'])->label(THelper::t('user_profile_skype')) ?>
@@ -187,30 +194,30 @@
         <div style="row">
             <div class="col-md-6">
                 <div class="row m-b-sm">
-                    <div class="col-sm-2 col-xs-4 m-b-sm"><img src="/images/whatsapp.png" /></div>
-                    <div class="col-sm-2 col-xs-8 text-left m-b-sm p-t-25"><?= THelper::t('whatsapp') ?></div>
-                    <div class="col-sm-8 col-xs-12 m-b-sm p-t-20">
+                    <div class="col-sm-3 col-xs-4 m-b-sm"><img src="/images/whatsapp.png" /></div>
+                    <div class="col-sm-3 col-xs-8 text-left m-b-sm p-t-25"><?= THelper::t('whatsapp') ?></div>
+                    <div class="col-sm-6 col-xs-12 m-b-sm p-t-20">
                         <?= $form->field($model, 'phoneWhatsApp')->textInput(['maxlength' => 16])->label(false) ?>
                     </div>
                 </div>
                 <div class="row m-b-sm">
-                    <div class="col-sm-2 col-xs-4 m-b-sm"><img src="/images/viber.png" /></div>
-                    <div class="col-sm-2 col-xs-8 text-left m-b-sm p-t-25"><?= THelper::t('viber') ?></div>
-                    <div class="col-sm-8 col-xs-12 m-b-sm p-t-20">
+                    <div class="col-sm-3 col-xs-4 m-b-sm"><img src="/images/viber.png" /></div>
+                    <div class="col-sm-3 col-xs-8 text-left m-b-sm p-t-25"><?= THelper::t('viber') ?></div>
+                    <div class="col-sm-6 col-xs-12 m-b-sm p-t-20">
                         <?= $form->field($model, 'phoneViber')->textInput(['maxlength' => 16])->label(false) ?>
                     </div>
                 </div>
                 <div class="row m-b-sm">
-                    <div class="col-sm-2 col-xs-4 m-b-sm"><img src="/images/telegram.png" /></div>
-                    <div class="col-sm-2 col-xs-8 text-left m-b-sm p-t-25"><?= THelper::t('telegram') ?></div>
-                    <div class="col-sm-8 col-xs-12 p-t-20">
+                    <div class="col-sm-3 col-xs-4 m-b-sm"><img src="/images/telegram.png" /></div>
+                    <div class="col-sm-3 col-xs-8 text-left m-b-sm p-t-25"><?= THelper::t('telegram') ?></div>
+                    <div class="col-sm-6 col-xs-12 p-t-20">
                         <?= $form->field($model, 'phoneTelegram')->textInput(['maxlength' => 16])->label(false) ?>
                     </div>
                 </div>
                 <div class="row m-b-md">
-                    <div class="col-sm-2 col-xs-4 m-b-sm"><img src="/images/facebook.png" /></div>
-                    <div class="col-sm-2 col-xs-8 text-left m-b-sm p-t-25"><?= THelper::t('facebook') ?></div>
-                    <div class="col-sm-8 col-xs-12 p-t-20">
+                    <div class="col-sm-3 col-xs-4 m-b-sm"><img src="/images/facebook.png" /></div>
+                    <div class="col-sm-3 col-xs-8 text-left m-b-sm p-t-25"><?= THelper::t('facebook') ?></div>
+                    <div class="col-sm-6 col-xs-12 p-t-20">
                         <?= $form->field($model, 'phoneFB')->textInput(['maxlength' => 16])->label(false) ?>
                     </div>
                 </div>
@@ -284,6 +291,7 @@
     </div>
     <?php $form = ActiveForm::end(); ?>
 </div>
+
 <?php $this->registerJsFile('/js/main/business_center_notes.js'); ?>
 <?php $this->registerCssFile('/css/main.css'); ?>
 
