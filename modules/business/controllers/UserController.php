@@ -70,13 +70,15 @@ class UserController extends BaseController
                 $model->selectedLang                = $user->settings->selectedLang;
                 $model->cards                       = (!empty($user->cards) ? ArrayHelper::toArray($user->cards) : '');
 
-
                 return $this->render('profile', [
-                    'user' => $user,
-                    'model' => $model,
-                    'countries' => api\dictionary\Country::all(),
-                    'languages' => ArrayHelper::map(api\dictionary\Lang::supported(), 'alpha2', 'native'),
-                    'notes' => api\Note::all($user->id),
+                    'user'                  => $user,
+                    'model'                 => $model,
+                    'countries'             => api\dictionary\Country::all(),
+                    'languages'             => ArrayHelper::map(api\dictionary\Lang::supported(), 'alpha2', 'native'),
+                    'notes'                 => api\Note::all($user->id),
+                    'modelSales'            => Sales::getAllSalesUser($model->id),
+                    'modelMovementMoney'    => Transaction::getAllMoneyTransactionUser($model->id),
+                    'modelMovementPoints'   => Transaction::getAllPointsTransactionUser($model->id)
                 ]);
             } else {
                 return $this->render('index', [

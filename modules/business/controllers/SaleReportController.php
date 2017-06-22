@@ -28,7 +28,7 @@ class SaleReportController extends BaseController
         $request['countryReport'] = (empty($request['countryReport']) ? 'all' : $request['countryReport']);
         $request['goodsReport'] = (empty($request['goodsReport']) ? 'all' : $request['goodsReport']);
 
-        $infoSale = [];
+        $infoSale = $infoGoods = [];
 
         $dateTo = date("Y-m-d");
         $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));;
@@ -95,6 +95,7 @@ class SaleReportController extends BaseController
                             $tempInfoGoods['goods'] = $itemSet->title;
                             $tempInfoGoods['status'] = $itemSet->status;
 
+                            $infoGoods[$itemSet->title] = (!empty($infoGoods[$itemSet->title]) ? ($infoGoods[$itemSet->title] +1) : '1');
 
                             if (!in_array($itemSet->status, ['status_sale_issued', 'status_sale_issued_after_repair'])) {
                                 $infoSale[] = ArrayHelper::merge($tempInfoUser, $tempInfoGoods);
@@ -112,6 +113,7 @@ class SaleReportController extends BaseController
             'request' => $request,
             'infoSale' => $infoSale,
             'listCountry' => $listCountry,
+            'infoGoods' => $infoGoods,
         ]);
     }
     

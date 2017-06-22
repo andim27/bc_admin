@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use yii\mongodb\ActiveRecord;
 
@@ -112,5 +113,13 @@ class Sales extends ActiveRecord
         return $this->hasOne(Products::className(),['product' => 'product']);
     }
 
-
+    /**
+     * get all sales for user
+     * @param $userID
+     * @return array|ActiveRecord
+     */
+    public static function  getAllSalesUser($userID)
+    {
+        return self::find()->where(['idUser'=>new ObjectID($userID)])->all();
+    }
 }

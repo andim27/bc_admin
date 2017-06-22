@@ -1,10 +1,12 @@
 <?php
 
 namespace app\models;
+use MongoDB\BSON\ObjectID;
 
 /**
  * @inheritdoc
  * @property Users $infoUser
+ * @property Users $infoUserTo
  * 
  * Class Transaction
  *
@@ -49,12 +51,25 @@ class Transaction extends \yii2tech\embedded\mongodb\ActiveRecord
             'card'
         ];
     }
-    
+
+    /**
+     * get info about idFrom
+     * @return \yii\db\ActiveQueryInterface
+     */
     public function getInfoUser()
-    {
+    {        
         return $this->hasOne(Users::className(),['_id'=>'idFrom']);
     }
 
+    /**
+     * get info about idTo
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getInfoUserTo()
+    {
+        return $this->hasOne(Users::className(),['_id'=>'idTo']);
+    }
+    
     public function getStatus()
     {
         $status = '';
@@ -72,5 +87,30 @@ class Transaction extends \yii2tech\embedded\mongodb\ActiveRecord
         }
         
         return $status;
+    }
+
+
+    public static function getAllMoneyTransactionUser($userID)
+    {
+        return self::find()->
+            where(['type'=>1])->
+            andWhere([
+                '$or'   =>  [
+                    ['idTo'      => new ObjectID($userID)],
+                    ['idFrom'    => new ObjectID($userID)]
+                ]
+            ])->limit('1000')->all();
+    }
+
+    public static function getAllPointsTransactionUser($userID)
+    {
+        return self::find()->
+            where(['IN','type',['4,5,6,8,9']])->
+            andWhere([
+                '$or'   =>  [
+                    ['idTo'      => new ObjectID($userID)],
+                    ['idFrom'    => new ObjectID($userID)]
+                ]
+            ])->limit('1000')->all();
     }
 }

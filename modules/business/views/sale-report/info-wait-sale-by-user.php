@@ -53,72 +53,34 @@ $listGoods = Products::getListGoods()
 <div class="row">
     <div class="col-md-12">
         <section class="panel panel-default">
-            <div class="table-responsive">
-                <table class="table table-translations table-striped datagrid m-b-sm">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>
-                            <?=THelper::t('full_name')?>
-                        </th>
-                        <th>
-                            <?=THelper::t('country')?>
-                        </th>
-                        <th>
-                            <?=THelper::t('city')?>
-                        </th>
-                        <th>
-                            <?=THelper::t('address')?>
-                        </th>
-                        <th>
-                            <?=THelper::t('phone')?>
-                        </th>
-                        <th>
-                            <?=THelper::t('goods')?>
-                        </th>
-                        <th>
-                            <?=THelper::t('status_sale')?>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <?php if(!empty($infoSale)) { ?>
-                            <?php $i = 1; ?>
-                            <?php foreach($infoSale as $item) { ?>
-                                <tr>
-                                    <td><?=$item['date_create']?></td>
-                                    <td><?=$item['name']?></td>
-                                    <td><?=$listCountry[$item['country']]?></td>
-                                    <td><?=$item['city']?></td>
-                                    <td><?=$item['address']?></td>
-                                    <td>
-                                        <?php if(!empty($item['phone'])) { ?>
-                                            <?php foreach($item['phone'] as $kPh => $itemPh) { ?>
-                                                <?= (in_array($kPh,['0','1']) ? '<i class="fa fa-phone"></i> ' : $kPh.': ') ?>
-                                                <?= $itemPh ?><br>
-                                            <?php } ?>
-                                        <?php } ?>
-                                    </td>
-                                    <td><?=$item['goods']?></td>
-                                    <td><?=THelper::t($item['status'])?></td>
-                                </tr>
-                                <?php $i++; ?>
-                            <?php } ?>
-                        <?php } ?>
-                    </tbody>
-                </table>
+            <header class="panel-heading bg-light">
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active">
+                        <a href="#by-info-user" class="tab-info-user" data-toggle="tab">По пользователям</a>
+                    </li>
+                    <li class="">
+                        <a href="#by-info-goods" class="tab-info-goods" data-toggle="tab">По товарам</a>
+                    </li>
+                </ul>
+            </header>
+            <div class="panel-body">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="by-info-user">
+                        <?= $this->render('_tabs-wait-sale-by-users',[
+                            'language'      => $language,
+                            'infoSale'      => $infoSale,
+                            'listCountry' => $listCountry,
+                        ]); ?>
+                    </div>
+                    <div class="tab-pane" id="by-info-goods">
+                        <?= $this->render('_tabs-wait-sale-by-goods',[
+                            'language'      => $language,
+                            'infoGoods'     => $infoGoods
+                        ]); ?>
+                    </div>
+                </div>
             </div>
-
         </section>
     </div>
 </div>
 
-
-<script>
-    $('.table-translations').dataTable({
-        language: TRANSLATION,
-        lengthMenu: [ 25, 50, 75, 100 ],
-        "order": [[ 0, "asc" ]]
-    });
-
-</script>
