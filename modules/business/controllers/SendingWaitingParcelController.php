@@ -157,9 +157,9 @@ class SendingWaitingParcelController extends BaseController {
             if($model->save()){
                 if(!empty($documents->baseName)) {
                     $pathDocuments = Yii::getAlias('@parcelDocuments') . '/' . $model->id . '/';
-
+                   
                     if (!file_exists($pathDocuments)) {
-                        mkdir($pathDocuments, 0777, true);
+                        mkdir($pathDocuments, 0755, true);
                     } else {
                         //clear directory
                         foreach (glob($pathDocuments.'*') as $file){
