@@ -132,19 +132,24 @@ $listAdmin = Users::getListAdmin();
                                             <th>
                                                 <?=THelper::t('number_booked')?>
                                             </th>
+                                            <th>
+                                                <?=THelper::t('amount')?>
+                                            </th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <?php if(!empty($infoGoods)) {?>
-                                        <?php foreach($infoGoods as $k=>$item) {?>
-                                        <tr>
-                                            <td><?=$k?></td>
-                                            <td><?=$item['title']?></td>
-                                            <td>
-                                                <?=$item['count']?>
+                                            <?php foreach($infoGoods as $k=>$item) {?>
+                                            <tr>
+                                                <td><?=$k?></td>
+                                                <td><?=$item['title']?></td>
+                                                <td>
+                                                    <?=$item['count']?>
+                                                <td>
+                                                    <?=$item['amount']?>
                                             </td>
                                             <?php } ?>
-                                            <?php } ?>
+                                        <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>

@@ -745,6 +745,9 @@ class StatusSalesController extends BaseController {
                 ]
             ])
             ->andWhere(['in','product',Products::productIDWithSet()])
+            ->andWhere([
+                'type' => ['$ne' => -1]
+            ])
             ->all();
 
 
@@ -752,16 +755,16 @@ class StatusSalesController extends BaseController {
         $infoGoods = $infoSetGoods = [];
         if(!empty($model)){
             foreach ($model as $item){
-
                 // info pack
                 if($item->statusSale->checkSalesForUserChange($listAdmin)!==false || empty($listAdmin)) {
-                    if(empty($infoGoods[$item->product]['count'])){
+                    if (empty($infoGoods[$item->product]['count'])) {
                         $infoGoods[$item->product]['title'] = $item->productName;
                         $infoGoods[$item->product]['count'] = 0;
+                        $infoGoods[$item->product]['amount'] = 0;
                     }
                     $infoGoods[$item->product]['count']++;
+                    $infoGoods[$item->product]['amount'] += $item->price;
                 }
-
 
 
                 // info goods
@@ -866,7 +869,10 @@ class StatusSalesController extends BaseController {
                     '$lte' => new UTCDatetime(strtotime($to) *1000)
                 ]
             ])
-            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->andWhere(['in','product',Products::productIDWithSet()]) 
+            ->andWhere([
+                'type' => ['$ne' => -1]
+            ])
             ->all();
 
         $listAdminCheck = [];
@@ -888,8 +894,10 @@ class StatusSalesController extends BaseController {
                     if (empty($infoGoods[$item->product]['count'])) {
                         $infoGoods[$item->product]['title'] = $item->productName;
                         $infoGoods[$item->product]['count'] = 0;
+                        $infoGoods[$item->product]['amount'] = 0;
                     }
                     $infoGoods[$item->product]['count']++;
+                    $infoGoods[$item->product]['amount'] += $item->price;
                 }
 
 
