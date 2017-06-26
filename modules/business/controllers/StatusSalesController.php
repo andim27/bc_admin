@@ -1255,7 +1255,56 @@ class StatusSalesController extends BaseController {
 
     public function actionFix()
     {
-        
+        $GoodsInfo = [
+            '1'     =>  '1',
+            '2'     =>  '2',
+            '3'     =>  '3',
+            '35'    =>  '4',
+            '20'    =>  '5',
+            '21'    =>  '6',
+            '36'    =>  '7',
+            '22'    =>  '8',
+            '37'    =>  '9',
+            '4'     =>  '10',
+            '5'     =>  '11',
+            '15'    =>  '12',
+            '16'    =>  '13',
+            '17'    =>  '14',
+            '26'    =>  '15',
+            '27'    =>  '16',
+            '6'     =>  '17',
+            '8'     =>  '18',
+            '10'    =>  '19',
+            '12'    =>  '20',
+            '7'     =>  '21',
+            '33'    =>  '22',
+            '9'     =>  '23',
+            '13'    =>  '24',
+            '11'    =>  '25',
+            '28'    =>  '26',
+            '29'    =>  '27',
+            '30'    =>  '28',
+            '31'    =>  '29',
+            '34'    =>  '30',
+            '32'    =>  '31',
+        ];
+
+        $model = Products::find()->all();
+
+        foreach ($model as $item){
+            if(!empty($GoodsInfo[$item->product])){
+                $item->sorting = (int)$GoodsInfo[$item->product];
+
+                if($item->save()){
+
+                }
+            }
+        }
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('ok');
+        echo "</xmp>";
+        die();
 
 //        $idOrder = '58f7208d3b04cb6703820562';
 //
