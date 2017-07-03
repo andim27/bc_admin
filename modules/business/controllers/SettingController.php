@@ -607,23 +607,13 @@ class SettingController extends BaseController {
             ]);
         }
     }
-    
-    
+
+    /**
+     * list info warehouse
+     * @return string|Response
+     */
     public function actionWarehouse()
     {
-        $request =  Yii::$app->request->post();
-        if(!empty($request['title'])){
-            $model = new Warehouse();
-            $model->title = $request['title'];
-
-            if($model->save()){
-                Yii::$app->session->setFlash('alert' ,['typeAlert'=>'success', 'message'=>'add_new_warehouse']);
-            } else {
-                Yii::$app->session->setFlash('alert' ,['typeAlert'=>'danger', 'message'=>'did_not_new_warehouse']);
-            }
-            return $this->redirect(Url::to(''),'301');
-        }
-
         $alert = Yii::$app->session->getFlash('alert', '', true);
 
         $infoWarehouse = Warehouse::find()->all();
@@ -634,6 +624,67 @@ class SettingController extends BaseController {
         ]);
     }
 
+    /**
+     * popup create and edit warehouse
+     * @param string $id
+     * @return string
+     */
+    public function actionAddUpdateWarehouse($id = '')
+    {
+        $model = new Warehouse();
+
+        if(!empty($id)){
+            $model = $model::findOne(['_id'=>new ObjectID($id)]);
+        }
+
+        return $this->renderAjax('_add-update-warehouse', [
+            'language' => Yii::$app->language,
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * save info for warehouse
+     * @return Response
+     */
+    public function actionSaveWarehouse()
+    {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert' => 'danger',
+                'message' => 'the changes are not saved'
+            ]
+        );
+
+        $request = Yii::$app->request->post();
+
+        $model = new Warehouse();
+
+        if(!empty($request['Warehouse']['_id'])){
+            $model = $model::findOne(['_id'=>new ObjectID($request['Warehouse']['_id'])]);
+        }
+
+        if(!empty($request)){
+
+            $model->title = $request['Warehouse']['title'];
+
+            if($model->save()){
+
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'success',
+                        'message'=>'the changes are saved'
+                    ]
+                );
+            }
+        }
+
+        return $this->redirect('/' . Yii::$app->language .'/business/setting/warehouse');
+    }
+
+    /**
+     * remove warehouse
+     * @param $id
+     * @return Response
+     */
     public function actionRemoveWarehouse($id)
     {
         Warehouse::deleteAll(['_id'=>new ObjectID($id)]);
@@ -641,6 +692,10 @@ class SettingController extends BaseController {
         return $this->redirect('warehouse','301');
     }
 
+    /**
+     * save info admin in warehouse
+     * @return string
+     */
     public function actionWarehouseAdminSave()
     {
         $request = Yii::$app->request->post();

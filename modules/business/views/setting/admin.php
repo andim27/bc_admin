@@ -1,6 +1,7 @@
 <?php
     use app\components\THelper;
     use yii\helpers\Html;
+
 ?>
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('setting_admin_title'); ?></h3>
@@ -63,7 +64,9 @@
                         <?= $admin->getCountryCityAsString() ?>
                     </td>
                     <td>
-
+                        <?php foreach ($admin->warehouseName as $item) { ?>
+                            <?=$item;?><br>
+                        <?php } ?>
                         <?= $admin->username != 'main' ? Html::a('<i class="fa fa-home"></i>', ['/business/setting/admin-warehouse-update', 'username' => $admin->username], ['title'=>'Склад']) : '' ?>
                     </td>
                     <td>

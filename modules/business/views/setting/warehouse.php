@@ -17,27 +17,7 @@ $userArray = Users::getListAdmin();
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
     
     <div class="col-md-offset-9 col-md-3 addWarehouse form-group">
-        <?=Html::button(THelper::t('add_warehouse'),['class'=>'btn btn-default btn-block'])?>
-    </div>
-
-    <div class="addFormWarehouse">
-        <?php $form = ActiveForm::begin([
-            'options' => [
-                'name'=>'addWarehouse',
-                'id'=>'addWarehouse'
-            ]
-        ]); ?>
-
-        <div class="col-sm-9">
-            <div class="form-group">
-                <?=Html::input('text','title','',['class'=>'form-control','placeholder'=> THelper::t('sidebar_settings_warehouse')])?>
-            </div>
-        </div>
-
-        <div class="col-sm-3">
-            <?= Html::input('submit', '',THelper::t('add_warehouse'), ['class' => 'btn btn-primary btn-block']) ?>
-        </div>
-        <?php ActiveForm::end(); ?>
+        <?= Html::a(THelper::t('add_warehouse') , ['/business/setting/add-update-warehouse'], ['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
     </div>
 </div>
 
@@ -63,6 +43,9 @@ $userArray = Users::getListAdmin();
                         <?php
                         //=Html::a('<i class="fa fa-trash-o"></i>',['/business/setting/remove-warehouse','id'=>$item->_id->__toString()],['class'=>'btn btn-default'])
                         ?>
+
+                        <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/setting/add-update-warehouse','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
+
                         <?=$item->title?>
                     </td>
                     <td class="text-center infoWarehouse">
@@ -137,10 +120,6 @@ $userArray = Users::getListAdmin();
         "order": [[ 0, "asc" ]]
     });
 
-    $(document).on('click','.addWarehouse button',function () {
-        $(this).closest('.addWarehouse').hide();
-        $('.addFormWarehouse').show();
-    });
 
     $(document).on('click','.addItemAdmin',function () {
         changeBl = $(this).closest('.infoWarehouse');
