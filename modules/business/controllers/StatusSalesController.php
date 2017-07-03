@@ -755,8 +755,10 @@ class StatusSalesController extends BaseController {
         $infoGoods = $infoSetGoods = [];
         if(!empty($model)){
             foreach ($model as $item){
+
+
                 // info pack
-                if($item->statusSale->checkSalesForUserChange($listAdmin)!==false || empty($listAdmin)) {
+                if(empty($listAdmin) || $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {
                     if (empty($infoGoods[$item->product]['count'])) {
                         $infoGoods[$item->product]['title'] = $item->productName;
                         $infoGoods[$item->product]['count'] = 0;
@@ -768,36 +770,37 @@ class StatusSalesController extends BaseController {
 
 
                 // info goods
-                foreach($item->statusSale->set as $itemSet){
+                if(!empty($item->statusSale->set)){
+                    foreach($item->statusSale->set as $itemSet){
 
-                    $flUse = 0;
-                    if(!empty($request['listWarehouse']) && $request['listWarehouse']!='all'){
-                        if(in_array($itemSet->idUserChange,$listAdmin)) {
+                        $flUse = 0;
+                        if(!empty($request['listWarehouse']) && $request['listWarehouse']!='all'){
+                            if(in_array($itemSet->idUserChange,$listAdmin)) {
+                                $flUse = 1;
+                            }
+                        } else if(!empty($request['listAdmin']) && $request['listAdmin']!='placeh'){
+                            if(in_array($itemSet->idUserChange,$listAdmin)) {
+                                $flUse = 1;
+                            }
+                        } else{
                             $flUse = 1;
                         }
-                    } else if(!empty($request['listAdmin']) && $request['listAdmin']!='placeh'){
-                        if(in_array($itemSet->idUserChange,$listAdmin)) {
-                            $flUse = 1;
-                        }
-                    } else{
-                        $flUse = 1;
-                    }
 
-                    if($flUse == 1){
-                        if(empty($infoSetGoods[$itemSet->title])){
-                            $infoSetGoods[$itemSet->title]['books'] = 0;
-                            $infoSetGoods[$itemSet->title]['issue'] = 0;
-                        }
+                        if($flUse == 1){
+                            if(empty($infoSetGoods[$itemSet->title])){
+                                $infoSetGoods[$itemSet->title]['books'] = 0;
+                                $infoSetGoods[$itemSet->title]['issue'] = 0;
+                            }
 
 //                        if($itemSet->status == 'status_sale_issued'){
 //                            $infoSetGoods[$itemSet->title]['issue']++;
 //                        }
 
-                        $infoSetGoods[$itemSet->title]['books']++;
+                            $infoSetGoods[$itemSet->title]['books']++;
+                        }
+
                     }
-
                 }
-
             }
         }
 
@@ -890,7 +893,7 @@ class StatusSalesController extends BaseController {
             foreach ($model as $item){
 
                 // info pack
-                if($item->statusSale->checkSalesForUserChange($listAdminCheck)!==false || empty($listAdminCheck)) {
+                if(empty($listAdminCheck) || $item->statusSale->checkSalesForUserChange($listAdminCheck)!==false) {
                     if (empty($infoGoods[$item->product]['count'])) {
                         $infoGoods[$item->product]['title'] = $item->productName;
                         $infoGoods[$item->product]['count'] = 0;

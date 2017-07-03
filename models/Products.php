@@ -47,10 +47,19 @@ class Products extends ActiveRecord
         $model = self::find()->where(['productSet'=>[
             '$exists' => true
         ]])->all();
-        $arrayId = ArrayHelper::getColumn($model,'product');
 
+        $arrayId = [];
 
+        if(!empty($model)){
+            foreach ($model as $item){
+                if(!empty($item->productSet)){
+                    $arrayId[] = $item->product;
+                }
+            }
+        }
+        
         return $arrayId;
+
     }
 
     public static function getListPack()
