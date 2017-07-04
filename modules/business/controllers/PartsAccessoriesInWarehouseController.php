@@ -21,16 +21,17 @@ class PartsAccessoriesInWarehouseController extends BaseController {
     {
         $request =  Yii::$app->request->post();
 
-        if(!empty($request)){
-            $dateInterval['to'] = $request['to'];
-            $dateInterval['from'] =  $request['from'];
-        } else {
-            $dateInterval['to'] = date("Y-m-d");
-            $dateInterval['from'] = date("Y-01-01");
+        $idWarehouse = Warehouse::getIdMyWarehouse();
+
+        if(empty($request)){
+            $request['dateInterval']['to'] = date("Y-m-d");
+            $request['dateInterval']['from'] = date("Y-01-01");
+            $request['listWarehouse'] = $idWarehouse;
         }
 
-        $idWarehouse = Warehouse::getIdMyWarehouse();
-        $infoWarehouse = Warehouse::find()->where(['_id'=> new ObjectID($idWarehouse)])->one();
+
+        /** **** **/
+        $infoWarehouse = Warehouse::find()->where(['_id'=> new ObjectID($request['listWarehouse'])])->one();
         $listAdmin = $listAdminObj = [];
         if(!empty($infoWarehouse->idUsers)){
             $listAdmin = $infoWarehouse->idUsers;
@@ -43,8 +44,8 @@ class PartsAccessoriesInWarehouseController extends BaseController {
         $modelChangeStatus = StatusSales::find()
             ->where([
                 'setSales.dateChange' => [
-                    '$gte' => new UTCDateTime(strtotime($dateInterval['from']) * 1000),
-                    '$lt' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                    '$gte' => new UTCDateTime(strtotime($request['dateInterval']['from']) * 1000),
+                    '$lt' => new UTCDateTime(strtotime($request['dateInterval']['to'] . '23:59:59') * 1000)
                 ],
                 'setSales.status' => 'status_sale_issued',
                 'setSales.idUserChange' => [
@@ -52,35 +53,41 @@ class PartsAccessoriesInWarehouseController extends BaseController {
                 ],
             ])
             ->all();
+
         $implementation=[];
         if(!empty($modelChangeStatus)){
             foreach ($modelChangeStatus as $item){
-                foreach ($item->setSales as $itemSet){
 
-                    if(!empty($itemSet['idUserChange']) && in_array((string)$itemSet['idUserChange'],$listAdmin)){
-                        if(empty($implementation[$itemSet['title']])){
-                            $implementation[$itemSet['title']] = 0;
+                if($item->sales->type != -1){
+                    foreach ($item->setSales as $itemSet){
+                        if(!empty($itemSet['idUserChange']) && in_array((string)$itemSet['idUserChange'],$listAdmin)){
+                            if(empty($implementation[$itemSet['title']])){
+                                $implementation[$itemSet['title']] = 0;
+                            }
+
+                            $implementation[$itemSet['title']]++;
                         }
-
-                        $implementation[$itemSet['title']]++;
                     }
                 }
+
+
             }
         }
 
         $model = '';
-        if(!empty($idWarehouse)){
+        if(!empty($request['listWarehouse'])){
             $model = PartsAccessoriesInWarehouse::find()
-                ->where(['warehouse_id' => new ObjectID($idWarehouse)])
+                ->where(['warehouse_id' => new ObjectID($request['listWarehouse'])])
                 ->all();
         }
-
+        
         return $this->render('in-warehouse',[
-            'language' => Yii::$app->language,
-            'model' => $model,
-            'implementation' => $implementation,
-            'dateInterval' => $dateInterval,
-            'alert' => Yii::$app->session->getFlash('alert', '', true)
+            'language'          => Yii::$app->language,
+            'idWarehouse'       => $idWarehouse,
+            'model'             => $model,
+            'implementation'    => $implementation,
+            'request'           => $request,
+            'alert'             => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
 

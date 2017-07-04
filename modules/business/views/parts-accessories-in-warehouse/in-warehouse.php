@@ -9,6 +9,7 @@ use app\models\PartsAccessories;
 $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
 $listGoods = PartsAccessories::getListPartsAccessories();
+$listWarehouse = Warehouse::getArrayWarehouse();
 ?>
 
 <div class="m-b-md">
@@ -30,14 +31,22 @@ $listGoods = PartsAccessories::getListPartsAccessories();
         ]); ?>
 
         <div class="col-md-2 m-b">
-            <?= Html::input('text','from',$dateInterval['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
+            <?= Html::input('text','dateInterval[from]',$request['dateInterval']['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
         </div>
 
         <div class="col-md-2 m-b">
-            <?= Html::input('text','to',$dateInterval['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+            <?= Html::input('text','dateInterval[to]',$request['dateInterval']['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
         </div>
 
-        <div class="col-md-8 m-b">
+        <div class="col-md-2 m-b">
+            <?=($idWarehouse == '592426f6dca7872e64095b45' ? Html::dropDownList('listWarehouse',$request['listWarehouse'],$listWarehouse,[
+                'class'=>'form-control listWarehouse',
+                'id'=>'listWarehouse',
+                'options' => []
+            ]): '')?>
+        </div>
+
+        <div class="col-md-6 m-b">
             <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
         </div>
 

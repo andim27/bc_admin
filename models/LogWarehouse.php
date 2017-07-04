@@ -70,6 +70,10 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
 
             $idMyWarehouse = Warehouse::getIdMyWarehouse();
             $model->admin_warehouse_id = (!empty($idMyWarehouse) ? new ObjectID($idMyWarehouse) : '');
+            if(!empty($model->hide_admin_warehouse_id) && $model->hide_admin_warehouse_id == 1){
+                $model->admin_warehouse_id = '';
+            }
+
             $model->on_warehouse_id = (!empty($info['on_warehouse_id']) ? new ObjectID($info['on_warehouse_id']) : '');
 
             $model->money = (!empty($info['money']) ? (double)$info['money'] : '');

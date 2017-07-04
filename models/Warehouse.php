@@ -74,7 +74,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
      */
     public static function getIdMyWarehouse($idUser = ''){
         
-        if(empty($id)){
+        if(empty($idUser)){
             $idUser = \Yii::$app->view->params['user']->id;
         }       
 
