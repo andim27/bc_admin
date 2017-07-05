@@ -35,52 +35,48 @@ $to = strtotime($request['to']);
     <?php if (!empty($item->statusSale) && count($item->statusSale->set)>0 && $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {?>
     <?php if (empty($request['infoCity'])  || $request['infoCity'] == $item->infoUser->city || (empty($item->infoUser->city) && $request['infoCity']=='None('.$item->infoUser->country.')')) {?>
 
-    <tr>
-        <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
-        <td><?=$item->infoUser->secondName?> <?=$item->infoUser->firstName?></td>
-        <td><?=$item->username?></td>
-        <td><?=$item->infoUser->city.'('.$item->infoUser->country.')'?></td>
-        <td>
-            <table>
-
-                <?php foreach ($item->statusSale->set as $itemSet) {?>
-                    <?php $dateChange = strtotime($itemSet->dateChange->toDateTime()->format('Y-m-d')) ?>
-                    <?php if($dateChange>=$from && $dateChange<=$to) {?>
-                    <tr data-set="<?= $itemSet->title ?>">
+    <?php
+        $infoSet = '';
+        foreach ($item->statusSale->set as $itemSet) {
+            if($request['infoStatus'] == 'all' || $request['infoStatus']==$itemSet->status) {
+                $infoSet = '
+                    <tr data-set="'.$itemSet->title.'">
                         <td>
-                            <?= $itemSet->title ?>
+                            '. $itemSet->title .'
                         </td>
                         <td>
                             <span class="label label-default statusOrder">
-                                <?= THelper::t($itemSet->status) ?>
+                                '. THelper::t($itemSet->status) .'
                             </span>
                         </td>
                         <td>
-                            <?= $itemSet->dateChange->toDateTime()->format('Y-m-d H:i:s') ?>
+                            '.$itemSet->dateChange->toDateTime()->format('Y-m-d H:i:s') .'
                         </td>
-                    </tr>
-                    <?php } ?>
-                <?php } ?>
+                    </tr>';
+            }
+        }
+    ?>
 
-
-            </table>
-        </td>
-        <td>
-            <?= Html::a('<i class="fa fa-comment"></i>', ['/business/status-sales/look-comment','idSale'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
-        </td>
+        <?php if(!empty($infoSet)) {?>
+        <tr>
+            <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
+            <td><?=$item->infoUser->secondName?> <?=$item->infoUser->firstName?></td>
+            <td><?=$item->username?></td>
+            <td><?=$item->infoUser->city.'('.$item->infoUser->country.')'?></td>
+            <td>
+                <table>
+                    <?=$infoSet?>
+                </table>
+            </td>
+            <td>
+                <?= Html::a('<i class="fa fa-comment"></i>', ['/business/status-sales/look-comment','idSale'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
+            </td>
+        </tr>
+        <?php } ?>
         <?php } ?>
         <?php } ?>
         <?php } ?>
         <?php } ?>
     </tbody>
-    <thead>
-    <tr>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-    </tr>
-    </thead>
+
 </table>

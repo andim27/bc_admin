@@ -487,6 +487,7 @@ class StatusSalesController extends BaseController {
             $request['to'] = date("Y-m-d");
             $request['from'] = date("Y-01-01");
             $request['infoTypeDate'] = 'create';
+            $request['infoStatus'] = 'all';
         } else {
             $listAdmin = [$request['infoWarehouse']];
         }
@@ -551,8 +552,8 @@ class StatusSalesController extends BaseController {
             'language'          => Yii::$app->language,
             'request'           => $request,
             'model'             => $model,
-            'listAdmin'        => $listAdmin,
-            'listCity'        => $listCity,
+            'listAdmin'         => $listAdmin,
+            'listCity'          => $listCity,
         ]);
     }
 

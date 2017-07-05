@@ -2,6 +2,7 @@
     use app\components\THelper;
     use yii\helpers\Html;
     use yii\widgets\ActiveForm;
+
 ?>
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('report_for_sales') ?></h3>
@@ -20,15 +21,15 @@
                 'id'=>'infoTypeDate',
             ])?>
     </div>
-    <div class="col-md-2 m-b">
-        <?= Html::input('text','from',$request['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <?= Html::input('text','from',$request['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
+            <span class="input-group-addon"> - </span>
+            <?= Html::input('text','to',$request['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+        </div>
     </div>
-    <div class="col-md-1 m-b text-center">
-       -
-    </div>
-    <div class="col-md-2 m-b">
-        <?= Html::input('text','to',$request['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
-    </div>
+
     <div class="col-md-2 m-b">
         <?=Html::dropDownList('infoWarehouse', $request['infoWarehouse'],
             \app\models\Users::getListAdmin(),[
@@ -43,6 +44,15 @@
             'id'=>'infoCity',
         ])?>
     </div>
+
+    <div class="col-md-2 m-b">
+        <?=Html::dropDownList('infoStatus', $request['infoStatus'],
+            ['all'=>THelper::t('all_status'),'status_sale_new'=>THelper::t('status_sale_new'),'status_sale_issued'=>THelper::t('status_sale_issued')],[
+                'class'=>'form-control infoCity',
+                'id'=>'infoCity',
+            ])?>
+    </div>
+
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
     </div>
