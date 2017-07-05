@@ -39,7 +39,7 @@ $to = strtotime($request['to']);
         $infoSet = '';
         foreach ($item->statusSale->set as $itemSet) {
             if($request['infoStatus'] == 'all' || $request['infoStatus']==$itemSet->status) {
-                $infoSet = '
+                $infoSet .= '
                     <tr data-set="'.$itemSet->title.'">
                         <td>
                             '. $itemSet->title .'

@@ -503,6 +503,9 @@ class StatusSalesController extends BaseController {
                     ]
                 ])
                 ->andWhere(['in','product',Products::productIDWithSet()])
+                ->andWhere([
+                    'type' => ['$ne' => -1]
+                ])
                 ->all();
             
         } else {
@@ -515,6 +518,7 @@ class StatusSalesController extends BaseController {
                     ]
                 ])
                 ->all();
+
             $listOrdderId = [];
             if(!empty($modelLastChangeStatus)){
                 foreach ($modelLastChangeStatus as $item){
@@ -524,6 +528,10 @@ class StatusSalesController extends BaseController {
 
                 $model = Sales::find()
                     ->andWhere(['in','_id',$listOrdderId])
+                    ->andWhere(['in','product',Products::productIDWithSet()])
+                    ->andWhere([
+                        'type' => ['$ne' => -1]
+                    ])
                     ->all();
             }
         }
@@ -809,12 +817,10 @@ class StatusSalesController extends BaseController {
                     '$gte' => new UTCDateTime(strtotime($dateInterval['from']) * 1000),
                     '$lt' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
                 ],
-                'setSales.status' => 'status_sale_issued',
-//                'setSales.idUserChange' => [
-//                    '$in' => $listAdminObj
-//                ],
+                'setSales.status' => 'status_sale_issued'
             ])
             ->all();
+
         if(!empty($modelLastChangeStatus)){
             foreach ($modelLastChangeStatus as $item){
                 if($item->sales->type != -1) {
