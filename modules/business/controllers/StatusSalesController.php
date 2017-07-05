@@ -731,7 +731,6 @@ class StatusSalesController extends BaseController {
             $dateInterval['to'] = date("Y-m-d");
             $dateInterval['from'] = date("Y-01-01");
         }
-
         
         $listAdmin = [];
         if(!empty($request['listWarehouse']) && $request['listWarehouse'] != 'all' && !empty($request['flWarehouse']) && $request['flWarehouse']==1){
@@ -745,7 +744,6 @@ class StatusSalesController extends BaseController {
             $request['listWarehouse'] = 'all';
         }
 
-
         $model = Sales::find()
             ->where([
                 'dateCreate' => [
@@ -758,8 +756,6 @@ class StatusSalesController extends BaseController {
                 'type' => ['$ne' => -1]
             ])
             ->all();
-
-
 
         $infoGoods = $infoSetGoods = [];
         if(!empty($model)){
@@ -822,10 +818,14 @@ class StatusSalesController extends BaseController {
             ->all();
 
         if(!empty($modelLastChangeStatus)){
+
+            $from = strtotime($dateInterval['from']);
+            $to = strtotime($dateInterval['to']);
+
             foreach ($modelLastChangeStatus as $item){
                 if($item->sales->type != -1) {
                     foreach ($item->setSales as $itemSet) {
-
+                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
                         $flUse = 0;
                         if (!empty($request['listWarehouse']) && $request['listWarehouse'] != 'all') {
                             if (in_array((string)$itemSet['idUserChange'], $listAdmin)) {
@@ -839,7 +839,7 @@ class StatusSalesController extends BaseController {
                             $flUse = 1;
                         }
 
-                        if ($flUse == 1 && in_array($itemSet['status'],StatusSales::getListIssuedStatus())) {
+                        if ($flUse == 1 && $dateChange>=$from && $dateChange<=$to && in_array($itemSet['status'],StatusSales::getListIssuedStatus())) {
                             if (empty($infoSetGoods[$itemSet['title']])) {
                                 $infoSetGoods[$itemSet['title']]['books'] = 0;
                                 $infoSetGoods[$itemSet['title']]['issue'] = 0;
@@ -951,10 +951,14 @@ class StatusSalesController extends BaseController {
             ])
             ->all();
         if(!empty($modelLastChangeStatus)){
+
+            $from = strtotime($from);
+            $to = strtotime($to);
+
             foreach ($modelLastChangeStatus as $item){
                 if($item->sales->type != -1) {
                     foreach ($item->setSales as $itemSet) {
-
+                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
                         $flUse = 0;
                         if (!empty($listWarehouse) && $listWarehouse != 'all') {
                             if (in_array((string)$itemSet['idUserChange'], $listAdmin)) {
@@ -968,7 +972,7 @@ class StatusSalesController extends BaseController {
                             $flUse = 1;
                         }
 
-                        if ($flUse == 1 && in_array($itemSet['status'],StatusSales::getListIssuedStatus())) {
+                        if ($flUse == 1 && $dateChange>=$from && $dateChange<=$to && in_array($itemSet['status'],StatusSales::getListIssuedStatus())) {
                             if (empty($infoSetGoods[$itemSet['title']])) {
                                 $infoSetGoods[$itemSet['title']]['books'] = 0;
                                 $infoSetGoods[$itemSet['title']]['issue'] = 0;
@@ -1143,15 +1147,20 @@ class StatusSalesController extends BaseController {
             ])
             ->all();
         if(!empty($modelLastChangeStatus) && !empty($listAdmin)){
+
+            $from = strtotime($dateInterval['from']);
+            $to = strtotime($dateInterval['to']);
+
             foreach ($modelLastChangeStatus as $item){
                 if($item->sales->type != -1) {
                     foreach ($item->setSales as $itemSet) {
+                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
                         $flUse = 0;
                         if (in_array((string)$itemSet['idUserChange'], $listAdmin)) {
                             $flUse = 1;
                         }
 
-                        if ($flUse == 1 && in_array($itemSet['status'],StatusSales::getListIssuedStatus())) {
+                        if ($flUse == 1 && $dateChange>=$from && $dateChange<=$to && in_array($itemSet['status'],StatusSales::getListIssuedStatus())) {
                             if (empty($infoSetGoods[$itemSet['title']])) {
                                 $infoSetGoods[$itemSet['title']]['books'] = 0;
                                 $infoSetGoods[$itemSet['title']]['issue'] = 0;

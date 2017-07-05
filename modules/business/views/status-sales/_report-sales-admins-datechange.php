@@ -38,7 +38,8 @@ $to = strtotime($request['to']);
     <?php
         $infoSet = '';
         foreach ($item->statusSale->set as $itemSet) {
-            if($request['infoStatus'] == 'all' || $request['infoStatus']==$itemSet->status) {
+            $dateChange = strtotime($itemSet->dateChange->toDateTime()->format('Y-m-d'));
+            if($dateChange>=$from && $dateChange<=$to && ($request['infoStatus'] == 'all' || $request['infoStatus']==$itemSet->status)) {
                 $infoSet .= '
                     <tr data-set="'.$itemSet->title.'">
                         <td>
