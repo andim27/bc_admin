@@ -113,6 +113,11 @@ class StatusSales extends \yii2tech\embedded\mongodb\ActiveRecord
         }
         return $answer;
     }
+    
+    public static function getListIssuedStatus()
+    {
+        return ['status_sale_issued','status_sale_issued_after_repair',];   
+    }
 }
 
 class ReviewsSale extends Model

@@ -839,7 +839,7 @@ class StatusSalesController extends BaseController {
                             $flUse = 1;
                         }
 
-                        if ($flUse == 1) {
+                        if ($flUse == 1 && in_array($itemSet['status'],StatusSales::getListIssuedStatus())) {
                             if (empty($infoSetGoods[$itemSet['title']])) {
                                 $infoSetGoods[$itemSet['title']]['books'] = 0;
                                 $infoSetGoods[$itemSet['title']]['issue'] = 0;
@@ -851,7 +851,6 @@ class StatusSalesController extends BaseController {
                 }
             }
         }
-
         return $this->render('consolidated-report-sales',[
             'language' => Yii::$app->language,
             'dateInterval' => $dateInterval,
