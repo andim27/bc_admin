@@ -55,7 +55,8 @@ $listWarehouse = \app\models\Warehouse::getArrayWarehouse();
                     <th>Дата</th>
                     <th>Действие</th>
                     <th>Кто проводил</th>
-                    <th>Склад</th>
+                    <th>Склад --></th>
+                    <th>Склад <--</th>
                     <th>Количество</th>
                     <th>Цена</th>
                     <th>Коментарий</th>
@@ -68,7 +69,8 @@ $listWarehouse = \app\models\Warehouse::getArrayWarehouse();
                         <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
                         <td><?=$item->action?></td>
                         <td><?=$item->adminInfo->secondName . ' ' .$item->adminInfo->firstName?></td>
-                        <td>????</td>
+                        <td><?=(!empty($item->admin_warehouse_id) ? $item->adminWarehouseInfo->title : '')?></td>
+                        <td><?=(!empty($item->on_warehouse_id) ? $item->onWarehouseInfo->title : '')?></td>
                         <td><?=$item->number?></td>
                         <td><?=(!empty($item->money) ? $item->money . ' EUR' : '')?></td>
                         <td><?=$item->comment?></td>

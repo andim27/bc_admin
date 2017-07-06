@@ -420,6 +420,21 @@ Class Menu
             ],
 
             [
+                'key'   =>  'planning_purchasing',
+                'label' => THelper::t('planning_purchasing'),
+                'url' => '#',
+                'controller' => 'planning-purchasing',
+                'items' => [
+                    [
+                        'key'   =>  'planning',
+                        'label' => THelper::t('planning_purchasing'),
+                        'url' => ['planning-purchasing/planning'],
+                        'action' => 'planning',
+                    ],
+                ]
+            ],
+
+            [
                 'key'   =>  'parts_accessories_in_warehouse',
                 'label' => THelper::t('parts_accessories_in_warehouse'),
                 'url' => '#',
