@@ -26,9 +26,11 @@ class PartsAccessoriesInWarehouseController extends BaseController {
         if(empty($request)){
             $request['dateInterval']['to'] = date("Y-m-d");
             $request['dateInterval']['from'] = date("Y-01-01");
-            $request['listWarehouse'] = $idWarehouse;
         }
 
+        if(empty($request['listWarehouse'])){
+            $request['listWarehouse'] = $idWarehouse;
+        }
 
         /** **** **/
         $infoWarehouse = Warehouse::find()->where(['_id'=> new ObjectID($request['listWarehouse'])])->one();

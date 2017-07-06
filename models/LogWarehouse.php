@@ -54,6 +54,11 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         return $this->hasOne(Users::className(),['_id'=>'who_performed_action']);
     }
 
+    public function getWarehouseInfo()
+    {
+        return $this->hasOne(Warehouse::className(),['_id'=>'who_performed_action']);
+    }
+
     public static function setInfoLog($info)
     {
         if(!empty($info)){
