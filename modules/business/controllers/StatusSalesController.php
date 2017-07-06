@@ -423,6 +423,7 @@ class StatusSalesController extends BaseController {
             $request['to'] = date("Y-m-d");
             $request['from'] = date("Y-01-01");
             $request['infoTypeDate'] = 'create';
+            $request['infoStatus'] = 'all';
         }
 
         if( $request['infoWarehouse'] == 'for_me'){
@@ -442,6 +443,9 @@ class StatusSalesController extends BaseController {
                     ]
                 ])
                 ->andWhere(['in','product',Products::productIDWithSet()])
+                ->andWhere([
+                    'type' => ['$ne' => -1]
+                ])
                 ->all();
 
         } else {
@@ -463,6 +467,10 @@ class StatusSalesController extends BaseController {
 
                 $model = Sales::find()
                     ->andWhere(['in','_id',$listOrdderId])
+                    ->andWhere(['in','product',Products::productIDWithSet()])
+                    ->andWhere([
+                        'type' => ['$ne' => -1]
+                    ])
                     ->all();
             }
         }

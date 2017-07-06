@@ -23,15 +23,15 @@
                 'id'=>'infoTypeDate',
             ])?>
     </div>
-    <div class="col-md-2 m-b">
-        <?= Html::input('text','from',$request['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
+
+    <div class="col-md-3">
+        <div class="input-group">
+            <?= Html::input('text','from',$request['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
+            <span class="input-group-addon"> - </span>
+            <?= Html::input('text','to',$request['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+        </div>
     </div>
-    <div class="col-md-1 m-b text-center">
-       -
-    </div>
-    <div class="col-md-2 m-b">
-        <?= Html::input('text','to',$request['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
-    </div>
+
     <div class="col-md-2 m-b">
         <?=Html::dropDownList('infoWarehouse', $request['infoWarehouse'],
             \app\models\Warehouse::getMyWarehouse(),[
@@ -39,6 +39,15 @@
             'id'=>'infoWarehouse',
         ])?>
     </div>
+
+    <div class="col-md-2 m-b">
+        <?=Html::dropDownList('infoStatus', $request['infoStatus'],
+            ['all'=>THelper::t('all_status'),'status_sale_new'=>THelper::t('status_sale_new'),'status_sale_issued'=>THelper::t('status_sale_issued')],[
+                'class'=>'form-control infoCity',
+                'id'=>'infoCity',
+            ])?>
+    </div>
+
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
     </div>
@@ -51,77 +60,20 @@
 </div>
 <section class="panel panel-default">
     <div class="table-responsive">
-        <table class="table table-translations table-striped datagrid m-b-sm">
-            <thead>
-                <tr>
-                    <th>
-                        <?=THelper::t('date')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('full_name')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('login')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('goods')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('status_sale')?>
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if(!empty($model)) {?>
-                    <?php foreach($model as $item) {?>
-                        <?php if (!empty($item->statusSale) && count($item->statusSale->set)>0 && $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {?>
-                        <tr>
-                            <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
-                            <td><?=$item->infoUser->secondName?> <?=$item->infoUser->firstName?></td>
-                            <td><?=$item->username?></td>
-                            <td><?=$item->productName?></td>
-                            <td>
-                                <table>
-                                    <?php foreach ($item->statusSale->set as $itemSet) {?>
-                                        <?php $dateChange = strtotime($itemSet->dateChange->toDateTime()->format('Y-m-d')) ?>
-                                        <?php
-                                            $show = 0;
-                                            if($request['infoTypeDate'] == 'update') {
-                                                if($dateChange>=$from && $dateChange<=$to) {
-                                                    $show = 1;
-                                                }
-                                            } else {
-                                                $show = 1;
-                                            }
-                                        ?>
+        <?php if($request['infoTypeDate'] == 'create') { ?>
+            <?= $this->render('_report-sales-admins-datecreate',[
+                'model'     => $model,
+                'listAdmin' => $listAdmin,
+                'request'   => $request
+            ]); ?>
+        <?php } else { ?>
+            <?= $this->render('_report-sales-admins-datechange',[
+                'model'     => $model,
+                'listAdmin' => $listAdmin,
+                'request'   => $request
+            ]); ?>
+        <?php } ?>
 
-                                        <?php if($show = 1) {?>
-                                        <tr data-set="<?= $itemSet->title ?>">
-                                            <td>
-                                                <?= $itemSet->title ?>
-                                            </td>
-                                            <td>
-                                                <span class="label label-default statusOrder">
-                                                    <?= THelper::t($itemSet->status) ?>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <?= $itemSet->dateChange->toDateTime()->format('Y-m-d H:i:s') ?>
-                                            </td>
-                                        </tr>
-                                        <?php } ?>
-                                    <?php } ?>
-                                </table>
-                            </td>
-                            <td>
-                                <?= Html::a('<i class="fa fa-comment"></i>', ['/business/status-sales/look-comment','idSale'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
-                            </td>
-                        <?php } ?>
-                    <?php } ?>
-                <?php } ?>
-            </tbody>
-        </table>
     </div>
 </section>
 
