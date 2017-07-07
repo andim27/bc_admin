@@ -63,6 +63,11 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         return $this->hasOne(Warehouse::className(),['_id'=>'on_warehouse_id']);
     }
 
+    public function getInfoPartsAccessories()
+    {
+        return $this->hasOne(PartsAccessories::className(),['_id'=>'parts_accessories_id']);
+    }
+
     public static function setInfoLog($info)
     {
         if(!empty($info)){

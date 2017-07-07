@@ -857,126 +857,126 @@ class ManufacturingSuppliersController extends BaseController {
      * popup for assembly
      * @return string
      */
-    public function actionAssembly()
-    {
-        return $this->renderAjax('_assembly', [
-            'language' => Yii::$app->language,
-        ]);
-    }
+//    public function actionAssembly()
+//    {
+//        return $this->renderAjax('_assembly', [
+//            'language' => Yii::$app->language,
+//        ]);
+//    }
 
     /**
      * looking complectation
      * @return bool|string
      */
-    public function actionKitForAccessories(){
-
-        $request = Yii::$app->request->post();
-
-        if(!empty($request['PartsAccessoriesId'])){
-            $model = PartsAccessories::findOne(['_id'=>new ObjectID($request['PartsAccessoriesId'])]);
-            return $this->renderPartial('_kit-for-accessories', [
-                'language' => Yii::$app->language,
-                'model' => $model,
-            ]);
-        }
-
-        return false;
-    }
+//    public function actionKitForAccessories(){
+//
+//        $request = Yii::$app->request->post();
+//
+//        if(!empty($request['PartsAccessoriesId'])){
+//            $model = PartsAccessories::findOne(['_id'=>new ObjectID($request['PartsAccessoriesId'])]);
+//            return $this->renderPartial('_kit-for-accessories', [
+//                'language' => Yii::$app->language,
+//                'model' => $model,
+//            ]);
+//        }
+//
+//        return false;
+//    }
 
     /**
      * save assembly
      * @return \yii\web\Response
      */
-    public function actionSaveAssembly()
-    {
-        Yii::$app->session->setFlash('alert' ,[
-                'typeAlert'=>'danger',
-                'message'=>'Сохранения не применились, что то пошло не так!!!'
-            ]
-        );
-
-        $request = Yii::$app->request->post();
-
-        if(!empty($request)){
-
-            $myWarehouse = Warehouse::getIdMyWarehouse();
-
-            $model = PartsAccessoriesInWarehouse::findOne([
-                'parts_accessories_id'  =>  new ObjectID($request['parts_accessories_id']),
-                'warehouse_id'          =>  new ObjectID($myWarehouse)
-            ]);
-            if(empty($model)){
-                $model = new PartsAccessoriesInWarehouse();
-                $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
-                $model->warehouse_id = new ObjectID($myWarehouse);
-                $model->number = (integer)0;
-            }
-
-                $infoComplect = [];
-                if(!empty($request['complect'])){
-
-                    $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
-
-                    foreach ($request['complect'] as $k=>$item){
-                        if($listGoodsFromMyWarehouse[$item] < $request['number'][$k]){
-                            Yii::$app->session->setFlash('alert' ,[
-                                    'typeAlert'=>'danger',
-                                    'message'=>'Сохранения не применились, на складе не достаточно комплектующих!!!'
-                                ]
-                            );
-
-                            return $this->redirect(['parts-accessories']);
-                        }
-
-                        $infoComplect[$item] = [
-                            'id' => $item,
-                            'number' => $request['number'][$k]
-                        ];
-                    }
-
-
-                    foreach($infoComplect as $item){
-                        $modelComplect = PartsAccessoriesInWarehouse::findOne([
-                            'parts_accessories_id'  =>  new ObjectID($item['id']),
-                            'warehouse_id'          =>  new ObjectID($myWarehouse)
-                        ]);
-
-                        $modelComplect->number -= $item['number'];
-
-                        if($modelComplect->save()){
-                            // add log
-                            LogWarehouse::setInfoLog([
-                                'action'                    =>  'cancellation_for_accessories',
-                                'parts_accessories_id'      =>  $item['id'],
-                                'number'                    =>  $item['number'],
-
-                            ]);
-                        }
-
-                    }
-
-                    $model->number++;
-
-                    if($model->save()){
-
-                        // add log
-                        LogWarehouse::setInfoLog([
-                            'action'                    =>  'accessories',
-                            'parts_accessories_id'      =>  $request['parts_accessories_id'],
-                            'number'                    =>  1,
-
-                        ]);
-
-                        Yii::$app->session->setFlash('alert' ,[
-                                'typeAlert'=>'success',
-                                'message'=>'Сохранения применились.'
-                            ]
-                        );
-                    }
-
-                }
-        }
-
-        $this->redirect(['parts-accessories']);
-    }
+//    public function actionSaveAssembly()
+//    {
+//        Yii::$app->session->setFlash('alert' ,[
+//                'typeAlert'=>'danger',
+//                'message'=>'Сохранения не применились, что то пошло не так!!!'
+//            ]
+//        );
+//
+//        $request = Yii::$app->request->post();
+//
+//        if(!empty($request)){
+//
+//            $myWarehouse = Warehouse::getIdMyWarehouse();
+//
+//            $model = PartsAccessoriesInWarehouse::findOne([
+//                'parts_accessories_id'  =>  new ObjectID($request['parts_accessories_id']),
+//                'warehouse_id'          =>  new ObjectID($myWarehouse)
+//            ]);
+//            if(empty($model)){
+//                $model = new PartsAccessoriesInWarehouse();
+//                $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
+//                $model->warehouse_id = new ObjectID($myWarehouse);
+//                $model->number = (integer)0;
+//            }
+//
+//                $infoComplect = [];
+//                if(!empty($request['complect'])){
+//
+//                    $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
+//
+//                    foreach ($request['complect'] as $k=>$item){
+//                        if($listGoodsFromMyWarehouse[$item] < $request['number'][$k]){
+//                            Yii::$app->session->setFlash('alert' ,[
+//                                    'typeAlert'=>'danger',
+//                                    'message'=>'Сохранения не применились, на складе не достаточно комплектующих!!!'
+//                                ]
+//                            );
+//
+//                            return $this->redirect(['parts-accessories']);
+//                        }
+//
+//                        $infoComplect[$item] = [
+//                            'id' => $item,
+//                            'number' => $request['number'][$k]
+//                        ];
+//                    }
+//
+//
+//                    foreach($infoComplect as $item){
+//                        $modelComplect = PartsAccessoriesInWarehouse::findOne([
+//                            'parts_accessories_id'  =>  new ObjectID($item['id']),
+//                            'warehouse_id'          =>  new ObjectID($myWarehouse)
+//                        ]);
+//
+//                        $modelComplect->number -= $item['number'];
+//
+//                        if($modelComplect->save()){
+//                            // add log
+//                            LogWarehouse::setInfoLog([
+//                                'action'                    =>  'cancellation_for_accessories',
+//                                'parts_accessories_id'      =>  $item['id'],
+//                                'number'                    =>  $item['number'],
+//
+//                            ]);
+//                        }
+//
+//                    }
+//
+//                    $model->number++;
+//
+//                    if($model->save()){
+//
+//                        // add log
+//                        LogWarehouse::setInfoLog([
+//                            'action'                    =>  'accessories',
+//                            'parts_accessories_id'      =>  $request['parts_accessories_id'],
+//                            'number'                    =>  1,
+//
+//                        ]);
+//
+//                        Yii::$app->session->setFlash('alert' ,[
+//                                'typeAlert'=>'success',
+//                                'message'=>'Сохранения применились.'
+//                            ]
+//                        );
+//                    }
+//
+//                }
+//        }
+//
+//        $this->redirect(['parts-accessories']);
+//    }
 }

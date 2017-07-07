@@ -30,6 +30,7 @@ class ExecutionPosting extends \yii2tech\embedded\mongodb\ActiveRecord
             'list_component',
 
             'suppliers_performers_id',
+            'fullname_whom_transferred',
             'date_execution',
             'date_create',
             

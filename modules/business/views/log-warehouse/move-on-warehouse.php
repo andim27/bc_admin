@@ -16,7 +16,7 @@ $listWarehouse = \app\models\Warehouse::getArrayWarehouse();
 <div class="row">
 
     <?php $formStatus = ActiveForm::begin([
-        'action' => '/' . $language . '/business/status-sales/report-sales-admins',
+        'action' => '/' . $language . '/business/log-warehouse/move-on-warehouse',
         'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
     ]); ?>
 
@@ -57,6 +57,7 @@ $listWarehouse = \app\models\Warehouse::getArrayWarehouse();
                     <th>Кто проводил</th>
                     <th>Склад --></th>
                     <th>Склад <--</th>
+                    <th>Товар</th>
                     <th>Количество</th>
                     <th>Цена</th>
                     <th>Коментарий</th>
@@ -67,10 +68,11 @@ $listWarehouse = \app\models\Warehouse::getArrayWarehouse();
                 <?php foreach ($model as $k=>$item) { ?>
                     <tr>
                         <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
-                        <td><?=$item->action?></td>
+                        <td><?=THelper::t($item->action)?></td>
                         <td><?=$item->adminInfo->secondName . ' ' .$item->adminInfo->firstName?></td>
                         <td><?=(!empty($item->admin_warehouse_id) ? $item->adminWarehouseInfo->title : '')?></td>
                         <td><?=(!empty($item->on_warehouse_id) ? $item->onWarehouseInfo->title : '')?></td>
+                        <td><?=$item->infoPartsAccessories->title?></td>
                         <td><?=$item->number?></td>
                         <td><?=(!empty($item->money) ? $item->money . ' EUR' : '')?></td>
                         <td><?=$item->comment?></td>

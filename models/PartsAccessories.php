@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\components\ArrayInfoHelper;
 use app\components\THelper;
 use MongoDB\BSON\ObjectID;
 
@@ -76,6 +77,8 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         foreach ($model as $item){
             $list[(string)$item->_id] = $item->title;
         }
+
+        $list = ArrayInfoHelper::sortWords($list);
 
         return $list;
     }

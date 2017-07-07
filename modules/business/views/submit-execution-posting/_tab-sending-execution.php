@@ -33,12 +33,14 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 </th>
                 <th>Дата прихода</th>
                 <th>Кто собирает</th>
+                <th>Кому переданно</th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($model as $item) { ?>
                 <?php foreach ($item->list_component as $k=>$itemList) { ?>
+                    <?php if($item->received == 0 && $item->posting != 1){?>
                     <tr>
                         <td><?= $item->date_create->toDateTime()->format('Y-m-d H:i:s') ?></td>
                         <td><?= $listGoods[(string)$itemList['parts_accessories_id']]?></td>
@@ -46,13 +48,12 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                         <td><?= $listGoods[(string)$item->parts_accessories_id] ?></td>
                         <td><?= $item->date_execution->toDateTime()->format('Y-m-d H:i:s') ?></td>
                         <td><?= $listSuppliers[(string)$item->suppliers_performers_id] ?></td>
+                        <td><?= $item->fullname_whom_transferred ?></td>
                         <td>
-                            <?= (($item->received == 0 && $item->posting != 1) ?
-                                Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/add-edit-sending-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) :
-                                '')
-                            ?>
+                            <?=  Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/add-edit-sending-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']); ?>
                         </td>
                     </tr>
+                    <?php } ?>
                 <?php } ?>
             <?php } ?>
             </tbody>

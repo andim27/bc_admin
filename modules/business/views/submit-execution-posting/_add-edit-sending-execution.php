@@ -159,12 +159,22 @@ if(!empty($model)){
                     </div>
                 </div>
 
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <?=Html::label(THelper::t('fullname_whom_transferred'))?>
+                        <?=Html::input('text','fullname_whom_transferred',(!empty($model->fullname_whom_transferred) ? $model->fullname_whom_transferred : ''),[
+                            'class'=>'form-control',
+                            'required'=>true,
+                        ]);?>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <?= Html::submitButton(THelper::t('save'), ['class' => 'btn btn-success assemblyBtn']) ?>
                     </div>
                 </div>
+                
                 <?php ActiveForm::end(); ?>
             </div>
         </div>

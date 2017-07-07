@@ -13,18 +13,18 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
 <?php if(!empty($idMyWarehouse)){?>
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <?= Html::a('Оприходование', ['/business/manufacturing-suppliers/posting-ordering'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <?= Html::a('Оприходование пред заказа', ['/business/manufacturing-suppliers/posting-pre-ordering'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <?= Html::a('Списание', ['/business/manufacturing-suppliers/cancellation'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
         </div>
-        <div class="col-md-3">
-            <?= Html::a('Cборка', ['/business/manufacturing-suppliers/assembly'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
-        </div>
+<!--        <div class="col-md-3">-->
+            <?php // Html::a('Cборка', ['/business/manufacturing-suppliers/assembly'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']); ?>
+<!--        </div>-->
     </div>
 <?php } else {?>
     <div class="alert alert-danger fade in">

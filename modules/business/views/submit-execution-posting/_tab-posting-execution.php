@@ -18,6 +18,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 <th><?=THelper::t('count')?></th>
                 <th>Дата прихода</th>
                 <th>Кто собирает</th>
+                <th>Кому переданно</th>
                 <th>Статус</th>
             </tr>
             </thead>
@@ -29,6 +30,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                     <td><?= $item->number ?></td>
                     <td><?= $item->date_execution->toDateTime()->format('Y-m-d H:i:s') ?></td>
                     <td><?= $listSuppliers[(string)$item->suppliers_performers_id] ?></td>
+                    <td><?= $item->fullname_whom_transferred ?></td>
                     <td>
                         <?php if($item->posting != 1){?>
                             Осталось <?=($item->number - $item->received)?>

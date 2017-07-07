@@ -73,6 +73,7 @@ class SubmitExecutionPostingController extends BaseController {
             $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
             $model->number = (int)$request['want_number'];
             $model->received = (int)'0';
+            $model->fullname_whom_transferred = (!empty($request['fullname_whom_transferred']) ? $request['fullname_whom_transferred'] : '' );
 
             $list_component = [];
             foreach ($request['complect'] as $k => $item) {

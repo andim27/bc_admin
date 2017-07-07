@@ -344,6 +344,12 @@ Class Menu
                 'controller' => 'manufacturing-suppliers',
                 'items' => [
                     [
+                        'key'   =>  'sidebar_currency_rate',
+                        'label' => THelper::t('sidebar_currency_rate'),
+                        'url' => ['currency-rate/currency-rate'],
+                        'action' => 'currency-rate',
+                    ],
+                    [
                         'key'   =>  'sidebar_suppliers_performers',
                         'label' => THelper::t('sidebar_suppliers_performers'),
                         'url' => ['manufacturing-suppliers/suppliers-performers'],
@@ -374,35 +380,27 @@ Class Menu
                         'action' => 'parts-ordering',
                     ],
                     [
-                        'key'   =>  'sidebar_currency_rate',
-                        'label' => THelper::t('sidebar_currency_rate'),
-                        'url' => ['currency-rate/currency-rate'],
-                        'action' => 'currency-rate',
-                    ],
-                ]
-            ],
-
-            [
-                'key'   =>  'sidebar_submit_execution_posting',
-                'label' => THelper::t('sidebar_submit_execution_posting'),
-                'url' => '#',
-                'controller' => 'submit-execution-posting',
-                'items' => [
-                    [
                         'key'   =>  'sidebar_execution_posting',
                         'label' => THelper::t('sidebar_execution_posting'),
                         'url' => ['submit-execution-posting/execution-posting'],
                         'action' => 'execution-posting',
                     ],
-
                     [
                         'key'   =>  'sidebar_history_cancellation_posting',
                         'label' => THelper::t('sidebar_history_cancellation_posting'),
                         'url' => ['submit-execution-posting/history-cancellation-posting'],
                         'action' => 'history-cancellation-posting',
                     ],
+                    [
+                        'key'   =>  'planning',
+                        'label' => THelper::t('planning_purchasing'),
+                        'url' => ['planning-purchasing/planning'],
+                        'action' => 'planning',
+                    ],
+
                 ]
             ],
+
 
             [
                 'key'   =>  'sending_waiting_parcel',
@@ -419,20 +417,6 @@ Class Menu
                 ]
             ],
 
-            [
-                'key'   =>  'planning_purchasing',
-                'label' => THelper::t('planning_purchasing'),
-                'url' => '#',
-                'controller' => 'planning-purchasing',
-                'items' => [
-                    [
-                        'key'   =>  'planning',
-                        'label' => THelper::t('planning_purchasing'),
-                        'url' => ['planning-purchasing/planning'],
-                        'action' => 'planning',
-                    ],
-                ]
-            ],
 
             [
                 'key'   =>  'parts_accessories_in_warehouse',

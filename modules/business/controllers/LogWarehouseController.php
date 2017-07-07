@@ -17,8 +17,20 @@ class LogWarehouseController extends BaseController {
             $request['to'] = date("Y-m-d");
             $request['from'] = date("Y-01-01");
         }
-        
-        $model = LogWarehouse::find()->all();
+
+        $queryWarehouse = [];
+        if(!empty($request['infoWarehouse'])){
+            $queryWarehouse = [];
+        }
+
+        $model = LogWarehouse::find()
+            ->where([
+                'date_create' => [
+                    '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->all();
 
         return $this->render('move-on-warehouse',[
             'language'          => Yii::$app->language,
