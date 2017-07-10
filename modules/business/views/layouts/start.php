@@ -4,7 +4,7 @@
     use app\components\LangswitchWidget;
     use app\components\THelper;
     use app\components\SidebarWidget;
-    $this->title = THelper::t('business_center');
+    $this->title = THelper::t('admin_panel');
     AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>

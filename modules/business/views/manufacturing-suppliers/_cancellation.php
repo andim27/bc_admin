@@ -9,8 +9,6 @@ use app\models\SuppliersPerformers;
 $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getListGoodsFromMyWarehouse();
 $listGoodsFromMyWarehouse = ArrayHelper::merge([''=>'Выберите товар'],$listGoodsFromMyWarehouse);
 
-$listSuppliersPerformers=SuppliersPerformers::getListSuppliersPerformers();
-$listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поставщика-испонителя'],$listSuppliersPerformers);
 ?>
 
 <div class="modal-dialog">
@@ -28,18 +26,6 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
             <div class="form-group">
                 <?=Html::label(THelper::t('goods'))?>
                 <?=Html::dropDownList('parts_accessories_id','',$listGoodsFromMyWarehouse,[
-                    'class'=>'form-control',
-                    'id'=>'selectChangeStatus',
-                    'required'=>'required',
-                    'options' => [
-                        '' => ['disabled' => true]
-                    ]
-                ])?>
-            </div>
-
-            <div class="form-group">
-                <?=Html::label(THelper::t('sidebar_suppliers_performers'))?>
-                <?=Html::dropDownList('suppliers_performers_id','',$listSuppliersPerformers,[
                     'class'=>'form-control',
                     'id'=>'selectChangeStatus',
                     'required'=>'required',

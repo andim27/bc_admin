@@ -142,7 +142,10 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
 
         }
 
-        $number = min($composite);
+        $number = 0;
+        if(!empty($composite)){
+            $number = min($composite);
+        }
 
         return $number;
     }

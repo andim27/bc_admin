@@ -106,7 +106,7 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
         <?php foreach ($priceOnePiece as $k=>$item){ ?>
             <div>
                 <span class="<?=$k?>">
-                    <?=$item?>
+                    <?=round($item,3)?>
                 </span>
                 <?=THelper::t($k)?>
             </div>

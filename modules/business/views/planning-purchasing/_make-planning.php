@@ -235,7 +235,7 @@ if(!empty($model)){
         });
 
         for (key in fullSumma) {
-            $('.fullSumma .'+key).text(fullSumma[key]);
+            $('.fullSumma .'+key).text(fullSumma[key].toFixed(3));
         }
 
 

@@ -84,7 +84,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
                                 <?= ($item->checkTransaction() ?
                                     '' :
-                                    Html::a('<i class="fa fa-trash-o" title="удалить"></i>', ['/business/manufacturing-suppliers/remove-suppliers-performers','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']])) ?>
+                                    Html::a('<i class="fa fa-trash-o" title="удалить"></i>', ['/business/manufacturing-suppliers/remove-parts-accessories','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']])) ?>
 
                             </td>
                         </tr>

@@ -12,9 +12,11 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
 
 $listSuppliersPerformers=SuppliersPerformers::getListSuppliersPerformers();
 $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поставщика-испонителя'],$listSuppliersPerformers);
+
+$listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite();
 ?>
 
-<div class="modal-dialog">
+<div class="modal-dialog popupPostingOrder">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
@@ -27,13 +29,15 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
                 'options' => ['name' => 'savePartsAccessories'],
             ]); ?>
 
+            <div class="blError"></div>
+
             <div class="form-group">
                 <?=Html::label(THelper::t('goods'))?>
                 <?=Html::dropDownList('parts_accessories_id','',
                     $listGoods,
                     [
                         'class'=>'form-control',
-                        'id'=>'selectChangeStatus',
+                        'id'=>'partsAccessoriesId',
                         'required'=>'required',
                         'options' => [
                             '' => ['disabled' => true]
@@ -101,5 +105,31 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
 
     </div>
 </div>
+
+
+<script type="text/javascript">
+    arrayGoodsComposite = <?=json_encode($listGoodsWithComposite)?>;
+    $("#partsAccessoriesId").on("change",function () {
+
+        clearError();
+
+        goodsID = $(this).val();
+
+        if(arrayGoodsComposite[goodsID]){
+            alertError('Данный товар составной!');
+        }
+    });
+
+    function alertError(error) {
+        $(".popupPostingOrder .blError").html(
+            '<div class="alert alert-danger fade in">' +
+                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                '<strong>'+error+'</strong>' +
+            '</div>')
+    }
+    function clearError() {
+        $(".popupPostingOrder .blError").html('');
+    }
+</script>
 
 

@@ -13,9 +13,11 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
 
 $listSuppliersPerformers=SuppliersPerformers::getListSuppliersPerformers();
 $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поставщика-испонителя'],$listSuppliersPerformers);
+
+$listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite();
 ?>
 
-<div class="modal-dialog">
+<div class="modal-dialog popupPartsOrdering">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
@@ -30,6 +32,8 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
 
             <?=(!empty($model->_id) ? Html::hiddenInput('id', $model->_id,['class'=>'form-control']) : '')?>
 
+            <div class="blError"></div>
+
             <div class="row">
                 <div class="col-md-12">
                     <?=Html::label(THelper::t('goods'))?>
@@ -37,7 +41,7 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
                         (!empty((string)$model->parts_accessories_id) ? (string)$model->parts_accessories_id: ''),
                         $listGoods,[
                             'class'=>'form-control',
-                            'id'=>'selectChangeStatus',
+                            'id'=>'partsAccessoriesId',
                             'required'=>'required',
                             'options' => [
                                 '' => ['disabled' => true]
@@ -117,7 +121,30 @@ $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поста�
     </div>
 </div>
 
-<script>
+<script type="text/javascript">
     $(".datepicker-input").datepicker();
+
+    arrayGoodsComposite = <?=json_encode($listGoodsWithComposite)?>;
+    $("#partsAccessoriesId").on("change",function () {
+
+        clearError();
+
+        goodsID = $(this).val();
+
+        if(arrayGoodsComposite[goodsID]){
+            alertError('Данный товар составной!');
+        }
+    });
+
+    function alertError(error) {
+        $(".popupPartsOrdering .blError").html(
+            '<div class="alert alert-danger fade in">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+            '<strong>'+error+'</strong>' +
+            '</div>')
+    }
+    function clearError() {
+        $(".popupPartsOrdering .blError").html('');
+    }
 </script>
 

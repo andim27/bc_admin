@@ -31,7 +31,7 @@ if(!empty($model)){
 
 ?>
 
-<div class="modal-dialog">
+<div class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
@@ -50,7 +50,7 @@ if(!empty($model)){
                 <div class="form-group row infoDanger"></div>
 
                 <div class="form-group row">
-                    <div class="col-md-3">
+                    <div class="col-md-7">
                         <?=Html::dropDownList('parts_accessories_id',
                             (!empty($model) ?  $model->parts_accessories_id : ''),
                             ArrayHelper::merge([''=>'выберите товар'],PartsAccessories::getListPartsAccessoriesWithComposite()),[
@@ -65,13 +65,13 @@ if(!empty($model)){
 
                         <?=(!empty($model) ?  Html::hiddenInput('parts_accessories_id',(string)$model->parts_accessories_id) : '')?>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-1">
                         можно собрать
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <?=Html::input('text','can_number',($canMake+$want_number),['class'=>'form-control CanCollect','disabled'=>'disabled'])?>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <?=Html::input('number','want_number',$want_number,[
                             'class'=>'form-control WantCollect',
                             'pattern'=>'\d*',

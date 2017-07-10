@@ -840,7 +840,6 @@ class ManufacturingSuppliersController extends BaseController {
                     'action'                    =>  'cancellation',
                     'parts_accessories_id'      =>  $request['parts_accessories_id'],
                     'number'                    =>  $request['number'],
-                    'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
 
                     'comment'   =>  $request['comment'],
                 ]);

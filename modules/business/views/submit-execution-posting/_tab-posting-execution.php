@@ -36,7 +36,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                             Осталось <?=($item->number - $item->received)?>
                             <?=Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/posting-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal'])?>
                         <?php } else { ?>
-                            <?=Html::a('Выполнен', ['/business/submit-execution-posting/look-posting-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal'])?>
+                            <?=Html::a('Выполнен', ['/business/submit-execution-posting/look-posting-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal','class'=>'text-info'])?>
                         <?php } ?>
                     </td>
                 </tr>
