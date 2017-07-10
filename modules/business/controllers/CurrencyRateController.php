@@ -26,6 +26,12 @@ class CurrencyRateController extends BaseController {
     
     public function actionAddCurrencyRate()
     {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert' => 'danger',
+                'message' => 'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
         $request = Yii::$app->request->post();
 
         $model = new CurrencyRate();
@@ -41,21 +47,16 @@ class CurrencyRateController extends BaseController {
 
                 Yii::$app->session->setFlash('alert' ,[
                         'typeAlert'=>'success',
-                        'message'=>'the changes are saved'
+                        'message'=>'Сохранения применились.'
                     ]
                 );
 
-                return $this->redirect('/' . Yii::$app->language .'/business/currency-rate/currency-rate');
             }
 
 
         }
 
-        Yii::$app->session->setFlash('alert' ,[
-                'typeAlert' => 'danger',
-                'message' => 'the changes are not saved'
-            ]
-        );
+
         return $this->redirect('/' . Yii::$app->language .'/business/currency-rate/currency-rate');
     }
 }

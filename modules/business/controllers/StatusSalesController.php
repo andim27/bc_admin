@@ -1247,13 +1247,13 @@ class StatusSalesController extends BaseController {
 
                 $error = [
                     'type' => 'success',
-                    'message' => 'the changes are saved',
+                    'message' => 'Сохранения применились.',
                 ];
 
             } else {
                 $error = [
                     'type' => 'success',
-                    'message' => 'the changes are not saved',
+                    'message' => 'Сохранения не применились, что то пошло не так!!!',
                 ];
             }
 
@@ -1261,7 +1261,7 @@ class StatusSalesController extends BaseController {
         } else {
             $error = [
                 'type' => 'success',
-                'message' => 'the changes are not saved',
+                'message' => 'Сохранения не применились, что то пошло не так!!!',
             ];
         }
 

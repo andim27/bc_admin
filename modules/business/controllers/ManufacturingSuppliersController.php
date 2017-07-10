@@ -230,6 +230,13 @@ class ManufacturingSuppliersController extends BaseController {
      */
     public function actionSavePartsAccessories()
     {
+
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert' => 'danger',
+                'message' => 'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+        
         $request = Yii::$app->request->post();
 
         $model = new PartsAccessories();
@@ -246,21 +253,12 @@ class ManufacturingSuppliersController extends BaseController {
 
                 Yii::$app->session->setFlash('alert' ,[
                         'typeAlert'=>'success',
-                        'message'=>'the changes are saved'
+                        'message'=>'Сохранения применились.'
                     ]
                 );
-
-                return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
             }
-
-
         }
 
-        Yii::$app->session->setFlash('alert' ,[
-                'typeAlert' => 'danger',
-                'message' => 'the changes are not saved'
-            ]
-        );
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
     }
 

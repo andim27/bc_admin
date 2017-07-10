@@ -17,7 +17,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
             <?= Html::a('Оприходование', ['/business/manufacturing-suppliers/posting-ordering'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
         </div>
         <div class="col-md-4">
-            <?= Html::a('Оприходование пред заказа', ['/business/manufacturing-suppliers/posting-pre-ordering'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
+            <?= Html::a('Оприходование предзаказа', ['/business/manufacturing-suppliers/posting-pre-ordering'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>
         </div>
         <div class="col-md-4">
             <?= Html::a('Списание', ['/business/manufacturing-suppliers/cancellation'],['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']) ?>

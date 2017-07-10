@@ -651,7 +651,7 @@ class SettingController extends BaseController {
     {
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert' => 'danger',
-                'message' => 'the changes are not saved'
+                'message' => 'Сохранения не применились, что то пошло не так!!!'
             ]
         );
 
@@ -671,7 +671,7 @@ class SettingController extends BaseController {
 
                 Yii::$app->session->setFlash('alert' ,[
                         'typeAlert'=>'success',
-                        'message'=>'the changes are saved'
+                        'message'=>'Сохранения применились.'
                     ]
                 );
             }
@@ -724,13 +724,13 @@ class SettingController extends BaseController {
             if($infoWarehouse->save()){
                 $error = [
                     'typeAlert' => 'success',
-                    'message' => 'the changes are saved',
+                    'message' => 'Сохранения применились.',
                 ];
 
             } else {
                 $error = [
                     'typeAlert' => 'danger',
-                    'message' => 'the changes are not saved',
+                    'message' => 'Сохранения не применились, что то пошло не так!!!',
                 ];
             }
 
@@ -738,7 +738,7 @@ class SettingController extends BaseController {
         } else {
             $error = [
                 'typeAlert' => 'danger',
-                'message' => 'the changes are not saved',
+                'message' => 'Сохранения не применились, что то пошло не так!!!',
             ];
         }
 

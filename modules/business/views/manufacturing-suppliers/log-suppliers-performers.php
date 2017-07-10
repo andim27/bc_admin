@@ -58,7 +58,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 <?php foreach ($model as $k=>$item) { ?>
                     <tr>
                         <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
-                        <td><?=$item->action?></td>
+                        <td><?=THelper::t($item->action)?></td>
                         <td><?=$item->adminInfo->secondName . ' ' .$item->adminInfo->firstName?></td>
                         <td><?=$listGoods[(string)$item->parts_accessories_id]?></td>
                         <td><?=$item->number?></td>

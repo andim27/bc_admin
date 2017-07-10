@@ -1,5 +1,6 @@
 <?php
 use app\models\PartsAccessories;
+use app\components\THelper;
 
 $listGoods = PartsAccessories::getListPartsAccessories();
 ?>
@@ -26,7 +27,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                         <td><?=$listGoods[(string)$item->parts_accessories_id]?></td>
                         <td><?=$item->number?></td>
                         <td><?=$item->adminInfo->secondName . ' ' .$item->adminInfo->firstName?></td>
-                        <td><?=$item->action?></td>
+                        <td><?=THelper::t($item->action)?></td>
                     </tr>
                 <?php } ?>
                 </tbody>

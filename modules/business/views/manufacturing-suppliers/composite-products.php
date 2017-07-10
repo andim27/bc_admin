@@ -43,9 +43,12 @@ $listPartsAccessories = PartsAccessories::getListPartsAccessories();
                         <tr>
                             <td><?=$listPartsAccessories[(string)$item->_id]?></td>
                             <td>
-                                <?php foreach ($item->composite as $itemComposite) { ?>
-                                    <?=$listPartsAccessories[(string)$itemComposite['_id']] . ';'; ?>
-                                <?php } ?>
+                                <div class="shortItem150">
+                                    <?php foreach ($item->composite as $itemComposite) { ?>
+                                        <?=$listPartsAccessories[(string)$itemComposite['_id']] . '<br>'; ?>
+                                    <?php } ?>                                    
+                                </div>
+                                <span class="showMore"><?=THelper::t('more')?></span>
                             </td>
                             <td>
                                 <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-composite-products','id'=>(string)$item->_id], ['data-toggle'=>'ajaxModal']) ?>
@@ -65,5 +68,10 @@ $listPartsAccessories = PartsAccessories::getListPartsAccessories();
         lengthMenu: [ 25, 50, 75, 100 ],
         "order": [[ 0, "desc" ]]
     });
+    
+    $(".showMore").on('click',function () {
+        $(this).closest("td").find(".shortItem150").css({'height':'100%'});
+        $(this).hide();
+    })
 
 </script>

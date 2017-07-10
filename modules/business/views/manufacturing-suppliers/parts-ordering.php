@@ -12,7 +12,7 @@ use app\components\AlertWidget;
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
     <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-parts-ordering'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+        <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-parts-ordering'],['class'=>'btn btn-default btn-block addPartsOrdering','data-toggle'=>'ajaxModal'])?>
     </div>
 </div>
 
@@ -68,7 +68,10 @@ use app\components\AlertWidget;
     </section>
 <?php } ?>
 
-<script>
+<?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
+
+<script type="text/javascript">
+
     $('.table-translations').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],
@@ -76,5 +79,3 @@ use app\components\AlertWidget;
     });
 
 </script>
-
-<?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>

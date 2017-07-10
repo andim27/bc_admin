@@ -122,6 +122,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
 </div>
 
 <script type="text/javascript">
+
     $(".datepicker-input").datepicker();
 
     arrayGoodsComposite = <?=json_encode($listGoodsWithComposite)?>;

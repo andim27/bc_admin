@@ -3592,3 +3592,11 @@ fieldset[disabled] .btn-gplus.active {
 .infoCard .itemCard .labelCard{
   padding-top: 5px;
 }
+
+.shortItem150{
+  overflow: hidden;
+  height: 71px;
+}
+.showMore{
+  float: right;
+}
