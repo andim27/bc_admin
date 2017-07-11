@@ -26,7 +26,7 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
                         <?php if(!empty(PartsAccessories::getInterchangeableList((string)$item['_id']))) { ?>
                             <?=Html::dropDownList('complect[]','',
                                 PartsAccessories::getInterchangeableList((string)$item['_id']),[
-                                    'class'=>'form-control',
+                                    'class'=>'form-control partTitle',
                                     'required'=>'required',
                                     'options' => [
                                     ]
@@ -34,13 +34,13 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
 
                         <?php } else {?>
                             <?=Html::hiddenInput('complect[]',(string)$item['_id'],[]);?>
-                            <?=Html::input('text','',$listGoods[(string)$item['_id']],['class'=>'form-control','disabled'=>'disabled']);?>
+                            <?=Html::input('text','',$listGoods[(string)$item['_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
 
                         <?php } ?>
                     </div>
                     <div class="col-md-3">
                         <?=Html::hiddenInput('number[]',$item['number'],[]);?>
-                        <?=Html::input('text','',$item['number'],['class'=>'form-control','disabled'=>'disabled']);?>
+                        <?=Html::input('text','',$item['number'],['class'=>'form-control partNeedForOne','disabled'=>'disabled']);?>
                     </div>
                     <div class="col-md-3">
                         <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[(string)$item['_id']]) ? $listGoodsFromMyWarehouse[(string)$item['_id']] : 0 ),['class'=>'numberWarehouse']);?>
@@ -48,7 +48,7 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
                     </div>
                     <div class="col-md-3">
                         <?=Html::input('number','reserve[]','0',[
-                            'class'=>'form-control',
+                            'class'=>'form-control partNeedReserve',
                             'pattern'=>'\d*',
                             'min' => '0',
                             'step'=>'1',

@@ -29,7 +29,7 @@ $want_number = $model->number;
 
 ?>
 
-<div class="modal-dialog">
+<div class="modal-dialog modal-lg popupLookExecution">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
@@ -44,7 +44,7 @@ $want_number = $model->number;
                 <div class="form-group row">
                     <div class="col-md-6">
                         <label>Товар</label>
-                        <?=Html::dropDownList('',
+                        <?=Html::dropDownList('parts_accessories_id',
                             $model->parts_accessories_id,
                             ArrayHelper::merge([''=>'выберите товар'],PartsAccessories::getListPartsAccessoriesWithComposite()),[
                                 'class'=>'form-control',
@@ -58,11 +58,11 @@ $want_number = $model->number;
                     </div>
                     <div class="col-md-3">
                         <label>Заказано</label>
-                        <?=Html::input('text','',$model->number,['class'=>'form-control CanCollect','disabled'=>true])?>
+                        <?=Html::input('text','ordering_number',$model->number,['class'=>'form-control CanCollect','disabled'=>true])?>
                     </div>
                     <div class="col-md-3">
                         <label>Cобрано</label>
-                        <?=Html::input('text','',$model->received,['class'=>'form-control CanCollect','disabled'=>true])?>
+                        <?=Html::input('text','make_number',$model->received,['class'=>'form-control CanCollect','disabled'=>true])?>
                     </div>
                 </div>
 
@@ -80,7 +80,7 @@ $want_number = $model->number;
                                         <?php foreach($model->list_component as $item){ ?>
                                             <div class="form-group row">
                                                 <div class="col-md-6">
-                                                   <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control','disabled'=>true]);?>
+                                                   <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>true]);?>
                                                 </div>
 
                                                 <div class="col-md-3">
@@ -88,7 +88,7 @@ $want_number = $model->number;
                                                 </div>
                                                 <div class="col-md-3">
                                                     <?=Html::input('number','reserve[]',(!empty($item['reserve']) ? $item['reserve'] : 0),[
-                                                        'class'=>'form-control',
+                                                        'class'=>'form-control partNeedReserve',
                                                         'pattern'=>'\d*',
                                                         'min' => '0',
                                                         'step'=>'1',
@@ -123,9 +123,85 @@ $want_number = $model->number;
                     </div>
                 </div>
 
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <?=Html::label(THelper::t('fullname_whom_transferred'))?>
+                        <?=Html::input('text','fullname_whom_transferred',(!empty($model->fullname_whom_transferred) ? $model->fullname_whom_transferred : ''),[
+                            'class'=>'form-control',
+                            'disabled' => true
+                        ]);?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 text-left">
+                        <?= Html::button(THelper::t('print'), ['class' => 'btn btn-success btnPrint','type'=>'button']) ?>
+                    </div>
+                </div>
 
             </div>
         </div>
     </div>
 </div>
 
+
+
+<script type="text/javascript">
+
+
+    $(".btnPrint").on('click', function() {
+
+        tempBl = '';
+        $(".popupLookExecution .blPartsAccessories").find('.form-group.row').each(function () {
+            title = $(this).find('.partTitle :selected').text();
+            if(title == ''){
+                title = $(this).find('.partTitle').val();
+            }
+            tempBl +=
+                '<tr>' +
+                '<td>'+  title +
+                '<td>'+ $(this).find('.needSend').val() +
+                '<td>'+ $(this).find('.partNeedReserve').val();
+        });
+
+        printFile =
+            '<table>' +
+            '<tr>' +
+            '<th colspan="4">Выполненная заявка на исполнение' +
+            '<tr>' +
+            '<td><b>Собираем<b>'+
+            '<td colspan="3">' + $(".popupLookExecution select[name='parts_accessories_id'] :selected").text() +
+            '<tr>' +
+            '<td><b>Заказано<b>'+
+            '<td colspan="3">' + $(".popupLookExecution input[name='ordering_number']").val()  + ' шт.' +
+            '<tr>' +
+            '<td><b>Собранно<b>'+
+            '<td colspan="3">' + $(".popupLookExecution input[name='make_number']").val() + ' шт.' +
+            '<tr>' +
+            '<th colspan="4">Необходимо:' +
+            '<tr>' +
+                '<td> Коплектующая' +
+                '<td> Отправленно' +
+                '<td> Запас' +
+
+            tempBl +
+
+            '<tr>' +
+            '<td><b>Кому выдано<b>'+
+            '<td colspan="3">' + $(".popupLookExecution input[name='fullname_whom_transferred']").val() +
+
+            '<tr>' +
+            '<td><b>Поставщики и исполнители<b>'+
+            '<td colspan="3">' + $(".popupLookExecution select[name='suppliers_performers_id'] :selected").text() +
+
+            '<tr>' +
+            '<td><b>Дата исполнения<b>'+
+            '<td colspan="3">' + $(".popupLookExecution input[name='date_execution']").val() +
+
+            '</table>';
+
+        $.print(printFile,{
+            stylesheet : window.location.origin + '/css/print.css'
+        });
+    });
+</script>

@@ -243,6 +243,15 @@ class ManufacturingSuppliersController extends BaseController {
 
         if(!empty($request['PartsAccessories']['_id'])){
             $model = $model::findOne(['_id'=>new ObjectID($request['PartsAccessories']['_id'])]);
+        } else {
+            if($model::findOne(['title'=>$request['PartsAccessories']['title']])){
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert' => 'danger',
+                        'message' => 'Сохранения не применились. Такой товар уже существует!'
+                    ]
+                );
+                return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
+            }
         }
 
         if(!empty($request)){

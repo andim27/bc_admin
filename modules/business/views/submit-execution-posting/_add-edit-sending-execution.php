@@ -31,7 +31,7 @@ if(!empty($model)){
 
 ?>
 
-<div class="modal-dialog modal-lg">
+<div class="modal-dialog modal-lg popupSendingExecution">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
@@ -101,7 +101,7 @@ if(!empty($model)){
                                                 <?php if(!empty(PartsAccessories::getInterchangeableList((string)$item['parts_accessories_id']))) { ?>
                                                     <?=Html::dropDownList('complect[]','',
                                                         PartsAccessories::getInterchangeableList((string)$item['parts_accessories_id']),[
-                                                            'class'=>'form-control',
+                                                            'class'=>'form-control partTitle',
                                                             'required'=>'required',
                                                             'options' => [
                                                             ]
@@ -109,13 +109,13 @@ if(!empty($model)){
 
                                                 <?php } else {?>
                                                     <?=Html::hiddenInput('complect[]',(string)$item['parts_accessories_id'],[]);?>
-                                                    <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control','disabled'=>'disabled']);?>
+                                                    <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
 
                                                 <?php } ?>
                                             </div>
                                             <div class="col-md-3">
                                                 <?=Html::hiddenInput('number[]',$item['number'],[]);?>
-                                                <?=Html::input('text','',$item['number'],['class'=>'form-control','disabled'=>'disabled']);?>
+                                                <?=Html::input('text','',$item['number'],['class'=>'form-control partNeedForOne','disabled'=>'disabled']);?>
                                             </div>
                                             <div class="col-md-3">
                                                 <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']]) ? ($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']] + ($item['number']*$want_number)) : 0 ),['class'=>'numberWarehouse']);?>
@@ -123,7 +123,7 @@ if(!empty($model)){
                                             </div>
                                             <div class="col-md-3">
                                                 <?=Html::input('number','reserve[]',(!empty($item['reserve']) ? $item['reserve'] : 0),[
-                                                    'class'=>'form-control',
+                                                    'class'=>'form-control partNeedReserve',
                                                     'pattern'=>'\d*',
                                                     'min' => '0',
                                                     'step'=>'1',
@@ -170,7 +170,10 @@ if(!empty($model)){
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12 text-right">
+                    <div class="col-md-6 text-left">
+                        <?= Html::button(THelper::t('print'), ['class' => 'btn btn-success btnPrint','type'=>'button']) ?>
+                    </div>
+                    <div class="col-md-6 text-right">
                         <?= Html::submitButton(THelper::t('save'), ['class' => 'btn btn-success assemblyBtn']) ?>
                     </div>
                 </div>
@@ -183,8 +186,7 @@ if(!empty($model)){
 
 
 
-<script>
-
+<script type="text/javascript">    
 
     $(document).on('change','#selectGoods',function () {
         $.ajax({
@@ -237,5 +239,61 @@ if(!empty($model)){
         }
     })
 
+    $(".btnPrint").on('click', function() {
+
+        tempBl = '';
+        $(".popupSendingExecution .blPartsAccessories").find('.form-group.row').each(function () {
+            title = $(this).find('.partTitle :selected').text();
+            if(title == ''){
+                title = $(this).find('.partTitle').val();
+            }
+            tempBl +=
+                '<tr>' +
+                '<td>'+  title +
+                '<td>'+ $(this).find('.partNeedForOne').val() +
+                '<td>'+ $(this).find('.needSend').val() +
+                '<td>'+ $(this).find('.partNeedReserve').val();
+        });
+
+        printFile =
+            '<table>' +
+                '<tr>' +
+                    '<th colspan="4">Отправка на исполнение' +
+                '<tr>' +
+                    '<td><b>Собираем<b>'+
+                    '<td colspan="3">' + $(".popupSendingExecution select[name='parts_accessories_id'] :selected").text() +
+                '<tr>' +
+                    '<td><b>Можно собрать<b>'+
+                    '<td colspan="3">' + $(".popupSendingExecution input[name='can_number']").val()  + ' шт.' +
+                '<tr>' +
+                    '<td><b>Количество<b>'+
+                    '<td colspan="3">' + $(".popupSendingExecution input[name='want_number']").val() + ' шт.' +
+                '<tr>' +
+                    '<th colspan="4">Необходимо:' +
+                '<tr>' +
+                    '<td> Коплектующая' +
+                    '<td> Нужно на одну' +
+                    '<td> Нужно отправить' +
+                    '<td> Запас' +
+
+                tempBl +
     
+                '<tr>' +
+                    '<td><b>Кому выдано<b>'+
+                    '<td colspan="3">' + $(".popupSendingExecution input[name='fullname_whom_transferred']").val() +
+    
+                '<tr>' +
+                    '<td><b>Поставщики и исполнители<b>'+
+                    '<td colspan="3">' + $(".popupSendingExecution select[name='suppliers_performers_id'] :selected").text() +
+        
+                '<tr>' +
+                    '<td><b>Дата исполнения<b>'+
+                    '<td colspan="3">' + $(".popupSendingExecution input[name='date_execution']").val() +
+
+            '</table>';
+
+        $.print(printFile,{
+            stylesheet : window.location.origin + '/css/print.css'
+        });
+    });
 </script>

@@ -60,4 +60,5 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
 
     </script>
 
+<?php $this->registerJsFile('js/jQuery.print.js', ['depends'=>['app\assets\AppAsset']]); ?>
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
