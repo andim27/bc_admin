@@ -50,7 +50,6 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
                         <?=Html::input('number','reserve[]','0',[
                             'class'=>'form-control partNeedReserve',
                             'pattern'=>'\d*',
-                            'min' => '0',
                             'step'=>'1',
                         ]);?>
                     </div>

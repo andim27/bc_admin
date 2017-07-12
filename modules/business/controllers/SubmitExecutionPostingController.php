@@ -315,7 +315,7 @@ class SubmitExecutionPostingController extends BaseController {
         }
 
         $modelCancellation = LogWarehouse::find()
-            ->where(['IN','action',['return_reserve_execution_posting','return_when_edit_execution_posting']])
+            ->where(['IN','action',['return_reserve_execution_posting','return_when_edit_execution_posting','cancellation']])
             ->andWhere([
                 'date_create' => [
                     '$gte' => new UTCDatetime(strtotime($dateInterval['from']) * 1000),
@@ -326,7 +326,7 @@ class SubmitExecutionPostingController extends BaseController {
             ->all();
 
         $modelPosting = LogWarehouse::find()
-            ->where(['IN','action',['add_execution_posting']])
+            ->where(['IN','action',['add_execution_posting','send_for_execution_posting','posting','posting_ordering','posting_pre_ordering']])
             ->andWhere([
                 'date_create' => [
                     '$gte' => new UTCDatetime(strtotime($dateInterval['from']) * 1000),

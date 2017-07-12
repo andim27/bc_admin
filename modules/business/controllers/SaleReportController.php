@@ -142,6 +142,11 @@ class SaleReportController extends BaseController
                     '$lte' => new UTCDateTime(strtotime($dateTo . '23:59:59') * 1000)
                 ]
             ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
             ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
 

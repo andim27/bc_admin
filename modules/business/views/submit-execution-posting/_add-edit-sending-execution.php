@@ -125,7 +125,6 @@ if(!empty($model)){
                                                 <?=Html::input('number','reserve[]',(!empty($item['reserve']) ? $item['reserve'] : 0),[
                                                     'class'=>'form-control partNeedReserve',
                                                     'pattern'=>'\d*',
-                                                    'min' => '0',
                                                     'step'=>'1',
                                                 ]);?>
                                             </div>
@@ -214,8 +213,33 @@ if(!empty($model)){
             $('.assemblyBtn').hide();
         } else {
             $('.assemblyBtn').show();
+
+            checkReserve();
         }
     });
+
+    $(".partNeedReserve").on("change",function () {
+        checkReserve();
+    });
+
+    function checkReserve() {
+        $(".infoDanger").html('');
+
+        $('.blPartsAccessories .row').each(function () {
+            needSend = parseInt($(this).find('.needSend').val());
+            needReserve = parseInt($(this).find('.partNeedReserve').val());
+
+            if((needReserve + needSend) < 0){
+                $(".infoDanger").html(
+                    '<div class="alert alert-danger fade in">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                    'Резерв не может быть меньше чем нужно' +
+                    '</div>'
+                );
+            }
+
+        });
+    }
 
     $('.blPartsAccessories').on('change','input[name="reserve[]"]',function(){
         bl = $(this).closest('.row');
