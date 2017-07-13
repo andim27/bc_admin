@@ -5,6 +5,8 @@ use yii\widgets\ActiveForm;
 use app\models\Settings;
 
 use app\models\Products;
+use yii\helpers\ArrayHelper;
+
 
 $listCountry = Settings::getListCountry();
 
@@ -33,7 +35,8 @@ $listGoods = Products::getListGoods();
     </div>
 
     <div class="col-md-2 m-b blChangeGoods">
-        <?=Html::dropDownList('listPack',(!empty($request['listPack']) ? $request['listPack'] : 'all'),$listPack,[
+        <?=Html::dropDownList('listPack',(!empty($request['listPack']) ? $request['listPack'] : 'all'),
+            ArrayHelper::merge(['all' => 'Все паки'],$listPack),[
             'class'=>'form-control listPack',
             'id'=>'listPack',
             'disabled' => ((!empty($request['flGoods']) && $request['flGoods']==1) ? false : true),

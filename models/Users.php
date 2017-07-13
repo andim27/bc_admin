@@ -131,6 +131,19 @@ class Users extends ActiveRecord
 
         return $listAdmin;
     }
+
+    public static function checkHeadAdmin()
+    {
+        $infoWarehouse = Warehouse::find()->where(['headUser'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
+
+        if(!empty($infoWarehouse)){
+            $answer = true;
+        } else {
+            $answer = false;
+        }
+
+        return $answer;
+    }
     
 }
 

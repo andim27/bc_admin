@@ -1311,10 +1311,10 @@ class StatusSalesController extends BaseController {
     {
         $model = StatusSales::findOne(['idSale'=>new ObjectID($orderID)]);
 
-        $flChange = 0;
+        $numberChange = 0;
         foreach ($model->set as $item) {
             if($item->title == $goodsName && $item->status != 'status_sale_new'){
-                $flChange = 1;
+                $numberChange++;
                 $userID = $item->idUserChange;
 
                 $item->status = 'status_sale_new';
@@ -1322,7 +1322,7 @@ class StatusSalesController extends BaseController {
             }
         }
 
-        if($flChange == 1){
+        if($numberChange != 0){
 
             $comment = new ReviewsSale();
             $comment->idUser = new ObjectID($this->user->id);
@@ -1338,14 +1338,14 @@ class StatusSalesController extends BaseController {
                 $warehouseID = Warehouse::getIdMyWarehouse((string)$userID);
                 $goodsID = PartsAccessories::findOne(['title'=>$goodsName]);
                 $userWarehouse = PartsAccessoriesInWarehouse::findOne(['warehouse_id'=>new ObjectID($warehouseID),'parts_accessories_id'=>$goodsID->_id]);
-                $userWarehouse->number += 1;
+                $userWarehouse->number += $numberChange;
 
                 if($userWarehouse->save()){
                     // add log
                     LogWarehouse::setInfoLog([
                         'action'                    =>  'return_in_warehouse',
                         'parts_accessories_id'      =>  (string)$goodsID->_id,
-                        'number'                    =>  '1',
+                        'number'                    =>  $numberChange,
                         'on_warehouse_id'           =>  $warehouseID,
                         'hide_admin_warehouse_id'   =>  '1'
                     ]);

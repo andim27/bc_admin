@@ -108,9 +108,11 @@ class Sale {
     }
 
 
-    public static function add()
+    public static function add($data)
     {
+        $apiClient = new ApiClient('sales');
 
+        return $apiClient->post($data,false);
     }
 
     /**

@@ -322,6 +322,7 @@ class SettingController extends BaseController {
             }
         }
 
+        asort($adminList);
 
         return $this->render('admin_rules', [
             'adminList' => $adminList,
@@ -329,6 +330,7 @@ class SettingController extends BaseController {
             'errorsText' => Yii::$app->getSession()->getFlash('errors', '', true)
         ]);
     }
+
     public function actionAdminRulesShow()
     {
         $request = Yii::$app->request->post();
@@ -372,7 +374,6 @@ class SettingController extends BaseController {
 
         return $this->redirect('/'.Yii::$app->language.'/business/setting/admin-rules');
     }
-
 
     public function actionAddAdmin()
     {

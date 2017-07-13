@@ -5,11 +5,23 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\Warehouse;
 use app\models\PartsAccessories;
+use app\models\Users;
+
 
 $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
 $listGoods = PartsAccessories::getListPartsAccessories();
-$listWarehouse = Warehouse::getArrayWarehouse();
+
+$listWarehouse = [];
+if($idWarehouse == '592426f6dca7872e64095b45'){
+    $listWarehouse = Warehouse::getArrayWarehouse();
+} else {
+    if(Users::checkHeadAdmin()){
+        $listWarehouse = Warehouse::getListHeadAdminWarehouse();
+    }
+}
+
+
 ?>
 
 <div class="m-b-md">
@@ -38,13 +50,15 @@ $listWarehouse = Warehouse::getArrayWarehouse();
             <?= Html::input('text','dateInterval[to]',$request['dateInterval']['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
         </div>
 
+        <?php if(!empty($listWarehouse)) { ?>
         <div class="col-md-2 m-b">
-            <?=($idWarehouse == '592426f6dca7872e64095b45' ? Html::dropDownList('listWarehouse',$request['listWarehouse'],$listWarehouse,[
+            <?=Html::dropDownList('listWarehouse',$request['listWarehouse'],$listWarehouse,[
                 'class'=>'form-control listWarehouse',
                 'id'=>'listWarehouse',
                 'options' => []
-            ]): '')?>
+            ])?>
         </div>
+        <?php } ?>
 
         <div class="col-md-6 m-b">
             <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>

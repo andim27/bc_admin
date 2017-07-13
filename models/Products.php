@@ -32,6 +32,7 @@ class Products extends ActiveRecord
             'productName',
             'productSet',
             'price',
+            'idInMarket',
             'sorting'
         ];
     }
@@ -64,9 +65,10 @@ class Products extends ActiveRecord
 
     public static function getListPack()
     {
-        $list['all'] = 'Все паки';
+        $list = [];
+        //$list['all'] = 'Все паки';
 
-        $model = self::find()->all();
+        $model = self::find()->orderBy(['productName'=>SORT_ASC])->all();
         if(!empty($model)){
             foreach ($model as $item) {
                 if(!empty($item->set) && count($item->set) > 0){

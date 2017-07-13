@@ -97,21 +97,27 @@ $listAdmin = Users::getListAdmin();
                                             <th>
                                                 <?=THelper::t('number_issue')?>
                                             </th>
+                                            <th>
+                                                <?=THelper::t('number_difference')?>
+                                            </th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <?php if(!empty($infoSetGoods)) {?>
-                                        <?php foreach($infoSetGoods as $k=>$item) {?>
-                                        <tr>
-                                            <td><?=$k?></td>
-                                            <td>
-                                                <?=$item['books']?>
-                                            </td>
-                                            <td>
-                                                <?=$item['issue']?>
-                                            </td>
+                                            <?php foreach($infoSetGoods as $k=>$item) {?>
+                                                <tr>
+                                                    <td><?=$k?></td>
+                                                    <td>
+                                                        <?=$item['books']?>
+                                                    </td>
+                                                    <td>
+                                                        <?=$item['issue']?>
+                                                    </td>
+                                                    <td>
+                                                        <?=($item['books'] - $item['issue'])?>
+                                                    </td>
                                             <?php } ?>
-                                            <?php } ?>
+                                        <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>

@@ -19,6 +19,7 @@ class PartsAccessoriesInWarehouseController extends BaseController {
      */
     public function actionInWarehouse()
     {
+        
         $request =  Yii::$app->request->post();
 
         $idWarehouse = Warehouse::getIdMyWarehouse();

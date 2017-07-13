@@ -12,11 +12,11 @@
     <h3 class="m-b-none"><?= THelper::t('sidebar_cash_order') ?></h3>
 </div>
 
-<!--<div class="row">-->
-<!--    <div class="col-md-offset-9 col-md-3 form-group">-->
-<!--        --><?php //=Html::a('<i class="fa fa-plus"></i>',['/business/sale/popup-make-order'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
-<!--    </div>-->
-<!--</div>-->
+<div class="row">
+    <div class="col-md-offset-9 col-md-3 form-group">
+        <?=Html::a('<i class="fa fa-plus"></i>',['/business/sale/make-order'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+    </div>
+</div>
 
 <?php if(!empty($error)) {?>
     <div class="alert alert-danger"><?=$error?></div>

@@ -50,7 +50,8 @@ class StatusSales extends \yii2tech\embedded\mongodb\ActiveRecord
             '_id',
             'idSale',
             'reviewsSales',
-            'setSales'
+            'setSales',
+            'buy_for_money'
         ];
     }
 

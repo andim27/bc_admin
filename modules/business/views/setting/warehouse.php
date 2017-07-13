@@ -67,7 +67,7 @@ $userArray = Users::getListAdmin();
                         </div>
                         <div class="row">
                             <div class="m-t-sm m-b-sm col-md-offset-4 col-md-2 text-right">
-                                <label class="control-label m-t-xs">new manager</label>
+                                <label class="control-label m-t-xs"><?=THelper::t('new_admin');?></label>
                             </div>
                             <div class="m-t-sm m-b-sm col-md-5">
                                 <?=Html::dropDownList('listAdmin','placeh',$userArray,[
@@ -86,7 +86,7 @@ $userArray = Users::getListAdmin();
                         </div>
                         <div class="row">
                             <div class="m-t-sm m-b-sm col-md-offset-4 col-md-2 text-right">
-                                <label class="control-label m-t-xs">head admin</label>
+                                <label class="control-label m-t-xs"><?=THelper::t('head_admin');?></label>
                             </div>
                             <div class="m-t-sm m-b-sm col-md-5">
                                 <?=Html::dropDownList('headUser',(!empty($item->headUser) ? $item->headUser : ''),$userArray,[
