@@ -14,7 +14,7 @@
 
 <div class="row">
     <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>',['/business/sale/make-order'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+        <?=Html::a('<i class="fa fa-plus"></i>' . THelper::t('create_order'),['/business/sale/make-order'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
     </div>
 </div>
 
