@@ -21,6 +21,12 @@ class ApiClient {
 
         Yii::info('$url', 'api');
 
+        $cookies = Yii::$app->request->cookies;
+
+        if ($cookies->has('auth_cookie')) {
+            curl_setopt($this->_ch, CURLOPT_COOKIE, $cookies->get('auth_cookie'));
+        }
+
         curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->_ch, CURLOPT_URL, $this->_baseApiUrl . $url);
     }

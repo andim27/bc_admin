@@ -174,6 +174,7 @@
     </div>
 </div>
  */ ?>
+<?php if ($user->username == 'main') { ?>
 <div class="row">
     <div class="col-md-4">
         <ul class="list-group no-radius">
@@ -226,6 +227,7 @@
         </div>
     </div>
 </div>
+<?php } ?>
 <?php /*
 <div class="row">
     <div class="col-md-4">

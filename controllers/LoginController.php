@@ -26,11 +26,35 @@ class LoginController extends \yii\web\Controller
         $model = new LoginForm();
 
         if (Yii::$app->request->post()) {
-            $user = api\User::authAdmin($_POST['LoginForm']['email'], $_POST['LoginForm']['password']);
+            $login = $_POST['LoginForm']['email'];
+            $apiUrl = Yii::$app->params['apiAddress'] . 'auth/admin/' . $login . '&' . $_POST['LoginForm']['password'];
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL, $apiUrl);
+            $response = curl_exec($ch);
+            $info = curl_getinfo($ch);
+
+            if ($info['http_code'] == 200) {
+                preg_match_all('/^Set-Cookie:\s*([^\r\n]*)/mi', $response, $ms);
+                $authCookie = isset($ms[1][0]) ? $ms[1][0] : '';
+                if ($authCookie) {
+                    $cookies = Yii::$app->response->cookies;
+
+                    $cookies->add(new \yii\web\Cookie([
+                        'name' => 'auth_cookie',
+                        'value' => $authCookie,
+                        'expire' => time() + 24 * 3600
+                    ]));
+                    $user = api\User::get($login);
+                }
+            }
+
+            curl_close($ch);
+
             $rememberMe = $_POST['LoginForm']['rememberMe'];
 
-            if ($user) {
-                $user = api\User::get($_POST['LoginForm']['email']);
+            if (isset($user) && $user) {
                 if ($rememberMe) {
                     $cookies = Yii::$app->response->cookies;
 
