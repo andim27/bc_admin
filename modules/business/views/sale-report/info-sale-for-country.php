@@ -13,6 +13,8 @@ $listCountry = Settings::getListCountry();
 
 $listPack = Products::getListPack();
 $listGoods = Products::getListGoods();
+$listGoodsWithKey = Products::getListGoodsWithKey();
+
 ?>
 
 
@@ -84,6 +86,11 @@ $listGoods = Products::getListGoods();
                         <th>
                             <?=THelper::t('number_issue')?>
                         </th>
+                        <?php if(!empty($request['listGoods'])) { ?>
+                        <th>
+                            <?=THelper::t('number_send')?>
+                        </th>
+                        <?php } ?>
                         <th>
                             <?=THelper::t('number_difference')?>
                         </th>
@@ -96,12 +103,21 @@ $listGoods = Products::getListGoods();
                         <?php if(!empty($infoSale)) { ?>
                             <?php foreach($infoSale as $k=>$itemGoods) { ?>
                                 <?php foreach($itemGoods as $kGoods=>$item) { ?>
+
+                                    <?php
+                                        $idGoods = array_search($kGoods,$listGoodsWithKey);
+                                        $sendingCount = (!empty($infoSending[$k][$idGoods]) ? $infoSending[$k][$idGoods] : 0);
+                                    ?>
+
                                     <tr>
                                         <td><?=$listCountry[$k]?></>
                                         <td><?=$kGoods?></td>
                                         <td><?=$item['all']?></td>
                                         <td><?=$item['issued']?></td>
-                                        <td><?=$item['wait']?></td>
+                                        <?php if(!empty($request['listGoods'])) { ?>
+                                        <td><?=$sendingCount?></td>
+                                        <?php } ?>
+                                        <td><?=($item['wait'] - $sendingCount)?></td>
                                         <td><?=$item['repair']?></td>
                                     </tr>
                                 <?php } ?>

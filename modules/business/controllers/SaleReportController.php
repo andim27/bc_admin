@@ -6,6 +6,7 @@ use app\controllers\BaseController;
 use app\models\api;
 use app\models\Products;
 use app\models\Sales;
+use app\models\SendingWaitingParcel;
 use app\models\Settings;
 use app\models\StatusSales;
 use MongoDB\BSON\UTCDatetime;
@@ -121,11 +122,32 @@ class SaleReportController extends BaseController
     public function actionInfoSaleForCountry()
     {
         $request =  Yii::$app->request->post();
+
+        $infoSending = [];
+        
         if(empty($request['flGoods'])){
             if(empty($request['listGoods'])){
                 $request['listGoods'] = 'all';
             }
             $request['listPack'] = '';
+            
+
+            $modelSending = SendingWaitingParcel::find()
+                ->where(['is_posting'=>0])
+                ->all();
+
+            if(!empty($modelSending)){
+                foreach ($modelSending as $item){
+
+                    if(!empty($item->part_parcel)){
+                        foreach ($item->part_parcel as $itemParcel){
+                            $infoSending[$item->infoWarehouse->country][$itemParcel['goods_id']] = $itemParcel['goods_count'];
+                        }
+                    }
+
+                }
+            }
+
         } else {
             $request['listGoods'] = '';
         }
@@ -228,9 +250,10 @@ class SaleReportController extends BaseController
         }
 
         return $this->render('info-sale-for-country',[
-            'language' =>   Yii::$app->language,
-            'infoSale' =>   $infoSale,
-            'request'  =>   $request
+            'language'      =>   Yii::$app->language,
+            'infoSale'      =>   $infoSale,
+            'infoSending'   =>   $infoSending,
+            'request'       =>   $request
         ]);
     }
 }

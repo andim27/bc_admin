@@ -25,6 +25,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         return [
             '_id',
             'title',
+            'country',
             'headUser',
             'idUsers',
         ];
@@ -96,7 +97,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         $idUser = \Yii::$app->view->params['user']->id;
 
         $infoWarehous = self::find()->where(['idUsers'=>$idUser])->all();
-        $listWarehou['for_me'] = 'for_me';
+        $listWarehou = [];
         if(!empty($infoWarehous)){
             foreach ($infoWarehous as $item) {
                 $listWarehou[(string)$item->_id] = $item->title;

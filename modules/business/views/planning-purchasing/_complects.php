@@ -37,11 +37,10 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
 
     <div class="form-group row headPart">
         <div class="col-md-3 offset-left-<?=$level?>">
-            
             <?php if(!empty($changeableList)){ ?>
                 <?=Html::dropDownList('complect[]','',
                     $changeableList,[
-                        'class'     =>'form-control',
+                        'class'     =>'form-control partTitle',
                         'required'  =>'required',
                         'data'      => [
                             'parent'    =>  $parentChangeableList,
@@ -54,7 +53,7 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
 
             <?php } else {?>
                 <?=Html::hiddenInput('complect[]',(string)$infoComposite['_id'],[]);?>
-                <?=Html::input('text','',$listGoods[(string)$infoComposite['_id']],['class'=>'form-control','disabled'=>'disabled']);?>
+                <?=Html::input('text','',$listGoods[(string)$infoComposite['_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
             <?php } ?>
 
         </div>
@@ -82,7 +81,7 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
         <?php if(!empty($changeableList)) { ?>
             <?=Html::dropDownList('complect[]','',
                 $changeableList,[
-                    'class'     =>'form-control',
+                    'class'     =>'form-control partTitle',
                     'required'  =>'required',
                     'data'      => [
                         'parent'    =>  $parentChangeableList,
@@ -95,7 +94,7 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
 
         <?php } else {?>
             <?=Html::hiddenInput('complect[]',(string)$infoComposite['_id'],[]);?>
-            <?=Html::input('text','',$listGoods[(string)$infoComposite['_id']],['class'=>'form-control','disabled'=>'disabled']);?>
+            <?=Html::input('text','',$listGoods[(string)$infoComposite['_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
         <?php } ?>
 
     </div>

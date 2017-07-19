@@ -152,7 +152,7 @@ class SendingWaitingParcelController extends BaseController {
             
             $model->date_update = $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
             
-            $model->is_posting = '0';
+            $model->is_posting = (int)'0';
             
             if($model->save()){
                 if(!empty($documents->baseName)) {
@@ -327,7 +327,7 @@ class SendingWaitingParcelController extends BaseController {
                 }
             }
 
-            $modelParcel->is_posting = 1;
+            $modelParcel->is_posting = (int)1;
 
             if($modelParcel->save()){}
         }

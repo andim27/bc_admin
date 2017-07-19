@@ -2,7 +2,10 @@
     use app\components\THelper;
     use yii\helpers\Html;
     use yii\widgets\ActiveForm;
+    use yii\helpers\ArrayHelper;
+    use app\models\Warehouse;
 
+    $myWarehouse = Warehouse::getMyWarehouse();
 
     $from = strtotime($request['from']);
     $to = strtotime($request['to']);
@@ -34,7 +37,7 @@
 
     <div class="col-md-2 m-b">
         <?=Html::dropDownList('infoWarehouse', $request['infoWarehouse'],
-            \app\models\Warehouse::getMyWarehouse(),[
+            ArrayHelper::merge(['for_me' => THelper::t('for_me')],$myWarehouse),[
             'class'=>'form-control infoUser',
             'id'=>'infoWarehouse',
         ])?>

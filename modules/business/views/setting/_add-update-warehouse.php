@@ -3,6 +3,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use app\components\THelper;
 use app\models\PartsAccessories;
+use app\models\Settings;
 
 ?>
 
@@ -24,6 +25,19 @@ use app\models\PartsAccessories;
             <div class="row">
                 <div class="col-md-12">
                     <?= $formCom->field($model, 'title')->textInput(['required'=>'required'])->label(THelper::t('name_product')) ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label><?=THelper::t('country')?></label>
+                    <?=Html::dropDownList('Warehouse[country]',(!empty($model->country) ? $model->country : ''),Settings::getListCountry(),[
+                        'class'=>'form-control',
+                        'prompt' => '---------- Выберите страну ----------',
+                        'id'=>'countryReport',
+                        'options' => [
+                        ]
+                    ])?>
                 </div>
             </div>
 

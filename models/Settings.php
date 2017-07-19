@@ -33,7 +33,7 @@ class Settings extends ActiveRecord
     {
         $model = self::find()->one();
 
-        $list['all'] = 'all';
+        $list = [];
         if(!empty($model->countries)){
             foreach ($model->countries as $item) {
                 $list[mb_strtolower($item['alpha2'])] = $item['name'];

@@ -31,7 +31,7 @@ if(!empty($model)){
 
 ?>
 
-<div class="modal-dialog modal-lg">
+<div class="modal-dialog modal-lg popupPlanning">
     <div class="modal-content ">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
@@ -41,13 +41,19 @@ if(!empty($model)){
         <div class="modal-body">
             <div>
                 <?php $formCom = ActiveForm::begin([
-                    'action' => '/' . $language . '/business/submit-execution-posting/save-execution-posting',
+                    'action' => '/' . $language . '/business/planning-purchasing/save-planning',
                     'options' => ['name' => 'savePartsAccessories'],
                 ]); ?>
 
                 <?=Html::hiddenInput('_id',(!empty($model) ? (string)$model->_id : ''));?>
 
                 <div class="form-group row infoDanger"></div>
+
+                <div class="form-group row">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-4 text-right">Можно собрать:</div>
+                    <div class="col-md-2 canCollect">0 шт.</div>
+                </div>
 
                 <div class="form-group row">
                     <div class="col-md-6">
@@ -75,10 +81,10 @@ if(!empty($model)){
                         ])?>
                     </div>
                     <div class="col-md-2">
-                        <?=Html::a('Пересчитать','javascript:void(0);',['class'=>'btn btn-default btn-block'])?>
+                        <?=Html::a('Печать','javascript:void(0);',['class'=>'btn btn-default btn-block btnPrint']); ?>
                     </div>
                     <div class="col-md-2">
-                        <?=Html::a('Очистить','javascript:void(0);',['class'=>'btn btn-default btn-block'])?>
+                        <?=Html::a('Очистить','javascript:void(0);',['class'=>'btn btn-default btn-block btnClear'])?>
                     </div>
                 </div>
 
@@ -239,6 +245,90 @@ if(!empty($model)){
         }
 
 
+    });
+
+    $('.btnClear').on('click',function () {
+
+        fullSumma = {
+            'eur' : 0,
+            'usd' : 0,
+            'uah' : 0,
+            'rub' : 0,
+        };
+
+        $('.needPlaning').val(0);
+
+        $('.blPartsAccessories .warehouseCount').each(function(indx){
+            blItem = $(this).closest('.row');
+
+            blItem.find('.needBuy').val('0');
+            blItem.find('.needOrdering').text('0');
+        });
+
+        for (key in fullSumma) {
+            $('.fullSumma .'+key).text(fullSumma[key].toFixed(3));
+        }
+    });
+
+    $(".btnPrint").on('click', function() {
+
+        tempBl = '';
+        $(".popupPlanning .blPartsAccessories").find('.form-group.row').each(function () {
+            title = $(this).find('.partTitle :selected').text();
+            if(title == ''){
+                title = $(this).find('.partTitle').val();
+            }
+
+            if(title){
+                tempBl +=
+                    '<tr>' +
+                    '<td>'+  title +
+                    '<td>'+ $(this).find('.needCountForOne').text() +
+                    '<td>'+ $(this).find('.warehouseCount').text() +
+                    '<td>'+ $(this).find('.needOrdering').text() +
+                    '<td>'+ $(this).find('.onceSumma').html() +
+                    '<td>'+ $(this).find('.needBuy').val() +
+                    '<td>'+ $(this).find('.allSumma').html();
+            }
+
+        });
+
+        printFile =
+            '<table>' +
+            '<tr>' +
+                '<th colspan="7">Планирование' +
+            '<tr>' +
+                '<td><b>Собираем<b>'+
+                '<td colspan="6">' + $(".popupPlanning select[name='parts_accessories_id'] :selected").text() +
+            '<tr>' +
+                '<td><b>Количество<b>'+
+                '<td colspan="6">' + $(".popupPlanning input[name='need']").val() + ' шт.' +
+            '<tr>' +
+                '<th colspan="7">Необходимо:' +
+            '<tr>' +
+                '<td> Коплектующая' +
+                '<td> На одну шт.' +
+                '<td> В наличие' +
+                '<td> Надо заказть' +
+                '<td> Цена за шт.' +
+                '<td> Сколько брем' +
+                '<td> Стоимость' +
+
+            tempBl +
+
+            '<tr>' +
+                '<td colspan="3"> Итого:' +
+                '<td> '+$(".popupPlanning .fullSumma .eur").text()+' eur ' +
+                '<td> '+$(".popupPlanning .fullSumma .usd").text()+' usd ' +
+                '<td> '+$(".popupPlanning .fullSumma .uah").text()+' uah ' +
+                '<td> '+$(".popupPlanning .fullSumma .rub").text()+' rub ' +
+
+
+            '</table>';
+
+        $.print(printFile,{
+            stylesheet : window.location.origin + '/css/print.css'
+        });
     });
 
 //    $(".WantCollect").on('change',function(){

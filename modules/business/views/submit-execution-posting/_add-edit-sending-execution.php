@@ -90,9 +90,10 @@ if(!empty($model)){
                             <div class="panel-body">
                                 <div class="form-group">
                                     <div class="col-md-3"></div>
-                                    <div class="col-md-3">На одну шт.</div>
+                                    <div class="col-md-2">В наличие</div>
+                                    <div class="col-md-2">На одну шт.</div>
                                     <div class="col-md-3">Надо отправить</div>
-                                    <div class="col-md-3">С запасом</div>
+                                    <div class="col-md-2">С запасом</div>
                                 </div>
                                 <?php if(!empty($model->list_component)){ ?>
                                     <?php foreach($model->list_component as $item){ ?>
@@ -113,7 +114,13 @@ if(!empty($model)){
 
                                                 <?php } ?>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
+                                                <?=Html::input('text',
+                                                    '',
+                                                    (!empty($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']]) ? ($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']] + ($item['number']*$want_number)) : 0 ),
+                                                    ['class'=>'form-control','disabled'=>'disabled']);?>
+                                            </div>
+                                            <div class="col-md-2">
                                                 <?=Html::hiddenInput('number[]',$item['number'],[]);?>
                                                 <?=Html::input('text','',$item['number'],['class'=>'form-control partNeedForOne','disabled'=>'disabled']);?>
                                             </div>
@@ -121,7 +128,7 @@ if(!empty($model)){
                                                 <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']]) ? ($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']] + ($item['number']*$want_number)) : 0 ),['class'=>'numberWarehouse']);?>
                                                 <?=Html::input('text','',($item['number']*$want_number),['class'=>'form-control needSend','disabled'=>'disabled']);?>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <?=Html::input('number','reserve[]',(!empty($item['reserve']) ? $item['reserve'] : 0),[
                                                     'class'=>'form-control partNeedReserve',
                                                     'pattern'=>'\d*',
@@ -274,6 +281,7 @@ if(!empty($model)){
             tempBl +=
                 '<tr>' +
                 '<td>'+  title +
+                '<td>'+  $(this).find('.numberWarehouse').val() +
                 '<td>'+ $(this).find('.partNeedForOne').val() +
                 '<td>'+ $(this).find('.needSend').val() +
                 '<td>'+ $(this).find('.partNeedReserve').val();
@@ -282,20 +290,21 @@ if(!empty($model)){
         printFile =
             '<table>' +
                 '<tr>' +
-                    '<th colspan="4">Отправка на исполнение' +
+                    '<th colspan="5">Отправка на исполнение' +
                 '<tr>' +
                     '<td><b>Собираем<b>'+
-                    '<td colspan="3">' + $(".popupSendingExecution select[name='parts_accessories_id'] :selected").text() +
+                    '<td colspan="4">' + $(".popupSendingExecution select[name='parts_accessories_id'] :selected").text() +
                 '<tr>' +
                     '<td><b>Можно собрать<b>'+
-                    '<td colspan="3">' + $(".popupSendingExecution input[name='can_number']").val()  + ' шт.' +
+                    '<td colspan="4">' + $(".popupSendingExecution input[name='can_number']").val()  + ' шт.' +
                 '<tr>' +
                     '<td><b>Количество<b>'+
-                    '<td colspan="3">' + $(".popupSendingExecution input[name='want_number']").val() + ' шт.' +
+                    '<td colspan="4">' + $(".popupSendingExecution input[name='want_number']").val() + ' шт.' +
                 '<tr>' +
-                    '<th colspan="4">Необходимо:' +
+                    '<th colspan="5">Необходимо:' +
                 '<tr>' +
                     '<td> Коплектующая' +
+                    '<td> В наличие' +
                     '<td> Нужно на одну' +
                     '<td> Нужно отправить' +
                     '<td> Запас' +
@@ -304,15 +313,15 @@ if(!empty($model)){
     
                 '<tr>' +
                     '<td><b>Кому выдано<b>'+
-                    '<td colspan="3">' + $(".popupSendingExecution input[name='fullname_whom_transferred']").val() +
+                    '<td colspan="4">' + $(".popupSendingExecution input[name='fullname_whom_transferred']").val() +
     
                 '<tr>' +
                     '<td><b>Поставщики и исполнители<b>'+
-                    '<td colspan="3">' + $(".popupSendingExecution select[name='suppliers_performers_id'] :selected").text() +
+                    '<td colspan="4">' + $(".popupSendingExecution select[name='suppliers_performers_id'] :selected").text() +
         
                 '<tr>' +
                     '<td><b>Дата исполнения<b>'+
-                    '<td colspan="3">' + $(".popupSendingExecution input[name='date_execution']").val() +
+                    '<td colspan="4">' + $(".popupSendingExecution input[name='date_execution']").val() +
 
             '</table>';
 

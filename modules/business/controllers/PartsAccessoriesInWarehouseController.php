@@ -237,7 +237,7 @@ class PartsAccessoriesInWarehouseController extends BaseController {
             ->orderBy(['date_create'=>SORT_DESC])
             ->all();
 
-        return $this->render('cancellation-warehouse',[
+        return $this->render('all-cancellation-warehouse',[
             'language' => Yii::$app->language,
             'model' => $model,
             'dateInterval' => $dateInterval,

@@ -45,7 +45,7 @@ $listUnit = PartsAccessories::getListUnit();
                             <div class="row">
                                 <div class="col-md-7">
                                     <input type="hidden" name="composite[name][]" value="<?=(string)$item['_id']?>">
-                                    <?=(!empty($listGoods[(string)$item['_id']]) ? $listGoods[(string)$item['_id']] : '')?>
+                                    <?=(!empty($listGoods[(string)$item['_id']]) ? $listGoods[(string)$item['_id']] : '???')?>
                                 </div>
                                 <div class="col-md-2">
                                     <input type="hidden" name="composite[number][]" value="<?=$item['number']?>">

@@ -43,6 +43,7 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             'money',
 
             'comment',
+            'cancellation',
 
             'date_create'
 
@@ -83,7 +84,9 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             $model->suppliers_performers_id = (!empty($info['suppliers_performers_id']) ? new ObjectID($info['suppliers_performers_id']) : '');
 
             $idMyWarehouse = Warehouse::getIdMyWarehouse();
-            $model->admin_warehouse_id = (!empty($idMyWarehouse) ? new ObjectID($idMyWarehouse) : '');
+           
+            $model->admin_warehouse_id = (!empty($info['admin_warehouse_id']) ? new ObjectID($info['admin_warehouse_id']) : (!empty($idMyWarehouse) ? new ObjectID($idMyWarehouse) : ''));
+            
             if(!empty($model->hide_admin_warehouse_id) && $model->hide_admin_warehouse_id == 1){
                 $model->admin_warehouse_id = '';
             }
@@ -93,6 +96,8 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             $model->money = (!empty($info['money']) ? (double)$info['money'] : '');
 
             $model->comment = (!empty($info['comment']) ? $info['comment'] : '');
+            
+            $model->cancellation = (!empty($info['cancellation']) ? new ObjectID($info['cancellation']) : '');
 
             $model->date_create= new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
 

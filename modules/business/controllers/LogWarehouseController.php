@@ -3,6 +3,7 @@
 namespace app\modules\business\controllers;
 
 use app\models\LogWarehouse;
+use app\models\PartsAccessoriesInWarehouse;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
@@ -37,6 +38,48 @@ class LogWarehouseController extends BaseController {
             'request'           => $request,
             'model'             => $model
         ]);
+    }
+
+
+    public function actionCancellationCancelletion($id)
+    {
+        $modelCheckCancellation = LogWarehouse::findOne(['cancellation'=>new ObjectID($id)]);
+
+        $model = LogWarehouse::findOne(['_id'=>new ObjectID($id)]);
+
+        if(!empty($model) && $model->action == 'cancellation' && empty($modelCheckCancellation)){
+
+            $modelWarehouse = PartsAccessoriesInWarehouse::findOne([
+                'parts_accessories_id'=>$model->parts_accessories_id,
+                'warehouse_id'=>$model->admin_warehouse_id,
+            ]);
+
+            $modelWarehouse->number += $model->number;
+
+            if($modelWarehouse->save()){
+                // add log
+                LogWarehouse::setInfoLog([
+                    'action'                    =>  'cancellation_cancellation',
+                    'parts_accessories_id'      =>  $model->parts_accessories_id,
+                    'number'                    =>  $model->number,
+                    'admin_warehouse_id'        =>  (string)$model->admin_warehouse_id,
+                    'comment'                   =>  'Отмена списания за ' . $model->date_create->toDateTime()->format('Y-m-d H:i:s'),
+                    'cancellation'              =>  (string)$id,
+                ]);
+
+                header('Content-Type: text/html; charset=utf-8');
+                echo "<xmp>";
+                print_r('ok');
+                echo "</xmp>";
+                die();
+            }
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('fail');
+        echo "</xmp>";
+        die();
     }
 
 }

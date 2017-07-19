@@ -25,6 +25,22 @@ class PlanningPurchasingController extends BaseController {
         ]);
     }
 
+    public function actionSavePlanning()
+    {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
+        $request = Yii::$app->request->post();
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r($request);
+        echo "</xmp>";
+        die();
+    }
    
     public function actionMakePlanning()
     {

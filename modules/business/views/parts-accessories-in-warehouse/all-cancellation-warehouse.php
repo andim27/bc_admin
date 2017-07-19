@@ -62,7 +62,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                     <tbody>
 
                     <?php foreach ($model as $k=>$item) { ?>
-                        <tr>
+                        <tr date-transaction-id="<?=(string)$item->_id?>">
                             <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
                             <td><?=$listGoods[(string)$item->parts_accessories_id]?></td>
                             <td><?=$item->number?></td>

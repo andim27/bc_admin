@@ -45,5 +45,10 @@ class SendingWaitingParcel extends \yii2tech\embedded\mongodb\ActiveRecord
             'is_posting'
         ];
     }
+    
+    public function getInfoWarehouse()
+    {
+        return $this->hasOne(Warehouse::className(),['_id'=>'where_sent']);
+    }
 
 }

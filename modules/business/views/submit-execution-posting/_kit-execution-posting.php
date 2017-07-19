@@ -7,7 +7,6 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 
 $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
 
-
 ?>
 
 <div class="col-md-12">
@@ -15,9 +14,10 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
     <div class="panel-body">
         <div class="form-group">
             <div class="col-md-3"></div>
-            <div class="col-md-3">На одну шт.</div>
+            <div class="col-md-2">В наличие</div>
+            <div class="col-md-2">На одну шт.</div>
             <div class="col-md-3">Надо отправить</div>
-            <div class="col-md-3">С запасом</div>
+            <div class="col-md-2">С запасом</div>
         </div>
         <?php if(!empty($model->composite)){ ?>
             <?php foreach($model->composite as $item){ ?>
@@ -38,7 +38,13 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
 
                         <?php } ?>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
+                        <?=Html::input('text',
+                            '',
+                            (!empty($listGoodsFromMyWarehouse[(string)$item['_id']]) ? $listGoodsFromMyWarehouse[(string)$item['_id']] : 0 ),
+                            ['class'=>'form-control','disabled'=>'disabled']);?>
+                    </div>
+                    <div class="col-md-2">
                         <?=Html::hiddenInput('number[]',$item['number'],[]);?>
                         <?=Html::input('text','',$item['number'],['class'=>'form-control partNeedForOne','disabled'=>'disabled']);?>
                     </div>
@@ -46,7 +52,7 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
                         <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[(string)$item['_id']]) ? $listGoodsFromMyWarehouse[(string)$item['_id']] : 0 ),['class'=>'numberWarehouse']);?>
                         <?=Html::input('text','',$item['number'],['class'=>'form-control needSend','disabled'=>'disabled']);?>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <?=Html::input('number','reserve[]','0',[
                             'class'=>'form-control partNeedReserve',
                             'pattern'=>'\d*',

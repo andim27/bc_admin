@@ -5,6 +5,7 @@ namespace app\modules\business\controllers;
 use app\controllers\BaseController;
 use app\models\AlertForm;
 use app\models\Menu;
+use app\models\Settings;
 use app\models\Users;
 use app\models\Warehouse;
 use app\modules\business\models\AddCell;
@@ -667,6 +668,7 @@ class SettingController extends BaseController {
         if(!empty($request)){
 
             $model->title = $request['Warehouse']['title'];
+            $model->country = $request['Warehouse']['country'];
 
             if($model->save()){
 

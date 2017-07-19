@@ -45,7 +45,12 @@ $listPartsAccessories = PartsAccessories::getListPartsAccessories();
                             <td>
                                 <div class="shortItem150">
                                     <?php foreach ($item->composite as $itemComposite) { ?>
-                                        <?=$listPartsAccessories[(string)$itemComposite['_id']] . '<br>'; ?>
+
+                                        <?=(!empty($listPartsAccessories[(string)$itemComposite['_id']]) ?
+                                            $listPartsAccessories[(string)$itemComposite['_id']] . '<br>' :
+                                            '????<br>')
+                                        ?>
+
                                     <?php } ?>                                    
                                 </div>
                                 <span class="showMore"><?=THelper::t('more')?></span>

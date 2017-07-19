@@ -97,7 +97,24 @@ class Products extends ActiveRecord
 
         return $list;
     }
-       
+
+    public static function getListGoodsWithKey()
+    {
+        $list = [];
+
+        $model = self::find()->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+                if(!empty($item->set) && count($item->set) > 0){
+                    foreach ($item->set as $itemSet) {
+                        $list[$itemSet->setId] = $itemSet->setName;
+                    }
+                }
+            }
+        }
+
+        return $list;
+    }
     
 }
 
