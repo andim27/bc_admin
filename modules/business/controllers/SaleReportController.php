@@ -141,7 +141,11 @@ class SaleReportController extends BaseController
 
                     if(!empty($item->part_parcel)){
                         foreach ($item->part_parcel as $itemParcel){
-                            $infoSending[$item->infoWarehouse->country][$itemParcel['goods_id']] = $itemParcel['goods_count'];
+                            if(empty($infoSending[$item->infoWarehouse->country][$itemParcel['goods_id']])){
+                                $infoSending[$item->infoWarehouse->country][$itemParcel['goods_id']] = 0;
+                            }
+
+                            $infoSending[$item->infoWarehouse->country][$itemParcel['goods_id']] += $itemParcel['goods_count'];
                         }
                     }
 
