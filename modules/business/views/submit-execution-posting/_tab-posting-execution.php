@@ -26,9 +26,9 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
             <?php foreach ($model as $item) { ?>
                 <tr>
                     <td><?= $item->date_create->toDateTime()->format('Y-m-d H:i:s') ?></td>
-                    <td><?= $listGoods[(string)$item->parts_accessories_id] ?></td>
+                    <td><?= $listGoods[(string)$item->parts_accessories_id]?></td>
                     <td><?= $item->number ?></td>
-                    <td><?= $item->date_execution->toDateTime()->format('Y-m-d H:i:s') ?></td>
+                    <td><?= (!empty($item->date_execution) ? $item->date_execution->toDateTime()->format('Y-m-d H:i:s') : '') ?></td>
                     <td><?= $listSuppliers[(string)$item->suppliers_performers_id] ?></td>
                     <td><?= $item->fullname_whom_transferred ?></td>
                     <td>

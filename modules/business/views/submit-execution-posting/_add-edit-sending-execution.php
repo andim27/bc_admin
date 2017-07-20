@@ -21,7 +21,13 @@ if(!empty($model) && !empty($model->list_component)){
     foreach($model->list_component as $item){
         $listComponents[] = (string)$item['parts_accessories_id'];
     }
-    $canMake = PartsAccessoriesInWarehouse::getHowMuchCanCollect((string)$model->parts_accessories_id,$listComponents);
+
+    if($model->one_component != 1){
+        $canMake = PartsAccessoriesInWarehouse::getHowMuchCanCollect((string)$model->parts_accessories_id,$listComponents);
+    } else {
+        $canMake = $listGoodsFromMyWarehouse[(string)$model->parts_accessories_id];
+    }
+
 }
 
 $want_number = 0;
@@ -39,14 +45,26 @@ if(!empty($model)){
         </div>
 
         <div class="modal-body">
-            <div>
+
+            <?php if(empty($model)){ ?>
+            <div class="form-group row">
+                <div class="col-md-offset-8 col-md-3 text-right"><?=THelper::t('send_one_component')?></div>
+                <div class="col-md-1">
+                    <?=Html::checkbox('',(!empty($model->one_component) ?  true : false ),['class'=>'flOneComponent'])?>
+                </div>
+            </div>
+            <?php } ?>
+
+            <div id="execution-posting" <?=((empty($model->one_component) || $model->one_component != 1) ? '' : 'style="display:none"')?>>
                 <?php $formCom = ActiveForm::begin([
                     'action' => '/' . $language . '/business/submit-execution-posting/save-execution-posting',
                     'options' => ['name' => 'savePartsAccessories'],
                 ]); ?>
 
                 <?=Html::hiddenInput('_id',(!empty($model) ? (string)$model->_id : ''));?>
-                
+                <?=Html::hiddenInput('one_component',0);?>
+
+
                 <div class="form-group row infoDanger"></div>
 
                 <div class="form-group row">
@@ -54,15 +72,14 @@ if(!empty($model)){
                         <?=Html::dropDownList('parts_accessories_id',
                             (!empty($model) ?  $model->parts_accessories_id : ''),
                             ArrayHelper::merge([''=>'выберите товар'],PartsAccessories::getListPartsAccessoriesWithComposite()),[
-                            'class'=>'form-control',
+                            'class'=>'form-control withComposite',
                             'id'=>'selectGoods',
-                            'required'=>'required',
+                            'required'=>true,
                             'options' => [
                                 '' => ['disabled' => true]
                             ],
                             'disabled' => (!empty($model) ?  true : false)
                         ])?>
-
                         <?=(!empty($model) ?  Html::hiddenInput('parts_accessories_id',(string)$model->parts_accessories_id) : '')?>
                     </div>
                     <div class="col-md-1">
@@ -118,7 +135,7 @@ if(!empty($model)){
                                                 <?=Html::input('text',
                                                     '',
                                                     (!empty($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']]) ? ($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']] + ($item['number']*$want_number)) : 0 ),
-                                                    ['class'=>'form-control','disabled'=>'disabled']);?>
+                                                    ['class'=>'form-control inWarehouse','disabled'=>'disabled']);?>
                                             </div>
                                             <div class="col-md-2">
                                                 <?=Html::hiddenInput('number[]',$item['number'],[]);?>
@@ -161,11 +178,11 @@ if(!empty($model)){
                     </div>
                     <div class="col-md-3">
                         <?=Html::label(THelper::t('date_execution'))?>
-                        <?=Html::input('text','date_execution',(!empty($model) ? $model->date_execution->toDateTime()->format('Y-m-d') : date('Y-m-d')),['class'=>'form-control datepicker-input','data-date-format'=>'yyyy-mm-dd'])?>
+                        <?=Html::input('text','date_execution',(!empty($model->date_execution) ? $model->date_execution->toDateTime()->format('Y-m-d') : date('Y-m-d')),['class'=>'form-control datepicker-input','data-date-format'=>'yyyy-mm-dd'])?>
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="form-group row blFullnameWhomTransferred">
                     <div class="col-md-12">
                         <?=Html::label(THelper::t('fullname_whom_transferred'))?>
                         <?=Html::input('text','fullname_whom_transferred',(!empty($model->fullname_whom_transferred) ? $model->fullname_whom_transferred : ''),[
@@ -186,15 +203,94 @@ if(!empty($model)){
                 
                 <?php ActiveForm::end(); ?>
             </div>
+
+            <div id="send-posting" <?=((!empty($model->one_component) && $model->one_component == 1) ? '' : 'style="display:none"')?>>
+                <?php $formCom = ActiveForm::begin([
+                    'action' => '/' . $language . '/business/submit-execution-posting/save-execution-posting-replacement',
+                    'options' => ['name' => 'savePartsAccessories'],
+                ]); ?>
+
+                <?=Html::hiddenInput('_id',(!empty($model) ? (string)$model->_id : ''));?>
+                <?=Html::hiddenInput('one_component',1);?>
+
+                <div class="form-group row infoDanger"></div>
+
+
+
+                <div class="form-group row">
+                    <div class="col-md-7">
+
+                        <?=Html::dropDownList('parts_accessories_id',
+                            (!empty($model) ?  $model->parts_accessories_id : ''),
+                            ArrayHelper::merge([''=>'выберите товар'],PartsAccessories::getListPartsAccessoriesWithoutComposite()),[
+                                'class'=>'form-control withoutComposite',
+                                'id'=>'selectOneGoods',
+                                'required'=>true,
+                                'options' => [
+                                    '' => ['disabled' => true]
+                                ],
+                                'disabled' => (!empty($model) ?  true : false)
+                            ])?>
+
+                        <?=(!empty($model) ?  Html::hiddenInput('parts_accessories_id',(string)$model->parts_accessories_id) : '')?>
+                    </div>
+                    <div class="col-md-1">
+                        можно собрать
+                    </div>
+                    <div class="col-md-2">
+                        <?=Html::input('text','can_number',($canMake+$want_number),['class'=>'form-control CanCollect','disabled'=>'disabled'])?>
+                    </div>
+                    <div class="col-md-2">
+                        <?=Html::input('number','want_number',$want_number,[
+                            'class'=>'form-control WantCollect',
+                            'pattern'=>'\d*',
+                            'min'=>'1',
+                            'step'=>'1',
+                        ])?>
+                    </div>
+
+
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <?=Html::label(THelper::t('sidebar_suppliers_performers'))?>
+                        <?=Html::dropDownList('suppliers_performers_id',
+                            (!empty($model) ? (string)$model->suppliers_performers_id : ''),
+                            $listSuppliersPerformers,[
+                                'class'=>'form-control',
+                                'id'=>'selectChangeStatus',
+                                'required'=>'required',
+                                'options' => [
+                                    '' => ['disabled' => true]
+                                ]
+                            ])?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <?= Html::submitButton(THelper::t('save'), ['class' => 'btn btn-success assemblyBtn']) ?>
+                    </div>
+                </div>
+
+                <?php ActiveForm::end(); ?>
+            </div>
+
+
         </div>
     </div>
 </div>
 
 
 
-<script type="text/javascript">    
+<script type="text/javascript">
+
+    listGoodsFromMyWarehouse = <?=json_encode($listGoodsFromMyWarehouse)?>;
 
     $(document).on('change','#selectGoods',function () {
+        blForm = $(this).closest('form');
+
         $.ajax({
             url: '<?=\yii\helpers\Url::to(['submit-execution-posting/kit-execution-posting'])?>',
             type: 'POST',
@@ -202,24 +298,28 @@ if(!empty($model)){
                 PartsAccessoriesId : $(this).val(),
             },
             success: function (data) {
-                $('.blPartsAccessories').html(data);
+                blForm.find('.blPartsAccessories').html(data);
             }
         });
     });
 
-    $(".WantCollect").on('change',function(){
-        wantC = parseInt($(this).val());
-        canC = parseInt($('.CanCollect').val());
 
-        $('.blPartsAccessories .row').each(function () {
+    $(".WantCollect").on('change',function(){
+
+        blForm = $(this).closest('form');
+
+        wantC = parseInt($(this).val());
+        canC = parseInt(blForm.find('.CanCollect').val());
+
+        blForm.find('.blPartsAccessories .row').each(function () {
            needNumber = $(this).find('input[name="number[]"]').val();
            $(this).find('.needSend').val(needNumber*wantC);
         });
 
         if(wantC>canC){
-            $('.assemblyBtn').hide();
+            blForm.find('.assemblyBtn').hide();
         } else {
-            $('.assemblyBtn').show();
+            blForm.find('.assemblyBtn').show();
 
             checkReserve();
         }
@@ -268,12 +368,12 @@ if(!empty($model)){
 
             $('.assemblyBtn').hide();
         }
-    })
+    });
 
-    $(".btnPrint").on('click', function() {
+    $("#execution-posting .btnPrint").on('click', function() {
 
         tempBl = '';
-        $(".popupSendingExecution .blPartsAccessories").find('.form-group.row').each(function () {
+        $(".popupSendingExecution #execution-posting .blPartsAccessories").find('.form-group.row').each(function () {
             title = $(this).find('.partTitle :selected').text();
             if(title == ''){
                 title = $(this).find('.partTitle').val();
@@ -293,13 +393,13 @@ if(!empty($model)){
                     '<th colspan="5">Отправка на исполнение' +
                 '<tr>' +
                     '<td><b>Собираем<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution select[name='parts_accessories_id'] :selected").text() +
+                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting select[name='parts_accessories_id'] :selected").text() +
                 '<tr>' +
                     '<td><b>Можно собрать<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution input[name='can_number']").val()  + ' шт.' +
+                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting input[name='can_number']").val()  + ' шт.' +
                 '<tr>' +
                     '<td><b>Количество<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution input[name='want_number']").val() + ' шт.' +
+                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting input[name='want_number']").val() + ' шт.' +
                 '<tr>' +
                     '<th colspan="5">Необходимо:' +
                 '<tr>' +
@@ -313,15 +413,15 @@ if(!empty($model)){
     
                 '<tr>' +
                     '<td><b>Кому выдано<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution input[name='fullname_whom_transferred']").val() +
+                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting input[name='fullname_whom_transferred']").val() +
     
                 '<tr>' +
                     '<td><b>Поставщики и исполнители<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution select[name='suppliers_performers_id'] :selected").text() +
+                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting select[name='suppliers_performers_id'] :selected").text() +
         
                 '<tr>' +
                     '<td><b>Дата исполнения<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution input[name='date_execution']").val() +
+                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting input[name='date_execution']").val() +
 
             '</table>';
 
@@ -329,4 +429,26 @@ if(!empty($model)){
             stylesheet : window.location.origin + '/css/print.css'
         });
     });
+    
+    $('.popupSendingExecution .flOneComponent').on('change', function () {
+        if($(this).is(':checked')){
+            $('#execution-posting').hide();
+            $('#send-posting').show();
+        } else{
+            $('#send-posting').hide();
+            $('#execution-posting').show();
+        }
+
+    });
+    
+    $('#selectOneGoods').on('change',function () {
+        countGoods = listGoodsFromMyWarehouse[$(this).val()];
+
+        if(countGoods == undefined){
+            countGoods = 0;
+        }
+
+        $('#send-posting .CanCollect').val(countGoods);
+    })
+    
 </script>

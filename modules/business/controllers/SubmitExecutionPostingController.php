@@ -70,24 +70,27 @@ class SubmitExecutionPostingController extends BaseController {
                 $model = new ExecutionPosting();
             }
 
+            $model->one_component = (int)(!empty($request['one_component']) ? '1' : '0');
             $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
             $model->number = (int)$request['want_number'];
             $model->received = (int)'0';
             $model->fullname_whom_transferred = (!empty($request['fullname_whom_transferred']) ? $request['fullname_whom_transferred'] : '' );
 
             $list_component = [];
-            foreach ($request['complect'] as $k => $item) {
-                $list_component[] = [
-                    'parts_accessories_id' => new ObjectID($item),
-                    'number' => (int)$request['number'][$k],
-                    'reserve' => (int)$request['reserve'][$k],
-                ];
+            if(!empty($request['complect'])){
+                foreach ($request['complect'] as $k => $item) {
+                    $list_component[] = [
+                        'parts_accessories_id' => new ObjectID($item),
+                        'number' => (int)$request['number'][$k],
+                        'reserve' => (int)$request['reserve'][$k],
+                    ];
+                }
             }
 
             $model->list_component = $list_component;
 
             $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
-            $model->date_execution = new UTCDatetime(strtotime($request['date_execution']) * 1000);
+            $model->date_execution = new UTCDatetime(strtotime((!empty($request['date_execution']) ? $request['date_execution'] : date("Y-m-d H:i:s"))) * 1000);
             $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
 
             if($model->save()){
@@ -114,6 +117,7 @@ class SubmitExecutionPostingController extends BaseController {
                     }
                 }
 
+
                 Yii::$app->session->setFlash('alert' ,[
                         'typeAlert'=>'success',
                         'message'=>'Сохранения применились.'
@@ -123,6 +127,82 @@ class SubmitExecutionPostingController extends BaseController {
             }
             
             
+        }
+        return $this->redirect('/'.Yii::$app->language.'/business/submit-execution-posting/execution-posting');
+    }
+
+
+    public function actionSaveExecutionPostingReplacement()
+    {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
+        $request = Yii::$app->request->post();
+
+        if(!empty($request)){
+            $myWarehouse = Warehouse::getIdMyWarehouse();
+
+            if(!empty($request['_id'])){
+                $model = ExecutionPosting::findOne(['_id'=>new ObjectID($request['_id'])]);
+
+                $this->Cancellation($model);
+            } else {
+                $model = new ExecutionPosting();
+            }
+
+            $model->one_component = (int)(!empty($request['one_component']) ? '1' : '0');
+            $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
+            $model->number = (int)$request['want_number'];
+            $model->received = (int)'0';
+            $model->fullname_whom_transferred = (!empty($request['fullname_whom_transferred']) ? $request['fullname_whom_transferred'] : '' );
+
+            $list_component[] = [
+                'parts_accessories_id' => $model->parts_accessories_id,
+                'number' => 1,
+                'reserve' => (int)'0',
+            ];
+            $model->list_component = $list_component;
+
+            $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
+            $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            if($model->save()){
+
+                if(!empty($list_component)){
+                    foreach ($list_component as $k=>$item) {
+                        $modelItem = PartsAccessoriesInWarehouse::findOne([
+                            'parts_accessories_id'  =>  $item['parts_accessories_id'],
+                            'warehouse_id'          =>  new ObjectID($myWarehouse)
+                        ]);
+
+                        $modelItem->number = $modelItem->number - ($item['number']*$request['want_number']) - $item['reserve'];
+
+                        if($modelItem->save()){
+                            // add log
+                            LogWarehouse::setInfoLog([
+                                'action'                    =>  'send_for_execution_posting_one',
+                                'parts_accessories_id'      =>  (string)$item['parts_accessories_id'],
+                                'number'                    =>  (int)(($item['number']*$request['want_number']) + $item['reserve']),
+                                'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
+
+                            ]);
+                        }
+                    }
+                }
+
+
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'success',
+                        'message'=>'Сохранения применились.'
+                    ]
+                );
+
+            }
+
+
         }
         return $this->redirect('/'.Yii::$app->language.'/business/submit-execution-posting/execution-posting');
     }

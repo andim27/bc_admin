@@ -23,6 +23,9 @@ class ExecutionPosting extends \yii2tech\embedded\mongodb\ActiveRecord
     {
         return [
             '_id',
+
+            'one_component',
+
             'parts_accessories_id',
             'number',
             'received',

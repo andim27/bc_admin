@@ -45,8 +45,8 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                         <td><?= $item->date_create->toDateTime()->format('Y-m-d H:i:s') ?></td>
                         <td><?= $listGoods[(string)$itemList['parts_accessories_id']]?></td>
                         <td><?= ($itemList['number'] * $item->number) + $itemList['reserve'] ?></td>
-                        <td><?= $listGoods[(string)$item->parts_accessories_id] ?></td>
-                        <td><?= $item->date_execution->toDateTime()->format('Y-m-d H:i:s') ?></td>
+                        <td><?= ($item->one_component == 1 ? THelper::t('component_replacement') : $listGoods[(string)$item->parts_accessories_id]) ?></td>
+                        <td><?= (!empty($item->date_execution) ? $item->date_execution->toDateTime()->format('Y-m-d H:i:s') : '') ?></td>
                         <td><?= $listSuppliers[(string)$item->suppliers_performers_id] ?></td>
                         <td><?= $item->fullname_whom_transferred ?></td>
                         <td>

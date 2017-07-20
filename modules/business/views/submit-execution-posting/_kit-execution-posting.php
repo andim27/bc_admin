@@ -42,7 +42,7 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
                         <?=Html::input('text',
                             '',
                             (!empty($listGoodsFromMyWarehouse[(string)$item['_id']]) ? $listGoodsFromMyWarehouse[(string)$item['_id']] : 0 ),
-                            ['class'=>'form-control','disabled'=>'disabled']);?>
+                            ['class'=>'form-control inWarehouse','disabled'=>'disabled']);?>
                     </div>
                     <div class="col-md-2">
                         <?=Html::hiddenInput('number[]',$item['number'],[]);?>
@@ -78,7 +78,16 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
 
     $(document).find('.CanCollect').val(canCollect);
 
-    $(document).on('click','select[name="complect[]"]',function () {
+    $(document).on('change','select[name="complect[]"]',function () {
+
+        changeRow = $(this).closest('.row');
+        newComplect = $(this).val();
+
+        countNewComplect = 0;
+        if(listGoodsFromMyWarehouse[newComplect]){
+            countNewComplect = listGoodsFromMyWarehouse[newComplect];
+        }
+
         listComponents = $(".blPartsAccessories").find('input[name="complect[]"],select[name="complect[]"] option:selected').map(function(){
             return this.value;
         }).get();
@@ -92,6 +101,7 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
             },
             success: function (data) {
                 $(document).find('.CanCollect').val(data);
+                changeRow.find('.inWarehouse').val(countNewComplect)
             }
         });
 

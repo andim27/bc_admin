@@ -82,6 +82,7 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
 
         return $list;
     }
+
     public static function getListPartsAccessoriesWithComposite()
     {
         $model = self::find()->all();
@@ -95,7 +96,24 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
 
         return $list;
     }
-    
+
+
+    public static function getListPartsAccessoriesWithoutComposite()
+    {
+        $model = self::find()->all();
+        $list = [];
+        foreach ($model as $item){
+            if(empty($item->composite)){
+                $list[(string)$item->_id] = $item->title;
+            }
+
+        }
+
+        return $list;
+    }
+
+
+
 //    public static function getNamePartsAccessories($id)
 //    {
 //        $list = self::getListPartsAccessories();
