@@ -29,10 +29,13 @@ $listUnit = PartsAccessories::getListUnit();
                         'class'=>'form-control',
                         'id'=>'selectChangeStatus',
                         'required'=>'required',
+                        'disabled' => (!empty($model->_id) ? true : false),
                         'options' => [
                             '' => ['disabled' => true]
                         ]
                     ])?>
+
+                    <?=(!empty($model->_id) ? Html::hiddenInput('id',(string)$model->_id) : '')?>
                 </div>
             </div>
 

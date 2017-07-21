@@ -65,4 +65,18 @@ class ExecutionPosting extends \yii2tech\embedded\mongodb\ActiveRecord
             return false;
         }
     }
+
+    public static function getCountSpareForContractor()
+    {
+        $list = [];
+
+        $model = self::find()->where(['one_component'=>1])->all();
+
+        foreach ($model as $item) {
+            $list[(string)$item->parts_accessories_id] = $item->number;
+        }
+
+        return $list;
+    }
+
 }

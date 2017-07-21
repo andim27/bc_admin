@@ -2,21 +2,25 @@
 use yii\helpers\Html;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
+use app\models\ExecutionPosting;
 
 $listGoods = PartsAccessories::getListPartsAccessories();
 
 $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
+
+$contractorInfo = ExecutionPosting::getCountSpareForContractor();
 
 ?>
 
 <div class="col-md-12">
 <div class="panel panel-default">
     <div class="panel-body">
-        <div class="form-group">
+        <div class="row form-group">
             <div class="col-md-3"></div>
             <div class="col-md-2">В наличие</div>
-            <div class="col-md-2">На одну шт.</div>
-            <div class="col-md-3">Надо отправить</div>
+            <div class="col-md-2">У исполнителя</div>
+            <div class="col-md-1">На одну шт.</div>
+            <div class="col-md-2">Надо отправить</div>
             <div class="col-md-2">С запасом</div>
         </div>
         <?php if(!empty($model->composite)){ ?>
@@ -45,10 +49,18 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
                             ['class'=>'form-control inWarehouse','disabled'=>'disabled']);?>
                     </div>
                     <div class="col-md-2">
+                        <?=Html::hiddenInput('contractor[]',
+                            (!empty($contractorInfo[(string)$item['_id']]) ? $contractorInfo[(string)$item['_id']] : '0'),
+                            []); ?>
+                        <?=Html::input('text','',
+                            (!empty($contractorInfo[(string)$item['_id']]) ? $contractorInfo[(string)$item['_id']] : '0'),
+                            ['class'=>'form-control partContractor','disabled'=>'disabled']); ?>
+                    </div>
+                    <div class="col-md-1">
                         <?=Html::hiddenInput('number[]',$item['number'],[]);?>
                         <?=Html::input('text','',$item['number'],['class'=>'form-control partNeedForOne','disabled'=>'disabled']);?>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[(string)$item['_id']]) ? $listGoodsFromMyWarehouse[(string)$item['_id']] : 0 ),['class'=>'numberWarehouse']);?>
                         <?=Html::input('text','',$item['number'],['class'=>'form-control needSend','disabled'=>'disabled']);?>
                     </div>
@@ -69,6 +81,7 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
 
 <script>
     canCollect = '<?=PartsAccessoriesInWarehouse::getHowMuchCanCollect((string)$model->_id)?>';
+    atContractor = '<?=json_encode($contractorInfo)?>';
 
     if(canCollect==0){
         $('.assemblyBtn').hide();
@@ -101,7 +114,9 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
             },
             success: function (data) {
                 $(document).find('.CanCollect').val(data);
-                changeRow.find('.inWarehouse').val(countNewComplect)
+                changeRow.find('.inWarehouse').val(countNewComplect);
+                changeRow.find('.partContractor').val(countNewComplect);
+                changeRow.find('input[name="contractor[]"]').val(countNewComplect);
             }
         });
 

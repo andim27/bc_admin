@@ -488,4 +488,28 @@ class SubmitExecutionPostingController extends BaseController {
     }
 
 
+
+    public function actionFix()
+    {
+        $list = [
+            '595e60d1dca7877ad12258e2',
+            '595e5ed1dca787052448de05',
+            '595e5ea4dca787052448de02',
+        ];
+
+        foreach ($list as $item){
+            $model = ExecutionPosting::findOne(['_id'=>new ObjectID($item)]);
+
+            if(!empty($model)){
+                $model->delete();
+            }
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('ok');
+        echo "</xmp>";
+        die();
+    }
+
 }
