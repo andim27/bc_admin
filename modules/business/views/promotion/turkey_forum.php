@@ -8,8 +8,14 @@
                 <tr>
                     <th><?= THelper::t('promotion_turkey_forum_table_number') ?></th>
                     <th><?= THelper::t('promotion_turkey_forum_table_username') ?></th>
+                    <th><?= THelper::t('promotion_turkey_forum_table_firstname') ?></th>
+                    <th><?= THelper::t('promotion_turkey_forum_table_secondname') ?></th>
+                    <th><?= THelper::t('promotion_turkey_forum_table_country') ?></th>
+                    <th><?= THelper::t('promotion_turkey_forum_table_city') ?></th>
                     <th><?= THelper::t('promotion_turkey_forum_table_steps') ?></th>
-                    <th><?= THelper::t('promotion_travel_table_dateComplete') ?></th>
+                    <th><?= THelper::t('promotion_turkey_forum_table_steps_need') ?></th>
+                    <th><?= THelper::t('promotion_turkey_forum_table_completed') ?></th>
+                    <th><?= THelper::t('promotion_travel_table_dateCompleted') ?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -22,10 +28,28 @@
                             <?= $u->username ?>
                         </td>
                         <td>
+                            <?= $u->firstName ?>
+                        </td>
+                        <td>
+                            <?= $u->secondName ?>
+                        </td>
+                        <td>
+                            <?= $u->country ?>
+                        </td>
+                        <td>
+                            <?= $u->city ?>
+                        </td>
+                        <td>
                             <?= $u->steps ?>
                         </td>
                         <td>
-                            <?= isset($u->dateComplete) ? gmdate('d.m.Y', $u->dateComplete) : '' ?>
+                            <?= $u->needSteps ?>
+                        </td>
+                        <td>
+                            <?= $u->completed ? THelper::t('yes') : THelper::t('no') ?>
+                        </td>
+                        <td>
+                            <?= isset($u->dateCompleted) ? $u->dateCompleted->toDateTime()->format('d.m.Y') : '' ?>
                         </td>
                     </tr>
                 <?php } ?>
