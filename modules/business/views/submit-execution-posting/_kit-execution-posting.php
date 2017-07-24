@@ -81,7 +81,7 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
 
 <script>
     canCollect = '<?=PartsAccessoriesInWarehouse::getHowMuchCanCollect((string)$model->_id)?>';
-    atContractor = '<?=json_encode($contractorInfo)?>';
+    atContractor = <?=json_encode($contractorInfo)?>;
 
     if(canCollect==0){
         $('.assemblyBtn').hide();
@@ -101,6 +101,11 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
             countNewComplect = listGoodsFromMyWarehouse[newComplect];
         }
 
+        countAtContractor = 0;
+        if(atContractor[newComplect]){
+            countAtContractor = atContractor[newComplect];
+        }
+
         listComponents = $(".blPartsAccessories").find('input[name="complect[]"],select[name="complect[]"] option:selected').map(function(){
             return this.value;
         }).get();
@@ -115,8 +120,8 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
             success: function (data) {
                 $(document).find('.CanCollect').val(data);
                 changeRow.find('.inWarehouse').val(countNewComplect);
-                changeRow.find('.partContractor').val(countNewComplect);
-                changeRow.find('input[name="contractor[]"]').val(countNewComplect);
+                changeRow.find('.partContractor').val(countAtContractor);
+                changeRow.find('input[name="contractor[]"]').val(countAtContractor);
             }
         });
 
