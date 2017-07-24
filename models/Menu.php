@@ -266,6 +266,12 @@ Class Menu
                         'url' => ['/business/promotion/travel'],
                         'action' => 'travel',
                     ],
+                    [
+                        'key'   =>  'sidebar_promotion_turkey_forum',
+                        'label' => THelper::t('sidebar_promotion_turkey_forum'),
+                        'url' => ['/business/promotion/turkey-forum'],
+                        'action' => 'turkey-forum',
+                    ],
                 ]
             ],
             [

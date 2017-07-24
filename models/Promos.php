@@ -5,17 +5,17 @@ namespace app\models;
 use yii\mongodb\ActiveRecord;
 
 /**
- * Class Pins
+ * Class Promos
  * @package app\models
  */
-class Pins extends ActiveRecord
+class Promos extends ActiveRecord
 {
     /**
      * @return string
      */
     public static function collectionName()
     {
-        return 'pins';
+        return 'promos';
     }
 
     /**
@@ -25,8 +25,17 @@ class Pins extends ActiveRecord
     {
         return [
             '_id',
+            'dateCompleted',
             'userId',
-            'pin',
+            'username',
+            'date',
+            'completed',
+            'needSteps',
+            'steps',
+            'country',
+            'city',
+            'firstName',
+            'secondName'
         ];
     }
 
