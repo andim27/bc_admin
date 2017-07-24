@@ -990,6 +990,7 @@ class ManufacturingSuppliersController extends BaseController {
 //        $this->redirect(['parts-accessories']);
 //    }
 
+/*
     public function actionFix()
     {
         $infoReplaceTitle = [
@@ -1100,4 +1101,6 @@ class ManufacturingSuppliersController extends BaseController {
 
 
     }
+*/
+
 }
