@@ -5,10 +5,14 @@ namespace app\modules\business\controllers;
 
 
 use app\models\CurrencyRate;
+use app\models\ExecutionPosting;
 use app\models\LogWarehouse;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\PartsOrdering;
+use app\models\Products;
+use app\models\SendingWaitingParcel;
+use app\models\StatusSales;
 use app\models\SuppliersPerformers;
 use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
@@ -985,4 +989,115 @@ class ManufacturingSuppliersController extends BaseController {
 //
 //        $this->redirect(['parts-accessories']);
 //    }
+
+    public function actionFix()
+    {
+        $infoReplaceTitle = [
+            'Прибор Life Balance' => 'Комплект для продажи Life Balance',
+            'Прибор Life Expert' => 'Комплект для продажи Life Expert',
+            'Прибор Life Expert PROFI' => 'Комплект для продажи Life Expert PROFI'
+        ];
+
+        $infoReplaceId = [
+            '5924362adca78730ff4a3f22' => '59620f57dca78747631d3c62',
+            '59243648dca78730ff4a3f23' => '59620f49dca78761ae2d01c1',
+            '59243668dca78731c6788832' => '5975afe2dca78748ce5e7e02'
+        ];
+
+
+        // products
+        $modulProducts = Products::find()->all();
+        foreach ($modulProducts as $item){
+            if(!empty($item->productSet)){
+                $temp = $item->productSet;
+
+                foreach ($temp as $kV => $itemV){
+                    if(!empty($infoReplaceTitle[$itemV['setName']]) && !empty($infoReplaceId[$itemV['setId']])){
+                        $temp[$kV]['setName'] = $infoReplaceTitle[$itemV['setName']];
+                        $temp[$kV]['setId'] = $infoReplaceId[$itemV['setId']];
+                    }
+                }
+
+                $item->productSet = $temp;
+
+                if($item->save()){}
+            }
+
+        }
+
+        // status sale
+        $modulStatusSale = StatusSales::find()->all();
+        foreach ($modulStatusSale as $item){
+            if(!empty($item->setSales)){
+
+                $temp = $item->setSales;
+
+                foreach ($temp as $kV => $itemV) {
+                    if(!empty($infoReplaceTitle[$itemV['title']])){
+                        $temp[$kV]['title'] = $infoReplaceTitle[$itemV['title']];
+                    }
+                }
+
+                $item->setSales = $temp;
+
+                if($item->save()){}
+            }
+        }
+
+        // parts_accessories_in_warehouse
+        $modulPartsAccessoriesInWarehouse = PartsAccessoriesInWarehouse::find()->all();
+        foreach ($modulPartsAccessoriesInWarehouse as $item){
+            $temp = (string)$item->parts_accessories_id;
+
+            if(!empty($infoReplaceId[$temp])){
+                $item->parts_accessories_id = new ObjectID($infoReplaceId[$temp]);
+
+                if($item->save()){}
+            }
+
+        }
+
+        //log warehouse
+        $moduleLogWarehouse = LogWarehouse::find()->all();
+        foreach ($moduleLogWarehouse as $item){
+            $temp = (string)$item->parts_accessories_id;
+
+            if(!empty($infoReplaceId[$temp])){
+                $item->parts_accessories_id = new ObjectID($infoReplaceId[$temp]);
+
+                if($item->save()){}
+            }
+        }
+
+
+        //sending waiting parcel
+        $moduleSendingWaitingParcel = SendingWaitingParcel::find()->all();
+        foreach ($moduleSendingWaitingParcel as $item){
+
+            if(!empty($item->part_parcel)){
+
+                $temp = $item->part_parcel;
+
+                foreach ($temp as $kV => $itemV) {
+                    if(!empty($infoReplaceId[$itemV['goods_id']])){
+                        $temp[$kV]['goods_id'] = $infoReplaceId[$itemV['goods_id']];
+                    }
+                }
+
+                $item->part_parcel = $temp;
+
+                if($item->save()){}
+            }
+        }
+
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('ok');
+        echo "</xmp>";
+        die();
+
+
+
+    }
 }
