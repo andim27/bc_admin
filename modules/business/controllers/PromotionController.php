@@ -18,7 +18,7 @@ class PromotionController extends BaseController
     public function actionTurkeyForum()
     {
         return $this->render('turkey_forum', [
-            'promos' => Promos::find()->all()
+            'promos' => Promos::find()->orderBy(['completed' => SORT_DESC, 'dateCompleted' => SORT_DESC])->all()
         ]);
     }
 }
