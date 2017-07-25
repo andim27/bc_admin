@@ -9,6 +9,8 @@ use app\models\Sales;
 use app\models\SendingWaitingParcel;
 use app\models\Settings;
 use app\models\StatusSales;
+use app\models\Warehouse;
+use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -32,7 +34,7 @@ class SaleReportController extends BaseController
         $infoSale = $infoGoods = [];
 
         $dateTo = date("Y-m-d");
-        $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));;
+        $dateFrom = date("Y-m-d", strtotime( $dateTo." -1 months"));;
 
         $model = Sales::find()
             ->where([
@@ -56,10 +58,17 @@ class SaleReportController extends BaseController
             foreach ($model as $item) {
                 $tempInfoUser = [];
                 if(!empty($item->statusSale) && ($request['countryReport'] == 'all' || $request['countryReport'] == $item->infoUser->country)){
+
+                    $tempInfoUser['_id'] = (string)$item->_id;
+
+                    $tempInfoUser['countryWarehouse'] = 'none';
+                    $tempInfoUser['nameWarehouse'] = '';
+
                     $tempInfoUser['name'] = $item->infoUser->secondName . ' ' . $item->infoUser->firstName . '('. $item->infoUser->username.')';
                     $tempInfoUser['country'] = $item->infoUser->country;
                     $tempInfoUser['city'] = $item->infoUser->city;
                     $tempInfoUser['address'] = $item->infoUser->address;
+
 
                     if(empty($listCountry[$item->infoUser->country])){
                         $listCountry[$item->infoUser->country] = $allListCountry[$item->infoUser->country];
@@ -87,12 +96,24 @@ class SaleReportController extends BaseController
 
                     $tempInfoUser['date_create'] = $item->dateCreate->toDateTime()->format('Y-m-d H:i:s');
                     $tempInfoUser['type'] = $item->type;
-
+                                        
                     /** @var StatusSales $itemSet */
-                    foreach($item->statusSale->set as $itemSet){
+                    foreach($item->statusSale->set as $k=>$itemSet){
                         if($request['goodsReport'] == 'all' || $request['goodsReport'] == $itemSet->title) {
 
+                            if(!empty($itemSet->idUserChange)){
+                                $infoWarehouse = Warehouse::getInfoWarehouse((string)$itemSet->idUserChange);
+
+                                if(!empty($infoWarehouse->country)){
+                                    $tempInfoUser['countryWarehouse'] = $infoWarehouse->country;
+                                    $tempInfoUser['nameWarehouse'] = $infoWarehouse->title;
+                                }
+                            }
+
+                            
                             $tempInfoGoods = [];
+
+                            $tempInfoGoods['key'] = $k;
                             $tempInfoGoods['goods'] = $itemSet->title;
                             $tempInfoGoods['status'] = $itemSet->status;
 
@@ -103,9 +124,8 @@ class SaleReportController extends BaseController
                             }
                         }
                     }
+
                 }
-
-
             }
         }
 
@@ -115,9 +135,62 @@ class SaleReportController extends BaseController
             'infoSale' => $infoSale,
             'listCountry' => $listCountry,
             'infoGoods' => $infoGoods,
+
+
+            'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
     
+    public function actionChangeWarehouse()
+    {
+        $request = Yii::$app->request->get();
+
+        $modelInfoSale = Sales::findOne(['_id'=>new ObjectID($request['_id'])]);
+
+        $info = $modelInfoSale->statusSale->setSales[$request['k']];
+
+        $info = [
+            'idSale'            => $request['_id'],
+            'key'               => $request['k'],
+            'idUserWarehpouse'  => (string)$info['idUserChange']
+        ];
+
+
+        return $this->renderAjax('_change-warehouse', [
+            'language' => Yii::$app->language,
+            'info' => $info,
+        ]);
+    }
+    
+    public function actionSaveChangeWarehouse(){
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert' => 'danger',
+                'message' => 'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
+        $request = Yii::$app->request->post();
+
+        $modelInfoSale = Sales::findOne(['_id'=>new ObjectID($request['idSale'])]);
+
+        $info = $modelInfoSale->statusSale;
+
+        $temp = $info->setSales;
+        $temp[$request['key']]['idUserChange'] = new ObjectID($request['warehouse_id']);
+
+        $info->setSales = $temp;
+
+        if($info->save()){
+            Yii::$app->session->setFlash('alert' ,[
+                    'typeAlert'=>'success',
+                    'message'=>'Сохранения применились.'
+                ]
+            );
+        }
+
+
+        return $this->redirect('/' . Yii::$app->language .'/business/sale-report/info-wait-sale-by-user');
+    }
     
     public function actionInfoSaleForCountry()
     {
@@ -139,6 +212,10 @@ class SaleReportController extends BaseController
             if(!empty($modelSending)){
                 foreach ($modelSending as $item){
 
+                    if(empty($item->infoWarehouse->country)){
+                        $item->infoWarehouse->country = 'none';
+                    }
+
                     if(!empty($item->part_parcel)){
                         foreach ($item->part_parcel as $itemParcel){
                             if(empty($infoSending[$item->infoWarehouse->country][$itemParcel['goods_id']])){
@@ -156,10 +233,11 @@ class SaleReportController extends BaseController
             $request['listGoods'] = '';
         }
 
+
         $infoSale = [];
 
         $dateTo = date("Y-m-d");
-        $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));;
+        $dateFrom = date("Y-m-d", strtotime( $dateTo." -1 months"));;
 
         $model = Sales::find()
             ->where([
@@ -187,18 +265,19 @@ class SaleReportController extends BaseController
 
                     if($item->product == $request['listPack'] || $request['listPack'] == 'all') {
 
-                        if (empty($infoSale[$item->infoUser->country][$item->productName])) {
-                            $infoSale[$item->infoUser->country][$item->productName] = [
-                                'all' => 0,
-                                'issued' => 0,
-                                'wait' => 0,
-                                'repair' => 0,
-                            ];
-                        }
-
+                        $country = 'none';
                         $flIssuedPack = '1';
                         $flRepairsPack = '0';
                         foreach ($item->statusSale->set as $itemSet) {
+
+                            if(!empty($itemSet->idUserChange)) {
+                                $infoWarehouse = Warehouse::getInfoWarehouse((string)$itemSet->idUserChange);
+
+                                if (!empty($infoWarehouse->country)) {
+                                    $country = $infoWarehouse->country;
+                                }
+                            }
+
                             if (!in_array($itemSet->status, ['status_sale_issued', 'status_sale_issued_after_repair'])) {
                                 $flIssuedPack = '0';
                             }
@@ -208,17 +287,26 @@ class SaleReportController extends BaseController
                             }
                         }
 
+                        if (empty($infoSale[$country][$item->productName])) {
+                            $infoSale[$country][$item->productName] = [
+                                'all' => 0,
+                                'issued' => 0,
+                                'wait' => 0,
+                                'repair' => 0,
+                            ];
+                        }
+
                         if ($flIssuedPack == '1') {
-                            $infoSale[$item->infoUser->country][$item->productName]['issued']++;
+                            $infoSale[$country][$item->productName]['issued']++;
                         } else {
-                            $infoSale[$item->infoUser->country][$item->productName]['wait']++;
+                            $infoSale[$country][$item->productName]['wait']++;
                         }
 
                         if($flRepairsPack == '1'){
-                            $infoSale[$item->infoUser->country][$item->productName]['repair']++;
+                            $infoSale[$country][$item->productName]['repair']++;
                         }
 
-                        $infoSale[$item->infoUser->country][$item->productName]['all']++;
+                        $infoSale[$country][$item->productName]['all']++;
                     }
                 /** GOODS */
                 } else {
@@ -226,8 +314,18 @@ class SaleReportController extends BaseController
 
                         if($itemSet->title == $request['listGoods'] || $request['listGoods'] == 'all'){
 
-                            if(empty($infoSale[$item->infoUser->country][$itemSet->title])){
-                                $infoSale[$item->infoUser->country][$itemSet->title] = [
+                            $country = 'none';
+                            if(!empty($itemSet->idUserChange)) {
+                                $infoWarehouse = Warehouse::getInfoWarehouse((string)$itemSet->idUserChange);
+
+                                if (!empty($infoWarehouse->country)) {
+                                    $country = $infoWarehouse->country;
+                                }
+                            }
+
+
+                            if(empty($infoSale[$country][$itemSet->title])){
+                                $infoSale[$country][$itemSet->title] = [
                                     'all' => 0,
                                     'issued' => 0,
                                     'wait' => 0,
@@ -235,16 +333,16 @@ class SaleReportController extends BaseController
                                 ];
                             }
 
-                            $infoSale[$item->infoUser->country][$itemSet->title]['all']++;
+                            $infoSale[$country][$itemSet->title]['all']++;
 
                             if(in_array($itemSet->status,['status_sale_issued','status_sale_issued_after_repair'])){
-                                $infoSale[$item->infoUser->country][$itemSet->title]['issued']++;
+                                $infoSale[$country][$itemSet->title]['issued']++;
                             } else {
-                                $infoSale[$item->infoUser->country][$itemSet->title]['wait']++;
+                                $infoSale[$country][$itemSet->title]['wait']++;
                             }
 
                             if(in_array($itemSet->status,['status_sale_repairs_under_warranty','status_sale_repair_without_warranty'])){
-                                $infoSale[$item->infoUser->country][$itemSet->title]['repair']++;
+                                $infoSale[$infoWarehouse->country][$itemSet->title]['repair']++;
                             }
                         }
                     }

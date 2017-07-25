@@ -3,6 +3,7 @@ use app\components\THelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\Products;
+use app\components\AlertWidget;
 
 $listGoods = Products::getListGoods()
 ?>
@@ -12,6 +13,8 @@ $listGoods = Products::getListGoods()
     <h3 class="m-b-none"><?= THelper::t('report_not_issued_sales') ?></h3>
 </div>
 <div class="row">
+
+    <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
     <?php $formStatus = ActiveForm::begin([
         'action' => '/' . $language . '/business/sale-report/info-wait-sale-by-user',

@@ -144,7 +144,24 @@ class Users extends ActiveRecord
 
         return $answer;
     }
-    
+
+    public static function getListWarehouseAdmin()
+    {
+        $lang = \Yii::$app->language;
+
+        $model = self::getAllAdmin();
+
+        $list = [];
+
+        foreach ($model as $item){
+            if(!empty($item->warehouseName[$lang])){
+                $list[(string)$item->_id] = $item->warehouseName[$lang];
+            }
+        }
+
+        return $list;
+    }
+
 }
 
 class RulesAdmin extends Model

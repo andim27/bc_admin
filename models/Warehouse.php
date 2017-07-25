@@ -107,4 +107,15 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         return $listWarehou;
     }
 
+    public static function getInfoWarehouse($idUser = '')
+    {
+        if(empty($idUser)){
+            $idUser = \Yii::$app->view->params['user']->id;
+        }
+
+        $infoWarehous = self::findOne(['idUsers'=>$idUser]);
+
+        return $infoWarehous;
+    }
+
 }

@@ -1,5 +1,8 @@
 <?php
+use yii\bootstrap\Html;
 use app\components\THelper;
+
+
 ?>
 
 <section class="panel panel-default">
@@ -15,7 +18,7 @@ use app\components\THelper;
                     <?=THelper::t('country')?>
                 </th>
                 <th>
-                    <?=THelper::t('city')?>
+                    <?=THelper::t('warehouse')?>
                 </th>
                 <th>
                     <?=THelper::t('address')?>
@@ -38,9 +41,18 @@ use app\components\THelper;
                     <tr>
                         <td><?=$item['date_create']?></td>
                         <td><?=$item['name']?></td>
-                        <td><?=$listCountry[$item['country']]?></td>
-                        <td><?=$item['city']?></td>
-                        <td><?=$item['address']?></td>
+                        <td>
+                            <?=(!empty($listCountry[$item['countryWarehouse']]) ? $listCountry[$item['countryWarehouse']] . ', ': 'none') ?>
+                        </td>
+                        <td>
+                            <?=(!empty($item['nameWarehouse']) ? $item['nameWarehouse'] . ', ': 'none') ?>
+                            <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/sale-report/change-warehouse','_id'=>$item['_id'],'k'=>$item['key']], ['data-toggle'=>'ajaxModal']) ?>
+                        </td>
+                        <td>
+                            <?=(!empty($listCountry[$item['country']]) ? $listCountry[$item['country']] .', ' : '') ?>
+                            <?=(!empty($item['city']) ? $item['city'] .', ' : '') ?>
+                            <?=(!empty($item['address']) ? $item['address'] : '') ?>
+                        </td>
                         <td>
                             <?php if(!empty($item['phone'])) { ?>
                                 <?php foreach($item['phone'] as $kPh => $itemPh) { ?>

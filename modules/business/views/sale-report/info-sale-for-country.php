@@ -110,7 +110,7 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
                                     ?>
 
                                     <tr>
-                                        <td><?=$listCountry[$k]?></>
+                                        <td><?=(!empty($listCountry[$k]) ? $listCountry[$k] : 'none') ?></td>
                                         <td><?=$kGoods?></td>
                                         <td><?=$item['all']?></td>
                                         <td><?=$item['issued']?></td>
