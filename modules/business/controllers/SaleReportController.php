@@ -34,7 +34,7 @@ class SaleReportController extends BaseController
         $infoSale = $infoGoods = [];
 
         $dateTo = date("Y-m-d");
-        $dateFrom = date("Y-m-d", strtotime( $dateTo." -1 months"));;
+        $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));;
 
         $model = Sales::find()
             ->where([
@@ -239,7 +239,7 @@ class SaleReportController extends BaseController
         $infoSale = [];
 
         $dateTo = date("Y-m-d");
-        $dateFrom = date("Y-m-d", strtotime( $dateTo." -1 months"));;
+        $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));;
 
         $model = Sales::find()
             ->where([
