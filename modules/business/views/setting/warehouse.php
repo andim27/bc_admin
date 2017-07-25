@@ -4,8 +4,10 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use app\components\AlertWidget;
 use app\models\Users;
+use app\models\Settings;
 
 
+$listCountry = Settings::getListCountry();
 $userArray = Users::getListAdmin();
 ?>
 
@@ -45,6 +47,8 @@ $userArray = Users::getListAdmin();
                         ?>
 
                         <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/setting/add-update-warehouse','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
+
+                        <?=((!empty($item->country) && !empty($listCountry[$item->country])) ? $listCountry[$item->country] : 'none')?>,
 
                         <?=$item->title?>
                     </td>

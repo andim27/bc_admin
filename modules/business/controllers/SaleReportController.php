@@ -70,9 +70,7 @@ class SaleReportController extends BaseController
                     $tempInfoUser['address'] = $item->infoUser->address;
 
 
-                    if(empty($listCountry[$item->infoUser->country])){
-                        $listCountry[$item->infoUser->country] = $allListCountry[$item->infoUser->country];
-                    }
+
 
                     $tempInfoUser['phone']= [];
                     if(!empty($item->infoUser->phoneNumber)){
@@ -107,6 +105,10 @@ class SaleReportController extends BaseController
                                 if(!empty($infoWarehouse->country)){
                                     $tempInfoUser['countryWarehouse'] = $infoWarehouse->country;
                                     $tempInfoUser['nameWarehouse'] = $infoWarehouse->title;
+
+                                    if(empty($listCountry[$infoWarehouse->country])){
+                                        $listCountry[$infoWarehouse->country] = $allListCountry[$infoWarehouse->country];
+                                    }
                                 }
                             }
 
