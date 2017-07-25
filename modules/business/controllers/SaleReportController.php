@@ -208,7 +208,8 @@ class SaleReportController extends BaseController
             
 
             $modelSending = SendingWaitingParcel::find()
-                ->where(['is_posting'=>0])
+                ->where(['is_posting'=>(int)0])
+                ->orWhere(['is_posting'=>(string)0])
                 ->all();
 
             if(!empty($modelSending)){
@@ -234,8 +235,7 @@ class SaleReportController extends BaseController
         } else {
             $request['listGoods'] = '';
         }
-
-
+        
         $infoSale = [];
 
         $dateTo = date("Y-m-d");
