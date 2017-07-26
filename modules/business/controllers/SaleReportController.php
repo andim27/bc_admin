@@ -353,7 +353,7 @@ class SaleReportController extends BaseController
 
                     if (!empty($item->part_parcel)) {
                         foreach ($item->part_parcel as $itemParcel) {
-                            if (empty($infoSending[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]])) {
+                            if (empty($infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]])) {
                                 $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]] = [
                                     'all'               => 0,
                                     'issued'            => 0,
@@ -382,7 +382,7 @@ class SaleReportController extends BaseController
 
                     if (!empty($listGoodsWithKey[(string)$item->parts_accessories_id])) {
 
-                        if (empty($infoSending[$item->infoWarehouse->country][$listGoodsWithKey[(string)$item->parts_accessories_id]])) {
+                        if (empty($infoSale[$item->infoWarehouse->country][$listGoodsWithKey[(string)$item->parts_accessories_id]])) {
                             $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[(string)$item->parts_accessories_id]] = [
                                 'all'               => 0,
                                 'issued'            => 0,
@@ -593,7 +593,7 @@ class SaleReportController extends BaseController
 
                     if (!empty($item->part_parcel) && ($request['listCountry'] == 'all' || $request['listCountry'] == $item->infoWarehouse->country)) {
                         foreach ($item->part_parcel as $itemParcel) {
-                            if (empty($infoSending[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[$itemParcel['goods_id']]])) {
+                            if (empty($infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[$itemParcel['goods_id']]])) {
                                 $infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[$itemParcel['goods_id']]] = [
                                     'all'               => 0,
                                     'issued'            => 0,
@@ -625,7 +625,7 @@ class SaleReportController extends BaseController
 
                     if (!empty($listGoodsWithKey[(string)$item->parts_accessories_id]) && ($request['listCountry'] == 'all' || $request['listCountry'] == $item->infoWarehouse->country)) {
 
-                        if (empty($infoSending[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[(string)$item->parts_accessories_id]])) {
+                        if (empty($infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[(string)$item->parts_accessories_id]])) {
                             $infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[(string)$item->parts_accessories_id]] = [
                                 'all'               => 0,
                                 'issued'            => 0,
