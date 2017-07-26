@@ -29,19 +29,20 @@ $listGoods = Products::getListGoods();
         'options' => ['name' => 'selectGoods'],
     ]); ?>
 
-    <div class="col-md-1">
-        <label class="control-label switch-center"></label>
-        <label class="switch">
-            <input value="1" class="btnflGoods" type="checkbox" name="flGoods" <?= ((!empty($request['flGoods']) && $request['flGoods']==1) ? 'checked="checked"' : '')?>/>
-            <span></span>
-        </label>
-    </div>
 
     <div class="col-md-2 m-b">
         <?=Html::dropDownList('listCountry',(!empty($request['listCountry']) ? $request['listCountry'] : 'all'),
             ArrayHelper::merge(['all' => 'Все страны'],$listCountryWarehouse),[
                 'class'=>'form-control'
             ])?>
+    </div>
+
+    <div class="col-md-1">
+        <label class="control-label switch-center"></label>
+        <label class="switch">
+            <input value="1" class="btnflGoods" type="checkbox" name="flGoods" <?= ((!empty($request['flGoods']) && $request['flGoods']==1) ? 'checked="checked"' : '')?>/>
+            <span></span>
+        </label>
     </div>
 
     <div class="col-md-2 m-b blChangeGoods">
@@ -63,6 +64,12 @@ $listGoods = Products::getListGoods();
         ])?>
     </div>
 
+    <div class="col-md-1 m-b">
+        <?=Html::label(THelper::t('number_send') .  ' из Харькова','send_kh')?>
+    </div>
+    <div class="col-md-1 m-b">
+        <?=Html::checkbox('send_kh',($request['send_kh']==0 ? false : true),['id'=>'send_kh'])?>
+    </div>
 
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
@@ -128,7 +135,7 @@ $listGoods = Products::getListGoods();
                                             <td><?=$item['in_stock']?></td>
                                             <td><?=$item['send']?></td>
                                             <?php } ?>
-                                            <td><?=($item['all'] - $item['issued'] - $item['send'] - $item['in_stock'])?></td>
+                                            <td><?=($item['issued'] + $item['send'] + $item['in_stock'] - $item['all'])?></td>
                                             <td><?=$item['repair']?></td>
                                         </tr>
                                     <?php } ?>

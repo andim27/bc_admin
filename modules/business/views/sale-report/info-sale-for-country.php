@@ -55,6 +55,12 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
         ])?>
     </div>
 
+    <div class="col-md-1 m-b">
+        <?=Html::label(THelper::t('number_send') .  ' из Харькова','send_kh')?>
+    </div>
+    <div class="col-md-1 m-b">
+        <?=Html::checkbox('send_kh',($request['send_kh']==0 ? false : true),['id'=>'send_kh'])?>
+    </div>
 
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
@@ -115,7 +121,7 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
                                             <td><?=$item['in_stock']?></td>
                                             <td><?=$item['send']?></td>
                                         <?php } ?>
-                                        <td><?=($item['all'] - $item['issued'] - $item['send'] - $item['in_stock'])?></td>
+                                        <td><?=($item['issued'] + $item['send'] + $item['in_stock'] - $item['all'])?></td>
                                         <td><?=$item['repair']?></td>
                                     </tr>
                                 <?php } ?>

@@ -202,7 +202,9 @@ class SaleReportController extends BaseController
 
         $request =  Yii::$app->request->post();
 
-        $infoSending = [];
+        if(empty($request['send_kh'])){
+            $request['send_kh'] = 0;
+        }
         
         if(empty($request['flGoods'])){
             if(empty($request['listGoods'])){
@@ -234,8 +236,8 @@ class SaleReportController extends BaseController
             ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
 
+
         if(!empty($model)){
-            $tempInfo = [];
 
             /** @var Sales $item */
             foreach ($model as $item) {
@@ -340,8 +342,13 @@ class SaleReportController extends BaseController
             // get info about sending parcel with goods
             $modelSending = SendingWaitingParcel::find()
                 ->where(['is_posting' => (int)0])
-                ->orWhere(['is_posting' => (string)0])
-                ->all();
+                ->orWhere(['is_posting' => (string)0]);
+            
+            if($request['send_kh']==1){
+                $modelSending = $modelSending->andWhere(['from_where_send'=>'592426f6dca7872e64095b45'])->all();
+            } else {
+                $modelSending = $modelSending->all();
+            }
 
             if (!empty($modelSending)) {
                 foreach ($modelSending as $item) {
@@ -353,18 +360,21 @@ class SaleReportController extends BaseController
 
                     if (!empty($item->part_parcel)) {
                         foreach ($item->part_parcel as $itemParcel) {
-                            if (empty($infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]])) {
-                                $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]] = [
-                                    'all'               => 0,
-                                    'issued'            => 0,
-                                    'in_stock'          => 0,
-                                    'wait'              => 0,
-                                    'repair'            => 0,
-                                    'send'              => 0,
-                                ];
-                            }
+                            if($listGoodsWithKey[$itemParcel['goods_id']] == $request['listGoods'] || $request['listGoods'] == 'all') {
+                                if (empty($infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]])) {
+                                    $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]] = [
+                                        'all'               => 0,
+                                        'issued'            => 0,
+                                        'in_stock'          => 0,
+                                        'wait'              => 0,
+                                        'repair'            => 0,
+                                        'send'              => 0,
+                                    ];
+                                }
 
-                            $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]]['send'] += $itemParcel['goods_count'];
+                                $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]]['send'] += $itemParcel['goods_count'];
+
+                            }
                         }
                     }
 
@@ -375,21 +385,21 @@ class SaleReportController extends BaseController
             $modelWarehouseGoods = PartsAccessoriesInWarehouse::find()->all();
             if (!empty($modelWarehouseGoods)) {
                 foreach ($modelWarehouseGoods as $item) {
+                    if(!empty($listGoodsWithKey[(string)$item->parts_accessories_id]) && ($listGoodsWithKey[(string)$item->parts_accessories_id] == $request['listGoods'] || $request['listGoods'] == 'all')) {
 
-                    if (empty($item->infoWarehouse->country)) {
-                        $item->infoWarehouse->country = 'none';
-                    }
+                        if (empty($item->infoWarehouse->country)) {
+                            $item->infoWarehouse->country = 'none';
+                        }
 
-                    if (!empty($listGoodsWithKey[(string)$item->parts_accessories_id])) {
 
                         if (empty($infoSale[$item->infoWarehouse->country][$listGoodsWithKey[(string)$item->parts_accessories_id]])) {
                             $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[(string)$item->parts_accessories_id]] = [
-                                'all'               => 0,
-                                'issued'            => 0,
-                                'in_stock'          => 0,
-                                'wait'              => 0,
-                                'repair'            => 0,
-                                'send'              => 0,
+                                'all' => 0,
+                                'issued' => 0,
+                                'in_stock' => 0,
+                                'wait' => 0,
+                                'repair' => 0,
+                                'send' => 0,
                             ];
                         }
 
@@ -417,10 +427,13 @@ class SaleReportController extends BaseController
         $request =  Yii::$app->request->post();
 
         $listCountryWarehouse = [];
-        $infoSending = [];
 
         if(empty($request['listCountry'])){
             $request['listCountry'] = 'all';
+        }
+
+        if(empty($request['send_kh'])){
+            $request['send_kh'] = 0;
         }
 
         if(empty($request['flGoods'])){
@@ -457,7 +470,6 @@ class SaleReportController extends BaseController
 
 
         if(!empty($model)){
-            $tempInfo = [];
 
             /** @var Sales $item */
             foreach ($model as $item) {
@@ -575,11 +587,22 @@ class SaleReportController extends BaseController
         
         if(!empty($request['listGoods'])) {
 
+            $selectWarehouseKh = [];
+            if($request['send_kh']==1){
+                $selectWarehouseKh = ['from_where_send'=>new ObjectID('592426f6dca7872e64095b45')];
+            }
+
             // get info about sending parcel with goods
             $modelSending = SendingWaitingParcel::find()
                 ->where(['is_posting' => (int)0])
-                ->orWhere(['is_posting' => (string)0])
-                ->all();
+                ->orWhere(['is_posting' => (string)0]);
+            
+            if($request['send_kh']==1){
+                $modelSending = $modelSending->andWhere(['from_where_send'=>'592426f6dca7872e64095b45'])->all();
+            } else {
+                $modelSending = $modelSending->all();
+            }
+
 
             if (!empty($modelSending)) {
                 foreach ($modelSending as $item) {
@@ -593,18 +616,20 @@ class SaleReportController extends BaseController
 
                     if (!empty($item->part_parcel) && ($request['listCountry'] == 'all' || $request['listCountry'] == $item->infoWarehouse->country)) {
                         foreach ($item->part_parcel as $itemParcel) {
-                            if (empty($infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[$itemParcel['goods_id']]])) {
-                                $infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[$itemParcel['goods_id']]] = [
-                                    'all'               => 0,
-                                    'issued'            => 0,
-                                    'in_stock'          => 0,
-                                    'wait'              => 0,
-                                    'repair'            => 0,
-                                    'send'              => 0,
-                                ];
-                            }
+                            if($listGoodsWithKey[$itemParcel['goods_id']] == $request['listGoods'] || $request['listGoods'] == 'all') {
+                                if (empty($infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[$itemParcel['goods_id']]])) {
+                                    $infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[$itemParcel['goods_id']]] = [
+                                        'all' => 0,
+                                        'issued' => 0,
+                                        'in_stock' => 0,
+                                        'wait' => 0,
+                                        'repair' => 0,
+                                        'send' => 0,
+                                    ];
+                                }
 
-                            $infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[$itemParcel['goods_id']]]['send'] += $itemParcel['goods_count'];
+                                $infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[$itemParcel['goods_id']]]['send'] += $itemParcel['goods_count'];
+                            }
                         }
                     }
 
@@ -615,31 +640,32 @@ class SaleReportController extends BaseController
             $modelWarehouseGoods = PartsAccessoriesInWarehouse::find()->all();
             if (!empty($modelWarehouseGoods)) {
                 foreach ($modelWarehouseGoods as $item) {
+                    if(!empty($listGoodsWithKey[(string)$item->parts_accessories_id]) && ($listGoodsWithKey[(string)$item->parts_accessories_id] == $request['listGoods'] || $request['listGoods'] == 'all')) {
 
-                    if (empty($item->infoWarehouse->country)) {
-                        $item->infoWarehouse->country = 'none';
-                    }
-                    if (empty($item->infoWarehouse->title)) {
-                        $item->infoWarehouse->title = 'none';
-                    }
-
-                    if (!empty($listGoodsWithKey[(string)$item->parts_accessories_id]) && ($request['listCountry'] == 'all' || $request['listCountry'] == $item->infoWarehouse->country)) {
-
-                        if (empty($infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[(string)$item->parts_accessories_id]])) {
-                            $infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[(string)$item->parts_accessories_id]] = [
-                                'all'               => 0,
-                                'issued'            => 0,
-                                'in_stock'          => 0,
-                                'wait'              => 0,
-                                'repair'            => 0,
-                                'send'              => 0,
-                            ];
+                        if (empty($item->infoWarehouse->country)) {
+                            $item->infoWarehouse->country = 'none';
+                        }
+                        if (empty($item->infoWarehouse->title)) {
+                            $item->infoWarehouse->title = 'none';
                         }
 
-                        $infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[(string)$item->parts_accessories_id]]['in_stock'] += $item->number;
+                        if (!empty($listGoodsWithKey[(string)$item->parts_accessories_id]) && ($request['listCountry'] == 'all' || $request['listCountry'] == $item->infoWarehouse->country)) {
 
+                            if (empty($infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[(string)$item->parts_accessories_id]])) {
+                                $infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[(string)$item->parts_accessories_id]] = [
+                                    'all' => 0,
+                                    'issued' => 0,
+                                    'in_stock' => 0,
+                                    'wait' => 0,
+                                    'repair' => 0,
+                                    'send' => 0,
+                                ];
+                            }
+
+                            $infoSale[$item->infoWarehouse->country][$item->infoWarehouse->title][$listGoodsWithKey[(string)$item->parts_accessories_id]]['in_stock'] += $item->number;
+
+                        }
                     }
-
                 }
             }
             
