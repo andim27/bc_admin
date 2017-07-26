@@ -340,6 +340,12 @@ Class Menu
                         'url' => ['sale-report/info-sale-for-country'],
                         'action' => 'info-sale-for-country',
                     ],
+                    [
+                        'key'   =>  'sidebar_sale_country_warehouse',
+                        'label' => THelper::t('sidebar_report_sale_for_country_warehouse'),
+                        'url' => ['sale-report/info-sale-for-country-warehouse'],
+                        'action' => 'info-sale-for-country-warehouse',
+                    ]
                 ]
             ],
 

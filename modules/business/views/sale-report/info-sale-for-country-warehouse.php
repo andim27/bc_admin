@@ -13,19 +13,20 @@ $listCountry = Settings::getListCountry();
 
 $listPack = Products::getListPack();
 $listGoods = Products::getListGoods();
-$listGoodsWithKey = Products::getListGoodsWithKey();
+
+
 
 ?>
 
 
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('report_sale_for_country') ?></h3>
+    <h3 class="m-b-none"><?= THelper::t('report_sale_for_country_warehouse') ?></h3>
 </div>
 <div class="row">
 
     <?php $formStatus = ActiveForm::begin([
-        'action' => '/' . $language . '/business/sale-report/info-sale-for-country',
-        'options' => ['name' => 'selectGoods',],
+        'action' => '/' . $language . '/business/sale-report/info-sale-for-country-warehouse',
+        'options' => ['name' => 'selectGoods'],
     ]); ?>
 
     <div class="col-md-1">
@@ -34,6 +35,13 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
             <input value="1" class="btnflGoods" type="checkbox" name="flGoods" <?= ((!empty($request['flGoods']) && $request['flGoods']==1) ? 'checked="checked"' : '')?>/>
             <span></span>
         </label>
+    </div>
+
+    <div class="col-md-2 m-b">
+        <?=Html::dropDownList('listCountry',(!empty($request['listCountry']) ? $request['listCountry'] : 'all'),
+            ArrayHelper::merge(['all' => 'Все страны'],$listCountryWarehouse),[
+                'class'=>'form-control'
+            ])?>
     </div>
 
     <div class="col-md-2 m-b blChangeGoods">
@@ -78,6 +86,9 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
                             <?=THelper::t('country')?>
                         </th>
                         <th>
+                            <?=THelper::t('warehouse')?>
+                        </th>
+                        <th>
                             <?=((!empty($request['flGoods']) && $request['flGoods']==1) ? THelper::t('business_product') : THelper::t('goods'))?>
                         </th>
                         <th>
@@ -85,7 +96,7 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
                         </th>
                         <th>
                             <?=THelper::t('number_issue')?>
-                        </th>
+                        </th>                        
                         <?php if(!empty($request['listGoods'])) { ?>
                         <th>
                             <?=THelper::t('number_in_stock')?>
@@ -104,20 +115,23 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
                     </thead>
                     <tbody>
                         <?php if(!empty($infoSale)) { ?>
-                            <?php foreach($infoSale as $k=>$itemGoods) { ?>
-                                <?php foreach($itemGoods as $kGoods=>$item) { ?>
-                                    <tr>
-                                        <td><?=(!empty($listCountry[$k]) ? $listCountry[$k] : 'none') ?></td>
-                                        <td><?=$kGoods?></td>
-                                        <td><?=$item['all']?></td>
-                                        <td><?=$item['issued']?></td>
-                                        <?php if(!empty($request['listGoods'])) { ?>
+                            <?php foreach($infoSale as $k=>$itemWarehouse) { ?>
+                                <?php foreach($itemWarehouse as $kWarehouse=>$itemGoods) { ?>
+                                    <?php foreach($itemGoods as $kGoods=>$item) { ?>
+                                        <tr>
+                                            <td><?=(!empty($listCountry[$k]) ? $listCountry[$k] : 'none') ?></td>
+                                            <td><?=$kWarehouse?></td>
+                                            <td><?=$kGoods?></td>
+                                            <td><?=$item['all']?></td>
+                                            <td><?=$item['issued']?></td>
+                                            <?php if(!empty($request['listGoods'])) { ?>
                                             <td><?=$item['in_stock']?></td>
                                             <td><?=$item['send']?></td>
-                                        <?php } ?>
-                                        <td><?=($item['all'] - $item['issued'] - $item['send'] - $item['in_stock'])?></td>
-                                        <td><?=$item['repair']?></td>
-                                    </tr>
+                                            <?php } ?>
+                                            <td><?=($item['all'] - $item['issued'] - $item['send'] - $item['in_stock'])?></td>
+                                            <td><?=$item['repair']?></td>
+                                        </tr>
+                                    <?php } ?>
                                 <?php } ?>
                             <?php } ?>
                         <?php } ?>

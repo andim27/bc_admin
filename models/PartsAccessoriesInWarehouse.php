@@ -33,6 +33,12 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
         ];
     }
 
+
+    public function getInfoWarehouse()
+    {
+        return $this->hasOne(Warehouse::className(),['_id'=>'warehouse_id']);
+    }
+
     /**
      * get list goods from my warehouse
      * @return array
