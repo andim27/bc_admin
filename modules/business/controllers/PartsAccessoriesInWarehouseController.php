@@ -244,4 +244,69 @@ class PartsAccessoriesInWarehouseController extends BaseController {
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
+
+    public function actionConfirmationCancellation()
+    {
+        $request =  Yii::$app->request->get();
+        
+        if (!empty($request['id'])){
+            return $this->renderAjax('_confirmation-cancellation', [
+                'cancellationID'    => $request['id'],
+                'language'          => Yii::$app->language,
+            ]);
+        }
+
+        return false;
+    }
+
+    public function actionSaveConfirmationCancellation()
+    {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert' => 'danger',
+                'message' => 'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
+        $request =  Yii::$app->request->post();
+
+        if(!empty($request['_id'])){
+            $model = LogWarehouse::findOne(['_id'=>new ObjectID($request['_id'])]);
+
+            if(empty($model->confirmation_action)){
+                if(!empty($request['flConfirm']) && $request['flConfirm']==1){
+                    $model->confirmation_action = (int)1;
+
+                    if($model->save()){
+                        Yii::$app->session->setFlash('alert' ,[
+                                'typeAlert'=>'success',
+                                'message'=>'Сохранения применились.'
+                            ]
+                        );
+                    }
+                } else{
+                    $model->confirmation_action = (int)-1;
+                    $model->comment = 'Отмена списания по причине: «'.$request['comment'].'»' . "<br>" . $model->comment;
+
+                    $infoWarahouse = PartsAccessoriesInWarehouse::findOne([
+                        'parts_accessories_id'=>$model->parts_accessories_id,
+                        'warehouse_id'=>$model->admin_warehouse_id
+                    ]);
+
+                    $infoWarahouse->number += $model->number;
+
+                    if($infoWarahouse->save()){
+                        if($model->save()){
+                            Yii::$app->session->setFlash('alert' ,[
+                                    'typeAlert'=>'success',
+                                    'message'=>'Сохранения применились.'
+                                ]
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->redirect('/' . Yii::$app->language .'/business/parts-accessories-in-warehouse/all-cancellation-warehouse');
+    }
 }

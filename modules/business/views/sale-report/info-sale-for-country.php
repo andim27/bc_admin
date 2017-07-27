@@ -121,7 +121,12 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
                                             <td><?=$item['in_stock']?></td>
                                             <td><?=$item['send']?></td>
                                         <?php } ?>
-                                        <td><?=($item['issued'] + $item['send'] + $item['in_stock'] - $item['all'])?></td>
+                                        <td>
+                                            <?php
+                                                $margin = $item['issued'] + $item['send'] + $item['in_stock'] - $item['all'];
+                                            ?>
+                                            <span class="<?=($margin>=0 ? 'text-success' : 'text-danger')?>"><?=($margin)?></span>
+                                        </td>
                                         <td><?=$item['repair']?></td>
                                     </tr>
                                 <?php } ?>

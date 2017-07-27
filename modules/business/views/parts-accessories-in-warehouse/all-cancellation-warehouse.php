@@ -51,6 +51,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 <table class="table table-translations table-striped datagrid m-b-sm">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>Дата списания</th>
                         <th>Товар</th>
                         <th>Количество</th>
@@ -63,6 +64,15 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 
                     <?php foreach ($model as $k=>$item) { ?>
                         <tr date-transaction-id="<?=(string)$item->_id?>">
+                            <td>
+                                <?php if(empty($item->confirmation_action)){ ?>
+                                    <?=  Html::a('<i class="fa fa-flash text-warning"></i>', ['/business/parts-accessories-in-warehouse/confirmation-cancellation','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal','class'=>'btn btn-default btn-block']); ?>
+                                <?php } else if($item->confirmation_action == -1){ ?>
+                                    <i class="fa fa-times text-danger"></i>
+                                <?php } else if($item->confirmation_action == 1){ ?>
+                                    <i class="fa fa-check text-success"></i>
+                                <?php } ?>
+                            </td>
                             <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
                             <td><?=$listGoods[(string)$item->parts_accessories_id]?></td>
                             <td><?=$item->number?></td>

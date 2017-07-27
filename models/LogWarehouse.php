@@ -28,7 +28,11 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
     {
         return [
             '_id',
+
+            'confirmation_action',
+
             'action',
+
             'who_performed_action',
 
             'parts_accessories_id',            
