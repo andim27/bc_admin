@@ -283,7 +283,7 @@ class SubmitExecutionPostingController extends BaseController {
             if(empty($model)){
                 $model = new PartsAccessoriesInWarehouse();
                 $model->parts_accessories_id = $modelExecutionPosting->parts_accessories_id;
-                $model->parts_accewarehouse_idssories_id = new ObjectID($myWarehouse);
+                $model->warehouse_id = new ObjectID($myWarehouse);
                 $model->number = 0;
             }
 
