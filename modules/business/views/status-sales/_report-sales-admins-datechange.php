@@ -24,6 +24,15 @@ $to = strtotime($request['to']);
             <?=THelper::t('city')?>
         </th>
         <th>
+            <?=THelper::t('goods')?>
+        </th>
+        <th>
+            <?=THelper::t('price')?>
+        </th>
+        <th>
+            <?=THelper::t('type_payment')?>
+        </th>
+        <th>
             <?=THelper::t('status_sale')?>
         </th>
         <th></th>
@@ -64,6 +73,9 @@ $to = strtotime($request['to']);
             <td><?=$item->infoUser->secondName?> <?=$item->infoUser->firstName?></td>
             <td><?=$item->username?></td>
             <td><?=$item->infoUser->city.'('.$item->infoUser->country.')'?></td>
+            <td><?=$item->productName?></td>
+            <td><?=$item->price?></td>
+            <td><?=(!empty($item->statusSale->buy_for_money) ? THelper::t('paid_in_cash') : THelper::t('paid_in_company'))?></td>
             <td>
                 <table>
                     <?=$infoSet?>

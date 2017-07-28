@@ -276,9 +276,16 @@ class SubmitExecutionPostingController extends BaseController {
             $modelExecutionPosting =  ExecutionPosting::findOne(['_id'=>new ObjectID($request['_id'])]);
 
             $model = PartsAccessoriesInWarehouse::findOne([
-                'parts_accessories_id'  =>  $modelExecutionPosting['parts_accessories_id'],
+                'parts_accessories_id'  =>  $modelExecutionPosting->parts_accessories_id,
                 'warehouse_id'          =>  new ObjectID($myWarehouse)
             ]);
+
+            if(empty($model)){
+                $model = new PartsAccessoriesInWarehouse();
+                $model->parts_accessories_id = $modelExecutionPosting->parts_accessories_id;
+                $model->parts_accewarehouse_idssories_id = new ObjectID($myWarehouse);
+                $model->number = 0;
+            }
 
             $model->number += $request['received'];
 

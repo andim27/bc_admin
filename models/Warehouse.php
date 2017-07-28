@@ -2,6 +2,7 @@
 
 namespace app\models;
 use MongoDB\BSON\ObjectID;
+use yii\helpers\ArrayHelper;
 
 /**
  * Class Warehouse
@@ -116,6 +117,28 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         $infoWarehous = self::findOne(['idUsers'=>$idUser]);
 
         return $infoWarehous;
+    }
+    
+    public static function getAdminIdForWarehouse($idWarehouse = '')
+    {
+        $list = [];
+        if(!empty($idWarehouse)){
+            $model = self::find()->where(['_id'=>new ObjectID($idWarehouse)])->one();
+            if(!empty($model->idUsers)){
+                $list = $model->idUsers;
+            }            
+        } else {
+            $model = self::find()->all();
+            if(!empty($model)){
+                foreach ($model as $item) {
+                    if(!empty($item->idUsers)){
+                        $list = ArrayHelper::merge($list,$item->idUsers);
+                    }
+                }
+            }
+        }
+        
+        return $list;
     }
 
 }

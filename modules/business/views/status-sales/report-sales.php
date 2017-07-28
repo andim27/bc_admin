@@ -51,13 +51,21 @@
             ])?>
     </div>
 
+    <div class="col-md-2 m-b">
+        <?=Html::dropDownList('infoTypePayment', $request['infoTypePayment'],
+            ['all'=>THelper::t('all_type_payment'),'paid_in_company'=>THelper::t('paid_in_company'),'paid_in_cash'=>THelper::t('paid_in_cash')],[
+                'class'=>'form-control infoTypePayment',
+                'id'=>'infoTypePayment',
+            ])?>
+    </div>
+
     <div class="col-md-1 m-b">
-        <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(THelper::t('search'), ['class' => 'btn-block btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
 
-    <div class="col-md-2 m-b text-right">
+    <div class="col-md-offset-10 col-md-2 m-b text-right">
         <?= Html::a('Export <i class="fa fa-file-text"></i>', 'javascript:void(0);', ['class' => 'btn btn-success exportReport']) ?>
     </div>
 </div>
@@ -92,8 +100,9 @@
         $dateTo = $('.dateTo').val();
         $infoUser = $('.infoUser').prop('selected',true).val();
         $infoTypeDate = $('.infoTypeDate').prop('selected',true).val();
+        $infoTypePayment = $('.infoTypePayment').prop('selected',true).val();
 
-        document.location = "/business/status-sales/export-report?from="+$dateFrom+"&to="+$dateTo+"&infoUser="+$infoUser+"&infoTypeDate="+$infoTypeDate;
+        document.location = "/business/status-sales/export-report?from="+$dateFrom+"&to="+$dateTo+"&infoUser="+$infoUser+"&infoTypeDate="+$infoTypeDate+"&infoTypePayment="+$infoTypePayment;
 
     });
 

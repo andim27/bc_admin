@@ -319,6 +319,13 @@ Class Menu
                         'url' => ['status-sales/product-set'],
                         'action' => 'product-set',
                     ],
+
+                    [
+                        'key'   =>  'sidebar_report_for_cash',
+                        'label' => THelper::t('sidebar_report_for_cash'),
+                        'url' => ['status-sales/report-for-cash'],
+                        'action' => 'product-set',
+                    ],
                 ]
             ],
 

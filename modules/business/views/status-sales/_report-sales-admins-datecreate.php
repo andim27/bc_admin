@@ -25,6 +25,9 @@ use yii\helpers\Html;
             <?=THelper::t('price')?>
         </th>
         <th>
+            <?=THelper::t('type_payment')?>
+        </th>
+        <th>
             <?=THelper::t('status_sale')?>
         </th>
         <th></th>
@@ -68,6 +71,7 @@ use yii\helpers\Html;
             <td><?=$item->infoUser->city.'('.$item->infoUser->country.')'?></td>
             <td><?=$item->productName?></td>
             <td><?=$item->price?></td>
+            <td><?=(!empty($item->statusSale->buy_for_money) ? THelper::t('paid_in_cash') : THelper::t('paid_in_company'))?></td>
             <td>
                 <table>
                     <?=$infoSet?>
@@ -91,6 +95,7 @@ use yii\helpers\Html;
         <th>
             <?=$totalSum?>
         </th>
+        <th></th>
         <th></th>
         <th></th>
         <th></th>

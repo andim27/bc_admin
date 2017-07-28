@@ -109,8 +109,8 @@
                             <div  class="label label-danger">Отменен заказ</div>
                         <?php } else { ?>
                             <table>
-                                <?php foreach ($infoSet as $itemSet) {?>
-                                    <tr data-set="<?= $itemSet->title ?>">
+                                <?php foreach ($infoSet as $k=>$itemSet) {?>
+                                    <tr data-set="<?= $itemSet->title ?>" data-key="<?=$k;?>">
                                         <td>
                                             <?= $itemSet->title ?>
                                         </td>
@@ -121,7 +121,7 @@
                                         </td>
                                         <td>
                                             <div class="actionOrder">
-                                                <?= Html::a(THelper::t('change_status'), ['/business/status-sales/change-status','idSale'=>$item->_id->__toString(),'title'=>$itemSet->title], [ 'class' => 'btn btn-success', 'data-toggle'=>'ajaxModal']) ?>
+                                                <?= Html::a(THelper::t('change_status'), ['/business/status-sales/change-status','idSale'=>$item->_id->__toString(),'title'=>$itemSet->title,'key'=>$k], [ 'class' => 'btn btn-success', 'data-toggle'=>'ajaxModal']) ?>
                                             </div>
                                         </td>
                                     </tr>
@@ -154,7 +154,7 @@
 
     $("#searchOrders").on("submit", function(event) {
 
-        countUseField = 0
+        countUseField = 0;
         $(this).find('input[type="text"]').each(function (indx) {
             if($(this).val() != ''){
                 countUseField++;

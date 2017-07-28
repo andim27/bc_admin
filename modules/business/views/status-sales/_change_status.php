@@ -46,6 +46,7 @@ $unicBtn = rand();
             <?=Html::input('hidden','idSale',$formModel->idSale)?>
             <?=Html::input('hidden','oldStatus',$statusNow)?>
             <?=Html::input('hidden','set',$set)?>
+            <?=Html::input('hidden','key',$key)?>
 
 
 

@@ -114,12 +114,15 @@ class StatusSalesController extends BaseController {
                 ->where(['idSale'=> new ObjectID($request['idSale'])])
                 ->one();
 
-            $setStatus = ArrayHelper::map($formModel->set,'title','status');
+            $infoPart = $formModel->setSales[$request['key']];
+
+            $setStatus[$infoPart['title']] = $infoPart['status'];
 
             return $this->renderAjax('_change_status', [
                 'language' => Yii::$app->language,
                 'formModel' => $formModel,
                 'set' => $request['title'],
+                'key' => $request['key'],
                 'statusNow' => $setStatus[$request['title']]
             ]);
 
@@ -234,7 +237,8 @@ class StatusSalesController extends BaseController {
                     'idSale' => new ObjectID($request['idSale'])
                 ])->one();
 
-            $setStatus = ArrayHelper::map($model->set,'title','status');
+            $infoPart = $model->setSales[$request['key']];
+            $setStatus[$infoPart['title']] = $infoPart['status'];
 
             if($model !== null){
 
@@ -244,8 +248,8 @@ class StatusSalesController extends BaseController {
                     return $this->renderPartial('_save_status_error');
                 }
 
-                foreach ($model->set as $itemSet) {
-                    if($itemSet->title == $request['set']){
+                foreach ($model->set as $k=>$itemSet) {
+                    if($itemSet->title == $request['set'] && $k==$request['key']){
                         $itemSet->status = $request['status'];
                         $itemSet->dateChange = new UTCDateTime(strtotime(date("Y-m-d H:i:s")) * 1000);
                         $itemSet->idUserChange =  new ObjectID($this->user->id);
@@ -296,11 +300,10 @@ class StatusSalesController extends BaseController {
                         'idSale' => $request['idSale'],
                         'idUser' => $this->user->id,
                         'set' => $request['set'],
+                        'key' => $request['key'],
                         'status' => $request['status']
                     ]);
                 }
-                
-               
             }
 
         }
@@ -424,6 +427,7 @@ class StatusSalesController extends BaseController {
             $request['from'] = date("Y-01-01");
             $request['infoTypeDate'] = 'create';
             $request['infoStatus'] = 'all';
+            $request['infoTypePayment'] = 'all';
         }
 
         if( $request['infoWarehouse'] == 'for_me'){
@@ -475,6 +479,19 @@ class StatusSalesController extends BaseController {
             }
         }
 
+        if(!empty($model)){
+            foreach ($model as $k=>$item){
+                /** check type money */
+                if($request['infoTypePayment'] != 'all'){
+                    if($request['infoTypePayment'] == 'paid_in_company' && !empty($item->statusSale->buy_for_money) && $item->statusSale->buy_for_money == 1){
+                        unset($model[$k]);
+                    } else if($request['infoTypePayment'] == 'paid_in_cash' && empty($item->statusSale->buy_for_money)){
+                        unset($model[$k]);
+                    }
+                }
+            }
+        }
+
 
         return $this->render('report-sales',[
             'language'          => Yii::$app->language,
@@ -496,6 +513,7 @@ class StatusSalesController extends BaseController {
             $request['from'] = date("Y-01-01");
             $request['infoTypeDate'] = 'create';
             $request['infoStatus'] = 'all';
+            $request['infoTypePayment'] = 'all';
         } else {
             $listAdmin = [$request['infoWarehouse']];
         }
@@ -548,7 +566,7 @@ class StatusSalesController extends BaseController {
         $listCity = [];
         $listCity[''] = 'Выберите город';
         if(!empty($model)){
-            foreach ($model as $item){
+            foreach ($model as $k=>$item){
                 if($item->statusSale->checkSalesForUserChange($listAdmin)){
 
                     if (empty($item->infoUser->city)){
@@ -558,6 +576,15 @@ class StatusSalesController extends BaseController {
                     }
                     
 
+                }
+
+                /** check type money */
+                if($request['infoTypePayment'] != 'all'){
+                    if($request['infoTypePayment'] == 'paid_in_company' && !empty($item->statusSale->buy_for_money) && $item->statusSale->buy_for_money == 1){
+                        unset($model[$k]);
+                    } else if($request['infoTypePayment'] == 'paid_in_cash' && empty($item->statusSale->buy_for_money)){
+                        unset($model[$k]);
+                    }
                 }
             }
 
@@ -619,7 +646,7 @@ class StatusSalesController extends BaseController {
      * @param $from
      * @param $to
      */
-    public function actionExportReport($from,$to,$infoUser,$infoTypeDate)
+    public function actionExportReport($from,$to,$infoUser,$infoTypeDate,$infoTypePayment)
     {
         $language = Yii::$app->language;
 
@@ -667,6 +694,18 @@ class StatusSalesController extends BaseController {
 
         $infoExport = [];
         if(!empty($model)){
+            /** check type money */
+            foreach ($model as $k=>$item){
+                if($infoTypePayment != 'all'){
+                    if($infoTypePayment == 'paid_in_company' && !empty($item->statusSale->buy_for_money) && $item->statusSale->buy_for_money == 1){
+                        unset($model[$k]);
+                    } else if($infoTypePayment == 'paid_in_cash' && empty($item->statusSale->buy_for_money)){
+                        unset($model[$k]);
+                    }
+                }
+            }
+
+
             $fromT = strtotime($from);
             $toT = strtotime($to);
             foreach ($model as $item) {
@@ -695,7 +734,8 @@ class StatusSalesController extends BaseController {
                         'fullName'      =>  $item->infoUser->secondName . ' ' . $item->infoUser->firstName,
                         'login'         =>  $item->username,
                         'goods'         =>  $item->productName,
-                        'status_sale'   =>  implode(";;",$status_sale)
+                        'status_sale'   =>  implode(";;",$status_sale),
+                        'type_payment'  =>  (!empty($item->statusSale->buy_for_money) ? THelper::t('paid_in_cash') : THelper::t('paid_in_company'))
                     ];
                 }
             }
@@ -709,7 +749,8 @@ class StatusSalesController extends BaseController {
                 'fullName',
                 'login',
                 'goods',
-                'status_sale'
+                'status_sale',
+                'type_payment'
             ],
             'headers' => [
                 'dateCreate' =>  THelper::t('date'),
@@ -717,6 +758,7 @@ class StatusSalesController extends BaseController {
                 'login' => THelper::t('login'),
                 'goods' => THelper::t('goods'),
                 'status_sale' => THelper::t('status_sale'),
+                'type_payment' => THelper::t('type_payment'),
             ],
         ]);
 
@@ -1274,6 +1316,130 @@ class StatusSalesController extends BaseController {
         ]);
     }
 
+    public function actionReportForCash()
+    {
+        $request =  Yii::$app->request->post();
+
+        if(empty($request)){
+            $request['infoWarehouse'] = 'all';
+            $request['to'] = date("Y-m-d");
+            $request['from'] = date("Y-01-01");
+            $request['infoTypeDate'] = 'create';
+            $request['infoTypePayment'] = 'all';
+        }
+
+        if( $request['infoWarehouse'] == 'all'){
+            $listAdmin = Warehouse::getAdminIdForWarehouse();
+        } else {
+            $listAdmin = Warehouse::getAdminIdForWarehouse($request['infoWarehouse']);
+        }
+
+        $model = [];
+        if($request['infoTypeDate'] == 'create'){
+            $model = Sales::find()
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                    ]
+                ])
+                ->andWhere(['in','product',Products::productIDWithSet()])
+                ->andWhere([
+                    'type' => ['$ne' => -1]
+                ])
+                ->all();
+
+        } else {
+
+            $modelLastChangeStatus = StatusSales::find()
+                ->where([
+                    'setSales.dateChange' => [
+                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                        '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                    ]
+                ])
+                ->all();
+            $listOrdderId = [];
+            if(!empty($modelLastChangeStatus)){
+                foreach ($modelLastChangeStatus as $item){
+                    $listOrdderId[] = $item->idSale;
+                }
+
+
+                $model = Sales::find()
+                    ->andWhere(['in','_id',$listOrdderId])
+                    ->andWhere(['in','product',Products::productIDWithSet()])
+                    ->andWhere([
+                        'type' => ['$ne' => -1]
+                    ])
+                    ->all();
+            }
+        }
+
+
+        $infoGoods = $infoWarehouse = [];
+        if(!empty($model)){
+
+            $from = strtotime($request['from']);
+            $to = strtotime($request['to']);
+
+            foreach ($model as $k=>$item){
+                /** check type money */
+                if(!empty($item->statusSale->buy_for_money) && $item->statusSale->buy_for_money==1){
+
+                    foreach ($item->statusSale->set as $itemSet) {
+
+
+
+                        $dateChange = strtotime($itemSet->dateChange->toDateTime()->format('Y-m-d'));
+                        if($dateChange>=$from && $dateChange<=$to && $itemSet->status=='status_sale_issued' && in_array($itemSet->idUserChange,$listAdmin)) {
+
+                            $modelWarehouse = Warehouse::getInfoWarehouse((string)$itemSet->idUserChange);
+                            if(!empty($modelWarehouse->title)){
+                                $nameWarehouse = $modelWarehouse->title;
+                            } else {
+                                $nameWarehouse = '???';
+                            }
+
+
+                            if(empty($infoGoods[$itemSet->title])){
+                                $infoGoods[$itemSet->title] = [
+                                    'count'     => 0,
+                                    'amount'    => 0
+                                ];
+                            }
+
+                            if(empty($infoWarehouse[$nameWarehouse])){
+                                $infoWarehouse[$nameWarehouse] = [
+                                    'count'     => 0,
+                                    'amount'    => 0
+                                ];
+                            }
+
+                            $infoGoods[$itemSet->title]['count']++;
+                            $infoWarehouse[$nameWarehouse]['count']++;
+
+                        }
+                    }
+                }
+            }
+        }
+
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo "<xmp>";
+//        print_r($infoWarehouse);
+//        print_r($infoGoods);
+//        echo "</xmp>";
+//        die();
+
+        return $this->render('report-for-cash',[
+            'language'          => Yii::$app->language,
+            'request'           => $request,
+            'infoGoods'         => $infoGoods,
+            'infoWarehouse'     => $infoWarehouse,
+        ]);
+    }
+    
 
 
     public function actionFix()

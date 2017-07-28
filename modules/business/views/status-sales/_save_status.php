@@ -13,12 +13,13 @@ use app\models\Users;
 <script>
     var idChangeRow = '<?=$idSale?>';
     var set = '<?=$set?>';
+    var key = '<?=$key?>';
     var userChangeStatus = '<?=Users::getUserEmail($idUser)?>';
     var newStatus = '<?= $status ?>';
     var newStatusTranslate = '<?= THelper::t($status) ?>';
 
     changeRow = $(document).find('#row_' + idChangeRow);
-    changeRow.find("[data-set='" + set + "'] .statusOrder").text(newStatusTranslate);
+    changeRow.find("[data-set='" + set + "'][data-key='" + key + "'] .statusOrder").text(newStatusTranslate);
 
 //    if(newStatus == 'status_sale_issued'){
 //        changeRow.find("[data-set='" + set + "'] .actionOrder").html(' Выдан кассиром: ' + userChangeStatus);
