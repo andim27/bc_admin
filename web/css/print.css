@@ -1,6 +1,11 @@
+
+body{
+    overflow:visible;
+}
 table {
     width: 100%;
     border-collapse: collapse;
+
 }
 
 table, th, td {
@@ -10,6 +15,7 @@ table, th, td {
 th, td {
     padding: 15px;
     text-align: left;
+
 }
 th {
     font-weight: bold;

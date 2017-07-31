@@ -2,6 +2,7 @@ html {
   background-color: #f7f7f7;
   overflow-x: hidden;
 }
+
 body {
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
@@ -11,6 +12,7 @@ body {
   background-size: cover;
   overflow: auto;
 }
+
 .h1,
 .h2,
 .h3,
@@ -98,6 +100,7 @@ a:hover .caret-white {
   background-color: rgba(0,0,0,0.9);
   background-color: #2e3e4e;
 }
+
 .tooltip.top .tooltip-arrow {
   border-top-color: rgba(0,0,0,0.9);
   border-top-color: #2e3e4e;
@@ -496,6 +499,7 @@ a:hover .caret-white {
 .no-gutter [class*="col"] {
   padding: 0;
 }
+
 .modal-backdrop {
   background-color: #2e3e4e;
 }
@@ -827,7 +831,6 @@ a:hover .caret-white {
   text-decoration: none;
 }
 .navbar-brand img {
-  /*max-height: 20px;*/
   margin-top: -4px;
   vertical-align: middle;
 }
@@ -1291,6 +1294,7 @@ a:hover .caret-white {
   border-right-color: #fff;
   bottom: -7px;
 }
+
 .btn-link {
   color: #717171;
 }
@@ -1718,6 +1722,7 @@ fieldset[disabled] .btn-gplus.active {
 .btn-group-vertical > .btn:last-child:not(:first-child) {
   border-bottom-left-radius: 2px;
 }
+
 .chat-item:before,
 .chat-item:after {
   content: " ";
