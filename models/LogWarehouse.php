@@ -83,7 +83,7 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             $model->who_performed_action = new ObjectID(\Yii::$app->view->params['user']->id);
 
             $model->parts_accessories_id = (!empty($info['parts_accessories_id']) ? new ObjectID($info['parts_accessories_id']) : '');
-            $model->number = (!empty($info['number']) ? (int)$info['number'] : '');
+            $model->number = (!empty($info['number']) ? (float)$info['number'] : '');
 
             $model->suppliers_performers_id = (!empty($info['suppliers_performers_id']) ? new ObjectID($info['suppliers_performers_id']) : '');
 

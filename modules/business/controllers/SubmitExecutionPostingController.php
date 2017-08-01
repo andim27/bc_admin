@@ -81,8 +81,8 @@ class SubmitExecutionPostingController extends BaseController {
                 foreach ($request['complect'] as $k => $item) {
                     $list_component[] = [
                         'parts_accessories_id' => new ObjectID($item),
-                        'number' => (int)$request['number'][$k],
-                        'reserve' => (int)$request['reserve'][$k],
+                        'number' => (float)$request['number'][$k],
+                        'reserve' => (float)$request['reserve'][$k],
                     ];
                 }
             }
@@ -102,14 +102,14 @@ class SubmitExecutionPostingController extends BaseController {
                             'warehouse_id'          =>  new ObjectID($myWarehouse)
                         ]);
 
-                        $modelItem->number = $modelItem->number - ($item['number']*$request['want_number']) - $item['reserve'];
+                        $modelItem->number = (float)($modelItem->number - ($item['number']*$request['want_number']) - $item['reserve']);
 
                         if($modelItem->save()){
                             // add log
                             LogWarehouse::setInfoLog([
                                 'action'                    =>  'send_for_execution_posting',
                                 'parts_accessories_id'      =>  (string)$item['parts_accessories_id'],
-                                'number'                    =>  (int)(($item['number']*$request['want_number']) + $item['reserve']),
+                                'number'                    =>  (float)(($item['number']*$request['want_number']) + $item['reserve']),
                                 'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
 
                             ]);

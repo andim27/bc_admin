@@ -68,12 +68,13 @@ class PartsAccessoriesInWarehouseController extends BaseController {
                     foreach ($item->setSales as $itemSet){
                         $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
 
-                        if(!empty($itemSet['idUserChange']) && in_array((string)$itemSet['idUserChange'],$listAdmin) && $dateChange>=$from && $dateChange<=$to){
+                        if(!empty($itemSet['idUserChange']) && in_array((string)$itemSet['idUserChange'],$listAdmin) && $dateChange>=$from && $dateChange<=$to && $itemSet['status']=='status_sale_issued'){
                             if(empty($implementation[$itemSet['title']])){
                                 $implementation[$itemSet['title']] = 0;
                             }
 
                             $implementation[$itemSet['title']]++;
+
                         }
                     }
                 }
@@ -81,6 +82,7 @@ class PartsAccessoriesInWarehouseController extends BaseController {
 
             }
         }
+
         $model = '';
         if(!empty($request['listWarehouse'])){
             $model = PartsAccessoriesInWarehouse::find()

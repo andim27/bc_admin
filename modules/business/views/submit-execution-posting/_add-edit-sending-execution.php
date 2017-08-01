@@ -105,12 +105,13 @@ if(!empty($model)){
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-body">
-                                <div class="form-group">
+                                <div class="form-group row">
                                     <div class="col-md-3"></div>
                                     <div class="col-md-2">В наличие</div>
-                                    <div class="col-md-2">На одну шт.</div>
-                                    <div class="col-md-3">Надо отправить</div>
-                                    <div class="col-md-2">С запасом</div>
+                                    <div class="col-md-2">У исполнителя</div>
+                                    <div class="col-md-1">На одну шт.</div>
+                                    <div class="col-md-2">Надо отправить</div>
+                                    <div class="col-md-1">С запасом</div>
                                 </div>
                                 <?php if(!empty($model->list_component)){ ?>
                                     <?php foreach($model->list_component as $item){ ?>
@@ -127,7 +128,12 @@ if(!empty($model)){
 
                                                 <?php } else {?>
                                                     <?=Html::hiddenInput('complect[]',(string)$item['parts_accessories_id'],[]);?>
-                                                    <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
+                                                    <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],[
+                                                        'class'             =>'form-control partTitle',
+                                                        'disabled'          =>true,
+                                                        'data-placement'    => 'left',
+                                                        'title'             => $listGoods[(string)$item['parts_accessories_id']]
+                                                        ]);?>
 
                                                 <?php } ?>
                                             </div>
@@ -137,11 +143,21 @@ if(!empty($model)){
                                                     (!empty($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']]) ? ($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']] + ($item['number']*$want_number)) : 0 ),
                                                     ['class'=>'form-control inWarehouse','disabled'=>'disabled']);?>
                                             </div>
+
                                             <div class="col-md-2">
+                                                <?=Html::hiddenInput('contractor[]',
+                                                    (!empty($contractorInfo[(string)$item['parts_accessories_id']]) ? $contractorInfo[(string)$item['parts_accessories_id']] : '0'),
+                                                    []); ?>
+                                                <?=Html::input('text','',
+                                                    (!empty($contractorInfo[(string)$item['parts_accessories_id']]) ? $contractorInfo[(string)$item['parts_accessories_id']] : '0'),
+                                                    ['class'=>'form-control partContractor','disabled'=>'disabled']); ?>
+                                            </div>
+
+                                            <div class="col-md-1">
                                                 <?=Html::hiddenInput('number[]',$item['number'],[]);?>
                                                 <?=Html::input('text','',$item['number'],['class'=>'form-control partNeedForOne','disabled'=>'disabled']);?>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']]) ? ($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']] + ($item['number']*$want_number)) : 0 ),['class'=>'numberWarehouse']);?>
                                                 <?=Html::input('text','',($item['number']*$want_number),['class'=>'form-control needSend','disabled'=>'disabled']);?>
                                             </div>
@@ -308,12 +324,12 @@ if(!empty($model)){
 
         blForm = $(this).closest('form');
 
-        wantC = parseInt($(this).val());
-        canC = parseInt(blForm.find('.CanCollect').val());
+        wantC = parseFloat($(this).val());
+        canC = parseFloat(blForm.find('.CanCollect').val());
 
         blForm.find('.blPartsAccessories .row').each(function () {
            needNumber = $(this).find('input[name="number[]"]').val();
-           $(this).find('.needSend').val(needNumber*wantC);
+           $(this).find('.needSend').val((needNumber*wantC).toFixed(2));
         });
 
         if(wantC>canC){
