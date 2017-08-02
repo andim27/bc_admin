@@ -46,7 +46,14 @@ $listPartsAccessories = PartsAccessories::getListPartsAccessories();
                             <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-interchangeable-goods','id'=>$item['id'],'idInterchangeable'=>$item['idInterchangeable']], ['data-toggle'=>'ajaxModal']) ?>
                         </td>
                         <td>
-                            <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-interchangeable-goods','id'=>$item['id'],'idInterchangeable'=>$item['idInterchangeable']],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]) ?>
+                            <?= Html::a('<i class="fa fa-trash-o"></i>', [
+                                    '/business/manufacturing-suppliers/remove-interchangeable-goods',
+                                    'id'=>$item['id'],
+                                    'idInterchangeable'=>$item['idInterchangeable']
+                                ],
+                                [
+                                    'onclick' => 'return confirmRemoving();'
+                            ]) ?>
                         </td>
                     </tr>
                 <?php } ?>
@@ -62,5 +69,15 @@ $listPartsAccessories = PartsAccessories::getListPartsAccessories();
         lengthMenu: [ 25, 50, 75, 100 ],
         "order": [[ 0, "desc" ]]
     });
+
+
+    function confirmRemoving() {
+        if (confirm("Вы действительно хотите удалить?")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
 </script>
