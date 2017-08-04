@@ -21,7 +21,7 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
-            <h4 class="modal-title"><?= THelper::t('sidebar_suppliers_performers') ?></h4>
+            <h4 class="modal-title"><?= THelper::t('sidebar_repayment_amounts') ?></h4>
         </div>
 
         <div class="modal-body">
