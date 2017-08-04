@@ -21,6 +21,12 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         'm'
     ];
 
+    protected static $productForSale = [
+        '59620f49dca78761ae2d01c1',
+        '59620f57dca78747631d3c62',
+        '5975afe2dca78748ce5e7e02'
+    ];
+
     /**
      * @return string
      */
@@ -83,6 +89,19 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         return $list;
     }
 
+    public static function getListPartsAccessoriesForSaLe()
+    {
+        $model = self::find()->all();
+        $list = [];
+        foreach ($model as $item){
+            if(in_array((string)$item->_id,self::$productForSale)){
+                $list[(string)$item->_id] = $item->title;
+            }
+        }
+
+        return $list;
+    }
+    
     public static function getListPartsAccessoriesWithComposite()
     {
         $model = self::find()->all();
