@@ -32,7 +32,7 @@ class AppAsset extends AssetBundle
         '/js/intro/introjs.css'
     ];
     public $js = [
-        '//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js',
+        //'//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js',
         '/js/bootstrap.js',
         '/js/app.js',
         '/js/app.plugin.js',
@@ -49,7 +49,7 @@ class AppAsset extends AssetBundle
     ];
     public $jsOptions = ['position' => yii\web\View::POS_HEAD];
     public $depends = [
-//        'yii\web\YiiAsset',
+        'yii\web\YiiAsset',
 //        'yii\bootstrap\BootstrapAsset',
     ];
 }

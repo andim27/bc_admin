@@ -17,7 +17,7 @@ $listWarehouse = Warehouse::getArrayWarehouse();
 </div>
 
 
-<div class="row">
+<div class="row blQuery">
 
     <?php $formStatus = ActiveForm::begin([
         'action' => '/' . $language . '/business/offsets-with-warehouses/offsets-with-warehouses',
@@ -26,9 +26,9 @@ $listWarehouse = Warehouse::getArrayWarehouse();
 
     <div class="col-md-3">
         <div class="input-group">
-            <?= Html::input('text','from',$request['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
+            <?= Html::input('text','from',$request['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd', 'data-date-weekStart'=>1])?>
             <span class="input-group-addon"> - </span>
-            <?= Html::input('text','to',$request['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+            <?= Html::input('text','to',$request['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd', 'data-date-weekStart'=>1])?>
         </div>
     </div>
 
@@ -63,15 +63,6 @@ $listWarehouse = Warehouse::getArrayWarehouse();
             ])?>
     </div>
 
-    <div class="col-md-2 m-b blChangeGoods">
-        <?=Html::dropDownList('listPack',(!empty($request['listPack']) ? $request['listPack'] : 'all'),
-            ArrayHelper::merge(['all' => 'Все паки'],$listPack),[
-                'class'=>'form-control listPack',
-                'id'=>'listPack',
-                'options' => []
-            ])?>
-    </div>
-
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
     </div>
@@ -88,9 +79,9 @@ $listWarehouse = Warehouse::getArrayWarehouse();
                 <table class="table table-translations table-striped datagrid m-b-sm">
                     <thead>
                     <tr>
+                        <th></th>
                         <th><?=THelper::t('country')?></th>
                         <th><?=THelper::t('warehouse')?></th>
-                        <th><?=THelper::t('product')?></th>
                         <th><?=THelper::t('number_buy_prepayment')?></th>
                         <th><?=THelper::t('number_buy_cash')?></th>
                         <th><?=THelper::t('amount_for_the_device')?></th>
@@ -105,27 +96,38 @@ $listWarehouse = Warehouse::getArrayWarehouse();
                     <?php if(!empty($info)) { ?>
                         <?php foreach($info as $kCountry=>$itemCountry) { ?>
                             <?php foreach($itemCountry as $kWarehouse=>$itemWarehouse) { ?>
-                                <?php foreach($itemWarehouse as $kSet=>$itemSet) { ?>
-                                    <tr>
-                                        <td><?=$listCountry[$kCountry]?></td>
-                                        <td><?=$listWarehouse[$kWarehouse]?></td>
-                                        <td><?=$listPack[$kSet]?></td>
-                                        <td><?=$itemSet['number_buy_prepayment']?></td>
-                                        <td><?=$itemSet['number_buy_cash']?></td>
-                                        <td><?=$itemSet['amount_for_the_device']?></td>
-                                        <td><?=$itemSet['amount_repayment_for_company']?></td>
-                                        <td><?=$itemSet['amount_repayment_for_warehouse']?></td>
-                                        <td>
-                                            <span class="<?=($itemSet['amount_repayment_for_company']>$itemSet['amount_repayment_for_warehouse'] ? 'text-danger' : 'text-success')?>">
-                                                <?=abs($itemSet['amount_repayment_for_company']-$itemSet['amount_repayment_for_warehouse'])?>
-                                            </span>
-                                        </td>
-                                        <td>???</td>
-                                        <td>
-                                            <?=  Html::a('<i class="fa fa-eye text-info"></i>', ['/business/offsets-with-warehouses/repayment','id'=>$kWarehouse], ['class'=>'btn btn-default']); ?>
-                                        </td>
-                                    </tr>
-                                <?php } ?>
+                                <tr>
+                                    <td>
+                                        <?=  Html::a('<i class="fa fa-bars text-info"></i>', 'javascript:void(0);', ['class'=>'btn btn-default decompositionByProducts', 'data-warehouse'=>$kWarehouse]); ?>
+                                    </td>
+                                    </td>
+                                    <td><?=$listCountry[$kCountry]?></td>
+                                    <td><?=$listWarehouse[$kWarehouse]?></td>
+                                    <td><?=$itemWarehouse['number_buy_prepayment']?></td>
+                                    <td><?=$itemWarehouse['number_buy_cash']?></td>
+                                    <td><?=$itemWarehouse['amount_for_the_device']?></td>
+                                    <td><?=$itemWarehouse['amount_repayment_for_company']?></td>
+                                    <td><?=$itemWarehouse['amount_repayment_for_warehouse']?></td>
+                                    <td>
+                                        <?php
+                                            $difference = $itemWarehouse['amount_repayment_for_company']-$itemWarehouse['amount_repayment_for_warehouse'];
+                                        ?>
+                                        <span class="<?=($difference>0 ? 'text-danger' : 'text-success')?>">
+                                            <?=abs($difference)?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $repaid = $difference + $itemWarehouse['repayment'];
+                                        ?>
+                                        <span class="<?=($repaid>0 ? 'text-danger' : 'text-success')?>">
+                                            <?=abs($repaid)?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?=  Html::a('<i class="fa fa-eye text-info"></i>', ['/business/offsets-with-warehouses/repayment','id'=>$kWarehouse], ['class'=>'btn btn-default']); ?>
+                                    </td>
+                                </tr>
                             <?php } ?>
                         <?php } ?>
                     <?php } ?>
@@ -141,7 +143,7 @@ $listWarehouse = Warehouse::getArrayWarehouse();
     $('.table-translations').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],
-        "order": [[ 0, "desc" ]]
+        "order": [[ 1, "desc" ]]
     });
 
     $('.btnflWarehouse').on('change',function () {
@@ -152,6 +154,39 @@ $listWarehouse = Warehouse::getArrayWarehouse();
             $(this).closest('.row').find('.blChangeWarehouse select[name="listWarehouse"]').prop( "disabled", true ).hide();
             $(this).closest('.row').find('.blChangeWarehouse select[name="listCountry"]').prop( "disabled", false ).show();
         }
+    });
+
+    $('.decompositionByProducts').on('click',function () {
+        warehouseId = $(this).data('warehouse');
+
+        $.ajax({
+            url: '<?=\yii\helpers\Url::to(['offsets-with-warehouses/offsets-with-goods'])?>',
+            type: 'POST',
+            data: {
+                listWarehouse   : warehouseId,
+                from            : $('.blQuery .dateFrom').val(),
+                to              : $('.blQuery .dateTo').val()
+            },
+            success: function (data) {
+                $('#decompositionPopup').modal().find('.modal-body').html(data);
+            }
+        });
+
     })
+
 </script>
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
+
+<div class="modal fade" id="decompositionPopup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><?=THelper::t('decomposition_for_goods')?></h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+        </div>
+    </div>
+</div>

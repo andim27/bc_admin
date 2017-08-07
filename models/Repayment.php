@@ -2,6 +2,7 @@
 
 namespace app\models;
 use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDatetime;
 
 /**
  * Class Repayment
@@ -46,7 +47,40 @@ class Repayment extends \yii2tech\embedded\mongodb\ActiveRecord
             return false;
         }
     }
-    
+
+    public static function getRepayment($warehouse_id,$type_repayment,$from='',$to='')
+    {
+        if(!empty($from) && !empty($to)){
+            $repayment = Repayment::find()
+                ->where([
+                    'warehouse_id'=>new ObjectID($warehouse_id),
+                    'type_repayment'=>$type_repayment
+                ])
+                ->andWhere([
+                        'date_create' => [
+                        '$gte' => new UTCDatetime(strtotime($from) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($to . '23:59:59') * 1000)
+                    ]
+                ])
+                ->sum('repayment');
+        } else {
+            $repayment = Repayment::find()
+                ->where([
+                    'warehouse_id'=>new ObjectID($warehouse_id),
+                    'type_repayment'=>$type_repayment
+                ])
+                ->sum('repayment');
+        }
+
+
+
+        if(empty($repayment)){
+            $repayment = 0;
+        }
+
+        return $repayment;
+    }
+
     public static function getListSuppliersPerformers()
     {
         $list = [];
