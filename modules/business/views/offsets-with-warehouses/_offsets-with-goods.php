@@ -16,11 +16,11 @@ $listWarehouse = Warehouse::getArrayWarehouse();
     <thead>
     <tr>
         <th><?=THelper::t('product')?></th>
-        <th><?=THelper::t('number_ buy_prepayment')?></th>
-        <th><?=THelper::t('number_ buy_cash')?></th>
-        <th><?=THelper::t('amount_ for_the_device')?></th>
-        <th><?=THelper::t('amount_ repayment_for_company')?></th>
-        <th><?=THelper::t('amount_ repayment_for_warehouse')?></th>
+        <th><?=THelper::t('number_buy_prepayment')?></th>
+        <th><?=THelper::t('number_buy_cash')?></th>
+        <th><?=THelper::t('amount_for_the_device')?></th>
+        <th><?=THelper::t('amount_repayment_for_company')?></th>
+        <th><?=THelper::t('amount_repayment_for_warehouse')?></th>
         <th><?=THelper::t('difference')?></th>
     </tr>
     </thead>
