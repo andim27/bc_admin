@@ -18,7 +18,7 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
-            <h4 class="modal-title">Посылка № <?= (!empty($model->id) ? $model->id : '')?></h4>
+            <h4 class="modal-title"><?=THelper::t('package')?> № <?= (!empty($model->id) ? $model->id : '')?></h4>
         </div>
 
 

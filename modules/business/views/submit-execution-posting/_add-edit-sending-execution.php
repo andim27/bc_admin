@@ -111,7 +111,7 @@ if(!empty($model)){
                                     <div class="col-md-2">У исполнителя</div>
                                     <div class="col-md-1">На одну шт.</div>
                                     <div class="col-md-2">Надо отправить</div>
-                                    <div class="col-md-1">С запасом</div>
+                                    <div class="col-md-2">С запасом</div>
                                 </div>
                                 <?php if(!empty($model->list_component)){ ?>
                                     <?php foreach($model->list_component as $item){ ?>

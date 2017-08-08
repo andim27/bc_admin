@@ -16,17 +16,17 @@ $listAdmin = Users::getListAdmin();
             <thead>
             <tr>
                 <th>№</th>
-                <th>Дата добавления</th>
-                <th>Кто отправил</th>
-                <th>Откуда отправка</th>
-                <th>Состав посылки</th>
-                <th>Кол</th>
-                <th>Куда отправленно</th>
-                <th>Кто получает</th>
-                <th>Чем отправленно</th>
+                <th><?=THelper::t('date_added');?></th>
+                <th><?=THelper::t('who_sent');?></th>
+                <th><?=THelper::t('from_sent')?></th>
+                <th><?=THelper::t('part_parcel')?></th>
+                <th><?=THelper::t('num')?></th>
+                <th><?=THelper::t('to_sent')?></th>
+                <th><?=THelper::t('who_gets')?></th>
+                <th><?=THelper::t('than_sent')?></th>
                 <th></th>
-                <th>Состояние</th>
-                <th>Замечания</th>
+                <th><?=THelper::t('condition')?></th>
+                <th><?=THelper::t('comments')?></th>
                 <th></th>
             </tr>
             </thead>

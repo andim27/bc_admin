@@ -51,12 +51,12 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 <table class="table table-translations table-striped datagrid m-b-sm">
                     <thead>
                     <tr>
-                        <th>Дата списания</th>
-                        <th>Товар</th>
-                        <th>Количество</th>
-                        <th>Какой склад списал</th>
-                        <th>Кто списал</th>
-                        <th>Причины списания</th>
+                        <th><?=THelper::t('date_cancellation')?></th>
+                        <th><?=THelper::t('product')?></th>
+                        <th><?=THelper::t('count')?></th>
+                        <th><?=THelper::t('what_warehouse_cancellation')?></th>
+                        <th><?=THelper::t('who_cancellation')?></th>
+                        <th><?=THelper::t('reason_cancellation')?></th>
                     </tr>
                     </thead>
                     <tbody>

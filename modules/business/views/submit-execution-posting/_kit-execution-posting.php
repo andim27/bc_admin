@@ -38,8 +38,16 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
 
                         <?php } else {?>
                             <?=Html::hiddenInput('complect[]',(string)$item['_id'],[]);?>
-                            <?=Html::input('text','',$listGoods[(string)$item['_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
-
+                            <?=Html::input('text','',$listGoods[(string)$item['_id']],
+                                [
+                                    'class'=>'form-control partTitle',
+                                    'disabled'=>true,
+                                    'data' => [
+                                        'toggle'    =>  'tooltip',
+                                        'placement' =>  'placement'
+                                    ],
+                                    'title' => $listGoods[(string)$item['_id']]
+                                ]);?>
                         <?php } ?>
                     </div>
                     <div class="col-md-2">

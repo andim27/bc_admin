@@ -21,7 +21,7 @@
     ]); ?>
     <div class="col-md-2 m-b">
         <?=Html::dropDownList('infoTypeDate', $request['infoTypeDate'],
-            ['create'=>'Дата создания','update'=>'Дата изменениня'],[
+            ['create'=>THelper::t('date_create'),'update'=>THelper::t('date_update')],[
                 'class'=>'form-control infoTypeDate',
                 'id'=>'infoTypeDate',
             ])?>
