@@ -133,7 +133,7 @@ class OffsetsWithWarehousesController extends BaseController {
                             }
 
 
-                            $info[$countryCode][$warehouseId]['number_buy_cash']++;
+                            $info[$countryCode][$warehouseId]['number_buy_prepayment']++;
                             $info[$countryCode][$warehouseId]['amount_for_the_device'] += $item->sales->price;
                             $info[$countryCode][$warehouseId]['amount_repayment_for_warehouse'] += $amountRepayment;
 
@@ -242,7 +242,7 @@ class OffsetsWithWarehousesController extends BaseController {
                             }
 
 
-                            $info[$productSetId]['number_buy_cash']++;
+                            $info[$productSetId]['number_buy_prepayment']++;
                             $info[$productSetId]['amount_for_the_device'] += $item->sales->price;
                             $info[$productSetId]['amount_repayment_for_warehouse'] += $amountRepayment;
 

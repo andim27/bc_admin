@@ -104,8 +104,8 @@ $listWarehouse = Warehouse::getArrayWarehouse();
                                     <td><?=$listCountry[$kCountry]?></td>
                                     <td><?=$listWarehouse[$kWarehouse]?></td>
                                     <td><?=$itemWarehouse['number_buy_prepayment']?></td>
-                                    <td><?=$itemWarehouse['amount_for_the_device']?></td>
                                     <td><?=$itemWarehouse['number_buy_cash']?></td>
+                                    <td><?=$itemWarehouse['amount_for_the_device']?></td>
                                     <td><?=$itemWarehouse['amount_repayment_for_company']?></td>
                                     <td><?=$itemWarehouse['amount_repayment_for_warehouse']?></td>
                                     <td>

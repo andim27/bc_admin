@@ -30,8 +30,8 @@ $listWarehouse = Warehouse::getArrayWarehouse();
             <tr>
                 <td><?=$listPack[$kSet]?></td>
                 <td><?=$itemSet['number_buy_prepayment']?></td>
-                <td><?=$itemSet['amount_for_the_device']?></td>
                 <td><?=$itemSet['number_buy_cash']?></td>
+                <td><?=$itemSet['amount_for_the_device']?></td>
                 <td><?=$itemSet['amount_repayment_for_company']?></td>
                 <td><?=$itemSet['amount_repayment_for_warehouse']?></td>
                 <td>

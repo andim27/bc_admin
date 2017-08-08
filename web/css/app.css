@@ -3605,3 +3605,7 @@ fieldset[disabled] .btn-gplus.active {
 .showMore{
   float: right;
 }
+
+.select2-container--krajee .select2-search:after {
+  content:none;
+}

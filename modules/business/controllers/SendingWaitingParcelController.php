@@ -53,6 +53,12 @@ class SendingWaitingParcelController extends BaseController {
             $model = SendingWaitingParcel::findOne(['_id'=>new ObjectID($request['id'])]);
         }
         
+        Yii::$app->assetManager->bundles = [
+            'yii\bootstrap\BootstrapPluginAsset' => false,
+            'yii\bootstrap\BootstrapAsset' => false,
+            'yii\web\JqueryAsset' => false,
+        ];
+        
         return $this->renderAjax('_add-edit-parcel',[
             'language'  => $language,
             'model'     => $model,
