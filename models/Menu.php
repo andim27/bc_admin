@@ -27,12 +27,6 @@ Class Menu
                         'action' => 'user',
                     ],
                     [
-                        'key'   =>  'sidebar_users_qualification',
-                        'label' => THelper::t('sidebar_users_qualification'),
-                        'url' => ['/business/user/qualification'],
-                        'action' => 'qualification',
-                    ],
-                    [
                         'key'   =>  'sidebar_users_genealogy',
                         'label' => THelper::t('sidebar_users_genealogy'),
                         'url' => ['/business/user/genealogy'],

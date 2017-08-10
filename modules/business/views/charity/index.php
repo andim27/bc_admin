@@ -83,7 +83,7 @@
                         <tr>
                             <td><?= date('d-m-Y, H:i:s', $c->dateCreate) ?></td>
                             <td><?= $c->amount ?></td>
-                            <td><?= $c->forWhat ?></td>
+                            <td><?= THelper::charityTranslate($c->forWhat) ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>

@@ -4,6 +4,7 @@ namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
 use app\models\AlertForm;
+use app\models\Langs;
 use app\models\Menu;
 use app\models\Settings;
 use app\models\Users;
@@ -14,6 +15,8 @@ use app\modules\business\models\TranslationForm;
 use MongoDB\BSON\ObjectID;
 use Yii;
 use app\models\User;
+use yii\data\Pagination;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
 use app\modules\business\models\PasswordForm;
@@ -69,6 +72,7 @@ class SettingController extends BaseController {
                 );
             } else {
                 $result = api\Lang::add(
+
                     $translationForm->countryId,
                     $translationForm->stringId,
                     $translationForm->stringValue,
@@ -82,21 +86,83 @@ class SettingController extends BaseController {
             } else {
                 Yii::$app->session->setFlash('danger', 'settings_translation_update_error');
             }
+        }
 
-            $this->refresh();
-        } else {
-            $requestLanguage = $request->get('l');
-            $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $translations = api\Lang::getAll($language);
-            $languages = api\dictionary\Lang::all();
+        $columns = [
+            'stringId', 'ruStringValue', 'stringValue', 'countryId', 'comment', 'action'
+        ];
 
-            return $this->render('translation', [
-                'translations' => $translations,
-                'language' => $language,
-                'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : []
+        $requestLanguage = $request->get('l');
+
+        $language = $requestLanguage ?: Yii::$app->language;
+
+        $language = $request->get('language') ?: $language;
+        // $translations = api\Lang::getAll($language);
+        //hh(count($translations));
+        $translations = Langs::find()->where(['countryId' => $language]);
+
+        if ($search = $request->get('search')['value']) {
+            $translations->andFilterWhere(['or',
+                ['like', 'stringId', $search],
+                ['like', 'stringValue', $search]
             ]);
         }
+
+        if ($order = $request->get('order')[0]) {
+            $translations->orderBy([$columns[$order['column']] => ($order['dir'] === 'asc' ? SORT_ASC : SORT_DESC)]);
+        }
+
+        $countQuery = clone $translations;
+        $languages = api\dictionary\Lang::all();
+        $pages = new Pagination(['totalCount' => $countQuery->count()]);
+
+        if (Yii::$app->request->isAjax) {
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $data = [];
+
+            $translationQuery = $translations->with(['languages' => function ($query) use ($language) {
+                $query->where(['countryId' => 'ru'])->andWhere(['<>', 'stringValue' , '']);
+            }]);
+
+            if ($request->get('empty_only') === 'true') {
+                $translationQuery->andWhere(['stringValue' => '']);
+            }
+
+            $translations = $translationQuery
+                ->offset($request->get('start') ?: $pages->offset)
+                ->limit($request->get('length') ?: $pages->limit);
+
+            $count = $translations->count();
+
+            foreach ($translations->all() as $key => $translation){
+                $nestedData = [];
+
+                $nestedData[$columns[0]] = $translation->stringId;
+                $nestedData[$columns[1]] = $translation->languages ? $translation->languages->stringValue : '';
+                $nestedData[$columns[2]] = $translation->stringValue;
+                $nestedData[$columns[3]] = $language;
+                $nestedData[$columns[4]] = $translation->comment;
+                $nestedData['action'] = '';
+
+                $data[] = $nestedData;
+            }
+
+            return [
+                'draw' => $request->get('draw'),
+                'data' => $data,
+                'recordsTotal' => $count,
+                'recordsFiltered' => $count
+            ];
+        }
+
+        return $this->render('translation', [
+            'pages' => $pages,
+            'language' => $language,
+            'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : []
+        ]);
     }
+
 
     public function actionExportTranslation()
     {
@@ -171,7 +237,7 @@ class SettingController extends BaseController {
                                         $comment,
                                         $originalStringValue
                                     );
-                                } else {
+                                } elseif (!$checkResult) {
                                     api\Lang::add(
                                         $countryId,
                                         $stringId,

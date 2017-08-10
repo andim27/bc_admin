@@ -13,4 +13,10 @@ require(__DIR__ . '/../config/bootstrap.php');
 
 $config = require(__DIR__ . '/../config/web.php');
 
+function hh($data)
+{
+    yii\helpers\VarDumper::dump($data, 10, true);
+    Yii::$app->end();
+}
+
 (new yii\web\Application($config))->run();

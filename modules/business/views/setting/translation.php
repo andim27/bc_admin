@@ -1,6 +1,8 @@
 <?php
     use app\components\THelper;
     use yii\helpers\Html;
+use yii\widgets\LinkPager;
+
 ?>
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('settings_translation_title'); ?></h3>
@@ -9,7 +11,10 @@
     <div class="col-md-3 m-b">
         <?= Html::dropDownList('languages', $language, $translationList, ['id' => 'languages-list', 'class' => 'form-control']) ?>
     </div>
-    <div class="col-md-9 m-b text-right">
+    <div class="col-md-3 m-b m-t-xs">
+        <?= Html::checkbox('empty_values', false, ['label' => THelper::t('empty_values')]) ?>
+    </div>
+    <div class="col-md-6 m-b text-right">
         <?= Html::a(THelper::t('settings_translation_export_to_excel'), ['/business/setting/export-translation/', 'l' => $language], ['class' => 'btn btn-success']) ?>
         <?= Html::a(THelper::t('settings_translation_import_from_excel'), ['/business/setting/import-translation/', 'l' => $language], ['class' => 'btn btn-success', 'data-toggle'=>'ajaxModal']) ?>
     </div>
@@ -21,6 +26,9 @@
             <tr>
                 <th>
                     <?= THelper::t('settings_translation_id') ?>
+                </th>
+                <th>
+                    <?= THelper::t('settings_translation_value') ?> (ru)
                 </th>
                 <th>
                     <?= THelper::t('settings_translation_value') ?>
@@ -35,36 +43,73 @@
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($translations as $key => $translation) { ?>
-                <tr>
-                    <td>
-                        <?= $translation->stringId ?>
-                    </td>
-                    <td>
-                        <?= $translation->stringValue ?>
-                    </td>
-                    <td>
-                        <?= $translation->countryId ?>
-                    </td>
-                    <td>
-                        <?= $translation->comment ?>
-                    </td>
-                    <td>
-                        <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/setting/edit-translation', 'stringId' => $translation->stringId, 'countryId' => $translation->countryId], ['style' => 'display:none;', 'class' => 'pencil', 'data-toggle'=>'ajaxModal']) ?>
-                    </td>
-                </tr>
-            <?php } ?>
+
             </tbody>
         </table>
     </div>
 </section>
+
 <script>
+    var emptyOnly = false;
+    var table = $('.table-translations');
+
     $('.pencil').show();
-    $('.table-translations').dataTable({
+
+    table = table.dataTable({
         language: TRANSLATION,
-        lengthMenu: [ 25, 50, 75, 100 ]
+        lengthMenu: [ 25, 50, 75, 100 ],
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '/' + LANG + '/business/setting/translation',
+            "data": function ( d ) {
+                d.language = "<?= Yii::$app->request->get('l'); ?>";
+                d.empty_only = emptyOnly
+            }
+        },
+        "columns": [
+            {"data": "stringId"},
+            {"data": "ruStringValue"},
+            {"data": "stringValue"},
+            {"data": "countryId"},
+            {"data": "comment"},
+            {"data": "action"}
+        ],
+        "order": [[ 5, "desc" ]],
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "render":  function (data, type, full) {
+                return "<a href='/" + LANG + "/business/setting/edit-translation?stringId=" + full['stringId'] + "&countryId=" + full['countryId'] + "' class = 'pencil' data-toggle = 'ajaxModal'><i class='fa fa-pencil'></i></a>";
+            }
+        } ]
     });
+
     $('#languages-list').change(function() {
         window.location.replace('/' + LANG + '/business/setting/translation?l=' + $(this).val());
+    });
+
+    $('input[name="empty_values"]').on('change',  function(){
+        emptyOnly = this.checked;
+
+        table.api().ajax.reload();
+    });
+
+    $(document).on('click', '.save-translation', function(e){
+        e.preventDefault();
+
+        var $form = $('form#TranslationForm');
+
+        table.api().ajax.reload();
+        $.post($form.attr("action"), $form.serialize())
+            .done(function(result) {
+                table.api().ajax.reload();
+            })
+            .fail(function() {
+                    alert("Error.");
+                }
+            );
+
+        return false;
     });
 </script>

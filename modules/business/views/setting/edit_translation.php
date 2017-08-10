@@ -5,7 +5,7 @@
 ?>
 <div class="modal-dialog">
     <div class="modal-content">
-        <?php $form = ActiveForm::begin(['action' => '/' . $language . '/business/setting/translation']); ?>
+        <?php $form = ActiveForm::begin(['id' => $translationForm->formName(), 'action' => '/' . $language . '/business/setting/translation']); ?>
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
             <h4 class="modal-title"><?= THelper::t('settings_translation_edit_title') ?></h4>
@@ -30,9 +30,12 @@
         </div>
         <div class="modal-footer">
             <div class="text-center">
-                <?= Html::submitButton(THelper::t('settings_translation_edit_save'), ['class' => 'btn btn-success']) ?>
+                <a href="javascript:void(0);" class="btn btn-success save-translation" data-dismiss="modal">
+                    <?= THelper::t('settings_translation_edit_save') ?>
+                </a>
             </div>
         </div>
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+

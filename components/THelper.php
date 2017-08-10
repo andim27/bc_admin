@@ -46,11 +46,27 @@ class THelper
         if ($message) {
             return $message ? $message : $key;
         } else {
-            $message = api\Lang::add($useLang, $key, $key, '', '');
+            if (!api\Lang::get($useLang, $key)) {
+                $message = api\Lang::add($useLang, $key, $key, '', '');
+            }
+
             if ($message) {
                 return $message->stringValue;
             }
         }
+    }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    public static function charityTranslate($value)
+    {
+        if (strtolower($value) == 'charity') {
+            return self::t('charity');
+        }
+
+        return $value;
     }
 
 }
