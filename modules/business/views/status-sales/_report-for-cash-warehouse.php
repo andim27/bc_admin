@@ -1,5 +1,8 @@
 <?php
 use app\components\THelper;
+use app\models\Warehouse;
+
+$listWarehouse = Warehouse::getArrayWarehouse();
 ?>
 
 <div class="tab-pane" id="by-warehouse">

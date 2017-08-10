@@ -23,6 +23,7 @@ class OffsetsWithWarehousesController extends BaseController {
         $listAllCountry = Settings::getListCountry();
         $infoGoodsInProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
         $infoUserWarehouseCountry = Warehouse::getArrayAdminWithWarehouseCountry();
+        $myWarehouseId = Warehouse::getIdMyWarehouse();
 
         $request =  Yii::$app->request->post();
 
@@ -30,8 +31,14 @@ class OffsetsWithWarehousesController extends BaseController {
             $request['flWarehouse'] = '1';
             $request['to'] = date("Y-m-d");
             $request['from'] = date("Y-01-01");
-            $request['listWarehouse']='all';
-            $request['listCountry']='all';
+            $request['listCountry']='';
+            $request['listWarehouse'] = '';
+        }
+
+
+
+        if($myWarehouseId != '592426f6dca7872e64095b45'){
+            $request['listWarehouse']=$myWarehouseId;
         }
 
         $from = strtotime($request['from']);
@@ -53,8 +60,8 @@ class OffsetsWithWarehousesController extends BaseController {
                 $listCountry[$countryCode] = (!empty($listAllCountry[$countryCode]) ? $listAllCountry[$countryCode]: $countryCode );
 
                 if ($dateCreate >= $from && $dateCreate <= $to && $item->sales->type != -1
-                    && (empty($request['listWarehouse']) || $request['listWarehouse']=='all' || $request['listWarehouse']==$warehouseId)
-                    && (empty($request['listCountry']) || $request['listCountry']=='all' || $request['listCountry']==$countryCode)) {
+                    && (empty($request['listWarehouse']) || $request['listWarehouse']==$warehouseId)
+                    && (empty($request['listCountry']) || $request['listCountry']==$countryCode)) {
 
 
 
@@ -100,8 +107,8 @@ class OffsetsWithWarehousesController extends BaseController {
             ->all();
         if(!empty($model)){
             foreach ($model as $item) {
-
                 if(!empty($item->setSales)  && $item->sales->type != -1){
+                    $countTemp = [];
 
                     foreach ($item->setSales as $itemSet) {
                         $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
@@ -111,8 +118,8 @@ class OffsetsWithWarehousesController extends BaseController {
                         $listCountry[$countryCode] = (!empty($listAllCountry[$countryCode]) ? $listAllCountry[$countryCode]: $countryCode );
 
                         if ($dateChange >= $from && $dateChange <= $to && $itemSet['status'] == 'status_sale_issued'
-                            && (empty($request['listWarehouse']) || $request['listWarehouse']=='all' || $request['listWarehouse']==$warehouseId)
-                            && (empty($request['listCountry']) || $request['listCountry']=='all' || $request['listCountry']==$countryCode)) {
+                            && (empty($request['listWarehouse']) || $request['listWarehouse']==$warehouseId)
+                            && (empty($request['listCountry']) || $request['listCountry']==$countryCode)) {
 
                             $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
 
@@ -132,13 +139,22 @@ class OffsetsWithWarehousesController extends BaseController {
                                 ];
                             }
 
+                            $countTemp[$countryCode][$warehouseId] = 1;
 
-                            $info[$countryCode][$warehouseId]['number_buy_prepayment']++;
                             $info[$countryCode][$warehouseId]['amount_for_the_device'] += $item->sales->price;
                             $info[$countryCode][$warehouseId]['amount_repayment_for_warehouse'] += $amountRepayment;
 
                         }
                     }
+
+                    if(!empty($countTemp)){
+                        foreach ($countTemp as $kTemp=>$itemWTemp){
+                            foreach ($itemWTemp as $kWTemp=>$itemTemp){
+                                $info[$kTemp][$kWTemp]['number_buy_prepayment'] += $itemTemp;
+                            }
+                        }
+                    }
+
                 }
 
             }
@@ -176,10 +192,9 @@ class OffsetsWithWarehousesController extends BaseController {
                 if ($dateCreate >= $from && $dateCreate <= $to && $item->sales->type != -1
                     && $request['listWarehouse']==$warehouseId) {
 
-
-
                     $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($warehouseId,$productSetId);
-
+                    
+                    // info item pack
                     if(empty($info[$productSetId])){
                         $info[$productSetId] = [
                             'number_buy_cash'                   => 0,
@@ -189,11 +204,26 @@ class OffsetsWithWarehousesController extends BaseController {
                             'amount_repayment_for_warehouse'    => 0,
                         ];
                     }
-
-
                     $info[$productSetId]['number_buy_cash']++;
                     $info[$productSetId]['amount_for_the_device'] += $item->sales->price;
                     $info[$productSetId]['amount_repayment_for_company'] += $amountRepayment;
+
+                    // info item pack
+                    foreach ($item->setSales as $itemSet) {
+                        $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
+                        if(empty($info[$productSetId]['set'][$productId])){
+                            $info[$productSetId]['set'][$productId] = [
+                                'number_buy_cash'                   => 0,
+                                'number_buy_prepayment'             => 0,
+                                'amount_for_the_device'             => 0,
+                                'amount_repayment_for_company'      => '-',
+                                'amount_repayment_for_warehouse'    => 0,
+                            ];
+                        }
+                        $info[$productSetId]['set'][$productId]['amount_for_the_device'] += $item->sales->price;
+                        $info[$productSetId]['set'][$productId]['number_buy_cash']++;
+                    }
+
 
                 }
             }
@@ -219,7 +249,7 @@ class OffsetsWithWarehousesController extends BaseController {
                 $productSetId   = (!empty($item->sales->product) ? $item->sales->product : '???');
 
                 if(!empty($item->setSales)  && $item->sales->type != -1){
-
+                    $countTemp=0;
                     foreach ($item->setSales as $itemSet) {
                         $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
                         $warehouseId    = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id'] : 'none');
@@ -230,7 +260,8 @@ class OffsetsWithWarehousesController extends BaseController {
                             $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
 
                             $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($warehouseId,$productId);
-
+                            
+                            // info pack
                             if(empty($info[$productSetId])){
                                 $info[$productSetId] = [
                                     'number_buy_cash'                   => 0,
@@ -241,12 +272,30 @@ class OffsetsWithWarehousesController extends BaseController {
                                 ];
                             }
 
-
-                            $info[$productSetId]['number_buy_prepayment']++;
+                            $countTemp=1;
                             $info[$productSetId]['amount_for_the_device'] += $item->sales->price;
                             $info[$productSetId]['amount_repayment_for_warehouse'] += $amountRepayment;
+                            
+                            
+                            // info item pack
+                            if(empty($info[$productSetId]['set'][$productId])){
+                                $info[$productSetId]['set'][$productId] = [
+                                    'number_buy_cash'                   => 0,
+                                    'number_buy_prepayment'             => 0,
+                                    'amount_for_the_device'             => 0,
+                                    'amount_repayment_for_company'      => '-',
+                                    'amount_repayment_for_warehouse'    => 0,
+                                ];
+                            }
+                            $info[$productSetId]['set'][$productId]['amount_for_the_device'] += $item->sales->price;
+                            $info[$productSetId]['set'][$productId]['amount_repayment_for_warehouse'] += $amountRepayment;
+                            $info[$productSetId]['set'][$productId]['number_buy_prepayment']++;
 
                         }
+                    }
+
+                    if($countTemp==1){
+                        $info[$productSetId]['number_buy_prepayment'] += $countTemp;
                     }
                 }
 

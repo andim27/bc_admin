@@ -36,7 +36,7 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
 
 
     <div class="form-group row headPart">
-        <div class="col-md-3 offset-left-<?=$level?>">
+        <div class="col-md-5 offset-left-<?=$level?>">
             <?php if(!empty($changeableList)){ ?>
                 <?=Html::dropDownList('complect[]','',
                     $changeableList,[
@@ -60,8 +60,8 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
         <div class="col-md-1"><?=($infoComposite['number'] * $count)?></div>
         <div class="col-md-1"></div>
         <div class="col-md-1"></div>
-        <div class="col-md-2"></div>
-        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
+        <div class="col-md-1"></div>
         <div class="col-md-2"></div>
     </div>
     <?php $level++; ?>
@@ -76,7 +76,7 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
 <?php } else { ?>
 
 <div class="form-group row">
-    <div class="col-md-3  offset-left-<?=$level?>">
+    <div class="col-md-5  offset-left-<?=$level?>">
         
         <?php if(!empty($changeableList)) { ?>
             <?=Html::dropDownList('complect[]','',
@@ -101,7 +101,7 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
     <div class="col-md-1 needCountForOne"><?=$needCount?></div>
     <div class="col-md-1 warehouseCount"><?=$warehouseCount?></div>
     <div class="col-md-1 needOrdering"><?=$needOrder?></div>
-    <div class="col-md-2 onceSumma">
+    <div class="col-md-1 onceSumma">
         <?php foreach ($priceOnePiece as $k=>$item){ ?>
             <div>
                 <span class="<?=$k?>">
@@ -111,7 +111,7 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
             </div>
         <?php } ?>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
         <?=Html::input('number','buy[]',$needOrder,[
             'class'=>'form-control needBuy',
             'pattern'=>'\d*',

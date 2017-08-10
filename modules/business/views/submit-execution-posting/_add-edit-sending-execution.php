@@ -37,7 +37,7 @@ if(!empty($model)){
 
 ?>
 
-<div class="modal-dialog modal-lg popupSendingExecution">
+<div class="modal-dialog modal-more-lg popupSendingExecution">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
@@ -106,17 +106,17 @@ if(!empty($model)){
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <div class="form-group row">
-                                    <div class="col-md-3"></div>
-                                    <div class="col-md-2">В наличие</div>
-                                    <div class="col-md-2">У исполнителя</div>
+                                    <div class="col-md-7"></div>
+                                    <div class="col-md-1">В наличие</div>
+                                    <div class="col-md-1">У исполнителя</div>
                                     <div class="col-md-1">На одну шт.</div>
-                                    <div class="col-md-2">Надо отправить</div>
-                                    <div class="col-md-2">С запасом</div>
+                                    <div class="col-md-1">Надо отправить</div>
+                                    <div class="col-md-1">С запасом</div>
                                 </div>
                                 <?php if(!empty($model->list_component)){ ?>
                                     <?php foreach($model->list_component as $item){ ?>
                                         <div class="form-group row">
-                                            <div class="col-md-3">
+                                            <div class="col-md-7">
                                                 <?php if(!empty(PartsAccessories::getInterchangeableList((string)$item['parts_accessories_id']))) { ?>
                                                     <?=Html::dropDownList('complect[]','',
                                                         PartsAccessories::getInterchangeableList((string)$item['parts_accessories_id']),[
@@ -137,14 +137,14 @@ if(!empty($model)){
 
                                                 <?php } ?>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <?=Html::input('text',
                                                     '',
                                                     (!empty($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']]) ? ($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']] + ($item['number']*$want_number)) : 0 ),
                                                     ['class'=>'form-control inWarehouse','disabled'=>'disabled']);?>
                                             </div>
 
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <?=Html::hiddenInput('contractor[]',
                                                     (!empty($contractorInfo[(string)$item['parts_accessories_id']]) ? $contractorInfo[(string)$item['parts_accessories_id']] : '0'),
                                                     []); ?>
@@ -157,11 +157,11 @@ if(!empty($model)){
                                                 <?=Html::hiddenInput('number[]',$item['number'],[]);?>
                                                 <?=Html::input('text','',$item['number'],['class'=>'form-control partNeedForOne','disabled'=>'disabled']);?>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']]) ? ($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']] + ($item['number']*$want_number)) : 0 ),['class'=>'numberWarehouse']);?>
                                                 <?=Html::input('text','',($item['number']*$want_number),['class'=>'form-control needSend','disabled'=>'disabled']);?>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <?=Html::input('number','reserve[]',(!empty($item['reserve']) ? $item['reserve'] : 0),[
                                                     'class'=>'form-control partNeedReserve',
                                                     'pattern'=>'\d*',
@@ -394,13 +394,19 @@ if(!empty($model)){
             if(title == ''){
                 title = $(this).find('.partTitle').val();
             }
-            tempBl +=
-                '<tr>' +
-                '<td>'+  title +
-                '<td>'+  $(this).find('.numberWarehouse').val() +
-                '<td>'+ $(this).find('.partNeedForOne').val() +
-                '<td>'+ $(this).find('.needSend').val() +
-                '<td>'+ $(this).find('.partNeedReserve').val();
+
+            //console.log(title +' ----- '+$(this).find('.numberWarehouse').val());
+
+            if(title != undefined){
+                tempBl +=
+                    '<tr>' +
+                    '<td>'+ title +
+                    '<td>'+ $(this).find('.numberWarehouse').val() +
+                    '<td>'+ $(this).find('.partNeedForOne').val() +
+                    '<td>'+ $(this).find('.needSend').val() +
+                    '<td>'+ $(this).find('.partNeedReserve').val();
+            }
+
         });
 
         printFile =

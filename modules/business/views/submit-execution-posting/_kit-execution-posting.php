@@ -16,17 +16,17 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
 <div class="panel panel-default">
     <div class="panel-body">
         <div class="row form-group">
-            <div class="col-md-3"></div>
-            <div class="col-md-2">В наличие</div>
-            <div class="col-md-2">У исполнителя</div>
+            <div class="col-md-7"></div>
+            <div class="col-md-1">В наличие</div>
+            <div class="col-md-1">У исполнителя</div>
             <div class="col-md-1">На одну шт.</div>
-            <div class="col-md-2">Надо отправить</div>
-            <div class="col-md-2">С запасом</div>
+            <div class="col-md-1">Надо отправить</div>
+            <div class="col-md-1">С запасом</div>
         </div>
         <?php if(!empty($model->composite)){ ?>
             <?php foreach($model->composite as $item){ ?>
                 <div class="form-group row">
-                    <div class="col-md-3">
+                    <div class="col-md-7">
                         <?php if(!empty(PartsAccessories::getInterchangeableList((string)$item['_id']))) { ?>
                             <?=Html::dropDownList('complect[]','',
                                 PartsAccessories::getInterchangeableList((string)$item['_id']),[
@@ -50,13 +50,13 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
                                 ]);?>
                         <?php } ?>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <?=Html::input('text',
                             '',
                             (!empty($listGoodsFromMyWarehouse[(string)$item['_id']]) ? $listGoodsFromMyWarehouse[(string)$item['_id']] : 0 ),
                             ['class'=>'form-control inWarehouse','disabled'=>'disabled']);?>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <?=Html::hiddenInput('contractor[]',
                             (!empty($contractorInfo[(string)$item['_id']]) ? $contractorInfo[(string)$item['_id']] : '0'),
                             []); ?>
@@ -68,11 +68,11 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
                         <?=Html::hiddenInput('number[]',$item['number'],[]);?>
                         <?=Html::input('text','',$item['number'],['class'=>'form-control partNeedForOne','disabled'=>'disabled']);?>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[(string)$item['_id']]) ? $listGoodsFromMyWarehouse[(string)$item['_id']] : 0 ),['class'=>'numberWarehouse']);?>
                         <?=Html::input('text','',$item['number'],['class'=>'form-control needSend','disabled'=>'disabled']);?>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <?=Html::input('number','reserve[]','0',[
                             'class'=>'form-control partNeedReserve',
                             'pattern'=>'\d*',
@@ -128,6 +128,7 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
             success: function (data) {
                 $(document).find('.CanCollect').val(data);
                 changeRow.find('.inWarehouse').val(countNewComplect);
+                changeRow.find('.numberWarehouse').val(countNewComplect);
                 changeRow.find('.partContractor').val(countAtContractor);
                 changeRow.find('input[name="contractor[]"]').val(countAtContractor);
             }

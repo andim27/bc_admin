@@ -8,8 +8,12 @@ use app\models\Products;
 use app\models\Warehouse;
 
 $listPack = Products::getListPack();
-$listWarehouse = Warehouse::getArrayWarehouse();
-
+$myWarehouseId = Warehouse::getIdMyWarehouse();
+if($myWarehouseId != '592426f6dca7872e64095b45'){
+    $listWarehouse = Warehouse::getMyWarehouse();
+} else{
+    $listWarehouse = Warehouse::getArrayWarehouse();
+}
 ?>
 
 <div class="m-b-md">
@@ -139,6 +143,20 @@ $listWarehouse = Warehouse::getArrayWarehouse();
     </div>
 </div>
 
+
+
+<div class="modal fade" id="decompositionPopup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><?=THelper::t('decomposition_for_goods')?></h4>
+            </div>
+            <div class="modal-body"></div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     $('.table-translations').dataTable({
         language: TRANSLATION,
@@ -172,21 +190,22 @@ $listWarehouse = Warehouse::getArrayWarehouse();
             }
         });
 
-    })
+    });
+
+    $('#decompositionPopup').on('click','.decompositionItem',function(){
+        warehouseId = $(this).data('id');
+        if ($(this).find('.fa').hasClass('fa-toggle-down') ) {
+            $(this).find('i').removeClass('fa-toggle-down').addClass('fa-toggle-right');
+            $('#decompositionPopup .table tr[data-warehouse="'+warehouseId+'"]').each(function(indx){
+                $(this).hide();
+            });
+        } else {
+            $(this).find('i').removeClass('fa-toggle-right').addClass('fa-toggle-down');
+            $('#decompositionPopup .table tr[data-warehouse="'+warehouseId+'"]').each(function(indx){
+                $(this).show();
+            });
+        }
+    });
 
 </script>
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
-
-<div class="modal fade" id="decompositionPopup">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title"><?=THelper::t('decomposition_for_goods')?></h4>
-            </div>
-            <div class="modal-body">
-
-            </div>
-        </div>
-    </div>
-</div>

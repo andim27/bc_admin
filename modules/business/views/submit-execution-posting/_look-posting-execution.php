@@ -29,7 +29,7 @@ $want_number = $model->number;
 
 ?>
 
-<div class="modal-dialog modal-lg popupLookExecution">
+<div class="modal-dialog modal-more-lg popupLookExecution">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
@@ -72,21 +72,21 @@ $want_number = $model->number;
                             <div class="panel panel-default">
                                 <div class="panel-body">
                                     <div class="form-group">
-                                        <div class="col-md-6"></div>
-                                        <div class="col-md-3">Отправленно</div>
-                                        <div class="col-md-3">Запас</div>
+                                        <div class="col-md-8"></div>
+                                        <div class="col-md-2">Отправленно</div>
+                                        <div class="col-md-2">Запас</div>
                                     </div>
                                     <?php if(!empty($model->list_component)){ ?>
                                         <?php foreach($model->list_component as $item){ ?>
                                             <div class="form-group row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-8">
                                                    <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>true]);?>
                                                 </div>
 
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <?=Html::input('text','',($item['number']*$want_number),['class'=>'form-control needSend','disabled'=>true]);?>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <?=Html::input('number','reserve[]',(!empty($item['reserve']) ? $item['reserve'] : 0),[
                                                         'class'=>'form-control partNeedReserve',
                                                         'pattern'=>'\d*',

@@ -122,13 +122,13 @@ $unicBtn = rand();
     $(document).on('change','#selectChangeStatus',function () {
         statusValue = $(this).find('option').filter(":selected").val();
 
-//        if(statusValue == 'status_sale_issued'){
-//            $('.dopInfoStatus').show();
-//            $('.saveStatus').hide();
-//        } else {
-//            $('.dopInfoStatus').hide();
-//            $('.saveStatus').show();
-//        }
+        if(statusValue == 'status_sale_issued'){
+            $('.dopInfoStatus').show();
+            $('.saveStatus').hide();
+        } else {
+            $('.dopInfoStatus').hide();
+            $('.saveStatus').show();
+        }
     });
 
     $(document).on('click','.getCodeBySms-<?=$unicBtn?>',function () {

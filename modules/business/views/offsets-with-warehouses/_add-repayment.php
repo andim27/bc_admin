@@ -2,7 +2,15 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use app\components\THelper;
+use app\models\Warehouse;
 
+
+$myWarehouseId = Warehouse::getIdMyWarehouse();
+if($myWarehouseId != '592426f6dca7872e64095b45'){
+    $typeRepayment = 'warehouse_company';
+} else{
+    $typeRepayment = 'company_warehouse';
+}
 ?>
 
 <div class="modal-dialog">
@@ -35,13 +43,11 @@ use app\components\THelper;
             <div class="form-group row">
                 <div class="col-md-4"><?=Html::label(THelper::t('type_repayment'),'typeRepayment')?></div>
                 <div class="col-md-8">
-                    <?=Html::dropDownList('type_repayment','',
-                        ['company_warehouse'=>THelper::t('company_warehouse'),'warehouse_company' => THelper::t('warehouse_company')],
-                        [
-                            'class'=>'form-control',
-                            'id'=>'typeRepayment',
-                            'required'=> true,
-                        ])?>
+                    <?=Html::hiddenInput('type_repayment',$typeRepayment);?>
+                    <?=Html::input('text','',THelper::t($typeRepayment),[
+                        'class'     =>  'form-control',
+                        'disabled'  =>  true,
+                    ])?>
                 </div>
             </div>
 
@@ -55,8 +61,7 @@ use app\components\THelper;
                     ])?>
                 </div>
             </div>
-
-
+            
             <div class="row">
                 <div class="col-md-12 text-right">
                     <?= Html::submitButton(THelper::t('settings_translation_edit_save'), ['class' => 'btn btn-success']) ?>

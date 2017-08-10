@@ -3609,3 +3609,11 @@ fieldset[disabled] .btn-gplus.active {
 .select2-container--krajee .select2-search:after {
   content:none;
 }
+.displayNone{
+  display: none;
+}
+@media (min-width: 992px) {
+  .modal-more-lg {
+    width: 1300px;
+  }
+}
