@@ -74,9 +74,9 @@ if($idWarehouse == '592426f6dca7872e64095b45'){
                 <table class="table table-translations table-striped datagrid m-b-sm">
                     <thead>
                     <tr>
-                        <th>Товар</th>
-                        <th>Наличие</th>
-                        <th>Реализовано за период</th>
+                        <th><?=THelper::t('product')?></th>
+                        <th><?=THelper::t('number_in_stock')?></th>
+                        <th><?=THelper::t('sold_during_period')?></th>
                         <th></th>
                     </tr>
                     </thead>
@@ -89,7 +89,7 @@ if($idWarehouse == '592426f6dca7872e64095b45'){
                             <td><?=(!empty($implementation[$listGoods[(string)$item->parts_accessories_id]]) ? $implementation[$listGoods[(string)$item->parts_accessories_id]] : '0')?></td>
                             <td>
                                 <?php if($item->number>0){ ?>
-                                <?=Html::a('Списать',['/business/parts-accessories-in-warehouse/cancellation','goodsID'=>(string)$item->parts_accessories_id],['data-toggle'=>'ajaxModal','class'=>'btn btn-danger'])?>
+                                <?=Html::a(THelper::t('write_off'),['/business/parts-accessories-in-warehouse/cancellation','goodsID'=>(string)$item->parts_accessories_id],['data-toggle'=>'ajaxModal','class'=>'btn btn-danger'])?>
                                 <?php } ?>
                             </td>
                         </tr>

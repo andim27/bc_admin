@@ -187,6 +187,12 @@ Class Menu
                         'action' => 'warehouse',
                     ],
                     [
+                        'key'   =>  'sidebar_repayment_amounts',
+                        'label' => THelper::t('sidebar_repayment_amounts'),
+                        'url' => ['/business/offsets-with-warehouses/repayment-amounts'],
+                        'action' => 'repayment-amounts',
+                    ],
+                    [
                         'key'   =>  'sidebar_settings_translation',
                         'label' => THelper::t('sidebar_settings_translation'),
                         'url' => ['/business/setting/translation'],
@@ -346,7 +352,13 @@ Class Menu
                         'label' => THelper::t('sidebar_report_sale_for_country_warehouse'),
                         'url' => ['sale-report/info-sale-for-country-warehouse'],
                         'action' => 'info-sale-for-country-warehouse',
-                    ]
+                    ],
+                    [
+                        'key'   =>  'sidebar_offsets_with_warehouses',
+                        'label' => THelper::t('sidebar_offsets_with_warehouses'),
+                        'url' => ['offsets-with-warehouses/offsets-with-warehouses'],
+                        'action' => 'offsets-with-warehouses',
+                    ],
                 ]
             ],
 

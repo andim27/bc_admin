@@ -26,10 +26,14 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 <header class="panel-heading bg-light">
                     <ul class="nav nav-tabs nav-justified">
                         <li class="active">
-                            <a href="#by-waiting-parcel" class="tab-sending-execution" data-toggle="tab">Ожидание</a>
+                            <a href="#by-waiting-parcel" class="tab-sending-execution" data-toggle="tab">
+                                <?=THelper::t('waiting')?>
+                            </a>
                         </li>
                         <li class="">
-                            <a href="#by-posting-executed" class="tab-posting-executed" data-toggle="tab">Отправка</a>
+                            <a href="#by-posting-executed" class="tab-posting-executed" data-toggle="tab">
+                                <?=THelper::t('sending')?>
+                            </a>
                         </li>
                     </ul>
                 </header>

@@ -177,17 +177,17 @@ class StatusSalesController extends BaseController {
                 $countMessage = 0;
 
                 if(!empty($infoUser['phoneViber'])){
-                    SendMessageHelper::sendMessage($infoUser['phoneWhatsApp'],'viber',$code);
+                    SendMessageHelper::sendMessage($infoUser['phoneViber'],'viber',$code);
                     $countMessage++;
                 }
 
                 if(!empty($infoUser['phoneFB'])){
-                    SendMessageHelper::sendMessage($infoUser['phoneWhatsApp'],'facebook',$code);
+                    SendMessageHelper::sendMessage($infoUser['phoneFB'],'facebook',$code);
                     $countMessage++;
                 }
 
                 if(!empty($infoUser['phoneTelegram']) && $countMessage < 2){
-                    SendMessageHelper::sendMessage($infoUser['phoneWhatsApp'],'telegram',$code);
+                    SendMessageHelper::sendMessage($infoUser['phoneTelegram'],'telegram',$code);
                     $countMessage++;
                 }
 
@@ -1343,84 +1343,106 @@ class StatusSalesController extends BaseController {
                         '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
                     ]
                 ])
-                ->andWhere(['in','product',Products::productIDWithSet()])
+                //->andWhere(['in','product',Products::productIDWithSet()])
                 ->andWhere([
                     'type' => ['$ne' => -1]
                 ])
                 ->all();
 
-        } else {
-
-            $modelLastChangeStatus = StatusSales::find()
-                ->where([
-                    'setSales.dateChange' => [
-                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
-                        '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
-                    ]
-                ])
-                ->all();
-            $listOrdderId = [];
-            if(!empty($modelLastChangeStatus)){
-                foreach ($modelLastChangeStatus as $item){
-                    $listOrdderId[] = $item->idSale;
-                }
-
-
-                $model = Sales::find()
-                    ->andWhere(['in','_id',$listOrdderId])
-                    ->andWhere(['in','product',Products::productIDWithSet()])
-                    ->andWhere([
-                        'type' => ['$ne' => -1]
-                    ])
-                    ->all();
-            }
         }
+//        else {
+//
+//            $modelLastChangeStatus = StatusSales::find()
+//                ->where([
+//                    'setSales.dateChange' => [
+//                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+//                        '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+//                    ]
+//                ])
+//                ->all();
+//            $listOrdderId = [];
+//            if(!empty($modelLastChangeStatus)){
+//                foreach ($modelLastChangeStatus as $item){
+//                    $listOrdderId[] = $item->idSale;
+//                }
+//
+//
+//                $model = Sales::find()
+//                    ->where(['in','_id',$listOrdderId])
+//                    //->andWhere(['in','product',Products::productIDWithSet()])
+//                    ->andWhere([
+//                        'type' => ['$ne' => -1]
+//                    ])
+//                    ->all();
+//            }
+//        }
 
 
         $infoGoods = $infoWarehouse = [];
         if(!empty($model)){
 
-            $from = strtotime($request['from']);
-            $to = strtotime($request['to']);
+//            $from = strtotime($request['from']);
+//            $to = strtotime($request['to']);
 
             foreach ($model as $k=>$item){
                 /** check type money */
-                if(!empty($item->statusSale->buy_for_money) && $item->statusSale->buy_for_money==1){
+                if(!empty($item->statusSale->buy_for_money) && $item->statusSale->buy_for_money == 1){
 
-                    foreach ($item->statusSale->set as $itemSet) {
-
-
-
-                        $dateChange = strtotime($itemSet->dateChange->toDateTime()->format('Y-m-d'));
-                        if($dateChange>=$from && $dateChange<=$to && $itemSet->status=='status_sale_issued' && in_array($itemSet->idUserChange,$listAdmin)) {
-
-                            $modelWarehouse = Warehouse::getInfoWarehouse((string)$itemSet->idUserChange);
-                            if(!empty($modelWarehouse->title)){
-                                $nameWarehouse = $modelWarehouse->title;
-                            } else {
-                                $nameWarehouse = '???';
-                            }
-
-
-                            if(empty($infoGoods[$itemSet->title])){
-                                $infoGoods[$itemSet->title] = [
-                                    'count'     => 0,
-                                    'amount'    => 0
-                                ];
-                            }
-
-                            if(empty($infoWarehouse[$nameWarehouse])){
-                                $infoWarehouse[$nameWarehouse] = [
-                                    'count'     => 0,
-                                    'amount'    => 0
-                                ];
-                            }
-
-                            $infoGoods[$itemSet->title]['count']++;
-                            $infoWarehouse[$nameWarehouse]['count']++;
-
-                        }
+                    if(empty($infoGoods[$item->product])){
+                        $infoGoods[$item->product] = [
+                            'count'     => 0,
+                            'amount'    => 0
+                        ];
                     }
+
+                    $warehouseId = Warehouse::getIdMyWarehouse((string)$item->warehouseId);
+
+                    if(empty($infoWarehouse[$warehouseId])){
+                        $infoWarehouse[$warehouseId] = [
+                            'count'     => 0,
+                            'amount'    => 0
+                        ];
+                    }
+
+                    $infoGoods[$item->product]['count']++;
+                    $infoGoods[$item->product]['amount']+=$item->price;
+
+                    $infoWarehouse[$warehouseId]['count']++;
+                    $infoWarehouse[$warehouseId]['amount']+=$item->price;
+
+
+//                    foreach ($item->statusSale->set as $itemSet) {
+//
+//                        $dateChange = strtotime($itemSet->dateChange->toDateTime()->format('Y-m-d'));
+//                        if($dateChange>=$from && $dateChange<=$to && $itemSet->status=='status_sale_issued' && in_array($itemSet->idUserChange,$listAdmin)) {
+//
+//                            $modelWarehouse = Warehouse::getInfoWarehouse((string)$itemSet->idUserChange);
+//                            if(!empty($modelWarehouse->title)){
+//                                $nameWarehouse = $modelWarehouse->title;
+//                            } else {
+//                                $nameWarehouse = '???';
+//                            }
+//
+//
+//                            if(empty($infoGoods[$itemSet->title])){
+//                                $infoGoods[$itemSet->title] = [
+//                                    'count'     => 0,
+//                                    'amount'    => 0
+//                                ];
+//                            }
+//
+//                            if(empty($infoWarehouse[$nameWarehouse])){
+//                                $infoWarehouse[$nameWarehouse] = [
+//                                    'count'     => 0,
+//                                    'amount'    => 0
+//                                ];
+//                            }
+//
+//                            $infoGoods[$itemSet->title]['count']++;
+//                            $infoWarehouse[$nameWarehouse]['count']++;
+//
+//                        }
+//                    }
                 }
             }
         }

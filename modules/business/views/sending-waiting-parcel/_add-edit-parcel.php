@@ -6,14 +6,16 @@ use app\components\THelper;
 use app\models\Warehouse;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\PartsAccessories;
+use kartik\widgets\Select2;
 
 $listWarehouse = Warehouse::getArrayWarehouse();
-$listWarehouse = ArrayHelper::merge([''=>'Выберите склад'],$listWarehouse);
 
 $listGoods = PartsAccessories::getListPartsAccessories();
 
 $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getListGoodsFromMyWarehouse();
-$listGoodsFromMyWarehouse = ArrayHelper::merge([''=>'Выберите товар'],$listGoodsFromMyWarehouse);
+asort($listGoodsFromMyWarehouse);
+
+
 
 $countGoodsFromMyWarehouse = json_encode(PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse());
 
@@ -27,11 +29,11 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
 
 ?>
 
-<div class="modal-dialog">
+<div class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
-            <h4 class="modal-title">Посылка <?=(!empty($model->id) ? '№'.$model->id : '')?></h4>
+            <h4 class="modal-title"><?=THelper::t('package')?> <?=(!empty($model->id) ? '№'.$model->id : '')?></h4>
         </div>
 
 
@@ -48,17 +50,16 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
 
                 <div class="form-group row">
                     <div class="col-md-10">
-                        <?=Html::dropDownList('',
-                            '',
-                            $listGoodsFromMyWarehouse,[
+                        <?=Select2::widget([
+                            'name' => '',
+                            'data' => $listGoodsFromMyWarehouse,
+                            'options' => [
                                 'class'=>'form-control',
                                 'id'=>'selectGoods',
-                                'options' => [
-                                    '' => ['disabled' => true]
-                                ],
-                                'placeholder'=>'Товар',
+                                'placeholder' => 'Выберите товар',
+                                'multiple' => false
                             ]
-                        )?>
+                        ]);?>
                     </div>
                     <div class="col-md-2">
                         <?=Html::button('<i class="fa fa-plus"></i>',[
@@ -91,18 +92,21 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
 
                 <div class="form-group row">
                     <div class="col-md-7">
-                        <?=Html::dropDownList('where_sent',
-                            (!empty($model->where_sent) ? (string)$model->where_sent : ''),
-                            $listWarehouse,[
+                        <?=Select2::widget([
+                            'name' => 'where_sent',
+                            'value' => (!empty($model->where_sent) ? (string)$model->where_sent : ''),
+                            'data' => $listWarehouse,
+                            'options' => [
                                 'class'=>'form-control',
                                 'id'=>'whereSend',
-                                'required'=>'required',
-                                'options' => [
-                                    '' => ['disabled' => true]
-                                ],
-                                'placeholder'=>'Куда отправляем',
-                            ]
-                        )?>
+                                'required'=>true,
+                                'placeholder' => 'Куда отправляем',
+                                'multiple' => false
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]);?>
                     </div>
                     <div class="col-md-5">
                         <?=Html::input('text','comment', (!empty($model->comment) ? (string)$model->comment : ''),[

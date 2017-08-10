@@ -221,10 +221,19 @@ class ManufacturingSuppliersController extends BaseController {
         if(!empty($id)){
             $model = $model::findOne(['_id'=>new ObjectID($id)]);
         }
+        
+        $existingProducts = [];
+        $modelExistingProducts = PartsAccessories::find()->all();
+        if(!empty($modelExistingProducts)){
+            foreach ($modelExistingProducts as $item) {
+                $existingProducts[$item->title] = $item->title;
+            }
+        }
 
         return $this->renderAjax('_add-update-parts-accessories', [
-            'language' => Yii::$app->language,
-            'model' => $model,
+            'language'          => Yii::$app->language,
+            'model'             => $model,
+            'existingProducts'  => $existingProducts,
         ]);
     }
 

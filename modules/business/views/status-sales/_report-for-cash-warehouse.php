@@ -1,5 +1,9 @@
 <?php
 use app\components\THelper;
+use app\models\Warehouse;
+
+$listWarehouse = Warehouse::getArrayWarehouse();
+
 ?>
 
 <div class="tab-pane" id="by-warehouse">
@@ -23,7 +27,7 @@ use app\components\THelper;
                 <?php if(!empty($infoWarehouse)){ ?>
                     <?php foreach($infoWarehouse as $k=>$item){ ?>
                         <tr>
-                            <td><?=$k?></td>
+                            <td><?=$listWarehouse[$k]?></td>
                             <td><?=$item['count']?></td>
                             <td><?=$item['amount']?></td>
                         </tr>

@@ -72,7 +72,7 @@ $listGoods = Products::getListGoods()
                         <?= $this->render('_tabs-wait-sale-by-users',[
                             'language'      => $language,
                             'infoSale'      => $infoSale,
-                            'listCountry' => $listCountry,
+                            'listCountry'   => $listCountry,
                         ]); ?>
                     </div>
                     <div class="tab-pane" id="by-info-goods">

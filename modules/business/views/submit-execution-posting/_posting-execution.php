@@ -11,7 +11,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 
 ?>
 
-<div class="modal-dialog">
+<div class="modal-dialog modal-more-lg ">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
@@ -30,26 +30,24 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 <div class="form-group row infoDanger"></div>
 
                 <div class="form-group row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         Заказано:
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <?=$model->number?>
                         <?=Html::hiddenInput('',$model->number,['class'=>'orderingExecution']);?>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         Оприходованно:
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <?=$model->received?>
                         <?=Html::hiddenInput('',$model->received,['class'=>'receivedExecution']);?>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-md-6">
+                    <div class="col-md-1">
                         Пришло:
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <?=Html::input('number','received','0',[
                             'class'=>'form-control postingExecution',
                             'pattern'=>'\d*',
@@ -65,20 +63,20 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                             <div class="panel panel-default">
                                 <div class="panel-body">
                                     <div class="form-group">
-                                        <div class="col-md-4"></div>
-                                        <div class="col-md-4"></div>
-                                        <div class="col-md-4">Запас был</div>
+                                        <div class="col-md-8"></div>
+                                        <div class="col-md-2"></div>
+                                        <div class="col-md-2">Запас был</div>
                                     </div>
                                     <?php if(!empty($model->list_component)){ ?>
                                         <?php foreach($model->list_component as $item){ ?>
                                             <div class="form-group row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-8">
                                                     <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control','disabled'=>'disabled']);?>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-2">
                                                     <?=Html::input('text','',($item['number']*$model->number),['class'=>'form-control needSend','disabled'=>'disabled']);?>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-2">
                                                     <?=Html::input('text','',$item['reserve'],['class'=>'form-control needSend','disabled'=>'disabled']);?>
                                                 </div>
 

@@ -21,7 +21,11 @@ $listWarehouse = Warehouse::getArrayWarehouse();
 
         <div class="col-md-3 m-b">
             <?=Html::dropDownList('infoTypeDate', $request['infoTypeDate'],
-                ['create'=>'Дата создания','update'=>'Дата изменениня'],[
+                [
+                    'create'=>'Дата создания',
+                    //'update'=>'Дата изменениня'
+                ],
+                [
                     'class'=>'form-control infoTypeDate',
                     'id'=>'infoTypeDate',
                 ])?>

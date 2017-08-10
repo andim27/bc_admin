@@ -3,7 +3,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use app\components\THelper;
 use app\models\PartsAccessories;
-
+use kartik\widgets\Select2;
 ?>
 
 <div class="modal-dialog">
@@ -22,8 +22,19 @@ use app\models\PartsAccessories;
             <?=(!empty($model->_id) ? $formCom->field($model, '_id')->hiddenInput()->label(false) : '')?>
 
             <div class="row">
+
                 <div class="col-md-12">
-                    <?= $formCom->field($model, 'title')->textInput(['required'=>'required'])->label('Название') ?>
+                    <?= $formCom->field($model, 'title')->widget(Select2::className(),[
+                        'data' => $existingProducts,
+                        'language' => 'ru',
+                        'options' => [
+                            'placeholder' => '',
+                            'multiple' => false
+                        ],
+                        'pluginOptions' => [
+                            'tags' => true
+                        ]
+                    ])->label('Название') ?>
                 </div>
             </div>
 

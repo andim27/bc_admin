@@ -1,5 +1,8 @@
 <?php
-    use app\components\THelper;
+use app\components\THelper;
+use app\models\Products;
+
+$listPack = Products::getListPack();
 ?>
 
 <div class="tab-pane active" id="by-goods">
@@ -23,9 +26,9 @@
                 <?php if(!empty($infoGoods)){ ?>
                     <?php foreach($infoGoods as $k=>$item){ ?>
                         <tr>
-                            <td><?=$k?></td>
-                            <td><?=$item['count']?></td>
-                            <td><?=$item['amount']?></td>
+                            <td><?=$listPack[$k];?></td>
+                            <td><?=$item['count'];?></td>
+                            <td><?=$item['amount'];?></td>
                         </tr>
                     <?php } ?>                
                 <?php } ?>                

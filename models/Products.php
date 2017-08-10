@@ -80,6 +80,22 @@ class Products extends ActiveRecord
         return $list;
     }
 
+    public static function getListPackPrice()
+    {
+        $list = [];
+
+        $model = self::find()->orderBy(['productName'=>SORT_ASC])->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+                if(!empty($item->set) && count($item->set) > 0){
+                    $list[$item->product] = $item->price;
+                }
+            }
+        }
+
+        return $list;
+    }
+
     public static function getListGoods()
     {
         $list['all'] = 'Все товары';
@@ -98,17 +114,39 @@ class Products extends ActiveRecord
         return $list;
     }
 
-    public static function getListGoodsWithKey()
+    public static function getListGoodsWithKey($product='')
     {
         $list = [];
 
-        $model = self::find()->all();
+        $condition = [];
+        if(!empty($id)){
+            $condition = ['product'=>$product];
+        }
+
+        $model = self::find()->where($condition)->all();
         if(!empty($model)){
             foreach ($model as $item) {
                 if(!empty($item->set) && count($item->set) > 0){
                     foreach ($item->set as $itemSet) {
                         $list[$itemSet->setId] = $itemSet->setName;
                     }
+                }
+            }
+        }
+
+        return $list;
+    }
+
+
+    public static function getListPackId()
+    {
+        $list = [];
+
+        $model = self::find()->orderBy(['productName'=>SORT_ASC])->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+                if(!empty($item->set) && count($item->set) > 0){
+                    $list[(string)$item->_id] = $item->productName;
                 }
             }
         }

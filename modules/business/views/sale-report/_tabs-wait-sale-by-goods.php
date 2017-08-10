@@ -1,5 +1,6 @@
 <?php
 use app\components\THelper;
+$allCount = 0;
 ?>
 
 <section class="panel panel-default">
@@ -17,7 +18,6 @@ use app\components\THelper;
             </thead>
             <tbody>
             <?php if(!empty($infoGoods)) { ?>
-                <?php $allCount = 0; ?>
                 <?php foreach($infoGoods as $k => $item) { ?>
                     <tr>
                         <td><?=$k?></td>

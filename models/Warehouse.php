@@ -141,4 +141,24 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         return $list;
     }
 
+    public static function getArrayAdminWithWarehouseCountry(){
+        $list = [];
+        $model = self::find()->all();
+
+        if(!empty($model)){
+            foreach ($model as $itemWarehouse) {
+                if(!empty($itemWarehouse->idUsers)){
+                    foreach ($itemWarehouse->idUsers as $itemUser) {
+                        $list[$itemUser] = [
+                            'warehouse_id' => (string)$itemWarehouse->_id,
+                            'country' => $itemWarehouse->country
+                        ];
+                    }
+                }
+
+            }
+        }
+
+        return $list;
+    }
 }
