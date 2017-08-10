@@ -54,7 +54,7 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
                     <?=Html::input('number','price[]',(!empty($infoProduct[$k]) ? $infoProduct[$k] : 0 ),[
                         'class'=>'form-control',
                         'min'=>'0',
-                        'step'=>'1',
+                        'step'=>'0.01',
                     ])?>
                 </div>
             </div>

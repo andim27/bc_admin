@@ -34,7 +34,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
                             'class'=>'form-control',
                             'id'=>'amount',
                             'min'=>'0',
-                            'step'=>'1',
+                            'step'=>'0.01',
                             'required'=> true,
                         ])?>
                 </div>

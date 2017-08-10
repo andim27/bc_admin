@@ -1395,8 +1395,10 @@ class StatusSalesController extends BaseController {
                         ];
                     }
 
-                    if(empty($infoWarehouse[(string)$item->warehouseId])){
-                        $infoWarehouse[(string)$item->warehouseId] = [
+                    $warehouseId = Warehouse::getIdMyWarehouse((string)$item->warehouseId);
+
+                    if(empty($infoWarehouse[$warehouseId])){
+                        $infoWarehouse[$warehouseId] = [
                             'count'     => 0,
                             'amount'    => 0
                         ];
@@ -1405,8 +1407,8 @@ class StatusSalesController extends BaseController {
                     $infoGoods[$item->product]['count']++;
                     $infoGoods[$item->product]['amount']+=$item->price;
 
-                    $infoWarehouse[(string)$item->warehouseId]['count']++;
-                    $infoWarehouse[(string)$item->warehouseId]['amount']+=$item->price;
+                    $infoWarehouse[$warehouseId]['count']++;
+                    $infoWarehouse[$warehouseId]['amount']+=$item->price;
 
 
 //                    foreach ($item->statusSale->set as $itemSet) {

@@ -378,7 +378,7 @@ class OffsetsWithWarehousesController extends BaseController {
                 $model = new RepaymentAmounts();
                 $model->warehouse_id = new ObjectID($request['warehouse_id']);
                 $model->product_id = new ObjectID($v);
-                $model->price = (int)$request['price'][$k];
+                $model->price = (double)$request['price'][$k];
 
                 if($model->save()){}
 
@@ -454,7 +454,7 @@ class OffsetsWithWarehousesController extends BaseController {
 
             $model = new Repayment();
 
-            $model->repayment = (int)$request['price'];
+            $model->repayment = (double)$request['price'];
             $model->warehouse_id = new ObjectID($request['warehouse_id']);
             $model->difference_repayment = (int)$this->getDifferenceRepaymentNow($request['warehouse_id']);
             $model->type_repayment = $request['type_repayment'];
