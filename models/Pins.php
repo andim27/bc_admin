@@ -26,6 +26,9 @@ class Pins extends ActiveRecord
         return [
             '_id',
             'userId',
+            'used',
+            'isDelete',
+            'isActivate',
             'pin',
         ];
     }

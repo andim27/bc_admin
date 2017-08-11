@@ -4,9 +4,11 @@ namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
 use app\models\MoneyTransfer;
+use app\models\Pins;
 use app\models\Sales;
 use app\models\Transaction;
 use app\models\Users;
+use app\modules\business\models\PincodeCancelForm;
 use app\modules\business\models\ProfileForm;
 use app\modules\business\models\PurchaseForm;
 use Yii;
@@ -602,6 +604,36 @@ class UserController extends BaseController
     {
         return $this->render('money_transfer_log', [
             'moneyTransfers' => MoneyTransfer::find()->orderBy('date desc')->all()
+        ]);
+    }
+
+    public function actionPincodeCancel()
+    {
+        $status = '';
+        $model = new PincodeCancelForm();
+
+        $request = Yii::$app->request;
+
+        if ($request->isPost && $model->load($request->post())) {
+            $pin = Pins::find()->where(['pin' => $model->pin])->one();
+
+            if (!$pin) {
+                $status = THelper::t('pin_is_not_found');
+            } else {
+                $pin->used = true;
+                $pin->isDelete = true;
+                $pin->isActivate = true;
+
+                $pin->save();
+
+                $status = THelper::t('pin_is_deactivated');
+            }
+        }
+
+        return $this->render('pincode_cancel', [
+            'model' => $model,
+            'action' => '/' . Yii::$app->language . '/business/user/pincode-cancel',
+            'status' => $status
         ]);
     }
 
