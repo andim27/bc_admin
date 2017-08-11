@@ -11,6 +11,7 @@ use app\models\Users;
 use app\models\Warehouse;
 use app\modules\business\models\AddCell;
 use app\modules\business\models\ImportTranslationForm;
+use app\modules\business\models\TranslationDeleteForm;
 use app\modules\business\models\TranslationForm;
 use MongoDB\BSON\ObjectID;
 use Yii;
@@ -138,12 +139,19 @@ class SettingController extends BaseController {
             foreach ($translations->all() as $key => $translation){
                 $nestedData = [];
 
+                $query = Langs::find()->where([
+                    'countryId' => $translation->countryId,
+                    'stringId' => $translation->stringId,
+                ]);
+
                 $nestedData[$columns[0]] = $translation->stringId;
                 $nestedData[$columns[1]] = $translation->languages ? $translation->languages->stringValue : '';
                 $nestedData[$columns[2]] = $translation->stringValue;
                 $nestedData[$columns[3]] = $language;
                 $nestedData[$columns[4]] = $translation->comment;
-                $nestedData['action'] = '';
+                $nestedData['action'] = $query->count() > 1 ? $query->count() : '';
+
+                $nestedData['id'] = $translation->_id->__toString();
 
                 $data[] = $nestedData;
             }
@@ -161,6 +169,44 @@ class SettingController extends BaseController {
             'language' => $language,
             'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : []
         ]);
+    }
+
+    public function actionDeleteTranslation()
+    {
+        $request = Yii::$app->request;
+        $translationForm = new TranslationDeleteForm();
+
+        if ($request->isPost && $translationForm->load($request->post())) {
+            $query = Langs::find()->where([
+                'countryId' => $translationForm->countryId,
+                'stringId' => $translationForm->stringId,
+            ]);
+
+            if ($query->count() > 1) {
+                Langs::findOne($translationForm->id)->delete();
+            }
+        } else {
+            $translation = '';
+            $translations = api\Lang::getAll($request->get('countryId'));
+
+            foreach ($translations as $t) {
+                if ($t->stringId == $request->get('stringId')) {
+                    $translation = $t;
+                    break;
+                }
+            }
+
+            if ($translation) {
+                $translationForm->id = $request->get('id') ?: $translation->id;
+                $translationForm->countryId = $translation->countryId;
+                $translationForm->stringId = $translation->stringId;
+            }
+
+            return $this->renderAjax('delete_translation', [
+                'translationForm' => $translationForm,
+                'language' => Yii::$app->language
+            ]);
+        }
     }
 
 

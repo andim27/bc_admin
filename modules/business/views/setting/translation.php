@@ -73,14 +73,20 @@ use yii\widgets\LinkPager;
             {"data": "stringValue"},
             {"data": "countryId"},
             {"data": "comment"},
-            {"data": "action"}
+            {"data": "action"},
         ],
         "order": [[ 5, "desc" ]],
         "columnDefs": [ {
             "targets": -1,
             "data": null,
             "render":  function (data, type, full) {
-                return "<a href='/" + LANG + "/business/setting/edit-translation?stringId=" + full['stringId'] + "&countryId=" + full['countryId'] + "' class = 'pencil' data-toggle = 'ajaxModal'><i class='fa fa-pencil'></i></a>";
+                var actions = "<div  style='min-width: 50px'><a href='/" + LANG + "/business/setting/edit-translation?stringId=" + full['stringId'] + "&countryId=" + full['countryId'] + "' class = 'pencil' data-toggle = 'ajaxModal'><i class='fa fa-pencil'></i></a>";
+
+                if (full['action']) {
+                    actions += "&nbsp;(" + full['action'] + ")&nbsp;<a href='/" + LANG + "/business/setting/delete-translation?stringId=" + full['stringId'] + "&countryId=" + full['countryId'] + "&id=" + full['id'] + "' class = 'remove' data-toggle = 'ajaxModal'><i class='fa fa-times'></i></a>";
+                }
+
+                return actions + '</div>';
             }
         } ]
     });
@@ -92,7 +98,7 @@ use yii\widgets\LinkPager;
     $('input[name="empty_values"]').on('change',  function(){
         emptyOnly = this.checked;
 
-        table.api().ajax.reload();
+        table.api().ajax.reload(null, false);
     });
 
     $(document).on('click', '.save-translation', function(e){
@@ -100,10 +106,28 @@ use yii\widgets\LinkPager;
 
         var $form = $('form#TranslationForm');
 
-        table.api().ajax.reload();
+        table.api().ajax.reload(null, false);
         $.post($form.attr("action"), $form.serialize())
             .done(function(result) {
-                table.api().ajax.reload();
+                table.api().ajax.reload(null, false);
+            })
+            .fail(function() {
+                    alert("Error.");
+                }
+            );
+
+        return false;
+    });
+
+    $(document).on('click', '.delete-translation', function(e){
+        e.preventDefault();
+
+        var $form = $('form#TranslationDeleteForm');
+
+        table.api().ajax.reload(null, false);
+        $.post($form.attr("action"), $form.serialize())
+            .done(function(result) {
+                table.api().ajax.reload(null, false);
             })
             .fail(function() {
                     alert("Error.");
