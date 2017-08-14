@@ -127,7 +127,7 @@ class SubmitExecutionPostingController extends BaseController {
 
                                 foreach ($modelCancellationPerformer as $itemModelCancellationPerformer) {
                                     if($numberCancellationPerformer > 0){
-                                        if($itemModelCancellationPerformer->number >= $numberCancellationPerformer){
+                                        if($itemModelCancellationPerformer->number > $numberCancellationPerformer){
                                             $itemModelCancellationPerformer->number -= $numberCancellationPerformer;
 
                                             $tempCancellationPerformerNumber = $numberCancellationPerformer;
@@ -181,6 +181,7 @@ class SubmitExecutionPostingController extends BaseController {
             
             
         }
+
         return $this->redirect('/'.Yii::$app->language.'/business/submit-execution-posting/execution-posting');
     }
 
@@ -410,21 +411,67 @@ class SubmitExecutionPostingController extends BaseController {
         foreach ($modelExecutionPosting->list_component as $item) {
             $myWarehouse = Warehouse::getIdMyWarehouse();
 
-            $model = PartsAccessoriesInWarehouse::findOne([
-                'parts_accessories_id'  =>  $item['parts_accessories_id'],
-                'warehouse_id'          =>  new ObjectID($myWarehouse)
-            ]);
+            $countReturn = ($item['number'] * $needReturn) + $item['reserve'];
+            if(!empty($item['cancellation_performer']) && $item['cancellation_performer'] > 0){
+                if($countReturn>$item['cancellation_performer']){
+                    $countReturn -= $item['cancellation_performer'];
+                } else {
+                    $countReturn = 0;
+                }
 
-            $model->number += ($item['number'] * $needReturn) + $item['reserve'];
-
-            if($model->save()) {
-                //add log
-                LogWarehouse::setInfoLog([
-                    'action'                    => 'return_reserve_execution_posting',
-                    'parts_accessories_id'      => (string)$item['parts_accessories_id'],
-                    'number'                    => (int)(($item['number'] * $needReturn) + $item['reserve'])
+                $modelCancellationPerformer = ExecutionPosting::findOne([
+                    'one_component'             =>  1,
+                    'parts_accessories_id'      =>  $item['parts_accessories_id'],
+                    'suppliers_performers_id'   =>  $modelExecutionPosting->suppliers_performers_id,
+                    'posting'                   => [
+                        '$ne'                   => 1
+                    ]
                 ]);
+
+                if(empty($modelCancellationPerformer)){
+                    $modelCancellationPerformer = ExecutionPosting::find()
+                        ->where([
+                            'one_component'             =>  1,
+                            'parts_accessories_id'      =>  $item['parts_accessories_id'],
+                            'suppliers_performers_id'   =>  $modelExecutionPosting->suppliers_performers_id,
+                            'posting'                   =>  1
+                        ])
+                        ->orderBy(['date_create'=>SORT_DESC])
+                        ->one();
+
+                    $modelCancellationPerformer->posting = 0;
+                }
+
+                $modelCancellationPerformer->number += $item['cancellation_performer'];
+                if($modelCancellationPerformer->save()){
+                    //add log
+                    LogWarehouse::setInfoLog([
+                        'action'                    => 'return_reserve_execution_posting',
+                        'parts_accessories_id'      => (string)$item['parts_accessories_id'],
+                        'number'                    => (double)($item['cancellation_performer'])
+                    ]);
+                }
+
             }
+
+            if($countReturn != 0){
+                $model = PartsAccessoriesInWarehouse::findOne([
+                    'parts_accessories_id'  =>  $item['parts_accessories_id'],
+                    'warehouse_id'          =>  new ObjectID($myWarehouse)
+                ]);
+
+                $model->number += $countReturn;
+
+                if($model->save()) {
+                    //add log
+                    LogWarehouse::setInfoLog([
+                        'action'                    => 'return_reserve_execution_posting',
+                        'parts_accessories_id'      => (string)$item['parts_accessories_id'],
+                        'number'                    => (double)$countReturn
+                    ]);
+                }
+            }
+
         }
         
         
@@ -491,48 +538,73 @@ class SubmitExecutionPostingController extends BaseController {
      * @param $model
      */
     public function Cancellation($model){
-        $myWarehouse = Warehouse::getIdMyWarehouse();
 
         $list_component = $model->list_component;
 
+        $myWarehouse = Warehouse::getIdMyWarehouse();
+
         foreach ($list_component as $item) {
 
-            $count = ($item['number'] * $model->number) + $item['reserve'];
+            $countReturn = ($item['number'] * $model->number) + $item['reserve'];
             if(!empty($item['cancellation_performer']) && $item['cancellation_performer'] > 0){
-                $count = ($item['number'] * $model->number) + $item['reserve'] - $item['cancellation_performer'];
+                if($countReturn>$item['cancellation_performer']){
+                    $countReturn -= $item['cancellation_performer'];
+                } else {
+                    $countReturn = 0;
+                }
 
-                $modelExecutionPosting = ExecutionPosting::findOne([
+                $modelCancellationPerformer = ExecutionPosting::findOne([
+                    'one_component'             =>  1,
                     'parts_accessories_id'      =>  $item['parts_accessories_id'],
-                    'suppliers_performers_id'   =>  new ObjectID($myWarehouse)
+                    'suppliers_performers_id'   =>  $model->suppliers_performers_id,
+                    'posting'                   => [
+                        '$ne'                   => 1
+                    ]
                 ]);
 
-                $modelExecutionPosting->number += $item['cancellation_performer'];
+                if(empty($modelCancellationPerformer)){
+                    $modelCancellationPerformer = ExecutionPosting::find()
+                        ->where([
+                            'one_component'             =>  1,
+                            'parts_accessories_id'      =>  $item['parts_accessories_id'],
+                            'suppliers_performers_id'   =>  $model->suppliers_performers_id,
+                            'posting'                   =>  1
+                        ])
+                        ->orderBy(['date_create'=>SORT_DESC])
+                        ->one();
 
-                if($modelExecutionPosting->save()){
-                    // add log
+                    $modelCancellationPerformer->posting = 0;
+                }
+
+                $modelCancellationPerformer->number += $item['cancellation_performer'];
+                if($modelCancellationPerformer->save()){
+                    //add log
                     LogWarehouse::setInfoLog([
-                        'action'                    =>  'return_when_edit_execution_posting_in_execution_posting',
-                        'parts_accessories_id'      =>  (string)$item['parts_accessories_id'],
-                        'number'                    =>  (int)$item['cancellation_performer'],
+                        'action'                    => 'return_when_edit_execution_posting_in_execution_posting',
+                        'parts_accessories_id'      => (string)$item['parts_accessories_id'],
+                        'number'                    => (double)($item['cancellation_performer'])
                     ]);
                 }
+
             }
 
+            if($countReturn > 0) {
 
-            $modelItem = PartsAccessoriesInWarehouse::findOne([
-                'parts_accessories_id'  =>  $item['parts_accessories_id'],
-                'warehouse_id'          =>  new ObjectID($myWarehouse)
-            ]);
-
-            $modelItem->number = $modelItem->number + $count;
-
-            if($modelItem->save()){
-                // add log
-                LogWarehouse::setInfoLog([
-                    'action'                    =>  'return_when_edit_execution_posting',
-                    'parts_accessories_id'      =>  (string)$item['parts_accessories_id'],
-                    'number'                    =>  (int)$count,
+                $modelItem = PartsAccessoriesInWarehouse::findOne([
+                    'parts_accessories_id' => $item['parts_accessories_id'],
+                    'warehouse_id' => new ObjectID($myWarehouse)
                 ]);
+
+                $modelItem->number += $countReturn;
+
+                if ($modelItem->save()) {
+                    // add log
+                    LogWarehouse::setInfoLog([
+                        'action'                => 'return_when_edit_execution_posting',
+                        'parts_accessories_id'  => (string)$item['parts_accessories_id'],
+                        'number'                => (double)$countReturn,
+                    ]);
+                }
             }
         }
     }
