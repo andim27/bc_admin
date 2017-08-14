@@ -187,7 +187,7 @@ class SettingController extends BaseController {
             }
         } else {
             $translation = '';
-            $translations = api\Lang::getAll($request->get('countryId'));
+            $translations = api\Lang::getAll($request->get('countryId') ?: 'ru');
 
             foreach ($translations as $t) {
                 if ($t->stringId == $request->get('stringId')) {
