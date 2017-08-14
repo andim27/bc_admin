@@ -183,7 +183,13 @@ class SettingController extends BaseController {
             ]);
 
             if ($query->count() > 1) {
-                Langs::findOne($translationForm->id)->delete();
+                if (!empty($request->post('all'))) {
+                    foreach ($query->all() as $item) {
+                        $item->delete();
+                    };
+                } else {
+                    Langs::findOne($translationForm->id)->delete();
+                }
             }
         } else {
             $translation = '';

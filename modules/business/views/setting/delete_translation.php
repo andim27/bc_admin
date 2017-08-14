@@ -16,9 +16,14 @@
             <?= $form->field($translationForm, 'stringId')->hiddenInput()->label(false) ?>
 
             <div class="text-center">
+                <?= Html::checkbox('all', false, ['label' => THelper::t('settings_translation_delete_all')]) ?>
+
+                <br>
+
                 <a href="javascript:void(0);" class="btn btn-danger delete-translation" data-dismiss="modal">
                     <?= THelper::t('settings_translation_delete') ?>
                 </a>
+
                 <a href="javascript:void(0);" class="btn btn-warning" data-dismiss="modal">
                     <?= THelper::t('settings_translation_cancel') ?>
                 </a>
