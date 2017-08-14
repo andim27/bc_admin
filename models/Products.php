@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\components\THelper;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use yii2tech\embedded\mongodb\ActiveRecord;
@@ -98,7 +99,7 @@ class Products extends ActiveRecord
 
     public static function getListGoods()
     {
-        $list['all'] = 'Все товары';
+        $list['all'] = THelper::t('all_goods');
 
         $model = self::find()->all();
         if(!empty($model)){

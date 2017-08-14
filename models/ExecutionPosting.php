@@ -1,6 +1,8 @@
 <?php
 
 namespace app\models;
+use kartik\widgets\DepDrop;
+use MongoDB\BSON\ObjectID;
 
 /**
  * Class ExecutionPosting
@@ -79,4 +81,29 @@ class ExecutionPosting extends \yii2tech\embedded\mongodb\ActiveRecord
         return $list;
     }
 
+    
+    public static function getPresenceInPerformer($partsAccessoriesId,$performerId)
+    {
+        $countInPerformer = 0;
+        if(!empty($performerId)){
+            $modelPresenceInPerformer = ExecutionPosting::find()->where([
+                'one_component'             => 1,
+                'parts_accessories_id'      => new ObjectID($partsAccessoriesId),
+                'suppliers_performers_id'   => new ObjectID($performerId),
+                'posting'                   => [
+                    '$ne'                   => 1
+                ],
+            ])->all();
+
+            if(!empty($modelPresenceInPerformer)){
+                foreach ($modelPresenceInPerformer as $item){
+                    if($item->number >0){
+                        $countInPerformer += $item->number;
+                    }
+                }
+            }
+        }
+
+        return $countInPerformer;
+    }
 }

@@ -102,7 +102,7 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
     }
 
 
-    public static function getHowMuchCanCollect($id,$listComponents = [])
+    public static function getHowMuchCanCollect($id,$listComponents = [],$performerId='')
     {
 
         $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
@@ -112,14 +112,16 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
         $composite = [];
         foreach ($model->composite as $item){
 
+            $countInPerformer = ExecutionPosting::getPresenceInPerformer((string)$item['_id'],$performerId);
+
             $countWarehouse = 0;
             if(!empty($listGoodsFromMyWarehouse[(string)$item['_id']]) && $listGoodsFromMyWarehouse[(string)$item['_id']] != 0){
                 $countWarehouse = $listGoodsFromMyWarehouse[(string)$item['_id']];
             }
 
-
             if(empty($listComponents) && $countWarehouse > 0){
-                $composite[(string)$item['_id']] = intval($countWarehouse/$item['number']);
+
+                $composite[(string)$item['_id']] = intval($countWarehouse/$item['number']) + $countInPerformer;
             } else if (!empty($listComponents)) {
 
                 $modelInterchangeable = PartsAccessories::findOne(['_id'=>$item['_id']]);
@@ -138,11 +140,11 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
                     }
 
                 } else {
-                    $composite[(string)$item['_id']] = intval($countWarehouse/$item['number']);
+                    $composite[(string)$item['_id']] = intval($countWarehouse/$item['number']) + $countInPerformer;
                 }
 
             } else {
-                $composite[(string)$item['_id']] = '0';
+                $composite[(string)$item['_id']] = $countInPerformer;
             }
 
 

@@ -38,7 +38,7 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
 
     <div class="col-md-2 m-b blChangeGoods">
         <?=Html::dropDownList('listPack',(!empty($request['listPack']) ? $request['listPack'] : 'all'),
-            ArrayHelper::merge(['all' => 'Все паки'],$listPack),[
+            ArrayHelper::merge(['all' => THelper::t('all_pack')],$listPack),[
             'class'=>'form-control listPack',
             'id'=>'listPack',
             'disabled' => ((!empty($request['flGoods']) && $request['flGoods']==1) ? false : true),
@@ -56,7 +56,7 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
     </div>
 
     <div class="col-md-1 m-b">
-        <?=Html::label(THelper::t('number_send') .  ' из Харькова','send_kh')?>
+        <?=Html::label(THelper::t('number_send') . THelper::t('from_kharkov'),'send_kh')?>
     </div>
     <div class="col-md-1 m-b">
         <?=Html::checkbox('send_kh',($request['send_kh']==0 ? false : true),['id'=>'send_kh'])?>

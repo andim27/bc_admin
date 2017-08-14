@@ -7,8 +7,9 @@ use app\components\AlertWidget;
 $listGoods = PartsAccessories::getListPartsAccessories();
 $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
 
-
 ?>
+
+    <?php if(1==2){ ?>
     <div class="m-b-md">
         <h3 class="m-b-none"><?= THelper::t('sidebar_execution_posting') ?></h3>
     </div>
@@ -62,3 +63,6 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
 
 <?php $this->registerJsFile('js/jQuery.print.js', ['depends'=>['app\assets\AppAsset']]); ?>
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
+
+<?php } ?>
+<div>В разработке</div>
