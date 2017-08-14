@@ -26,8 +26,11 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
         <?php if(!empty($model->composite)){ ?>
             <?php foreach($model->composite as $item){ ?>
                 <div class="form-group row">
-                    <div class="col-md-7">
-                        <?php if(!empty(PartsAccessories::getInterchangeableList((string)$item['_id']))) { ?>
+                    <?php if(!empty(PartsAccessories::getInterchangeableList((string)$item['_id']))) { ?>
+                        <div class="col-md-1">
+                            <?=Html::a('-','javascript:void(0);',['class'=>'btn btn-default btn-block'])?>
+                        </div>
+                        <div class="col-md-6">
                             <?=Html::dropDownList('complect[]','',
                                 PartsAccessories::getInterchangeableList((string)$item['_id']),[
                                     'class'=>'form-control partTitle',
@@ -35,8 +38,9 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
                                     'options' => [
                                     ]
                                 ])?>
-
-                        <?php } else {?>
+                        </div>
+                    <?php } else {?>
+                        <div class="col-md-7">
                             <?=Html::hiddenInput('complect[]',(string)$item['_id'],[]);?>
                             <?=Html::input('text','',$listGoods[(string)$item['_id']],
                                 [
@@ -48,8 +52,8 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
                                     ],
                                     'title' => $listGoods[(string)$item['_id']]
                                 ]);?>
-                        <?php } ?>
-                    </div>
+                        </div>
+                    <?php } ?>
                     <div class="col-md-1">
                         <?=Html::input('text',
                             '',
@@ -88,7 +92,7 @@ $contractorInfo = ExecutionPosting::getCountSpareForContractor();
 </div>
 
 <script>
-    canCollect = '<?=PartsAccessoriesInWarehouse::getHowMuchCanCollect((string)$model->_id)?>';
+    canCollect = '<?=PartsAccessoriesInWarehouse::getHowMuchCanCollect((string)$model->_id,[],$performerId)?>';
     atContractor = <?=json_encode($contractorInfo)?>;
 
     if(canCollect==0){

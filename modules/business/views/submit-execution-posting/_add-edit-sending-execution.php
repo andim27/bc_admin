@@ -68,6 +68,26 @@ if(!empty($model)){
                 <div class="form-group row infoDanger"></div>
 
                 <div class="form-group row">
+                    <div class="col-md-9">
+                        <?=Html::label(THelper::t('sidebar_suppliers_performers'))?>
+                        <?=Html::dropDownList('suppliers_performers_id',
+                            (!empty($model) ? (string)$model->suppliers_performers_id : ''),
+                            $listSuppliersPerformers,[
+                                'class'=>'form-control',
+                                'id'=>'selectChangeStatus',
+                                'required'=>'required',
+                                'options' => [
+                                    '' => ['disabled' => true]
+                                ]
+                            ])?>
+                    </div>
+                    <div class="col-md-3">
+                        <?=Html::label(THelper::t('date_execution'))?>
+                        <?=Html::input('text','date_execution',(!empty($model->date_execution) ? $model->date_execution->toDateTime()->format('Y-m-d') : date('Y-m-d')),['class'=>'form-control datepicker-input','data-date-format'=>'yyyy-mm-dd'])?>
+                    </div>
+                </div>
+
+                <div class="form-group row">
                     <div class="col-md-7">
                         <?=Html::dropDownList('parts_accessories_id',
                             (!empty($model) ?  $model->parts_accessories_id : ''),
@@ -75,10 +95,10 @@ if(!empty($model)){
                             'class'=>'form-control withComposite',
                             'id'=>'selectGoods',
                             'required'=>true,
+                            'disabled' => true,
                             'options' => [
                                 '' => ['disabled' => true]
-                            ],
-                            'disabled' => (!empty($model) ?  true : false)
+                            ]
                         ])?>
                         <?=(!empty($model) ?  Html::hiddenInput('parts_accessories_id',(string)$model->parts_accessories_id) : '')?>
                     </div>
@@ -96,8 +116,6 @@ if(!empty($model)){
                             'step'=>'1',
                         ])?>
                     </div>
-
-
                 </div>
 
                 <div class="form-group blPartsAccessories row">
@@ -178,26 +196,6 @@ if(!empty($model)){
                     <?php } ?>
                 </div>
 
-                <div class="form-group row">
-                    <div class="col-md-9">
-                        <?=Html::label(THelper::t('sidebar_suppliers_performers'))?>
-                        <?=Html::dropDownList('suppliers_performers_id',
-                            (!empty($model) ? (string)$model->suppliers_performers_id : ''),
-                            $listSuppliersPerformers,[
-                                'class'=>'form-control',
-                                'id'=>'selectChangeStatus',
-                                'required'=>'required',
-                                'options' => [
-                                    '' => ['disabled' => true]
-                                ]
-                            ])?>
-                    </div>
-                    <div class="col-md-3">
-                        <?=Html::label(THelper::t('date_execution'))?>
-                        <?=Html::input('text','date_execution',(!empty($model->date_execution) ? $model->date_execution->toDateTime()->format('Y-m-d') : date('Y-m-d')),['class'=>'form-control datepicker-input','data-date-format'=>'yyyy-mm-dd'])?>
-                    </div>
-                </div>
-
                 <div class="form-group row blFullnameWhomTransferred">
                     <div class="col-md-12">
                         <?=Html::label(THelper::t('fullname_whom_transferred'))?>
@@ -235,7 +233,6 @@ if(!empty($model)){
 
                 <div class="form-group row">
                     <div class="col-md-7">
-
                         <?=Html::dropDownList('parts_accessories_id',
                             (!empty($model) ?  $model->parts_accessories_id : ''),
                             ArrayHelper::merge([''=>'выберите товар'],PartsAccessories::getListPartsAccessoriesWithoutComposite()),[
@@ -264,8 +261,6 @@ if(!empty($model)){
                             'step'=>'1',
                         ])?>
                     </div>
-
-
                 </div>
 
                 <div class="form-group row">
@@ -311,14 +306,14 @@ if(!empty($model)){
             url: '<?=\yii\helpers\Url::to(['submit-execution-posting/kit-execution-posting'])?>',
             type: 'POST',
             data: {
-                PartsAccessoriesId : $(this).val(),
+                partsAccessoriesId  : $(this).val(),
+                performerId         : $('#selectChangeStatus').val()
             },
             success: function (data) {
                 blForm.find('.blPartsAccessories').html(data);
             }
         });
     });
-
 
     $(".WantCollect").on('change',function(){
 
@@ -400,11 +395,12 @@ if(!empty($model)){
             if(title != undefined){
                 tempBl +=
                     '<tr>' +
-                    '<td>'+ title +
-                    '<td>'+ $(this).find('.numberWarehouse').val() +
-                    '<td>'+ $(this).find('.partNeedForOne').val() +
-                    '<td>'+ $(this).find('.needSend').val() +
-                    '<td>'+ $(this).find('.partNeedReserve').val();
+                        '<td>'+ title +
+                        '<td>'+ $(this).find('.numberWarehouse').val() +
+                        '<td>'+ $(this).find('.partContractor').val() +
+                        '<td>'+ $(this).find('.partNeedForOne').val() +
+                        '<td>'+ $(this).find('.needSend').val() +
+                        '<td>'+ $(this).find('.partNeedReserve').val();
             }
 
         });
@@ -412,38 +408,39 @@ if(!empty($model)){
         printFile =
             '<table>' +
                 '<tr>' +
-                    '<th colspan="5">Отправка на исполнение' +
+                    '<th colspan="6">Отправка на исполнение' +
                 '<tr>' +
                     '<td><b>Собираем<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting select[name='parts_accessories_id'] :selected").text() +
+                    '<td colspan="5">' + $(".popupSendingExecution #execution-posting select[name='parts_accessories_id'] :selected").text() +
                 '<tr>' +
                     '<td><b>Можно собрать<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting input[name='can_number']").val()  + ' шт.' +
+                    '<td colspan="5">' + $(".popupSendingExecution #execution-posting input[name='can_number']").val()  + ' шт.' +
                 '<tr>' +
                     '<td><b>Количество<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting input[name='want_number']").val() + ' шт.' +
+                    '<td colspan="5">' + $(".popupSendingExecution #execution-posting input[name='want_number']").val() + ' шт.' +
                 '<tr>' +
-                    '<th colspan="5">Необходимо:' +
+                    '<th colspan="6">Необходимо:' +
                 '<tr>' +
                     '<td> Коплектующая' +
-                    '<td> В наличие' +
+                    '<td> В нали- чие' +
+                    '<td> У испол- нителя' +
                     '<td> Нужно на одну' +
-                    '<td> Нужно отправить' +
+                    '<td> Нужно отпра- вить' +
                     '<td> Запас' +
 
                 tempBl +
     
                 '<tr>' +
                     '<td><b>Кому выдано<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting input[name='fullname_whom_transferred']").val() +
+                    '<td colspan="5">' + $(".popupSendingExecution #execution-posting input[name='fullname_whom_transferred']").val() +
     
                 '<tr>' +
                     '<td><b>Поставщики и исполнители<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting select[name='suppliers_performers_id'] :selected").text() +
+                    '<td colspan="5">' + $(".popupSendingExecution #execution-posting select[name='suppliers_performers_id'] :selected").text() +
         
                 '<tr>' +
                     '<td><b>Дата исполнения<b>'+
-                    '<td colspan="4">' + $(".popupSendingExecution #execution-posting input[name='date_execution']").val() +
+                    '<td colspan="5">' + $(".popupSendingExecution #execution-posting input[name='date_execution']").val() +
 
             '</table>';
 
@@ -472,5 +469,11 @@ if(!empty($model)){
 
         $('#send-posting .CanCollect').val(countGoods);
     })
-    
+
+    $('#selectChangeStatus').on('change',function () {
+        if($(this).val() != ''){
+            $('#selectGoods').removeAttr('disabled');
+        }
+    })
+
 </script>
