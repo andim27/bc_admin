@@ -83,7 +83,7 @@ use yii\widgets\LinkPager;
                 var actions = "<div  style='min-width: 50px'><a href='/" + LANG + "/business/setting/edit-translation?stringId=" + encodeURI(full['stringId']) + "&countryId=" + full['countryId'] + "' class = 'pencil' data-toggle = 'ajaxModal'><i class='fa fa-pencil'></i></a>";
 
                 if (full['action']) {
-                    actions += "&nbsp;(" + full['action'] + ")&nbsp;<a href='/" + LANG + "/business/setting/delete-translation?stringId=" + encodeURI('карта AdvCash') + "&countryId=" + full['countryId'] + "&id=" + full['id'] + "' class = 'remove' data-toggle = 'ajaxModal'><i class='fa fa-times'></i></a>";
+                    actions += "&nbsp;(" + full['action'] + ")&nbsp;<a href='/" + LANG + "/business/setting/delete-translation?stringId=" + encodeURI(full['stringId']) + "&countryId=" + full['countryId'] + "&id=" + full['id'] + "' class = 'remove' data-toggle = 'ajaxModal'><i class='fa fa-times'></i></a>";
                 }
 
                 return actions + '</div>';
