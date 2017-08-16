@@ -183,12 +183,20 @@ class SettingController extends BaseController {
             ]);
 
             if ($query->count() > 1) {
-                if (!empty($request->post('all'))) {
-                    foreach ($query->all() as $item) {
-                        $item->delete();
-                    };
-                } else {
-                    Langs::findOne($translationForm->id)->delete();
+                if (!empty($request->post('delete_items'))) {
+                    if ($request->post('delete_items') === 'all') {
+                        foreach ($query->all() as $item) {
+                            $item->delete();
+                        };
+                    } elseif ($request->post('delete_items') === 'all_except_this') {
+                        $allExceptOne = $query->andWhere(['<>', '_id', new ObjectID($request->post('TranslationDeleteForm')['id'])]);
+
+                        foreach ($allExceptOne->all() as $item) {
+                            $item->delete();
+                        };
+                    } else {
+                        Langs::findOne($translationForm->id)->delete();
+                    }
                 }
             }
         } else {

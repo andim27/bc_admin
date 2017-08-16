@@ -16,8 +16,11 @@
             <?= $form->field($translationForm, 'stringId')->hiddenInput()->label(false) ?>
 
             <div class="text-center">
-                <?= Html::checkbox('all', false, ['label' => THelper::t('settings_translation_delete_all')]) ?>
-
+                <?= Html::radio('delete_items', true, ['value' => 'one', 'label' => THelper::t('settings_translation_delete_one')]) ?>
+                &nbsp;
+                <?= Html::radio('delete_items', false, ['value' => 'all', 'label' => THelper::t('settings_translation_delete_all')]) ?>
+                &nbsp;
+                <?= Html::radio('delete_items', false, ['value' => 'all_except_this', 'label' => THelper::t('settings_translation_delete_all_except_this')]) ?>
                 <br>
 
                 <a href="javascript:void(0);" class="btn btn-danger delete-translation" data-dismiss="modal">
