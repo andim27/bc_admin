@@ -28,5 +28,5 @@
     </ul>
 </div>
 <?php $this->registerJsFile('js/preloader/jquery-waiting.js', ['depends' => ['app\assets\AppAsset']]); ?>
-<?php $this->registerJsFile('js/main/context-menu.js',['depends'=>['app\assets\AppAsset']]); ?>
+<?php $this->registerJsFile('js/main/context-menu.js?t' . time(), ['depends'=>['app\assets\AppAsset']]); ?>
 <?php $this->registerJsFile('js/main/date.js',['depends'=>['app\assets\AppAsset']]); ?>
