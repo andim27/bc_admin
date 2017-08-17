@@ -30,6 +30,7 @@ class User
     public $created;
     public $rank;
     public $expirationDateBS;
+    public $bs;
     public $leftSideNumberUsers;
     public $rightSideNumberUsers;
     public $sideToNextUser;
