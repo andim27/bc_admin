@@ -352,6 +352,9 @@ class User
                 if (isset($object->expirationDateBS)) {
                     $user->expirationDateBS = strtotime($object->expirationDateBS);
                 }
+                if (isset($object->bs)) {
+                    $user->bs = $object->bs;
+                }
                 if (isset($object->side)) {
                     $user->side = $object->side;
                 }
