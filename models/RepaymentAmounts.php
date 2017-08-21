@@ -26,7 +26,8 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
             '_id',
             'warehouse_id',
             'product_id',
-            'price'
+            'price',
+            'price_representative',
         ];
     }
 

@@ -39,7 +39,10 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
                         <?=THelper::t('goods')?>
                     </th>
                     <th>
-                        <?=THelper::t('price')?>
+                        <?=THelper::t('amount_warehouse')?>
+                    </th>
+                    <th>
+                        <?=THelper::t('amount_representative')?>
                     </th>
                     <th></th>
                 </tr>
@@ -53,6 +56,9 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
                         <td><?=$listProduct[(string)$item->product_id]?></td>
                         <td>
                             <?=$item->price?>
+                        </td>
+                        <td>
+                            <?=$item->price_representative?>
                         </td>
                         <td>
                             <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/offsets-with-warehouses/add-update-repayment-amounts','id'=>(string)$item->warehouse_id], ['data-toggle'=>'ajaxModal']) ?>

@@ -344,7 +344,8 @@ class OffsetsWithWarehousesController extends BaseController {
             $model = RepaymentAmounts::find()->where(['warehouse_id'=>new ObjectID($id)])->all();
 
             foreach ($model as $item) {
-                $infoProduct[(string)$item->product_id] = $item->price;
+                $infoProduct[(string)$item->product_id]['price'] = $item->price;
+                $infoProduct[(string)$item->product_id]['price_representative'] = $item->price_representative;
             }
         }
 
@@ -378,7 +379,8 @@ class OffsetsWithWarehousesController extends BaseController {
                 $model = new RepaymentAmounts();
                 $model->warehouse_id = new ObjectID($request['warehouse_id']);
                 $model->product_id = new ObjectID($v);
-                $model->price = (double)$request['price'][$k];
+                $model->price = (float)$request['price'][$k];
+                $model->price_representative = (float)$request['price_representative'][$k];
 
                 if($model->save()){}
 

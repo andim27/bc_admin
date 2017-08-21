@@ -6,10 +6,9 @@ use app\components\THelper;
 use app\models\PartsAccessories;
 use app\models\SuppliersPerformers;
 use app\models\CurrencyRate;
-
+use kartik\widgets\Select2;
 
 $listGoods = PartsAccessories::getListPartsAccessories();
-$listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
 
 $listSuppliersPerformers=SuppliersPerformers::getListSuppliersPerformers();
 $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поставщика-испонителя'],$listSuppliersPerformers);
@@ -37,16 +36,14 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
             <div class="row">
                 <div class="col-md-12">
                     <?=Html::label(THelper::t('goods'))?>
-                    <?=Html::dropDownList('parts_accessories_id',
-                        (!empty((string)$model->parts_accessories_id) ? (string)$model->parts_accessories_id: ''),
-                        $listGoods,[
-                            'class'=>'form-control',
-                            'id'=>'partsAccessoriesId',
-                            'required'=>'required',
-                            'options' => [
-                                '' => ['disabled' => true]
-                            ]
-                        ])?>
+                    <?= Select2::widget([
+                        'name' => 'parts_accessories_id',
+                        'data' => $listGoods,
+                        'options' => [
+                            'placeholder' => 'Выберите товар',
+                        ]
+                    ]);
+                    ?>
                 </div>
             </div>
 
