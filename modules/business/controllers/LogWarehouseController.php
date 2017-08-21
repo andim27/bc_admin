@@ -13,25 +13,31 @@ class LogWarehouseController extends BaseController {
 
     public function actionMoveOnWarehouse()
     {
+        $request = Yii::$app->request->post();
+
         if(empty($request)){
             $request['infoWarehouse'] = '';
             $request['to'] = date("Y-m-d");
             $request['from'] = date("Y-01-01");
         }
 
-        $queryWarehouse = [];
+        $model = '';
         if(!empty($request['infoWarehouse'])){
-            $queryWarehouse = [];
-        }
+            $model = LogWarehouse::find()
+                ->where([
+                    'date_create' => [
+                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                    ],
+                    '$or' => [
+                        ['admin_warehouse_id' => new ObjectID($request['infoWarehouse'])],
+                        ['on_warehouse_id' => new ObjectID($request['infoWarehouse'])]
+                    ]
+                ])
+                ->all();
 
-        $model = LogWarehouse::find()
-            ->where([
-                'date_create' => [
-                    '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
-                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
-                ]
-            ])
-            ->all();
+
+        }
 
         return $this->render('move-on-warehouse',[
             'language'          => Yii::$app->language,

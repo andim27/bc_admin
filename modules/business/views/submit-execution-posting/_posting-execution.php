@@ -63,23 +63,50 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                             <div class="panel panel-default">
                                 <div class="panel-body">
                                     <div class="form-group">
-                                        <div class="col-md-8"></div>
-                                        <div class="col-md-2"></div>
-                                        <div class="col-md-2">Запас был</div>
+                                        <div class="col-md-7"></div>
+                                        <div class="col-md-2">Отправленно</div>
+                                        <div class="col-md-2">Использованно</div>
+                                        <div class="col-md-1">Запас</div>
                                     </div>
-                                    <?php if(!empty($model->list_component)){ ?>
-                                        <?php foreach($model->list_component as $item){ ?>
+                                    <?php foreach($list_component as $items){ ?>
+                                        <?php if(count($items)>1){ ?>
+                                        <div class="panel panel-default blInterchangeable">
+                                            <div class="panel-body">
+                                                <div class="infoDangerExecution"></div>
+
+                                                <?php foreach($items as $k=>$item){ ?>
+                                                <div class="form-group row">
+                                                    <div class="col-md-7">
+                                                        <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control','disabled'=>'disabled']);?>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <?=Html::input('text','',($item['number_use']),['class'=>'form-control needSend','disabled'=>'disabled']);?>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <?=Html::input('text','',!empty($item['use_for_received']) ? $item['use_for_received'] : 0,['class'=>'form-control alreadyUse','disabled'=>'disabled']);?>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <?=Html::input('text','need_use['.(string)$item['parts_accessories_id'].']','0',['class'=>'form-control needUse','disabled'=>($item['number_use']=='0' ? true : false)]);?>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <?=Html::input('text','',$item['reserve'],['class'=>'form-control needSend','disabled'=>'disabled']);?>
+                                                    </div>
+                                                </div>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                        <?php } else {?>
+                                            <?php $item=$items['0']; ?>
                                             <div class="form-group row">
-                                                <div class="col-md-8">
+                                                <div class="col-md-7">
                                                     <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control','disabled'=>'disabled']);?>
                                                 </div>
-                                                <div class="col-md-2">
+                                                <div class="col-md-4">
                                                     <?=Html::input('text','',($item['number']*$model->number),['class'=>'form-control needSend','disabled'=>'disabled']);?>
                                                 </div>
-                                                <div class="col-md-2">
+                                                <div class="col-md-1">
                                                     <?=Html::input('text','',$item['reserve'],['class'=>'form-control needSend','disabled'=>'disabled']);?>
                                                 </div>
-
                                             </div>
                                         <?php } ?>
                                     <?php } ?>
@@ -106,15 +133,34 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 
 <script type="text/javascript">
     $('.postingExecution').on('change',function(){
+        checkBeforeSend();
+    });
 
+    $('.needUse').on('change',function(){
+        checkBeforeSend();
+    });
+
+    function checkBeforeSend(){
+        answer = checkWantCan();
+        if(answer == 1){
+            answer = checkInterchangeable();
+            if(answer == 1){
+                $('.assemblyBtn').show();
+                return true;
+            }
+        }
+        $('.assemblyBtn').hide();
+        return true;
+    }
+
+    function checkWantCan() {
+        $(".infoDanger").html('');
+        answer = 1;
         orderingExecution = parseInt($('.orderingExecution').val());
         receivedExecution = parseInt($('.receivedExecution').val());
-        wantPosting = parseInt($(this).val());
+        wantPosting = parseInt($('.postingExecution').val());
 
-        countInfo = orderingExecution - receivedExecution - wantPosting;
-        if(countInfo >= 0){
-            $('.assemblyBtn').show();
-        } else {
+        if(orderingExecution < (receivedExecution + wantPosting)){
             $(".infoDanger").html(
                 '<div class="alert alert-danger fade in">' +
                 '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
@@ -122,7 +168,52 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 '</div>'
             );
 
-            $('.assemblyBtn').hide();
+            answer = 0;
         }
-    })
+
+        return answer;
+    }
+
+    function checkInterchangeable(){
+        answer = 1;
+
+        needPosting = $('.postingExecution').val();
+
+        $('.blPartsAccessories .blInterchangeable').each(function () {
+
+            $(this).closest('.blInterchangeable').find(".infoDangerExecution").html('');
+
+            needUseInterchangeable = 0;
+            $(this).find('.needUse').each(function () {
+                wasSend = parseFloat($(this).closest('.row').find('.needSend').val());
+                alreadyUse = parseFloat($(this).closest('.row').find('.alreadyUse').val());
+                wantUse = parseFloat($(this).val());
+                if(wantUse > (wasSend-alreadyUse)){
+                    answer = 0;
+
+                    $(this).closest('.blInterchangeable').find(".infoDangerExecution").html(
+                        '<div class="alert alert-danger fade in">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                        'Неверные данные!!!' +
+                        '</div>'
+                    );
+                }
+                needUseInterchangeable += wantUse;
+            });
+
+            if(needPosting!=needUseInterchangeable){
+                answer = 0;
+
+                $(this).closest('.blInterchangeable').find(".infoDangerExecution").html(
+                    '<div class="alert alert-danger fade in">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                    'Неверные данные!!!' +
+                    '</div>'
+                );
+            }
+        });
+
+        return answer;
+    }
+
 </script>
