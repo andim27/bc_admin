@@ -7,7 +7,7 @@
     AppAsset::register($this);
 ?>
 <div class="main">
-<section id="content" class="m-t-lg wrapper-md animated fadeInUp">
+<section id="content" class="m-t-lg wrapper-md animated fadeInUp LoginForm">
     <div class="container aside-xxl">
         <a class="block logo_authorization" href="/"><img src="<?= $logo ? $logo : '/images/logo_auth.png' ?>" /></a>
         <h2 class="text-center text-white m-b">Администраторская панель</h2>

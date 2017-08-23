@@ -231,7 +231,8 @@ class StatusSalesController extends BaseController {
     {
         $request = Yii::$app->request->post();
 
-        if(!empty($request)){
+        if(!empty($request) && !empty($request['status'])){
+
             $model = StatusSales::find()
                 ->where([
                     'idSale' => new ObjectID($request['idSale'])
@@ -306,9 +307,9 @@ class StatusSalesController extends BaseController {
                 }
             }
 
+        } else {
+            return $this->renderPartial('_save_status_error');
         }
-
-        return 'Don\'t change status';
 
     }
 

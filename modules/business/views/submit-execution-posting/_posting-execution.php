@@ -80,6 +80,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                                         <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control','disabled'=>'disabled']);?>
                                                     </div>
                                                     <div class="col-md-2">
+                                                        <?=Html::hiddenInput('number_for_one',$item['number'],['class'=>'needForOne'])?>
                                                         <?=Html::input('text','',($item['number_use']),['class'=>'form-control needSend','disabled'=>'disabled']);?>
                                                     </div>
                                                     <div class="col-md-1">
@@ -89,7 +90,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                                         <?=Html::input('text','need_use['.(string)$item['parts_accessories_id'].']','0',['class'=>'form-control needUse','disabled'=>($item['number_use']=='0' ? true : false)]);?>
                                                     </div>
                                                     <div class="col-md-1">
-                                                        <?=Html::input('text','',$item['reserve'],['class'=>'form-control needSend','disabled'=>'disabled']);?>
+                                                        <?=Html::input('text','',$item['reserve'],['class'=>'form-control','disabled'=>'disabled']);?>
                                                     </div>
                                                 </div>
                                                 <?php } ?>
@@ -105,7 +106,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                                     <?=Html::input('text','',($item['number']*$model->number),['class'=>'form-control needSend','disabled'=>'disabled']);?>
                                                 </div>
                                                 <div class="col-md-1">
-                                                    <?=Html::input('text','',$item['reserve'],['class'=>'form-control needSend','disabled'=>'disabled']);?>
+                                                    <?=Html::input('text','',$item['reserve'],['class'=>'form-control','disabled'=>'disabled']);?>
                                                 </div>
                                             </div>
                                         <?php } ?>
@@ -188,9 +189,9 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 wasSend = parseFloat($(this).closest('.row').find('.needSend').val());
                 alreadyUse = parseFloat($(this).closest('.row').find('.alreadyUse').val());
                 wantUse = parseFloat($(this).val());
+                needForOne = parseFloat($(this).closest('.row').find('.needForOne').val());
                 if(wantUse > (wasSend-alreadyUse)){
                     answer = 0;
-
                     $(this).closest('.blInterchangeable').find(".infoDangerExecution").html(
                         '<div class="alert alert-danger fade in">' +
                         '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
@@ -198,7 +199,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                         '</div>'
                     );
                 }
-                needUseInterchangeable += wantUse;
+                needUseInterchangeable += (wantUse/needForOne);
             });
 
             if(needPosting!=needUseInterchangeable){

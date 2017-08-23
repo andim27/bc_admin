@@ -20,7 +20,7 @@ $listSet = Products::getListPack();
         </div>
 
         <div class="modal-body">
-            <?php Pjax::begin(['enablePushState' => false]); ?>
+            <?php Pjax::begin(['enablePushState' => false,'id' => 'pjaxFormMakeOrder'.rand()]); ?>
 
             <?= $this->render('_make-order-form', [
                 'language'  => $language,
