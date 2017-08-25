@@ -20,6 +20,7 @@ if(!empty($goodsID)){
 }
 
 $unicBtn = rand();
+
 ?>
 <div class="modal-dialog">
     <div class="modal-content" id="formChangeStatus">
@@ -28,7 +29,7 @@ $unicBtn = rand();
             <h4 class="modal-title"><?= THelper::t('change_status') ?></h4>
         </div>
 
-        <?php Pjax::begin(['enablePushState' => false]); ?>
+        <?php Pjax::begin(['enablePushState' => false,'id' => 'pjaxFormChangeStatus'.rand()]); ?>
         <div class="modal-body">
 
             <?php if($goodsCount==0) { ?>
@@ -57,8 +58,8 @@ $unicBtn = rand();
                         'id'=>'selectChangeStatus',
                         'options' => [
                             'status_sale_new' => ['disabled' => true,'style'=>'display:none'],
+                            'status_sale_issued' => [($goodsCount>0) ? '':'disabled' => true],
                             $statusNow => ['disabled' => true],
-                            'status_sale_issued' => [($goodsCount>0) ? '':'disabled' => true]
                         ]
                     ])?>
                 </div>

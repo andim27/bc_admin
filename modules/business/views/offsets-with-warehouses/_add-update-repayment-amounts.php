@@ -44,14 +44,34 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
                 </div>
             </div>
 
+
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <?=THelper::t('goods');?>
+                </div>
+                <div class="col-md-3">
+                    Сумма складу
+                </div>
+                <div class="col-md-3">
+                    Сумма представителю
+                </div>
+            </div>
+
             <?php foreach($listProduct as $k=>$v) {?>
             <div class="form-group row">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <?=Html::input('text','',$v,['class'=>'form-control','disabled' => true])?>
                     <?=Html::hiddenInput('product_id[]',$k)?>
                 </div>
-                <div class="col-md-4">
-                    <?=Html::input('number','price[]',(!empty($infoProduct[$k]) ? $infoProduct[$k] : 0 ),[
+                <div class="col-md-3">
+                    <?=Html::input('number','price[]',(!empty($infoProduct[$k]) ? $infoProduct[$k]['price'] : 0 ),[
+                        'class'=>'form-control',
+                        'min'=>'0',
+                        'step'=>'0.01',
+                    ])?>
+                </div>
+                <div class="col-md-3">
+                    <?=Html::input('number','price_representative[]',(!empty($infoProduct[$k]) ? $infoProduct[$k]['price_representative']: 0 ),[
                         'class'=>'form-control',
                         'min'=>'0',
                         'step'=>'0.01',

@@ -158,4 +158,49 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
         return $number;
     }
 
+
+    public static function getHowMuchCanCollectWithInterchangeable($id,$performerId='')
+    {
+
+        $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
+
+        $model = PartsAccessories::findOne(['_id'=>new ObjectID($id)]);
+
+        $composite = [];
+        foreach ($model->composite as $item){
+
+            $countInPerformer = ExecutionPosting::getPresenceInPerformer((string)$item['_id'],$performerId);
+
+            $countWarehouse = 0;
+            if(!empty($listGoodsFromMyWarehouse[(string)$item['_id']]) && $listGoodsFromMyWarehouse[(string)$item['_id']] != 0){
+                $countWarehouse = $listGoodsFromMyWarehouse[(string)$item['_id']];
+            }
+
+            $composite[(string)$item['_id']] = intval($countWarehouse/$item['number']) + $countInPerformer;
+
+            $modelInterchangeable = PartsAccessories::findOne(['_id'=>$item['_id']]);
+
+            if(!empty($modelInterchangeable->interchangeable)){
+
+                foreach ($modelInterchangeable->interchangeable as $itemInterchangeable) {
+                        $countWarehouse = 0;
+                        if(!empty($listGoodsFromMyWarehouse[$itemInterchangeable]) && $listGoodsFromMyWarehouse[$itemInterchangeable] != 0){
+                            $countWarehouse = $listGoodsFromMyWarehouse[$itemInterchangeable];
+                        }
+
+                        $composite[(string)$item['_id']]+=intval($countWarehouse/$item['number']);
+                    
+                }
+
+            }
+            
+        }
+
+        $number = 0;
+        if(!empty($composite)){
+            $number = min($composite);
+        }
+
+        return $number;
+    }
 }

@@ -16,14 +16,10 @@ $listSuppliersPerformers=SuppliersPerformers::getListSuppliersPerformers();
 $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поставщика-испонителя'],$listSuppliersPerformers);
 
 $canMake = 0;
-if(!empty($model) && !empty($model->list_component)){
-    $listComponents = [];
-    foreach($model->list_component as $item){
-        $listComponents[] = (string)$item['parts_accessories_id'];
-    }
+if(!empty($model) && !empty($model->suppliers_performers_id)){
 
     if($model->one_component != 1){
-        $canMake = PartsAccessoriesInWarehouse::getHowMuchCanCollect((string)$model->parts_accessories_id,$listComponents);
+        $canMake = PartsAccessoriesInWarehouse::getHowMuchCanCollectWithInterchangeable((string)$model->parts_accessories_id,$model->suppliers_performers_id);
     } else {
         $canMake = $listGoodsFromMyWarehouse[(string)$model->parts_accessories_id];
     }
@@ -55,6 +51,7 @@ if(!empty($model)){
             </div>
             <?php } ?>
 
+            <!--kit product-->
             <div id="execution-posting" <?=((empty($model->one_component) || $model->one_component != 1) ? '' : 'style="display:none"')?>>
                 <?php $formCom = ActiveForm::begin([
                     'action' => '/' . $language . '/business/submit-execution-posting/save-execution-posting',
@@ -63,7 +60,6 @@ if(!empty($model)){
 
                 <?=Html::hiddenInput('_id',(!empty($model) ? (string)$model->_id : ''));?>
                 <?=Html::hiddenInput('one_component',0);?>
-
 
                 <div class="form-group row infoDanger"></div>
 
@@ -131,63 +127,21 @@ if(!empty($model)){
                                     <div class="col-md-1">Надо отправить</div>
                                     <div class="col-md-1">С запасом</div>
                                 </div>
-                                <?php if(!empty($model->list_component)){ ?>
-                                    <?php foreach($model->list_component as $item){ ?>
-                                        <div class="form-group row">
-                                            <div class="col-md-7">
-                                                <?php if(!empty(PartsAccessories::getInterchangeableList((string)$item['parts_accessories_id']))) { ?>
-                                                    <?=Html::dropDownList('complect[]','',
-                                                        PartsAccessories::getInterchangeableList((string)$item['parts_accessories_id']),[
-                                                            'class'=>'form-control partTitle',
-                                                            'required'=>'required',
-                                                            'options' => [
-                                                            ]
-                                                        ])?>
-
-                                                <?php } else {?>
-                                                    <?=Html::hiddenInput('complect[]',(string)$item['parts_accessories_id'],[]);?>
-                                                    <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],[
-                                                        'class'             =>'form-control partTitle',
-                                                        'disabled'          =>true,
-                                                        'data-placement'    => 'left',
-                                                        'title'             => $listGoods[(string)$item['parts_accessories_id']]
-                                                        ]);?>
-
-                                                <?php } ?>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <?=Html::input('text',
-                                                    '',
-                                                    (!empty($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']]) ? ($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']] + ($item['number']*$want_number)) : 0 ),
-                                                    ['class'=>'form-control inWarehouse','disabled'=>'disabled']);?>
-                                            </div>
-
-                                            <div class="col-md-1">
-                                                <?=Html::hiddenInput('contractor[]',
-                                                    (!empty($contractorInfo[(string)$item['parts_accessories_id']]) ? $contractorInfo[(string)$item['parts_accessories_id']] : '0'),
-                                                    []); ?>
-                                                <?=Html::input('text','',
-                                                    (!empty($contractorInfo[(string)$item['parts_accessories_id']]) ? $contractorInfo[(string)$item['parts_accessories_id']] : '0'),
-                                                    ['class'=>'form-control partContractor','disabled'=>'disabled']); ?>
-                                            </div>
-
-                                            <div class="col-md-1">
-                                                <?=Html::hiddenInput('number[]',$item['number'],[]);?>
-                                                <?=Html::input('text','',$item['number'],['class'=>'form-control partNeedForOne','disabled'=>'disabled']);?>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']]) ? ($listGoodsFromMyWarehouse[(string)$item['parts_accessories_id']] + ($item['number']*$want_number)) : 0 ),['class'=>'numberWarehouse']);?>
-                                                <?=Html::input('text','',($item['number']*$want_number),['class'=>'form-control needSend','disabled'=>'disabled']);?>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <?=Html::input('number','reserve[]',(!empty($item['reserve']) ? $item['reserve'] : 0),[
-                                                    'class'=>'form-control partNeedReserve',
-                                                    'pattern'=>'\d*',
-                                                    'step'=>'1',
-                                                ]);?>
-                                            </div>
-
-                                        </div>
+                                <?php if(!empty($list_component)){ ?>
+                                    <?php foreach($list_component as $k=>$item){ ?>
+                                        <?php if(count($item)>1) {?>
+                                            <?= $this->render('__line_interchangeable_component',[
+                                                'items'         => $item,
+                                                'k'             => $k,
+                                                'performerId'   => $model->suppliers_performers_id,
+                                            ]); ?>
+                                        <?php } else { ?>
+                                            <?= $this->render('__line_component',[
+                                                'item'          => $item['0'],
+                                                'performerId'   => $model->suppliers_performers_id,
+                                                'want_number'   => $want_number
+                                            ]); ?>
+                                        <?php } ?>                                        
                                     <?php } ?>
                                 <?php } ?>
                             </div>
@@ -211,13 +165,16 @@ if(!empty($model)){
                         <?= Html::button(THelper::t('print'), ['class' => 'btn btn-success btnPrint','type'=>'button']) ?>
                     </div>
                     <div class="col-md-6 text-right">
+                        <?php if(empty($model)){?>
                         <?= Html::submitButton(THelper::t('save'), ['class' => 'btn btn-success assemblyBtn']) ?>
+                        <?php } ?>
                     </div>
                 </div>
                 
                 <?php ActiveForm::end(); ?>
             </div>
 
+            <!--single product-->
             <div id="send-posting" <?=((!empty($model->one_component) && $model->one_component == 1) ? '' : 'style="display:none"')?>>
                 <?php $formCom = ActiveForm::begin([
                     'action' => '/' . $language . '/business/submit-execution-posting/save-execution-posting-replacement',
@@ -231,7 +188,7 @@ if(!empty($model)){
 
 
 
-                <div class="form-group row">
+                <div class="form-group row blUnique">
                     <div class="col-md-7">
                         <?=Html::dropDownList('parts_accessories_id',
                             (!empty($model) ?  $model->parts_accessories_id : ''),
@@ -320,27 +277,21 @@ if(!empty($model)){
         blForm = $(this).closest('form');
 
         wantC = parseFloat($(this).val());
-        canC = parseFloat(blForm.find('.CanCollect').val());
 
         blForm.find('.blPartsAccessories .row').each(function () {
-           needNumber = $(this).find('input[name="number[]"]').val();
-           $(this).find('.needSend').val((needNumber*wantC).toFixed(2));
+            partNeedForOne = $(this).find('.partNeedForOne').val();
+           $(this).find('.needSend').val((partNeedForOne*wantC).toFixed(2));
         });
 
-        if(wantC>canC){
-            blForm.find('.assemblyBtn').hide();
-        } else {
-            blForm.find('.assemblyBtn').show();
-
-            checkReserve();
-        }
+        checkBeforeSend();
     });
 
     $(".partNeedReserve").on("change",function () {
-        checkReserve();
+        checkBeforeSend();
     });
 
     function checkReserve() {
+        answer = 1;
         $(".infoDanger").html('');
 
         $('.blPartsAccessories .row').each(function () {
@@ -354,12 +305,66 @@ if(!empty($model)){
                     'Резерв не может быть меньше чем нужно' +
                     '</div>'
                 );
+                answer = 0;
             }
 
         });
+
+        return answer;
     }
 
-    $('.blPartsAccessories').on('change','input[name="reserve[]"]',function(){
+    function checkInterchangeable(){
+        answer = 1;
+
+        $('.blPartsAccessories .blInterchangeable').each(function () {
+            needSendInterchangeable = 0
+            $(this).find('.needSendInterchangeable').each(function () {
+                needSendInterchangeable += parseFloat($(this).val());
+            });
+
+            needSend = parseFloat($(this).find('.needSend').val());
+
+            if(needSend!=needSendInterchangeable){
+                answer = 0;
+            }
+        });
+
+        return answer;
+    }
+
+    function checkWantCan() {
+        blForm = $('.popupSendingExecution form');
+
+        wantC = parseFloat(blForm.find('.WantCollect').val());
+        canC = parseFloat(blForm.find('.CanCollect').val());
+
+        if(wantC>canC){
+            answer = 0;
+        } else {
+            answer = 1;
+        }
+
+        return answer;
+    }
+
+    function checkBeforeSend(){
+        answer = checkWantCan();
+        if(answer == 1){
+            answer = checkInterchangeable();
+            if(answer == 1){
+                answer = checkReserve();
+                if(answer == 1){
+                    $('.assemblyBtn').show();
+                    return true;
+                }
+            }
+        }
+        $('.assemblyBtn').hide();
+        return true;
+    }
+
+
+    $('.blPartsAccessories').on('change','.partNeedReserve',function(){
         bl = $(this).closest('.row');
 
         inWarehouse = parseInt(bl.find('.numberWarehouse').val());
@@ -384,24 +389,60 @@ if(!empty($model)){
     $("#execution-posting .btnPrint").on('click', function() {
 
         tempBl = '';
-        $(".popupSendingExecution #execution-posting .blPartsAccessories").find('.form-group.row').each(function () {
-            title = $(this).find('.partTitle :selected').text();
-            if(title == ''){
-                title = $(this).find('.partTitle').val();
-            }
+        $(".popupSendingExecution #execution-posting .blPartsAccessories").find('.blUnique').each(function () {
 
-            //console.log(title +' ----- '+$(this).find('.numberWarehouse').val());
+            title = $(this).find('.partTitle').val();
 
             if(title != undefined){
                 tempBl +=
                     '<tr>' +
-                        '<td>'+ title +
-                        '<td>'+ $(this).find('.numberWarehouse').val() +
-                        '<td>'+ $(this).find('.partContractor').val() +
-                        '<td>'+ $(this).find('.partNeedForOne').val() +
-                        '<td>'+ $(this).find('.needSend').val() +
-                        '<td>'+ $(this).find('.partNeedReserve').val();
+                        '<td>' + title +
+                        '<td>' + $(this).find('.numberWarehouse').val() +
+                        '<td>' + $(this).find('.partContractor').val() +
+                        '<td>' + $(this).find('.partNeedForOne').val() +
+                        '<td>' + $(this).find('.needSend').val() +
+                        '<td>' + $(this).find('.partNeedReserve').val();
             }
+
+        });
+
+        $(".popupSendingExecution #execution-posting .blPartsAccessories").find('.blInterchangeable').each(function () {
+            tempBlInterchangeable = '';
+
+            $(this).find('.form-group.row').each(function () {
+
+                title = $(this).find('.partTitle').val();
+                if(title != undefined){
+                    tempBlInterchangeable +=
+                        '<tr>' +
+                        '<td>' + title +
+                        '<td>' + $(this).find('.numberWarehouse').val() +
+                        '<td>' + $(this).find('.partContractorInterchangeable').val() +
+                        '<td>' + $(this).find('.partNeedForOneInterchangeable').val() +
+                        '<td>' + $(this).find('.needSendInterchangeable').val() +
+                        '<td>' + $(this).find('.partNeedReserveInterchangeable').val();
+                }
+
+
+            });
+
+            tempBl +=
+                '<tr>' +
+                    '<td colspan="6">' +
+                        '<table>' +
+                            '<tr>' +
+                                '<td colspan="6">' + $(this).find('.blTitleInterchangeable').text() +
+                            tempBlInterchangeable +
+                            '<tr>' +
+                                '<td>' +
+                                '<td>' + $(this).find('.totalInterchangeable .numberWarehouse').val() +
+                                '<td>' + $(this).find('.totalInterchangeable .partContractor').val() +
+                                '<td>' + $(this).find('.totalInterchangeable .partNeedForOne').val() +
+                                '<td>' + $(this).find('.totalInterchangeable .needSend').val() +
+                                '<td>' + $(this).find('.totalInterchangeable .partNeedReserve').val()+
+                        '</table>' +
+                    '</td>' +
+                '</tr>';
 
         });
 
@@ -421,7 +462,7 @@ if(!empty($model)){
                 '<tr>' +
                     '<th colspan="6">Необходимо:' +
                 '<tr>' +
-                    '<td> Коплектующая' +
+                    '<td> Комплектующая' +
                     '<td> В нали- чие' +
                     '<td> У испол- нителя' +
                     '<td> Нужно на одну' +
@@ -468,12 +509,46 @@ if(!empty($model)){
         }
 
         $('#send-posting .CanCollect').val(countGoods);
-    })
+    });
 
     $('#selectChangeStatus').on('change',function () {
         if($(this).val() != ''){
             $('#selectGoods').removeAttr('disabled');
         }
-    })
+    });
+
+
+    // add reserve for interchangeable
+    $('.popupSendingExecution').on('change','.partNeedReserveInterchangeable',function () {
+        needSend = 0;
+        bl = $(this).closest('.blInterchangeable');
+        bl.find('.partNeedReserveInterchangeable').each(function () {
+            needSend += parseFloat($(this).val());
+        });
+        bl.find('.partNeedReserve').val(needSend);
+    });
+
+    // add reserve for interchangeable
+    $('.popupSendingExecution').on('change','.needSendInterchangeable',function () {
+        bl = $(this).closest('.row');
+        blFull = $(this).closest('.blInterchangeable');
+        blFull.find('.infoDangerExecution').html('');
+
+        inWarehouseInterchangeable = parseFloat(bl.find('.inWarehouseInterchangeable').val());
+        partContractorInterchangeable = parseFloat(bl.find('.partContractorInterchangeable').val());
+
+        needSendInterchangeable = parseFloat($(this).val());
+        if(needSendInterchangeable <= (inWarehouseInterchangeable+partContractorInterchangeable)){
+            checkBeforeSend();
+        } else{
+            blFull.find('.infoDangerExecution').html(
+                '<div class="alert alert-danger fade in">' +
+                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                'Не достаточно на складе' +
+                '</div>'
+            );
+        }
+
+    });
 
 </script>

@@ -73,7 +73,9 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
 
     <?php ActiveForm::end(); ?>
 
-    <div class="col-md-4 m-b text-right"></div>
+    <div class="col-md-4 m-b text-right">
+        <?=Html::a(THelper::t('sidebar_offsets_with_representative'),'offsets-with-representative')?>
+    </div>
 </div>
 
 <div class="row">

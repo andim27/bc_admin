@@ -13,7 +13,7 @@ use \app\models\Users;
             <h4 class="modal-title"><?= THelper::t('write_you_comment') ?></h4>
         </div>
 
-        <?php Pjax::begin(['enablePushState' => false]); ?>
+        <?php Pjax::begin(['enablePushState' => false,'id' => 'pjaxFormAddComment'.rand()]); ?>
         <div class="modal-body">
             <?php $formCom = ActiveForm::begin([
                 'action' => '/' . $language . '/business/status-sales/save-comment',

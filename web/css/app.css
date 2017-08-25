@@ -261,6 +261,9 @@ a:hover .caret-white {
   border-color: #e8e8e8;
   overflow: hidden;
 }
+.LoginForm .panel.panel-default > .panel-heading{
+  overflow:inherit;
+}
 .panel .list-group-item {
   border-color: #f0f0f0;
 }

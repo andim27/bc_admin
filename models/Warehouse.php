@@ -52,6 +52,29 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
     }
 
     /**
+     * get all list Head Admin
+     * @return array
+     */
+    public static function getListHeadAdmin()
+    {
+        $list = [];
+
+        $model = self::find()->all();
+
+        if(!empty($model)){
+            foreach ($model as $item) {
+                if(!empty($item->headUser) && empty($list[(string)$item->headUser])){
+                    $userInfo = Users::findOne(['_id'=>$item->headUser]);
+                    $list[(string)$item->headUser] = $userInfo->username;
+                }
+            }
+        }
+
+        return $list;
+    }
+
+
+    /**
      * get all warehouse head admin
      * @return mixed
      */

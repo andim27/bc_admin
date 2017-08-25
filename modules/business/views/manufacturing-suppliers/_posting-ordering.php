@@ -63,8 +63,8 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
                         <?=Html::input('number','number', '0',[
                             'class'=>'form-control',
                             'pattern'=>'\d*',
-                            'min'=>'1',
-                            'step'=>'1',
+                            'min'=>'0.01',
+                            'step'=>'0.01',
                         ])?>
                     </div>
                     <div class="col-md-4">

@@ -344,7 +344,8 @@ class OffsetsWithWarehousesController extends BaseController {
             $model = RepaymentAmounts::find()->where(['warehouse_id'=>new ObjectID($id)])->all();
 
             foreach ($model as $item) {
-                $infoProduct[(string)$item->product_id] = $item->price;
+                $infoProduct[(string)$item->product_id]['price'] = $item->price;
+                $infoProduct[(string)$item->product_id]['price_representative'] = $item->price_representative;
             }
         }
 
@@ -378,7 +379,8 @@ class OffsetsWithWarehousesController extends BaseController {
                 $model = new RepaymentAmounts();
                 $model->warehouse_id = new ObjectID($request['warehouse_id']);
                 $model->product_id = new ObjectID($v);
-                $model->price = (double)$request['price'][$k];
+                $model->price = (float)$request['price'][$k];
+                $model->price_representative = (float)$request['price_representative'][$k];
 
                 if($model->save()){}
 
@@ -537,6 +539,144 @@ class OffsetsWithWarehousesController extends BaseController {
         }
 
         return $repayment;
+    }
+
+    public function actionOffsetsWithRepresentative()
+    {
+        $infoUserWarehouseCountry = Warehouse::getArrayAdminWithWarehouseCountry();
+        $infoGoodsInProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
+        $listRepresentativeForWarehouse = [];
+        $infoWarehouse = Warehouse::find()->all();
+        if(!empty($infoWarehouse)){
+            foreach ($infoWarehouse as $item){
+                $listRepresentativeForWarehouse[(string)$item->_id] = (!empty($item->headUser) ? (string)$item->headUser : '');
+            }
+        }
+
+        $request =  Yii::$app->request->post();
+
+        if(empty($request)){
+            $request['to'] = date("Y-m-d");
+            $request['from'] = date("Y-01-01");
+            $request['listRepresentative']='';
+        }
+
+
+        $from = strtotime($request['from']);
+        $to = strtotime($request['to'] . ' 23:59:59');
+
+        $info = [];
+
+        /** buy for money */
+        $model = StatusSales::find()->where(['buy_for_money'=>1])->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $dateCreate = strtotime($item->sales->dateCreate->toDateTime()->format('Y-m-d'));
+                $productSetId = (!empty($item->sales->product) ? $item->sales->product : '???');
+
+                $warehouseId = (!empty($infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id'] : 'none');
+                $representativeId = (!empty($listRepresentativeForWarehouse[$warehouseId]) ? $listRepresentativeForWarehouse[$warehouseId] : '');
+
+                if ($dateCreate >= $from && $dateCreate <= $to && $item->sales->type != -1
+                    && !empty($representativeId) && (empty($request['listRepresentative']) || $request['listRepresentative']==$representativeId)) {
+
+                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($warehouseId,$productSetId);
+
+                    if(empty($info[$representativeId])){
+                        $repaymentCompanyWarehouse = Repayment::getRepayment($warehouseId,'company_warehouse',$request['from'],$request['to']);
+                        $repaymentWarehouseCompany = Repayment::getRepayment($warehouseId,'warehouse_company',$request['from'],$request['to']);
+
+                        $info[$representativeId] = [
+                            'number_buy_cash'                   => 0,
+                            'number_buy_prepayment'             => 0,
+                            'amount_for_the_device'             => 0,
+                            'amount_repayment_for_company'      => 0,
+                            'amount_repayment_for_warehouse'    => 0,
+                            'repayment'                         => ($repaymentCompanyWarehouse-$repaymentWarehouseCompany),
+                        ];
+                    }
+
+
+                    $info[$representativeId]['number_buy_cash']++;
+                    $info[$representativeId]['amount_for_the_device'] += $item->sales->price;
+                    $info[$representativeId]['amount_repayment_for_company'] += $amountRepayment;
+
+                }
+            }
+        }
+
+        /** buy for prepayment */
+        $model = StatusSales::find()
+            ->where([
+                'buy_for_money'=>[
+                    '$ne' => 1
+                ]
+            ])
+            ->andWhere([
+                'setSales.dateChange' => [
+                    '$gte' => new UTCDateTime($from * 1000),
+                    '$lt' => new UTCDateTime($to * 1000)
+                ]
+            ])
+            ->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+                if(!empty($item->setSales)  && $item->sales->type != -1){
+                    $countTemp = [];
+
+                    foreach ($item->setSales as $itemSet) {
+                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
+
+                        $warehouseId    = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id'] : 'none');
+                        $representativeId = (!empty($listRepresentativeForWarehouse[$warehouseId]) ? $listRepresentativeForWarehouse[$warehouseId] : '');
+
+                        if ($dateChange >= $from && $dateChange <= $to && $itemSet['status'] == 'status_sale_issued'
+                            && !empty($representativeId)  && (empty($request['listRepresentative']) || $request['listRepresentative']==$representativeId)) {
+
+                            $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
+
+                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($warehouseId,$productId);
+
+                            if(empty($info[$representativeId])){
+                                $repaymentCompanyWarehouse = Repayment::getRepayment($warehouseId,'company_warehouse',$request['from'],$request['to']);
+                                $repaymentWarehouseCompany = Repayment::getRepayment($warehouseId,'warehouse_company',$request['from'],$request['to']);
+
+                                $info[$representativeId] = [
+                                    'number_buy_cash'                   => 0,
+                                    'number_buy_prepayment'             => 0,
+                                    'amount_for_the_device'             => 0,
+                                    'amount_repayment_for_company'      => 0,
+                                    'amount_repayment_for_warehouse'    => 0,
+                                    'repayment'                         => ($repaymentCompanyWarehouse-$repaymentWarehouseCompany),
+                                ];
+                            }
+
+                            $countTemp[$representativeId] = 1;
+
+                            $info[$representativeId]['amount_for_the_device'] += $item->sales->price;
+                            $info[$representativeId]['amount_repayment_for_warehouse'] += $amountRepayment;
+
+                        }
+                    }
+
+//                    if(!empty($countTemp)){
+//                        foreach ($countTemp as $kTemp=>$itemWTemp){
+//                            foreach ($itemWTemp as $kWTemp=>$itemTemp){
+//                                $info[$kTemp][$kWTemp]['number_buy_prepayment'] += $itemTemp;
+//                            }
+//                        }
+//                    }
+
+                }
+
+            }
+        }
+
+        return $this->render('offsets-with-representative',[
+            'language'          => Yii::$app->language,
+            'request'           => $request,
+            'info'              => $info
+        ]);
     }
 
 }

@@ -75,7 +75,7 @@ $(document).ready(function(){
         } else {
             contextMenu.find('li[data-name="sponsor"]').hide();
         }
-        contextMenu.find('li[data-name="expirationDateBS"] span').html(info.expirationDateBS ? 'Есть, срок действия до ' + info.expirationDateBS : '-');
+        contextMenu.find('li[data-name="expirationDateBS"] span').html(info.bs ? 'Есть, срок действия до ' + info.expirationDateBS : '-');
         if (! info.status) {
             contextMenu.find('li[data-name="status"]').hide();
         }
