@@ -33,6 +33,7 @@ class Users extends ActiveRecord
             'created',
             'email',
             'phoneNumber',
+            'statistics',
             'phoneNumber2',
             'firstName',
             'secondName',
@@ -133,6 +134,11 @@ class Users extends ActiveRecord
         }
 
         return $listAdmin;
+    }
+
+    public function getStatistics()
+    {
+        return $this->statistics;
     }
 
     public static function checkHeadAdmin()
