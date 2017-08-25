@@ -459,6 +459,15 @@ class User
     }
 
     /**
+     * @param $data
+     * @return bool|mixed
+     */
+    public static function convert($data)
+    {
+        return self::_getResults($data);
+    }
+
+    /**
      * Returns country
      *
      * @return bool|mixed
@@ -467,7 +476,6 @@ class User
     {
         return dictionary\Country::get($this->countryCode);
     }
-
 
     public function getCountryCityAsString()
     {

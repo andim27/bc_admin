@@ -3,6 +3,7 @@
 namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
+use app\models\Langs;
 use app\models\MoneyTransfer;
 use app\models\Pins;
 use app\models\Sales;
@@ -16,6 +17,7 @@ use app\models\api;
 use app\modules\business\models\UsersReferrals;
 use app\models\User;
 use yii\base\Object;
+use yii\data\Pagination;
 use yii\web\Response;
 use yii\helpers\Html;
 use app\components\THelper;
@@ -83,8 +85,87 @@ class UserController extends BaseController
                     'modelMovementPoints'   => Transaction::getAllPointsTransactionUser($model->id)
                 ]);
             } else {
+                $columns = [
+                    'accountId', 'username', 'created', 'structure_status', 'full_name',
+                    'country_city', 'sponsor_username', 'sponsor_full_name', 'rank', 'action'
+                ];
+
+                $filterColumns = [
+                    'accountId', 'username', 'created', 'structure_status', 'firstName',
+                    'city', 'sponsor', 'sponsor', 'rank', 'action'
+                ];
+
+                $users = Users::find();
+
+                function getRank($search){
+                    $rank = Langs::find()->where(['stringValue' => $search])->andFilterWhere(['or',
+                        ['like', 'stringId', 'rank_'],
+                    ])->one();
+
+                    return $rank ? (int) str_replace('rank_', '', $rank->stringId) : '';
+                }
+
+                if ($search = $request->get('search')['value']) {
+
+
+                    // @todo filter
+                    $users->andFilterWhere(['or',
+                        ['=', 'accountId', (int)$search],
+                        ['like', 'username', $search],
+                        ['like', 'firstName', explode(' ', $search)[0]],
+                        ['like', 'secondName', $search],
+                        ['like', 'created', $search],
+                        ['=', 'rank', getRank($search)],
+                        ['like', 'country', $search],
+                        ['like', 'city', $search],
+                    ]);
+                }
+
+
+                if ($order = $request->get('order')[0]) {
+                    $users->orderBy([$filterColumns[$order['column']] => ($order['dir'] === 'asc' ? SORT_ASC : SORT_DESC)]);
+                }
+
+                $pages = new Pagination(['totalCount' => $users->count()]);
+
+                if (Yii::$app->request->isAjax) {
+                    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+                    $data = [];
+
+                    $users = $users
+                        ->offset($request->get('start') ?: $pages->offset)
+                        ->limit($request->get('length') ?: $pages->limit);
+
+                    $count = $users->count();
+
+                    foreach (api\User::convert($users->all()) as $key => $user){
+                        $nestedData = [];
+
+                        $nestedData[$columns[0]] = $user->accountId;
+                        $nestedData[$columns[1]] = $user->username;
+                        $nestedData[$columns[2]] = gmdate('d.m.Y', $user->created);
+                        $nestedData[$columns[3]] = 'В структуре / Удален';
+                        $nestedData[$columns[4]] = $user->firstName . ' ' . $user->secondName;
+                        $nestedData[$columns[5]] = $user->getCountryCityAsString();
+                        $nestedData[$columns[6]] = !empty($user->sponsor['username']) ? $user->sponsor['username'] : '';
+                        $nestedData[$columns[7]] = (!empty($user->sponsor['firstName']) ? $user->sponsor['firstName'] : '') . ' ' . (!empty($user->sponsor['secondName']) ? $user->sponsor['secondName'] : '');
+                        $nestedData[$columns[8]] = $user->rankString ? $user->rankString : '';
+                        $nestedData[$columns[9]] = Html::a('<i class="fa fa-pencil"></i>', ['/business/user', 'u' => $user->username]);
+
+                        $data[] = $nestedData;
+                    }
+
+                    return [
+                        'draw' => $request->get('draw'),
+                        'data' => $data,
+                        'recordsTotal' => $count,
+                        'recordsFiltered' => $count
+                    ];
+                }
+
                 return $this->render('index', [
-                    'users' => api\User::getList()
+                    'users' => []
                 ]);
             }
         } else if ($request->isPost) {

@@ -29,6 +29,8 @@ class Users extends ActiveRecord
         return [
             '_id',
             'username',
+            'accountId',
+            'created',
             'email',
             'phoneNumber',
             'phoneNumber2',
@@ -39,6 +41,7 @@ class Users extends ActiveRecord
             'warehouseName',
             'rulesAdmin',
             'settings',
+            'sponsor',
             'country',
             'city',
             'address',

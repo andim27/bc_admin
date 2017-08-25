@@ -43,48 +43,36 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($users as $key => $user) { ?>
-                    <tr>
-                        <td>
-                            <?= $user->accountId ?>
-                        </td>
-                        <td>
-                            <?= $user->username ?>
-                        </td>
-                        <td>
-                            <?= gmdate('d.m.Y', $user->created) ?>
-                        </td>
-                        <td>
-                            <?= 'В структуре / Удален' ?>
-                        </td>
-                        <td>
-                            <?= $user->firstName ?> <?= $user->secondName ?>
-                        </td>
-                        <td>
-                            <?= $user->getCountryCityAsString() ?>
-                        </td>
-                        <td>
-                            <?= $user->sponsor ? $user->sponsor->username : '' ?>
-                        </td>
-                        <td>
-                            <?= $user->sponsor ? $user->sponsor->firstName : '' ?> <?= $user->sponsor ? $user->sponsor->secondName : '' ?>
-                        </td>
-                        <td>
-                            <?= $user->rankString ? $user->rankString : '' ?>
-                        </td>
-                        <td>
-                            <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/user', 'u' => $user->username]) ?>
-                        </td>
-                    </tr>
-                <?php } ?>
+
             </tbody>
         </table>
     </div>
 </section>
 
 <script>
-    var table = $('.table-users').dataTable({
+    var table = $('.table-users');
+
+    table = table.dataTable({
         language: TRANSLATION,
-        lengthMenu: [25, 50, 75, 100]
+        lengthMenu: [ 25, 50, 75, 100 ],
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '/' + LANG + '/business/user'
+        },
+        "columns": [
+            {"data": "accountId"},
+            {"data": "username"},
+            {"data": "created"},
+            {"data": "structure_status"},
+            {"data": "full_name"},
+            {"data": "country_city"},
+            {"data": "sponsor_username"},
+            {"data": "sponsor_full_name"},
+            {"data": "rank"},
+            {"data": "action"}
+        ],
+        "order": [[ 5, "desc" ]]
     });
+
 </script>
