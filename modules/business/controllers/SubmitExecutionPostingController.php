@@ -196,7 +196,6 @@ class SubmitExecutionPostingController extends BaseController {
                                 $modelItem->number = (float)($modelItem->number - $number_use - $item['reserve']);
                             }
 
-
                             if($modelItem->save()){
                                 // add log
                                 LogWarehouse::setInfoLog([
@@ -443,9 +442,20 @@ class SubmitExecutionPostingController extends BaseController {
     {
         $model = ExecutionPosting::findOne(['_id'=>new ObjectID($id)]);
 
+        $list_component = [];
+       
+        foreach ($model->list_component as $item) {
+            if(!empty($item['parent_parts_accessories_id'])){
+                $list_component[(string)$item['parent_parts_accessories_id']][] = $item;
+            } else {
+                $list_component[(string)$item['parts_accessories_id']][] = $item;
+            }
+        }
+
         return $this->renderPartial('_look-posting-execution',[
             'language' => Yii::$app->language,
-            'model' => $model
+            'model' => $model,
+            'list_component' => $list_component
         ]);
     }
 
