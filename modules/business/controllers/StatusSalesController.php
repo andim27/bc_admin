@@ -1142,48 +1142,52 @@ class StatusSalesController extends BaseController {
 
         $infoGoods = $infoSetGoods = [];
         if(!empty($model) && !empty($listAdmin)){
+
+            $from = strtotime($dateInterval['from']);
+            $to = strtotime($dateInterval['to']);
+
             foreach ($model as $item){
-
-                // info pack
-                if($item->statusSale->checkSalesForUserChange($listAdmin)!==false || empty($listAdmin)) {
-                    if(empty($infoGoods[$item->product])){
-                        $infoGoods[$item->product]['title'] = $item->productName;
-                        $infoGoods[$item->product]['count'] = 0;
-                    }
-                    $infoGoods[$item->product]['count']++;
-                }
-
-
-
-                // info goods
-                foreach($item->statusSale->set as $itemSet){
-
-                    $flUse = 0;
-                    if(!empty($request['listWarehouse'])){
-                        if(in_array($itemSet->idUserChange,$listAdmin)) {
-                            $flUse = 1;
+                if($item->type != -1) {
+                    // info pack
+                    if ($item->statusSale->checkSalesForUserChange($listAdmin) !== false || empty($listAdmin)) {
+                        if (empty($infoGoods[$item->product])) {
+                            $infoGoods[$item->product]['title'] = $item->productName;
+                            $infoGoods[$item->product]['count'] = 0;
                         }
-                    } else if(!empty($request['listAdmin'])){
-                        if(in_array($itemSet->idUserChange,$listAdmin)) {
-                            $flUse = 1;
-                        }
-                    } else{
-                        $flUse = 1;
+                        $infoGoods[$item->product]['count']++;
                     }
 
-                    if($flUse == 1){
-                        if(empty($infoSetGoods[$itemSet->title])){
-                            $infoSetGoods[$itemSet->title]['books'] = 0;
-                            $infoSetGoods[$itemSet->title]['issue'] = 0;
+
+                    // info goods
+                    foreach ($item->statusSale->set as $itemSet) {
+                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
+                        $flUse = 0;
+                        if (!empty($request['listWarehouse'])) {
+                            if (in_array($itemSet->idUserChange, $listAdmin)) {
+                                $flUse = 1;
+                            }
+                        } else if (!empty($request['listAdmin'])) {
+                            if (in_array($itemSet->idUserChange, $listAdmin)) {
+                                $flUse = 1;
+                            }
+                        } else {
+                            $flUse = 1;
                         }
+
+                        if ($flUse == 1 && $dateChange >= $from && $dateChange <= $to && in_array($itemSet['status'], StatusSales::getListIssuedStatus())) {
+                            if (empty($infoSetGoods[$itemSet->title])) {
+                                $infoSetGoods[$itemSet->title]['books'] = 0;
+                                $infoSetGoods[$itemSet->title]['issue'] = 0;
+                            }
 
 //                        if($itemSet->status == 'status_sale_issued'){
 //                            $infoSetGoods[$itemSet->title]['issue']++;
 //                        }
 
-                        $infoSetGoods[$itemSet->title]['books']++;
-                    }
+                            $infoSetGoods[$itemSet->title]['books']++;
+                        }
 
+                    }
                 }
             }
         }
@@ -1462,8 +1466,6 @@ class StatusSalesController extends BaseController {
             'infoWarehouse'     => $infoWarehouse,
         ]);
     }
-    
-
 
     public function actionFix()
     {

@@ -26,6 +26,7 @@ class Repayment extends \yii2tech\embedded\mongodb\ActiveRecord
         return [
             '_id',
             'warehouse_id',
+            'representative_id',
             'repayment',
             'difference_repayment',
             'type_repayment',
@@ -48,12 +49,12 @@ class Repayment extends \yii2tech\embedded\mongodb\ActiveRecord
         }
     }
 
-    public static function getRepayment($warehouse_id,$type_repayment,$from='',$to='')
+    public static function getRepayment($object,$id,$type_repayment,$from='',$to='')
     {
         if(!empty($from) && !empty($to)){
             $repayment = Repayment::find()
                 ->where([
-                    'warehouse_id'=>new ObjectID($warehouse_id),
+                    $object.'_id'=>new ObjectID($id),
                     'type_repayment'=>$type_repayment
                 ])
                 ->andWhere([
@@ -66,7 +67,7 @@ class Repayment extends \yii2tech\embedded\mongodb\ActiveRecord
         } else {
             $repayment = Repayment::find()
                 ->where([
-                    'warehouse_id'=>new ObjectID($warehouse_id),
+                    $object.'_id'=>new ObjectID($id),
                     'type_repayment'=>$type_repayment
                 ])
                 ->sum('repayment');

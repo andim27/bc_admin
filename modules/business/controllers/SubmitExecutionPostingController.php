@@ -135,75 +135,77 @@ class SubmitExecutionPostingController extends BaseController {
                 
                 if(!empty($list_component)){
                     foreach ($list_component as $k=>$item) {
-                        $modelItem = PartsAccessoriesInWarehouse::findOne([
-                            'parts_accessories_id'  =>  $item['parts_accessories_id'],
-                            'warehouse_id'          =>  new ObjectID($myWarehouse)
-                        ]);
+                        if((!empty($item['number_use']) && !empty($item['parent_parts_accessories_id'])) || empty($item['parent_parts_accessories_id'])){
+                            $modelItem = PartsAccessoriesInWarehouse::findOne([
+                                'parts_accessories_id'  =>  $item['parts_accessories_id'],
+                                'warehouse_id'          =>  new ObjectID($myWarehouse)
+                            ]);
 
-                        if(empty($item['number_use'])){
-                            $number_use = $item['number']*$request['want_number'];
-                        } else {
-                            $number_use = $item['number_use'];
-                        }
+                            if(empty($item['number_use'])){
+                                $number_use = $item['number']*$request['want_number'];
+                            } else {
+                                $number_use = $item['number_use'];
+                            }
 
-                        // calculation cancellation parts
-                        if($item['cancellation_performer'] > 0){
+                            // calculation cancellation parts
+                            if($item['cancellation_performer'] > 0){
 
-                            $modelCancellationPerformer = ExecutionPosting::find()->where([
-                                'one_component'             =>  1,
-                                'parts_accessories_id'      =>  $item['parts_accessories_id'],
-                                'suppliers_performers_id'   =>  new ObjectID($request['suppliers_performers_id']),
-                                'posting'                   => [
-                                    '$ne'                   => 1
-                                ]
-                            ])->all();
+                                $modelCancellationPerformer = ExecutionPosting::find()->where([
+                                    'one_component'             =>  1,
+                                    'parts_accessories_id'      =>  $item['parts_accessories_id'],
+                                    'suppliers_performers_id'   =>  new ObjectID($request['suppliers_performers_id']),
+                                    'posting'                   => [
+                                        '$ne'                   => 1
+                                    ]
+                                ])->all();
 
-                            if(!empty($modelCancellationPerformer)){
+                                if(!empty($modelCancellationPerformer)){
 
-                                $numberCancellationPerformer = $item['cancellation_performer'];
+                                    $numberCancellationPerformer = $item['cancellation_performer'];
 
-                                foreach ($modelCancellationPerformer as $itemModelCancellationPerformer) {
-                                    if($numberCancellationPerformer > 0){
-                                        if($itemModelCancellationPerformer->number > $numberCancellationPerformer){
-                                            $itemModelCancellationPerformer->number -= $numberCancellationPerformer;
+                                    foreach ($modelCancellationPerformer as $itemModelCancellationPerformer) {
+                                        if($numberCancellationPerformer > 0){
+                                            if($itemModelCancellationPerformer->number > $numberCancellationPerformer){
+                                                $itemModelCancellationPerformer->number -= $numberCancellationPerformer;
 
-                                            $tempCancellationPerformerNumber = $numberCancellationPerformer;
-                                        } else {
-                                            $itemModelCancellationPerformer->number = 0;
-                                            $itemModelCancellationPerformer->posting = 1;
+                                                $tempCancellationPerformerNumber = $numberCancellationPerformer;
+                                            } else {
+                                                $itemModelCancellationPerformer->number = 0;
+                                                $itemModelCancellationPerformer->posting = 1;
 
-                                            $numberCancellationPerformer -= $itemModelCancellationPerformer->number;
+                                                $numberCancellationPerformer -= $itemModelCancellationPerformer->number;
 
-                                            $tempCancellationPerformerNumber = $itemModelCancellationPerformer->number;
-                                        }
+                                                $tempCancellationPerformerNumber = $itemModelCancellationPerformer->number;
+                                            }
 
-                                        if($itemModelCancellationPerformer->save()){
-                                            // add log
-                                            LogWarehouse::setInfoLog([
-                                                'action'                    =>  'cancellation_for_execution_posting',
-                                                'parts_accessories_id'      =>  (string)$item['parts_accessories_id'],
-                                                'number'                    =>  (float)$tempCancellationPerformerNumber,
-                                                'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
-                                            ]);
+                                            if($itemModelCancellationPerformer->save()){
+                                                // add log
+                                                LogWarehouse::setInfoLog([
+                                                    'action'                    =>  'cancellation_for_execution_posting',
+                                                    'parts_accessories_id'      =>  (string)$item['parts_accessories_id'],
+                                                    'number'                    =>  (float)$tempCancellationPerformerNumber,
+                                                    'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
+                                                ]);
+                                            }
                                         }
                                     }
                                 }
+
+                                $modelItem->number = (float)($modelItem->number + $item['cancellation_performer'] - $number_use - $item['reserve']);
+                            } else {
+                                $modelItem->number = (float)($modelItem->number - $number_use - $item['reserve']);
                             }
 
-                            $modelItem->number = (float)($modelItem->number + $item['cancellation_performer'] - $number_use - $item['reserve']);
-                        } else {
-                            $modelItem->number = (float)($modelItem->number - $number_use - $item['reserve']);
-                        }
 
-
-                        if($modelItem->save()){
-                            // add log
-                            LogWarehouse::setInfoLog([
-                                'action'                    =>  'send_for_execution_posting',
-                                'parts_accessories_id'      =>  (string)$item['parts_accessories_id'],
-                                'number'                    =>  (float)($number_use + $item['reserve']),
-                                'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
-                            ]);
+                            if($modelItem->save()){
+                                // add log
+                                LogWarehouse::setInfoLog([
+                                    'action'                    =>  'send_for_execution_posting',
+                                    'parts_accessories_id'      =>  (string)$item['parts_accessories_id'],
+                                    'number'                    =>  (float)($number_use + $item['reserve']),
+                                    'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
+                                ]);
+                            }
                         }
                     }
                 }

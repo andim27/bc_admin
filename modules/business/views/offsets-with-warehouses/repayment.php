@@ -12,7 +12,7 @@ use app\components\AlertWidget;
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
     <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>',['/business/offsets-with-warehouses/add-repayment','warehouse_id'=>$id],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+        <?=Html::a('<i class="fa fa-plus"></i>',['/business/offsets-with-warehouses/add-repayment','object'=>$object,'id'=>$id],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
     </div>
 </div>
 
@@ -54,7 +54,7 @@ use app\components\AlertWidget;
                                 <td><?=THelper::t($item->type_repayment);?></td>
                                 <td>
                                     <?php
-                                        $difference_after_repayment = ($item->type_repayment == 'company_warehouse'
+                                        $difference_after_repayment = ($item->type_repayment == 'company_'.$object
                                             ? ($item->difference_repayment+$item->repayment)
                                             : ($item->difference_repayment-$item->repayment)
                                         )

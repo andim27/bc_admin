@@ -7,9 +7,9 @@ use app\models\Warehouse;
 
 $myWarehouseId = Warehouse::getIdMyWarehouse();
 if($myWarehouseId != '592426f6dca7872e64095b45'){
-    $typeRepayment = 'warehouse_company';
+    $typeRepayment = $object.'_company';
 } else{
-    $typeRepayment = 'company_warehouse';
+    $typeRepayment = 'company_'.$object;
 }
 ?>
 
@@ -25,7 +25,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
                 'action' => '/' . $language . '/business/offsets-with-warehouses/save-repayment'
             ]); ?>
 
-            <?=Html::hiddenInput('warehouse_id',$warehouse_id)?>
+            <?=Html::hiddenInput($object.'_id',$id)?>
 
             <div class="form-group row">
                 <div class="col-md-4"><?=Html::label(THelper::t('amount'),'amount')?></div>

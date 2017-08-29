@@ -65,12 +65,12 @@ class OffsetsWithWarehousesController extends BaseController {
 
 
 
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($warehouseId,$productSetId);
+                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet('warehouse',$warehouseId,$productSetId);
 
                     if(empty($info[$countryCode][$warehouseId])){
-
-                        $repaymentCompanyWarehouse = Repayment::getRepayment($warehouseId,'company_warehouse',$request['from'],$request['to']);
-                        $repaymentWarehouseCompany = Repayment::getRepayment($warehouseId,'warehouse_company',$request['from'],$request['to']);
+                        //TODO:KAA  персонализировать откуда идут зачисления
+                        $repaymentCompanyWarehouse = Repayment::getRepayment('warehouse',$warehouseId,'company_warehouse',$request['from'],$request['to']);
+                        $repaymentWarehouseCompany = Repayment::getRepayment('warehouse',$warehouseId,'warehouse_company',$request['from'],$request['to']);
 
                         $info[$countryCode][$warehouseId] = [
                             'number_buy_cash'                   => 0,
@@ -123,11 +123,12 @@ class OffsetsWithWarehousesController extends BaseController {
 
                             $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
 
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($warehouseId,$productId);
+                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods('warehouse',$warehouseId,$productId);
 
                             if(empty($info[$countryCode][$warehouseId])){
-                                $repaymentCompanyWarehouse = Repayment::getRepayment($warehouseId,'company_warehouse',$request['from'],$request['to']);
-                                $repaymentWarehouseCompany = Repayment::getRepayment($warehouseId,'warehouse_company',$request['from'],$request['to']);
+                                //TODO:KAA  персонализировать откуда идут зачисления
+                                $repaymentCompanyWarehouse = Repayment::getRepayment('warehouse',$warehouseId,'company_warehouse',$request['from'],$request['to']);
+                                $repaymentWarehouseCompany = Repayment::getRepayment('warehouse',$warehouseId,'warehouse_company',$request['from'],$request['to']);
 
                                 $info[$countryCode][$warehouseId] = [
                                     'number_buy_cash'                   => 0,
@@ -180,6 +181,13 @@ class OffsetsWithWarehousesController extends BaseController {
 
         $info = [];
 
+        if($request['object'] == 'warehouse'){
+            $arrayWarehouse = [$request['id']];
+            
+        } else {
+            $arrayWarehouse = Warehouse::getListHeadAdminWarehouseId($request['id']);
+        }
+
         /** buy for money */
         $model = StatusSales::find()->where(['buy_for_money'=>1])->all();
         if(!empty($model)){
@@ -190,9 +198,9 @@ class OffsetsWithWarehousesController extends BaseController {
                 $warehouseId = (!empty($infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id'] : 'none');
 
                 if ($dateCreate >= $from && $dateCreate <= $to && $item->sales->type != -1
-                    && $request['listWarehouse']==$warehouseId) {
+                    && in_array($warehouseId,$arrayWarehouse)) {
 
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($warehouseId,$productSetId);
+                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($request['object'],$warehouseId,$productSetId);
                     
                     // info item pack
                     if(empty($info[$productSetId])){
@@ -255,11 +263,11 @@ class OffsetsWithWarehousesController extends BaseController {
                         $warehouseId    = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id'] : 'none');
 
                         if ($dateChange >= $from && $dateChange <= $to && $itemSet['status'] == 'status_sale_issued'
-                            && $request['listWarehouse']==$warehouseId) {
+                            && in_array($warehouseId,$arrayWarehouse)) {
 
                             $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
 
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($warehouseId,$productId);
+                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($request['object'],$warehouseId,$productId);
                             
                             // info pack
                             if(empty($info[$productSetId])){
@@ -418,27 +426,36 @@ class OffsetsWithWarehousesController extends BaseController {
     }
     
     
-    public function actionRepayment($id)
+    public function actionRepayment($object,$id)
     {
+        if($object == 'representative'){
+            $field = 'representative_id';
+        } else {
+            $field = 'warehouse_id';
+        }
+
         $model = Repayment::find()
-            ->where(['warehouse_id'=>new ObjectID($id)])
+            ->where([$field=>new ObjectID($id)])
             ->all();
 
-        $differenceRepaymentNow = $this->getDifferenceRepaymentNow($id);
+        $differenceRepaymentNow = $this->getDifferenceRepaymentNow($object,$id);
 
         return $this->render('repayment',[
             'id'                            => $id,
+            'object'                        => $object,
+            'field'                         => $field,
             'model'                         => $model,
             'differenceRepaymentNow'        => $differenceRepaymentNow,
             'alert'                         => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
 
-    public function actionAddRepayment($warehouse_id)
+    public function actionAddRepayment($object,$id)
     {
         return $this->renderAjax('_add-repayment', [
             'language'      => Yii::$app->language,
-            'warehouse_id'  => $warehouse_id
+            'object'  => $object,
+            'id'  => $id
         ]);
     }
 
@@ -456,12 +473,24 @@ class OffsetsWithWarehousesController extends BaseController {
 
             $model = new Repayment();
 
-            $model->repayment = (double)$request['price'];
-            $model->warehouse_id = new ObjectID($request['warehouse_id']);
-            $model->difference_repayment = (int)$this->getDifferenceRepaymentNow($request['warehouse_id']);
+            $model->repayment = (float)$request['price'];
             $model->type_repayment = $request['type_repayment'];
             $model->method_repayment = $request['method_repayment'];
             $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            if(!empty($request['representative_id'])){
+                $model->difference_repayment = (int)$this->getDifferenceRepaymentNow('representative',$request['representative_id']);
+                $model->warehouse_id = '';
+                $model->representative_id = new ObjectID($request['representative_id']);
+                $object = 'representative';
+                $id = $request['representative_id'];
+            } else {
+                $model->difference_repayment = (int)$this->getDifferenceRepaymentNow('warehouse',$request['warehouse_id']);
+                $model->warehouse_id = new ObjectID($request['warehouse_id']);
+                $model->representative_id = '';
+                $object = 'warehouse';
+                $id = $request['warehouse_id'];
+            }
 
             if($model->save()){
                 Yii::$app->session->setFlash('alert' ,[
@@ -470,15 +499,14 @@ class OffsetsWithWarehousesController extends BaseController {
                     ]
                 );
 
-                return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment?id=' . $request['warehouse_id']);
+                return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment?object='.$object.'&id=' . $id);
             }
         }
 
         return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment-amounts');
-
     }
 
-    protected function getDifferenceRepaymentNow($warehouse_id)
+    protected function getDifferenceRepaymentNow($object,$id)
     {
         $repayment = 0;
 
@@ -490,6 +518,12 @@ class OffsetsWithWarehousesController extends BaseController {
         $infoGoodsInProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
         $infoUserWarehouseCountry = Warehouse::getArrayAdminWithWarehouseCountry();
 
+        if($object=='representative'){
+            $arrayWarehouse = Warehouse::getListHeadAdminWarehouseId($id);
+        } else {
+            $arrayWarehouse = [$id];
+        }
+
         /** buy for money */
         $model = StatusSales::find()->where(['buy_for_money'=>1])->all();
         if(!empty($model)){
@@ -499,8 +533,8 @@ class OffsetsWithWarehousesController extends BaseController {
 
                 $warehouseId = (!empty($infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id'] : 'none');
 
-                if($item->sales->type != -1 && $warehouseId==$warehouse_id) {
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($warehouseId,$productSetId);
+                if($item->sales->type != -1 && in_array($warehouseId,$arrayWarehouse)) {
+                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($object,$warehouseId,$productSetId);
                     $info['amount_repayment_for_company'] += $amountRepayment;
                 }
             }
@@ -522,24 +556,27 @@ class OffsetsWithWarehousesController extends BaseController {
                     foreach ($item->setSales as $itemSet) {
                         $warehouseId    = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id'] : 'none');
 
-                        if ($itemSet['status'] == 'status_sale_issued' && $warehouseId==$warehouse_id) {
+                        if ($itemSet['status'] == 'status_sale_issued' && in_array($warehouseId,$arrayWarehouse)) {
                             $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($warehouseId,$productId);
+                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($object,$warehouseId,$productId);
                             $info['amount_repayment_for_warehouse'] += $amountRepayment;
                         }
                     }
                 }
-
             }
-            $repaymentCompanyWarehouse = Repayment::getRepayment($warehouse_id,'company_warehouse');
-            $repaymentWarehouseCompany = Repayment::getRepayment($warehouse_id,'warehouse_company');
 
+            $repaymentCompanyWarehouse = Repayment::getRepayment($object,$id,'company_'.$object);
+            $repaymentWarehouseCompany = Repayment::getRepayment($object,$id,$object.'_company');
 
             $repayment = $info['amount_repayment_for_company']-$repaymentWarehouseCompany-$info['amount_repayment_for_warehouse']+$repaymentCompanyWarehouse;
         }
 
         return $repayment;
     }
+
+
+
+
 
     public function actionOffsetsWithRepresentative()
     {
@@ -580,11 +617,12 @@ class OffsetsWithWarehousesController extends BaseController {
                 if ($dateCreate >= $from && $dateCreate <= $to && $item->sales->type != -1
                     && !empty($representativeId) && (empty($request['listRepresentative']) || $request['listRepresentative']==$representativeId)) {
 
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($warehouseId,$productSetId);
+                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet('representative',$warehouseId,$productSetId);
 
                     if(empty($info[$representativeId])){
-                        $repaymentCompanyWarehouse = Repayment::getRepayment($warehouseId,'company_warehouse',$request['from'],$request['to']);
-                        $repaymentWarehouseCompany = Repayment::getRepayment($warehouseId,'warehouse_company',$request['from'],$request['to']);
+                        //TODO:KAA  персонализировать откуда идут зачисления
+                        $repaymentCompanyWarehouse = Repayment::getRepayment('representative',$representativeId,'company_representative',$request['from'],$request['to']);
+                        $repaymentWarehouseCompany = Repayment::getRepayment('representative',$representativeId,'representative_company',$request['from'],$request['to']);
 
                         $info[$representativeId] = [
                             'number_buy_cash'                   => 0,
@@ -635,11 +673,12 @@ class OffsetsWithWarehousesController extends BaseController {
 
                             $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
 
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($warehouseId,$productId);
+                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods('representative',$warehouseId,$productId);
 
                             if(empty($info[$representativeId])){
-                                $repaymentCompanyWarehouse = Repayment::getRepayment($warehouseId,'company_warehouse',$request['from'],$request['to']);
-                                $repaymentWarehouseCompany = Repayment::getRepayment($warehouseId,'warehouse_company',$request['from'],$request['to']);
+                                //TODO:KAA  персонализировать откуда идут зачисления
+                                $repaymentCompanyWarehouse = Repayment::getRepayment('representative',$representativeId,'company_representative',$request['from'],$request['to']);
+                                $repaymentWarehouseCompany = Repayment::getRepayment('representative',$representativeId,'representative_company',$request['from'],$request['to']);
 
                                 $info[$representativeId] = [
                                     'number_buy_cash'                   => 0,
@@ -678,5 +717,21 @@ class OffsetsWithWarehousesController extends BaseController {
             'info'              => $info
         ]);
     }
+//    public function actionRepaymentRepresentative($id)
+//    {
+//        $model = Repayment::find()
+//            ->where(['warehouse_id'=>new ObjectID($id)])
+//            ->all();
+//
+//        $differenceRepaymentNow = $this->getDifferenceRepaymentNow($id);
+//
+//        return $this->render('repayment',[
+//            'id'                            => $id,
+//            'model'                         => $model,
+//            'differenceRepaymentNow'        => $differenceRepaymentNow,
+//            'alert'                         => Yii::$app->session->getFlash('alert', '', true)
+//        ]);
+//    }
+
 
 }

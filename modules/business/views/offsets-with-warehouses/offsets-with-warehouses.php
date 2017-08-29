@@ -183,9 +183,10 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
             url: '<?=\yii\helpers\Url::to(['offsets-with-warehouses/offsets-with-goods'])?>',
             type: 'POST',
             data: {
-                listWarehouse   : warehouseId,
-                from            : $('.blQuery .dateFrom').val(),
-                to              : $('.blQuery .dateTo').val()
+                id        : warehouseId,
+                object    : 'warehouse',
+                from      : $('.blQuery .dateFrom').val(),
+                to        : $('.blQuery .dateTo').val()
             },
             success: function (data) {
                 $('#decompositionPopup').modal().find('.modal-body').html(data);
