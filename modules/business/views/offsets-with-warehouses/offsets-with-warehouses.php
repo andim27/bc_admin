@@ -123,15 +123,12 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
                                         </span>
                                     </td>
                                     <td>
-                                        <?php
-                                            $repaid = $difference + $itemWarehouse['repayment'];
-                                        ?>
-                                        <span class="<?=($repaid>0 ? 'text-danger' : 'text-success')?>">
-                                            <?=abs($repaid)?>
+                                        <span>
+                                            <?=$itemWarehouse['repayment']?>
                                         </span>
                                     </td>
                                     <td>
-                                        <?=  Html::a('<i class="fa fa-eye text-info"></i>', ['/business/offsets-with-warehouses/repayment','id'=>$kWarehouse], ['class'=>'btn btn-default']); ?>
+                                        <?=  Html::a('<i class="fa fa-eye text-info"></i>', ['/business/offsets-with-warehouses/repayment','object'=>'warehouse','id'=>$kWarehouse], ['class'=>'btn btn-default']); ?>
                                     </td>
                                 </tr>
                             <?php } ?>
