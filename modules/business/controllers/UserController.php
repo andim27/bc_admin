@@ -121,12 +121,11 @@ class UserController extends BaseController
                     ]);
                 }
 
+                $pages = new Pagination(['totalCount' => $users->count()]);
 
                 if ($order = $request->get('order')[0]) {
                     $users->orderBy([$filterColumns[$order['column']] => ($order['dir'] === 'asc' ? SORT_ASC : SORT_DESC)]);
                 }
-
-                $pages = new Pagination(['totalCount' => $users->count()]);
 
                 if (Yii::$app->request->isAjax) {
                     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

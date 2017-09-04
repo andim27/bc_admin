@@ -39,12 +39,6 @@ Class Menu
                         'action' => 'purchase',
                     ],
                     [
-                        'key'   =>  'sidebar_users_commission',
-                        'label' => THelper::t('sidebar_users_commission'),
-                        'url' => ['/business/user/commission'],
-                        'action' => 'commission',
-                    ],
-                    [
                         'key'   =>  'sidebar_users_info',
                         'label' => THelper::t('sidebar_users_info'),
                         'url' => ['/business/user/info'],
@@ -236,6 +230,12 @@ Class Menu
                         'label' => THelper::t('sidebar_withdrawal'),
                         'url' => ['/business/transactions/withdrawal'],
                         'action' => 'withdrawal',
+                    ],
+                    [
+                        'key'   =>  'sidebar_users_commission',
+                        'label' => THelper::t('sidebar_users_commission'),
+                        'url' => ['/business/user/commission'],
+                        'action' => 'commission',
                     ],
                 ]
             ],
