@@ -171,6 +171,13 @@ class Users extends ActiveRecord
         return $list;
     }
 
+    public static function getSearchInfoUser($field,$search){
+        $model = self::find()->where(['LIKE',$field,$search])->one();
+
+        return !empty($model) ? $model->{$field} : '';
+    }
+
+
 }
 
 class RulesAdmin extends Model

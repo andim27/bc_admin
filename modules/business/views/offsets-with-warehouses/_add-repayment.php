@@ -2,15 +2,7 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use app\components\THelper;
-use app\models\Warehouse;
 
-
-$myWarehouseId = Warehouse::getIdMyWarehouse();
-if($myWarehouseId != '592426f6dca7872e64095b45'){
-    $typeRepayment = $object.'_company';
-} else{
-    $typeRepayment = 'company_'.$object;
-}
 ?>
 
 <div class="modal-dialog">

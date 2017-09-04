@@ -22,10 +22,9 @@ use kartik\widgets\Select2;
             <?=(!empty($model->_id) ? $formCom->field($model, '_id')->hiddenInput()->label(false) : '')?>
 
             <div class="row">
-
                 <div class="col-md-12">
                     <?= $formCom->field($model, 'title')->widget(Select2::className(),[
-                        'data' => $existingProducts,
+                        'data' => $existingProducts['ru'],
                         'language' => 'ru',
                         'options' => [
                             'placeholder' => '',
@@ -35,6 +34,28 @@ use kartik\widgets\Select2;
                             'tags' => true
                         ]
                     ])->label('Название') ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <?= Html::label('Название(en)')?>
+                        <?= Select2::widget([
+                            'name' => 'PartsAccessories[translations][en]',
+                            'value' => (!empty($model->translations['en']) ? $model->translations['en'] : ''),
+                            'data' => $existingProducts['en'],
+                            'language' => 'ru',
+                            'options' => [
+                                'placeholder' => '',
+                                'multiple' => false
+                            ],
+                            'pluginOptions' => [
+                                'tags' => true
+                            ]
+                        ]);
+                        ?>
+                    </div>
                 </div>
             </div>
 

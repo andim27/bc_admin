@@ -226,7 +226,8 @@ class ManufacturingSuppliersController extends BaseController {
         $modelExistingProducts = PartsAccessories::find()->all();
         if(!empty($modelExistingProducts)){
             foreach ($modelExistingProducts as $item) {
-                $existingProducts[$item->title] = $item->title;
+                $existingProducts['ru'][$item->title] = $item->title;
+                $existingProducts['en'][$item->translations['en']] = $item->translations['en'];
             }
         }
 
@@ -269,6 +270,7 @@ class ManufacturingSuppliersController extends BaseController {
 
         if(!empty($request)){
             $model->title = $request['PartsAccessories']['title'];
+            $model->translations = ['en' => $request['PartsAccessories']['translations']['en']];
             $model->unit = $request['PartsAccessories']['unit'];
 
             if($model->save()){

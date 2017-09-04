@@ -17,7 +17,7 @@ use MongoDB\BSON\UTCDatetime;
         <a href="javascript:void(0);" class="btn btn-info search-purchase"><?= THelper::t('users_purchase_search') ?></a>
     </div>
     <div class="col-md-8 text-right">
-        <?= Html::a(THelper::t('users_purchase_add'), ['/business/user/add-purchase'], ['data-toggle'=>'ajaxModal', 'class'=>'btn btn-danger add-purchase']) ?>
+        <?php //= Html::a(THelper::t('users_purchase_add'), ['/business/user/add-purchase'], ['data-toggle'=>'ajaxModal', 'class'=>'btn btn-danger add-purchase']); ?>
     </div>
 </div>
 <div class="row">
@@ -40,87 +40,41 @@ use MongoDB\BSON\UTCDatetime;
                         <div id="table-content"></div>
                     </div>
                     <div class="tab-pane" id="by-all">
-                        <table class="table table-striped datagrid m-b-sm table-by-all">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <?= THelper::t('users_purchase_date') ?>
-                                    </th>
-                                    <th>
-                                        <?= THelper::t('users_purchase_code') ?>
-                                    </th>
-                                    <th>
-                                        <?= THelper::t('users_purchase_name') ?>
-                                    </th>
-                                    <th>
-                                        <?= THelper::t('users_purchase_price') ?>
-                                    </th>
-                                    <th>
-                                        <?= THelper::t('users_purchase_point') ?>
-                                    </th>
-                                    <th>
-                                        <?= THelper::t('users_purchase_user_login') ?>
-                                    </th>
-                                    <th>
-                                        <?= THelper::t('users_purchase_user_fname_sname') ?>
-                                    </th>
-                                    <th>
-                                        <?= THelper::t('users_purchase_cancellation') ?>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php if ($purchases) {
-                                foreach ($purchases as $purchase) {
-
-                                    if (! isset($products[$purchase->product])) {
-                                        $product = $products[$purchase->product] = $purchase->getInfoProduct()->one();
-                                    } else {
-                                        $product = $products[$purchase->product];
-                                    }
-
-                                    $idUser = strval($purchase->idUser);
-                                    if (! isset($users[$idUser])) {
-                                        $purcahseUser = $users[$idUser] = $purchase->getInfoUser()->one();
-                                    } else {
-                                        $purcahseUser = $users[$idUser];
-                                    }
-                                    ?>
+                        <div class="table-responsive">
+                            <table class="table table-striped datagrid m-b-sm table-by-all" style="width: 100%;">
+                                <thead>
                                     <tr>
-                                        <td>
-                                            <?= gmdate('d.m.Y', strval($purchase->dateCreate) / 1000) ?>
-                                        </td>
-                                        <td>
-                                            <?= $product->product ?>
-                                        </td>
-                                        <td>
-                                            <?= $product->productName ?>
-                                        </td>
-                                        <td>
-                                            <?= $purchase->price ?>
-                                        </td>
-                                        <td>
-                                            <?= $purchase->bonusPoints ?>
-                                        </td>
-                                        <td>
-                                            <?= $purcahseUser->username ?>
-                                        </td>
-                                        <td>
-                                            <?= $purcahseUser->firstName . ' ' . $purcahseUser->secondName ?>
-                                        </td>
-                                        <td>
-                                            <?php if ($purchase->type == 1) { ?>
-                                            <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/user/cancel-purchase', 'id' => strval($purchase->_id)], ['onclick' => 'return confirmCancellation();']) ?>
-                                            <?php } else { ?>
-                                                <?= THelper::t('users_purchase_deleted') ?>
-                                            <?php } ?>
-                                        </td>
+                                        <th>
+                                            <?= THelper::t('users_purchase_date') ?>
+                                        </th>
+                                        <th>
+                                            <?= THelper::t('users_purchase_code') ?>
+                                        </th>
+                                        <th>
+                                            <?= THelper::t('users_purchase_name') ?>
+                                        </th>
+                                        <th>
+                                            <?= THelper::t('users_purchase_price') ?>
+                                        </th>
+                                        <th>
+                                            <?= THelper::t('users_purchase_point') ?>
+                                        </th>
+                                        <th>
+                                            <?= THelper::t('users_purchase_user_login') ?>
+                                        </th>
+                                        <th>
+                                            <?= THelper::t('users_purchase_user_fname_sname') ?>
+                                        </th>
+                                        <th>
+                                            <?= THelper::t('users_purchase_cancellation') ?>
+                                        </th>
                                     </tr>
-                                <?php }
-                            }
-                            ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,9 +82,28 @@ use MongoDB\BSON\UTCDatetime;
     </div>
 </div>
 <script>
-    $('.table-by-all').dataTable({
+
+
+    var table = $('.table-by-all');
+    table = table.dataTable({
         language: TRANSLATION,
-        lengthMenu: [25, 50, 75, 100]
+        lengthMenu: [ 25, 50, 75, 100 ],
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '/' + LANG + '/business/user/purchase'
+        },
+        "columns": [
+            {"data": "dateCreate"},
+            {"data": "product"},
+            {"data": "productName"},
+            {"data": "price"},
+            {"data": "bonusPoints"},
+            {"data": "username"},
+            {"data": "firstName_secondName"},
+            {"data": "action"}
+        ],
+        "order": [[ 0, "desc" ]]
     });
 
     $('.search-purchase').click(function() {

@@ -9,11 +9,9 @@ use app\models\Warehouse;
 
 $listPack = Products::getListPack();
 $myWarehouseId = Warehouse::getIdMyWarehouse();
-if($myWarehouseId != '592426f6dca7872e64095b45'){
-    $listWarehouse = Warehouse::getMyWarehouse();
-} else{
-    $listWarehouse = Warehouse::getArrayWarehouse();
-}
+
+$listWarehouse = Warehouse::getArrayWarehouse();
+
 ?>
 
 <div class="m-b-md">
@@ -37,6 +35,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
     </div>
 
 
+    <?php if(empty($representativeId)){ ?>
     <div class="col-md-1">
         <label class="control-label switch-center"></label>
         <label class="switch">
@@ -66,6 +65,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
                 'options' => []
             ])?>
     </div>
+    <?php } ?>
 
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>

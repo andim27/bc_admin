@@ -45,7 +45,8 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
             'title',            
             'unit',            
             'interchangeable',
-            'composite'
+            'composite',
+            'translations'
         ];
     }
 
@@ -76,12 +77,16 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         return $list;
     }
     
-    public static function getListPartsAccessories()
+    public static function getListPartsAccessories($languages='')
     {
         $model = self::find()->all();
         $list = [];
         foreach ($model as $item){
-            $list[(string)$item->_id] = $item->title;
+            if(!empty($languages) && $languages!='ru' && !empty($item->translations[$languages])){
+                $list[(string)$item->_id] = $item->translations[$languages];
+            }else{
+                $list[(string)$item->_id] = $item->title;
+            }
         }
 
         $list = ArrayInfoHelper::sortWords($list);

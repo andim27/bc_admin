@@ -1500,50 +1500,7 @@ class StatusSalesController extends BaseController {
 
     public function actionCanceledIssue($orderID,$goodsName)
     {
-        $model = StatusSales::findOne(['idSale'=>new ObjectID($orderID)]);
-
-        $numberChange = 0;
-        foreach ($model->set as $item) {
-            if($item->title == $goodsName && $item->status != 'status_sale_new'){
-                $numberChange++;
-                $userID = $item->idUserChange;
-
-                $item->status = 'status_sale_new';
-                $item->idUserChange = null;
-            }
-        }
-
-        if($numberChange != 0){
-
-            $comment = new ReviewsSale();
-            $comment->idUser = new ObjectID($this->user->id);
-            $comment->dateCreate = new UTCDateTime(strtotime(date("Y-m-d H:i:s")) * 1000);
-            $comment->review = 'Откат статуса ('.$goodsName.') ' . THelper::t('status_sale_issued') . '->' . THelper::t('status_sale_new');
-
-            $model->reviews[] = $comment;
-
-            $model->refreshFromEmbedded();
-            $model->isAttributeChanged('reviewsSales');
-
-            if($model->save()){
-                $warehouseID = Warehouse::getIdMyWarehouse((string)$userID);
-                $goodsID = PartsAccessories::findOne(['title'=>$goodsName]);
-                $userWarehouse = PartsAccessoriesInWarehouse::findOne(['warehouse_id'=>new ObjectID($warehouseID),'parts_accessories_id'=>$goodsID->_id]);
-                $userWarehouse->number += $numberChange;
-
-                if($userWarehouse->save()){
-                    // add log
-                    LogWarehouse::setInfoLog([
-                        'action'                    =>  'return_in_warehouse',
-                        'parts_accessories_id'      =>  (string)$goodsID->_id,
-                        'number'                    =>  $numberChange,
-                        'on_warehouse_id'           =>  $warehouseID,
-                        'hide_admin_warehouse_id'   =>  '1'
-                    ]);
-                }
-
-            }
-        }
+        SaleController::cancellationGoodsInOrder($orderID,$goodsName);
 
         header('Content-Type: text/html; charset=utf-8');
         echo "<xmp>";

@@ -6,6 +6,7 @@ use app\controllers\BaseController;
 use app\models\Langs;
 use app\models\MoneyTransfer;
 use app\models\Pins;
+use app\models\Products;
 use app\models\Sales;
 use app\models\Transaction;
 use app\models\Users;
@@ -364,23 +365,114 @@ class UserController extends BaseController
         }
     }
 
+    /**
+     * all order
+     * @return array|string
+     */
     public function actionPurchase()
     {
-        if (Yii::$app->request->isPost) {
+        $request = Yii::$app->request;
+
+        if ($request->isPost) {
             $purchaseForm = new PurchaseForm();
-            $purchaseForm->load(Yii::$app->request->post());
-            if (Yii::$app->request->isAjax) {
+            $purchaseForm->load($request->post());
+            if ($request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return ActiveForm::validate($purchaseForm);
             } else {
                 $purchaseUser = api\User::get($purchaseForm->user);
-
             }
         }
 
+        if($request->isAjax){
+            $columns = [
+                'dateCreate','product','productName','price','bonusPoints','username','firstName_secondName','action'
+            ];
+
+            $filterColumns = [
+                'dateCreate','product','productName','price','bonusPoints','username','firstName_secondName','action'
+            ];
+
+            $purchases = Sales::find();
+
+            if ($search = $request->get('search')['value']) {
+                if(mb_strlen($search,'utf-8') >= 2){
+                    $purchases->andFilterWhere(['or',
+                        ['like', 'dateCreate', $search],
+                        ['=', 'product', (int)$search],
+                        ['like', 'bonusPoints', $search],
+
+                        ['like', 'productName', Products::getSearchInfoProduct('productName',$search)],
+                        ['like', 'price', Products::getSearchInfoProduct('price',$search)],
+
+                        ['like', 'username', Users::getSearchInfoUser('username',$search)],
+                        ['like', 'firstName', Users::getSearchInfoUser('firstName',$search)],
+                        ['like', 'secondName', Users::getSearchInfoUser('secondName',$search)],
+
+                    ]);
+                }
+            }
+
+
+            if ($order = $request->get('order')[0]) {
+                $purchases->orderBy([$filterColumns[$order['column']] => ($order['dir'] === 'asc' ? SORT_ASC : SORT_DESC)]);
+            }
+
+            $pages = new Pagination(['totalCount' => $purchases->count()]);
+
+            if (Yii::$app->request->isAjax) {
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+                $data = [];
+
+                $purchases = $purchases
+                    ->offset($request->get('start') ?: $pages->offset)
+                    ->limit($request->get('length') ?: $pages->limit);
+
+                $count = $purchases->count();
+
+                foreach ($purchases->all() as $purchase){
+                    $nestedData = [];
+
+                    if (! isset($products[$purchase->product])) {
+                        $product = $products[$purchase->product] = $purchase->getInfoProduct()->one();
+                    } else {
+                        $product = $products[$purchase->product];
+                    }
+
+                    $idUser = strval($purchase->idUser);
+                    if (! isset($users[$idUser])) {
+                        $purcahseUser = $users[$idUser] = $purchase->getInfoUser()->one();
+                    } else {
+                        $purcahseUser = $users[$idUser];
+                    }
+
+                    $nestedData[$columns[0]] = $purchase->dateCreate->toDateTime()->format('Y-m-d H:i:s');
+                    $nestedData[$columns[1]] = $purchase->product;
+                    $nestedData[$columns[2]] = $product->productName;
+                    $nestedData[$columns[3]] = $product->price;
+                    $nestedData[$columns[4]] = $purchase->bonusPoints;
+                    $nestedData[$columns[5]] = $purcahseUser->username;
+                    $nestedData[$columns[6]] = $purcahseUser->firstName . ' ' . $purcahseUser->secondName;
+                    $nestedData[$columns[7]] = ($purchase->type == 1 ?
+                        Html::a('<i class="fa fa-trash-o"></i>', ['/business/user/cancel-purchase', 'id' => strval($purchase->_id)], ['onclick' => 'return confirmCancellation();']) : 
+                        THelper::t('users_purchase_deleted'));
+
+                    $data[] = $nestedData;
+                }
+
+                return [
+                    'draw' => $request->get('draw'),
+                    'data' => $data,
+                    'recordsTotal' => $count,
+                    'recordsFiltered' => $count
+                ];
+            }
+        }
+
+
         return $this->render('purchase', [
-            'model' => $this->user,
-            'purchases' => Sales::find()->all()
+            'model' => $this->user
         ]);
     }
 
@@ -424,6 +516,9 @@ class UserController extends BaseController
                             $result = api\Sale::cancel($id);
                             if ($result) {
                                 Yii::$app->session->setFlash('success', THelper::t('user_purchase_cancellation_success'));
+
+                                SaleController::cancellationGoodsInOrder($id);
+                                
                             } else {
                                 Yii::$app->session->setFlash('danger', THelper::t('user_purchase_cancellation_error'));
                             }

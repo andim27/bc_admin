@@ -77,9 +77,9 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
                             <td><?=(!empty($countGoodsFromMyWarehouse[$item->_id->__toString()]) ? $countGoodsFromMyWarehouse[$item->_id->__toString()] : '0');?></td>
                             <td><?=THelper::t($item->unit)?></td>
                             <td>
-                                <?php if(!in_array($item->_id->__toString(),['5975afe2dca78748ce5e7e02','59620f57dca78747631d3c62','59620f49dca78761ae2d01c1'])) { ?>
+                                <?php //if(!in_array($item->_id->__toString(),['5975afe2dca78748ce5e7e02','59620f57dca78747631d3c62','59620f49dca78761ae2d01c1'])) { ?>
                                 <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/manufacturing-suppliers/add-update-parts-accessories','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
-                                <?php } ?>
+                                <?php //} ?>
                             </td>
                             <td>
                                 <?=Html::a('<i class="fa fa-clock-o" title="история"></i>',['/business/manufacturing-suppliers/log-parts-accessories','id'=>$item->_id->__toString()]) ?>

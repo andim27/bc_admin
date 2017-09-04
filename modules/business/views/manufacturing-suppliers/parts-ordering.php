@@ -35,7 +35,10 @@ use app\components\AlertWidget;
                         <?=THelper::t('curency')?>
                     </th>
                     <th>
-                        <?=THelper::t('price')?>
+                        <?=THelper::t('price')?> <?=THelper::t('pic')?>
+                    </th>
+                    <th>
+                        <?=THelper::t('amount')?>
                     </th>
                     <th>
                         <?=THelper::t('date_receipt')?>
@@ -50,8 +53,9 @@ use app\components\AlertWidget;
                     <tr>
                         <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:m:s')?></td>
                         <td><?=$item->partsAccessories->title?></td>
-                        <td><?=THelper::t($item->number)?></td>
+                        <td><?=$item->number?></td>
                         <td><?=THelper::t($item->currency)?></td>
+                        <td><?=round($item->price/$item->number,2)?></td>
                         <td><?=$item->price?></td>
                         <td><?=$item->dateReceipt->toDateTime()->format('Y-m-d')?></td>
                         <td>

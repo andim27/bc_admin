@@ -38,6 +38,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
         </div>
     </div>
 
+    <?php if($hideFilter != 1){ ?>
     <div class="col-md-2 m-b blChangeWarehouse">
         <?= Select2::widget([
             'name' => 'listRepresentative',
@@ -52,6 +53,8 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
         ]);
         ?>
     </div>
+
+    <?php } ?>
 
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
@@ -112,6 +115,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
                                 </td>
                                 <td>
                                     <?=  Html::a('<i class="fa fa-eye text-info"></i>', ['/business/offsets-with-warehouses/repayment','object'=>'representative','id'=>$kRepresentative], ['class'=>'btn btn-default']); ?>
+                                    <?=  Html::a('<i class="fa fa-building-o text-info"></i>', ['/business/offsets-with-warehouses/offsets-with-warehouses','representativeId'=>$kRepresentative], ['class'=>'btn btn-default']); ?>
                                 </td>
                             </tr>
                         <?php } ?>
