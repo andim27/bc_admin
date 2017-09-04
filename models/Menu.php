@@ -360,10 +360,10 @@ Class Menu
                         'action' => 'info-sale-for-country-warehouse',
                     ],
                     [
-                        'key'   =>  'sidebar_offsets_with_warehouses',
-                        'label' => THelper::t('sidebar_offsets_with_warehouses'),
-                        'url' => ['offsets-with-warehouses/offsets-with-warehouses'],
-                        'action' => 'offsets-with-warehouses',
+                        'key'   =>  'sidebar_offsets_with_representative',
+                        'label' => THelper::t('sidebar_offsets_with_representative'),
+                        'url' => ['offsets-with-warehouses/offsets-with-representative'],
+                        'action' => 'offsets-with-representative',
                     ],
                 ]
             ],

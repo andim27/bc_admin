@@ -2,23 +2,32 @@
 use app\components\THelper;
 use yii\bootstrap\Html;
 use app\components\AlertWidget;
+
+if($object=='representative'){
+    $directionRepayment = 'company';
+} else {
+    $directionRepayment = 'representative';
+}
+
 ?>
 
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('sidebar_repayment') ?></h3>
+    <h3 class="m-b-none"><?= THelper::t('sidebar_repayment') ?> - <?=$directionTitle?></h3>
 </div>
 
 <div class="row">
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
     <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>',['/business/offsets-with-warehouses/add-repayment','warehouse_id'=>$id],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+        <?php if($hideBtnAdd != '1'){ ?>
+        <?=Html::a('<i class="fa fa-plus"></i>',['/business/offsets-with-warehouses/add-repayment','object'=>$object,'id'=>$id],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+        <?php } ?>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-12">
-        Сумма для выплаты на данный момент -
+        <?= THelper::t('amount_for_repayment_now') ?> -
         <span class ="<?=($differenceRepaymentNow>=0 ? 'text-danger' : 'text-success')?>">
             <?=abs($differenceRepaymentNow)?>
         </span>
@@ -54,7 +63,7 @@ use app\components\AlertWidget;
                                 <td><?=THelper::t($item->type_repayment);?></td>
                                 <td>
                                     <?php
-                                        $difference_after_repayment = ($item->type_repayment == 'company_warehouse'
+                                        $difference_after_repayment = ($item->type_repayment == $directionRepayment.'_'.$object
                                             ? ($item->difference_repayment+$item->repayment)
                                             : ($item->difference_repayment-$item->repayment)
                                         )
@@ -70,7 +79,6 @@ use app\components\AlertWidget;
                     </tbody>
                 </table>
             </div>
-
         </section>
     </div>
 </div>

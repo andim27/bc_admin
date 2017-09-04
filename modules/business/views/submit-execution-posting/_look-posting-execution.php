@@ -76,27 +76,25 @@ $want_number = $model->number;
                                         <div class="col-md-2">Отправленно</div>
                                         <div class="col-md-2">Запас</div>
                                     </div>
-                                    <?php if(!empty($model->list_component)){ ?>
-                                        <?php foreach($model->list_component as $item){ ?>
-                                            <div class="form-group row">
-                                                <div class="col-md-8">
-                                                   <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>true]);?>
+                                    <?php if(!empty($list_component)){ ?>
+                                        <?php foreach($list_component as $items){ ?>
+                                            <?php if(count($items)>1) {?>
+                                                <div class="panel panel-default blInterchangeable">
+                                                    <div class="panel-body">
+                                                        <?php foreach($items as $item){ ?>
+                                                            <?= $this->render('__look-posting-execution-component',[
+                                                                'item'         => $item,
+                                                                'want_number'   => $want_number
+                                                            ]); ?>
+                                                        <?php } ?>
+                                                    </div>
                                                 </div>
-
-                                                <div class="col-md-2">
-                                                    <?=Html::input('text','',($item['number']*$want_number),['class'=>'form-control needSend','disabled'=>true]);?>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <?=Html::input('number','reserve[]',(!empty($item['reserve']) ? $item['reserve'] : 0),[
-                                                        'class'=>'form-control partNeedReserve',
-                                                        'pattern'=>'\d*',
-                                                        'min' => '0',
-                                                        'step'=>'1',
-                                                        'disabled'=>true
-                                                    ]);?>
-                                                </div>
-
-                                            </div>
+                                            <?php } else { ?>
+                                                <?= $this->render('__look-posting-execution-component',[
+                                                    'item'          => $items['0'],
+                                                    'want_number'   => $want_number
+                                                ]); ?>
+                                            <?php } ?>
                                         <?php } ?>
                                     <?php } ?>
                                 </div>

@@ -9,11 +9,9 @@ use app\models\Warehouse;
 
 $listPack = Products::getListPack();
 $myWarehouseId = Warehouse::getIdMyWarehouse();
-if($myWarehouseId != '592426f6dca7872e64095b45'){
-    $listWarehouse = Warehouse::getMyWarehouse();
-} else{
-    $listWarehouse = Warehouse::getArrayWarehouse();
-}
+
+$listWarehouse = Warehouse::getArrayWarehouse();
+
 ?>
 
 <div class="m-b-md">
@@ -37,6 +35,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
     </div>
 
 
+    <?php if(empty($representativeId)){ ?>
     <div class="col-md-1">
         <label class="control-label switch-center"></label>
         <label class="switch">
@@ -66,6 +65,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
                 'options' => []
             ])?>
     </div>
+    <?php } ?>
 
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
@@ -123,15 +123,12 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
                                         </span>
                                     </td>
                                     <td>
-                                        <?php
-                                            $repaid = $difference + $itemWarehouse['repayment'];
-                                        ?>
-                                        <span class="<?=($repaid>0 ? 'text-danger' : 'text-success')?>">
-                                            <?=abs($repaid)?>
+                                        <span>
+                                            <?=$itemWarehouse['repayment']?>
                                         </span>
                                     </td>
                                     <td>
-                                        <?=  Html::a('<i class="fa fa-eye text-info"></i>', ['/business/offsets-with-warehouses/repayment','id'=>$kWarehouse], ['class'=>'btn btn-default']); ?>
+                                        <?=  Html::a('<i class="fa fa-eye text-info"></i>', ['/business/offsets-with-warehouses/repayment','object'=>'warehouse','id'=>$kWarehouse], ['class'=>'btn btn-default']); ?>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -183,9 +180,10 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
             url: '<?=\yii\helpers\Url::to(['offsets-with-warehouses/offsets-with-goods'])?>',
             type: 'POST',
             data: {
-                listWarehouse   : warehouseId,
-                from            : $('.blQuery .dateFrom').val(),
-                to              : $('.blQuery .dateTo').val()
+                id        : warehouseId,
+                object    : 'warehouse',
+                from      : $('.blQuery .dateFrom').val(),
+                to        : $('.blQuery .dateTo').val()
             },
             success: function (data) {
                 $('#decompositionPopup').modal().find('.modal-body').html(data);

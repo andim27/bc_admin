@@ -19,7 +19,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
 ?>
 
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('sidebar_offsets_with_warehouses') ?></h3>
+    <h3 class="m-b-none"><?= THelper::t('sidebar_offsets_with_representative') ?></h3>
 </div>
 
 
@@ -38,13 +38,14 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
         </div>
     </div>
 
+    <?php if($hideFilter != 1){ ?>
     <div class="col-md-2 m-b blChangeWarehouse">
         <?= Select2::widget([
             'name' => 'listRepresentative',
             'value' => $request['listRepresentative'],
             'data' => $listRepresentative,
             'options' => [
-                'placeholder' => 'Выберите представителя',
+                'placeholder'   => 'Выберите представителя',
             ],
             'pluginOptions' => [
                 'allowClear' => true
@@ -52,6 +53,8 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
         ]);
         ?>
     </div>
+
+    <?php } ?>
 
     <div class="col-md-1 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
@@ -88,7 +91,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
                         <?php foreach($info as $kRepresentative=>$itemRepresentative) { ?>
                             <tr>
                                 <td>
-                                    <?=  Html::a('<i class="fa fa-bars text-info"></i>', 'javascript:void(0);', ['class'=>'btn btn-default decompositionByProducts', 'data-warehouse'=>$kRepresentative]); ?>
+                                    <?=  Html::a('<i class="fa fa-bars text-info"></i>', 'javascript:void(0);', ['class'=>'btn btn-default decompositionByProducts', 'data-representative'=>$kRepresentative]); ?>
                                 </td>
                                 </td>
                                 <td><?=$listRepresentative[$kRepresentative]?></td>
@@ -106,15 +109,13 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
                                     </span>
                                 </td>
                                 <td>
-                                    <?php
-                                        $repaid = $difference + $itemRepresentative['repayment'];
-                                    ?>
-                                    <span class="<?=($repaid>0 ? 'text-danger' : 'text-success')?>">
-                                        <?=abs($repaid)?>
+                                    <span>
+                                        <?=$itemRepresentative['repayment']?>
                                     </span>
                                 </td>
                                 <td>
-                                    <?=  Html::a('<i class="fa fa-eye text-info"></i>', ['/business/offsets-with-warehouses/repayment-representative','id'=>$kRepresentative], ['class'=>'btn btn-default']); ?>
+                                    <?=  Html::a('<i class="fa fa-eye text-info"></i>', ['/business/offsets-with-warehouses/repayment','object'=>'representative','id'=>$kRepresentative], ['class'=>'btn btn-default']); ?>
+                                    <?=  Html::a('<i class="fa fa-building-o text-info"></i>', ['/business/offsets-with-warehouses/offsets-with-warehouses','representativeId'=>$kRepresentative], ['class'=>'btn btn-default']); ?>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -150,15 +151,16 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
 
 
     $('.decompositionByProducts').on('click',function () {
-        warehouseId = $(this).data('warehouse');
+        representativeId = $(this).data('representative');
 
         $.ajax({
             url: '<?=\yii\helpers\Url::to(['offsets-with-warehouses/offsets-with-goods'])?>',
             type: 'POST',
             data: {
-                listWarehouse   : warehouseId,
-                from            : $('.blQuery .dateFrom').val(),
-                to              : $('.blQuery .dateTo').val()
+                id        : representativeId,
+                object    : 'representative',
+                from      : $('.blQuery .dateFrom').val(),
+                to        : $('.blQuery .dateTo').val()
             },
             success: function (data) {
                 $('#decompositionPopup').modal().find('.modal-body').html(data);

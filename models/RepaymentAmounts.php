@@ -71,9 +71,14 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
     }
 
     
-    public static function CalculateRepaymentSet($warehouse_id,$set_id)
+    public static function CalculateRepaymentSet($object,$warehouse_id,$set_id)
     {
         $amount = 0;
+
+        $pricePr = '';
+        if($object=='representative'){
+            $pricePr = '_representative';
+        }
 
         $infoSet = Products::getListGoodsWithKey($set_id);
         if(!empty($infoSet)){
@@ -84,7 +89,7 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
                 ]);
 
                 if(!empty($model)){
-                    $amount += $model->price;
+                    $amount += $model->{'price'.$pricePr};
                 }
 
             }
@@ -93,9 +98,14 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
         return $amount;
     }
 
-    public static function CalculateRepaymentGoods($warehouse_id,$set_id)
+    public static function CalculateRepaymentGoods($object,$warehouse_id,$set_id)
     {
         $amount = 0;
+
+        $pricePr = '';
+        if($object=='representative'){
+            $pricePr = '_representative';
+        }
 
         $model = RepaymentAmounts::findOne([
             'warehouse_id'  =>  new ObjectID($warehouse_id),
@@ -103,7 +113,7 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
         ]);
 
         if(!empty($model)){
-            $amount = $model->price;
+            $amount = $model->{'price'.$pricePr};
         }
 
         return $amount;

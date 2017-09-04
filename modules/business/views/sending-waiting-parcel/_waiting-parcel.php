@@ -5,7 +5,7 @@ use app\models\Users;
 use app\models\Warehouse;
 use app\models\PartsAccessories;
 
-$listGoods = PartsAccessories::getListPartsAccessories();
+$listGoods = PartsAccessories::getListPartsAccessories($language);
 $listWarehouse = Warehouse::getArrayWarehouse();
 $listAdmin = Users::getListAdmin();
 ?>
@@ -50,8 +50,8 @@ $listAdmin = Users::getListAdmin();
                                         Html::a('<i class="fa fa-file-text text-success"></i></td>',Yii::getAlias('@parcelDocumentsUrl') . '/' . $item->id . '/' .$item->documents,['target'=>'_blank','title'=>$item->documents]) :
                                         '<i class="fa fa-file-text text-danger"></i></td>')?>
                                 </td>
-                                <td><?=($item->is_posting == 0  ? 'Отправлено' : 'Оприходовано')?></td>
-                                <td><?=(!empty($itemParcel['comment']) ? $itemParcel['comment'] : 'нет')?></td>
+                                <td><?=($item->is_posting == 0  ? THelper::t('sent') : THelper::t('capitalized'))?></td>
+                                <td><?=(!empty($itemParcel['comment']) ? $itemParcel['comment'] : THelper::t('no'))?></td>
                                 <td>
                                     <?=($item->is_posting == 0  ? 
                                         Html::a('<i class="fa fa-shopping-cart"></i>',['/business/sending-waiting-parcel/posting-parcel','id'=>(string)$item->_id],

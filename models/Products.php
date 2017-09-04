@@ -155,6 +155,12 @@ class Products extends ActiveRecord
         return $list;
     }
     
+    public static function getSearchInfoProduct($field,$search){
+        $model = Products::find()->where(['LIKE',$field,$search])->one();
+
+        return !empty($model) ? $model->{$field} : '';
+    }
+    
 }
 
 class ProductSet extends Model

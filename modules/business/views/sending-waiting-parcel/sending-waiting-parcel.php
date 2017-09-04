@@ -1,15 +1,7 @@
 <?php
 use app\components\THelper;
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-use app\models\PartsAccessories;
-use app\models\SuppliersPerformers;
 use app\components\AlertWidget;
 
-
-$listGoods = PartsAccessories::getListPartsAccessories();
-$listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
 ?>
     <div class="m-b-md">
         <h3 class="m-b-none"><?= THelper::t('sending_waiting_parcel') ?></h3>

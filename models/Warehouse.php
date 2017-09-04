@@ -93,6 +93,24 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         return $listWarehouse;
     }
 
+    public static function getListHeadAdminWarehouseId($idUser = ''){
+        $listWarehouse = [];
+
+        if(empty($idUser)){
+            $idUser = \Yii::$app->view->params['user']->id;
+        }
+
+        $model = self::find()->where(['headUser'=>new ObjectID($idUser)])->all();
+        
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $listWarehouse[] = (string)$item->_id;
+            }
+        }
+
+        return $listWarehouse;
+    }
+
     /**
      * return id Warehouse user
      * @return bool|string

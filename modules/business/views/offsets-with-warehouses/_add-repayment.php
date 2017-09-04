@@ -2,15 +2,7 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use app\components\THelper;
-use app\models\Warehouse;
 
-
-$myWarehouseId = Warehouse::getIdMyWarehouse();
-if($myWarehouseId != '592426f6dca7872e64095b45'){
-    $typeRepayment = 'warehouse_company';
-} else{
-    $typeRepayment = 'company_warehouse';
-}
 ?>
 
 <div class="modal-dialog">
@@ -25,7 +17,7 @@ if($myWarehouseId != '592426f6dca7872e64095b45'){
                 'action' => '/' . $language . '/business/offsets-with-warehouses/save-repayment'
             ]); ?>
 
-            <?=Html::hiddenInput('warehouse_id',$warehouse_id)?>
+            <?=Html::hiddenInput($object.'_id',$id)?>
 
             <div class="form-group row">
                 <div class="col-md-4"><?=Html::label(THelper::t('amount'),'amount')?></div>
