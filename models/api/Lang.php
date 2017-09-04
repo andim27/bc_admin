@@ -23,7 +23,7 @@ class Lang
      */
     public static function get($language, $key)
     {
-        $apiClient = new ApiClient('lang/' . $language . '&' . $key);
+        $apiClient = new ApiClient('lang/' . $language . '&' . urlencode($key));
 
         return $apiClient->get(false);
     }
