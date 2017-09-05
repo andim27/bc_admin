@@ -39,7 +39,7 @@ $listCard = PaymentCard::getListCards();
                 <tbody>
                 <?php foreach ($model as $k=>$item) { ?>
                     <tr>
-                        <td><?=(!empty($item->infoUserTo->username) ? $item->infoUserTo->username : '');?></td>
+                        <td><?=(!empty($item->infoUser->username) ? $item->infoUser->username : '');?></td>
                         <td>
                             <?=(!empty($item->infoUser->firstName) ? $item->infoUser->firstName : '')?>
                             <?=(!empty($item->infoUser->secondName) ? $item->infoUser->secondName : '')?>
