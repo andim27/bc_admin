@@ -165,8 +165,12 @@ class ManufacturingSuppliersController extends BaseController {
     {
             
         $model = PartsAccessories::find()->all();
+
+        $arrayProcurementPlanning = $this->procurementPlanning();
+        
         return $this->render('parts-accessories',[
             'model' => $model,
+            'arrayProcurementPlanning' => $arrayProcurementPlanning,
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
@@ -878,15 +882,32 @@ class ManufacturingSuppliersController extends BaseController {
     }
 
 
-    public function actionDev()
+    public function actionDev(){
+        $arrayProcurementPlanning = $this->procurementPlanning();
+
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r($arrayProcurementPlanning);
+        echo "</xmp>";
+        die();
+    }
+
+    protected function procurementPlanning()
     {
         $idWarehouse = Warehouse::getIdMyWarehouse();
-        // all goods
+
         $listGoods = [];
+        $statusGoods = [];
         $listGoodsId = [];
+
+        // all goods
         $modelGoods = PartsAccessories::find()
-            ->where(['composite'=>['$exists' => false]])
+            ->where([
+                'composite'=>['$exists' => false]
+            ])
             ->all();
+
         if(!empty($modelGoods)){
             foreach ($modelGoods as $item) {
                 $listGoods[(string)$item->_id] = [
@@ -930,12 +951,10 @@ class ManufacturingSuppliersController extends BaseController {
 
             if($modelUse){
                 foreach ($modelUse as $item) {
-                    $listGoods[(string)$item->parts_accessories_id]['usedMonth'] += $item->number;
-
                     if(!empty($item->comment) && $item->action == 'posting_pre_ordering'){
                         $listGoods[(string)$item->parts_accessories_id]['timeDelivery'] = $item->comment;
                     } elseif (in_array($item->action,['send_for_execution_posting','cancellation','add_execution_posting'])){
-
+                        $listGoods[(string)$item->parts_accessories_id]['usedMonth'] += $item->number;
                     }
                 }
             }
@@ -949,21 +968,49 @@ class ManufacturingSuppliersController extends BaseController {
                 }
             }
 
-//            foreach ($listGoods as $item) {
-//                $
-//            }
+            foreach ($listGoods as $k=>$item) {
+                if($item['wait'] == '1'){
+                    $statusGoods[$k] = 'wait';
+                }
+                else if($item['inWarehouse']>0){
+                    $needForDay = round(($item['inWarehouse']/30),2,PHP_ROUND_HALF_EVEN);
+
+                    //$needForDay = ceil($item['inWarehouse']/30);
+
+                    $listGoods[$k]['needDay'] = $needForDay;
+
+                    if($item['timeDelivery']>0 && $item['inWarehouse'] > ($item['timeDelivery']+14)*$needForDay){
+                        $statusGoods[$k] = 'good';
+                    } else if($item['timeDelivery']>0 && $item['inWarehouse'] <= $item['timeDelivery']*$needForDay){
+                        $statusGoods[$k] = 'alert';
+                    } else if($item['timeDelivery']>0 && $item['inWarehouse'] <= ($item['timeDelivery']+14)*$needForDay){
+                        $statusGoods[$k] = 'attention';
+                    } else if($item['timeDelivery']==0 && $item['inWarehouse'] > 14*$needForDay){
+                        $statusGoods[$k] = 'good';
+                    } else if($item['timeDelivery']==0 && $item['inWarehouse'] <= 7*$needForDay){
+                        $statusGoods[$k] = 'alert';
+                    } else if($item['timeDelivery']==0 && $item['inWarehouse'] <= 14*$needForDay){
+                        $statusGoods[$k] = 'attention';
+                    } else {
+                        $statusGoods[$k] = 'alert';
+                    }
+                }else{
+                    $statusGoods[$k] = 'empty';
+                }
+
+            }
         }
 
 
 
+        return $statusGoods;
+//
 
-
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r($listGoods);
-        echo "</xmp>";
-        die();
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo "<xmp>";
+//        print_r($listGoods);
+//        echo "</xmp>";
+//        die();
 
 
 

@@ -72,7 +72,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
                     <?php foreach ($model as $k=>$item) { ?>
                         <tr>
-                            <td><?=($k+1)?></td>
+                            <td class="status-planning-<?=(!empty($arrayProcurementPlanning[(string)$item->_id]) ? $arrayProcurementPlanning[(string)$item->_id] : '')?>"><?=($k+1)?></td>
                             <td><?=$item->title?></td>
                             <td><?=(!empty($countGoodsFromMyWarehouse[$item->_id->__toString()]) ? $countGoodsFromMyWarehouse[$item->_id->__toString()] : '0');?></td>
                             <td><?=THelper::t($item->unit)?></td>
