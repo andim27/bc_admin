@@ -40,6 +40,10 @@ class Lang
      */
     public static function add($language, $key, $value, $comment = '', $originalValue = '')
     {
+        if (!self::validateLatin($key)) {
+            return false;
+        }
+
         $apiClient = new ApiClient('lang');
 
         $response = $apiClient->post([
@@ -125,6 +129,14 @@ class Lang
         }
 
         return $result ? count($result) == 1 ? current($result) : $result : false;
+    }
+
+    /**
+     * @param $string
+     * @return bool
+     */
+    public static function validateLatin($string) {
+        return preg_match('/^[\w\d\s.,-]*$/', $string) && !preg_match('/\s/', $string);
     }
 
 }
