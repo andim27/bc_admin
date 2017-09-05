@@ -138,15 +138,15 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
 
 
 
-//    public static function getNamePartsAccessories($id)
-//    {
-//        $list = self::getListPartsAccessories();
-//        if(!empty($list[$id])){
-//            return $list[$id];
-//        } else {
-//            return false;
-//        }
-//    }
+    public static function getNamePartsAccessories($id)
+    {
+        $list = self::getListPartsAccessories();
+        if(!empty($list[$id])){
+            return $list[$id];
+        } else {
+            return false;
+        }
+    }
 
     public static function getInterchangeableList($id)
     {
