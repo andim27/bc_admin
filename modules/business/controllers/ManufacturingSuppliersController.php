@@ -19,6 +19,7 @@ use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
 use app\controllers\BaseController;
+use DateTime;
 
 class ManufacturingSuppliersController extends BaseController {
 
@@ -759,6 +760,8 @@ class ManufacturingSuppliersController extends BaseController {
         if(!empty($request)){
 
             $modelPreOrder = PartsOrdering::findOne(['_id'=>new ObjectID($request['id'])]);
+            
+            $countDeliveryDays = date_diff(new DateTime(), new DateTime($modelPreOrder->dateCreate->toDateTime()->format('Y-m-d H:i:s')))->days;
 
             $myWarehouse = Warehouse::getIdMyWarehouse();
 
@@ -794,7 +797,7 @@ class ManufacturingSuppliersController extends BaseController {
                     'number'                    =>  $modelPreOrder->number,
 
                     'suppliers_performers_id'   =>  (string)$modelPreOrder->suppliers_performers_id,
-
+                    'comment'                   =>  $countDeliveryDays
                 ]);
 
             }
@@ -873,6 +876,103 @@ class ManufacturingSuppliersController extends BaseController {
 
         return $this->redirect(['parts-accessories']);
     }
+
+
+    public function actionDev()
+    {
+        $idWarehouse = Warehouse::getIdMyWarehouse();
+        // all goods
+        $listGoods = [];
+        $listGoodsId = [];
+        $modelGoods = PartsAccessories::find()
+            ->where(['composite'=>['$exists' => false]])
+            ->all();
+        if(!empty($modelGoods)){
+            foreach ($modelGoods as $item) {
+                $listGoods[(string)$item->_id] = [
+                    'title'         =>  $item->title,
+                    'inWarehouse'   =>  0,
+                    'usedMonth'     =>  0,
+                    'timeDelivery'  =>  0,
+                    'wait'          =>  0
+                ];
+                $listGoodsId[] = $item->_id;
+            }
+
+            // in warehouse
+            $modelWarehouse = PartsAccessoriesInWarehouse::find()
+                ->where([
+                    'parts_accessories_id'  => ['$in'=>$listGoodsId],
+                    'warehouse_id'          => new ObjectID($idWarehouse)
+                ])
+                ->all();
+            if(!empty($modelWarehouse)){
+                foreach ($modelWarehouse as $item) {
+                    $listGoods[(string)$item->parts_accessories_id]['inWarehouse'] = $item->number;
+                }
+            }
+
+            $to = strtotime(date('Y-m-d'. ' 23:59:59'));
+            $from = strtotime(date('Y-m-d' . ' 00:00:00',strtotime("-1 month", $to)));
+
+            $modelUse = LogWarehouse::find()
+                ->where([
+                    'parts_accessories_id' => [
+                        '$in'=>$listGoodsId
+                    ],
+                    'date_create' => [
+                        '$gte' => new UTCDateTime($from * 1000),
+                        '$lt' => new UTCDateTime($to * 1000)
+                    ],
+                    'admin_warehouse_id' => new ObjectID($idWarehouse)
+                ])
+                ->all();
+
+            if($modelUse){
+                foreach ($modelUse as $item) {
+                    $listGoods[(string)$item->parts_accessories_id]['usedMonth'] += $item->number;
+
+                    if(!empty($item->comment) && $item->action == 'posting_pre_ordering'){
+                        $listGoods[(string)$item->parts_accessories_id]['timeDelivery'] = $item->comment;
+                    } elseif (in_array($item->action,['send_for_execution_posting','cancellation','add_execution_posting'])){
+
+                    }
+                }
+            }
+
+            $modelOrdering = PartsOrdering::find()->all();
+            if(!empty($modelOrdering)){
+                foreach ($modelOrdering as $item) {
+                    if(!empty($listGoods[(string)$item->parts_accessories_id])){
+                        $listGoods[(string)$item->parts_accessories_id]['wait'] = 1;
+                    }
+                }
+            }
+
+//            foreach ($listGoods as $item) {
+//                $
+//            }
+        }
+
+
+
+
+
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r($listGoods);
+        echo "</xmp>";
+        die();
+
+
+
+
+    }
+
+
+
+
 
     /**
      * popup for assembly

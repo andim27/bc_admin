@@ -35,7 +35,7 @@ use app\components\AlertWidget;
                         <?=THelper::t('curency')?>
                     </th>
                     <th>
-                        <?=THelper::t('price')?> <?=THelper::t('pic')?>
+                        <?=THelper::t('price')?> <?=THelper::t('pcs')?>
                     </th>
                     <th>
                         <?=THelper::t('amount')?>
