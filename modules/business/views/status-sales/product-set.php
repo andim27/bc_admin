@@ -13,6 +13,9 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
     <h3 class="m-b-none"><?= THelper::t('sidebar_product_set') ?></h3>
 </div>
 
+<div class="row">
+    <?= (!empty($alert) ? \app\components\AlertWidget::widget($alert) : '') ?>
+</div>
 
 <?php if(!empty($infoProduct)) { ?>
 
@@ -26,8 +29,13 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
                     <?=THelper::t('sale_product_name')?>
                 </th>
                 <th>
+                    <?=THelper::t('price')?>
+                </th>
+                <th>
                     <?=THelper::t('sale_product_set')?>
                 </th>
+                <th></th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -40,6 +48,9 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
                     </td>
                     <td>
                         <?=$item->productName?>
+                    </td>
+                    <td>
+                        <?=$item->price?>
                     </td>
                     <td class="text-center infoSet">
 
@@ -83,6 +94,13 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
                                 </a>
                             </div>
                         </div>
+                    </td>
+                    <td>
+                        <i class="fa fa-<?=((!empty($item->statusHide) && $item->statusHide==1) ? 'eye-slash' : 'eye')?>"></i>
+                        <i class="fa fa-"></i>
+                    </td>
+                    <td>
+                        <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/status-sales/add-update-product-set','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
                     </td>
                 </tr>
             <?php } ?>

@@ -975,8 +975,6 @@ class ManufacturingSuppliersController extends BaseController {
                 else if($item['inWarehouse']>0){
                     $needForDay = round(($item['inWarehouse']/30),2,PHP_ROUND_HALF_EVEN);
 
-                    //$needForDay = ceil($item['inWarehouse']/30);
-
                     $listGoods[$k]['needDay'] = $needForDay;
 
                     if($item['timeDelivery']>0 && $item['inWarehouse'] > ($item['timeDelivery']+14)*$needForDay){

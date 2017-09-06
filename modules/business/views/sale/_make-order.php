@@ -6,8 +6,7 @@ use app\components\THelper;
 use yii\widgets\Pjax;
 use app\models\Products;
 
-$listSet = Products::getListPack();
-
+$listSet = Products::getListPack(true);
 
 ?>
 
@@ -20,6 +19,7 @@ $listSet = Products::getListPack();
         </div>
 
         <div class="modal-body">
+            <p class="bg-danger attentionMakeOrder"><?=THelper::t('attention_for_make_order')?></p>
             <?php Pjax::begin(['enablePushState' => false,'id' => 'pjaxFormMakeOrder'.rand()]); ?>
 
             <?= $this->render('_make-order-form', [
