@@ -6,8 +6,6 @@ use app\components\THelper;
 use yii\widgets\Pjax;
 use app\models\Products;
 
-$listSet = Products::getListPack(true);
-
 ?>
 
 
