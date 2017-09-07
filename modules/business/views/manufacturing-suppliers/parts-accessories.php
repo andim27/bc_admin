@@ -67,6 +67,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -80,6 +81,11 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
                             <td class="status-planning-<?=(!empty($arrayProcurementPlanning[(string)$item->_id]) ? $arrayProcurementPlanning[(string)$item->_id] : '')?>">
                                 <?=(!empty($arrayProcurementPlanning[(string)$item->_id]) ? THelper::t('status-planning-'.$arrayProcurementPlanning[(string)$item->_id]) : '')?>
 <!--                                <i class="fa fa-dot-circle-o"></i>-->
+                            </td>
+                            <td>
+                                <?php if(!empty($item->delivery_from_chine) && $item->delivery_from_chine==1){ ?>
+                                <i class="fa fa-truck" data-toggle="tooltip" data-placement="top" title="Доставляется из Китая"></i>
+                                <?php } ?>
                             </td>
                             <td>
                                 <?php //if(!in_array($item->_id->__toString(),['5975afe2dca78748ce5e7e02','59620f57dca78747631d3c62','59620f49dca78761ae2d01c1'])) { ?>

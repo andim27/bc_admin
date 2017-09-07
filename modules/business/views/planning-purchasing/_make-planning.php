@@ -29,9 +29,10 @@ if(!empty($model)){
     $want_number = $model->number;
 }
 
+$idPopup = 'popup'.rand();
 ?>
 
-<div class="modal-dialog modal-more-lg popupPlanning">
+<div class="modal-dialog modal-more-lg popupPlanning" id="<?=$idPopup?>">
     <div class="modal-content ">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
@@ -179,10 +180,9 @@ if(!empty($model)){
 
 
 
-<script>
+<script type="text/javascript">
 
-
-    $(document).on('change','#selectGoods',function () {
+    $('#<?=$idPopup?>').on('change','#selectGoods',function () {
         $.ajax({
             url: '<?=\yii\helpers\Url::to(['planning-purchasing/all-components'])?>',
             type: 'POST',
@@ -195,7 +195,7 @@ if(!empty($model)){
         });
     });
 
-    $('.needPlaning').on('change',function () {
+    $('#<?=$idPopup?>').on('change','.needPlaning',function () {
 
         fullSumma = {
             'eur' : 0,
@@ -247,7 +247,7 @@ if(!empty($model)){
 
     });
 
-    $('.btnClear').on('click',function () {
+    $('#<?=$idPopup?>').on('click','.btnClear',function () {
 
         fullSumma = {
             'eur' : 0,
@@ -270,7 +270,7 @@ if(!empty($model)){
         }
     });
 
-    $(".btnPrint").on('click', function() {
+    $('#<?=$idPopup?>').on('click','.btnPrint', function() {
 
         tempBl = '';
         $(".popupPlanning .blPartsAccessories").find('.form-group.row').each(function () {
@@ -331,43 +331,13 @@ if(!empty($model)){
         });
     });
 
-//    $(".WantCollect").on('change',function(){
-//        wantC = parseInt($(this).val());
-//        canC = parseInt($('.CanCollect').val());
-//
-//        $('.blPartsAccessories .row').each(function () {
-//            needNumber = $(this).find('input[name="number[]"]').val();
-//            $(this).find('.needSend').val(needNumber*wantC);
-//        });
-//
-//        if(wantC>canC){
-//            $('.assemblyBtn').hide();
-//        } else {
-//            $('.assemblyBtn').show();
-//        }
-//    });
-//
-//    $('.blPartsAccessories').on('change','input[name="reserve[]"]',function(){
-//        bl = $(this).closest('.row');
-//
-//        inWarehouse = parseInt(bl.find('.numberWarehouse').val());
-//        need = parseInt(bl.find('.needSend').val());
-//        wantReserve = parseInt($(this).val());
-//
-//        countInfo = inWarehouse - need - wantReserve;
-//        if(countInfo >= 0){
-//            $('.assemblyBtn').show();
-//        } else {
-//            $(".infoDanger").html(
-//                '<div class="alert alert-danger fade in">' +
-//                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-//                'Такого количества нет на складе. Доступно ' + inWarehouse + 'шт.' +
-//                '</div>'
-//            );
-//
-//            $('.assemblyBtn').hide();
-//        }
-//    })
-
+    $(document).ready(function() {
+        $('form[name="savePartsAccessories"]').keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    });
 
 </script>

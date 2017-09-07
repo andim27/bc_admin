@@ -33,8 +33,6 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
 
 <?php if(!empty($infoGoods->composite)){ ?>
 
-
-
     <div class="form-group row headPart">
         <div class="col-md-5 offset-left-<?=$level?>">
             <?php if(!empty($changeableList)){ ?>
@@ -57,11 +55,16 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
             <?php } ?>
 
         </div>
-        <div class="col-md-1"><?=($infoComposite['number'] * $count)?></div>
+        <div class="col-md-1">
+            <?=Html::hiddenInput('needForOne[]',($infoComposite['number'] * $count))?>
+            <?=($infoComposite['number'] * $count)?>
+        </div>
+        <div class="col-md-1"><?=$warehouseCount?></div>
         <div class="col-md-1"></div>
         <div class="col-md-1"></div>
-        <div class="col-md-1"></div>
-        <div class="col-md-1"></div>
+        <div class="col-md-1">
+            <?=Html::hiddenInput('buy[]','-')?>
+        </div>
         <div class="col-md-2"></div>
     </div>
     <?php $level++; ?>
@@ -77,7 +80,7 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
 
 <div class="form-group row">
     <div class="col-md-5  offset-left-<?=$level?>">
-        
+
         <?php if(!empty($changeableList)) { ?>
             <?=Html::dropDownList('complect[]','',
                 $changeableList,[
@@ -98,7 +101,10 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
         <?php } ?>
 
     </div>
-    <div class="col-md-1 needCountForOne"><?=$needCount?></div>
+    <div class="col-md-1 needCountForOne">
+        <?=Html::hiddenInput('needForOne[]',($infoComposite['number'] * $count))?>
+        <?=$needCount?>
+    </div>
     <div class="col-md-1 warehouseCount"><?=$warehouseCount?></div>
     <div class="col-md-1 needOrdering"><?=$needOrder?></div>
     <div class="col-md-1 onceSumma">
@@ -115,7 +121,7 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
         <?=Html::input('number','buy[]',$needOrder,[
             'class'=>'form-control needBuy',
             'pattern'=>'\d*',
-            'min'=>'1',
+            'min'=>'0',
             'step'=>'1',
         ])?>
     </div>

@@ -73,6 +73,18 @@ use kartik\widgets\Select2;
             </div>
 
             <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <?= Html::label('Доставляется из Китая')?>
+                        <?= Html::checkbox('PartsAccessories[delivery_from_chine]',((!empty($model->delivery_from_chine) && $model->delivery_from_chine==1)? true : false),[
+                            'class'=>''
+                        ]);
+                        ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-12 text-right">
                     <?= Html::submitButton(THelper::t('settings_translation_edit_save'), ['class' => 'btn btn-success']) ?>
                 </div>

@@ -56,24 +56,7 @@ Class Menu
                         'url' => ['/business/career-history'],
                         'action' => 'index',
                     ],
-                    [
-                        'key'   =>  'sidebar_users_money_transfer',
-                        'label' => THelper::t('sidebar_users_money_transfer'),
-                        'url' => ['/business/user/money-transfer'],
-                        'action' => 'money-transfer',
-                    ],
-                    [
-                        'key'   =>  'sidebar_users_money_transfer_log',
-                        'label' => THelper::t('sidebar_users_money_transfer_log'),
-                        'url' => ['/business/user/money-transfer-log'],
-                        'action' => 'money-transfer-log',
-                    ],
-                    [
-                        'key'   =>  'sidebar_users_pincode_cancel',
-                        'label' => THelper::t('sidebar_users_pincode_cancel'),
-                        'url' => ['/business/user/pincode-cancel'],
-                        'action' => 'pincode-cancel',
-                    ],
+
                 ]
             ],
             [
@@ -219,6 +202,24 @@ Class Menu
                 'url' => '#',
                 'controller' => 'transactions',
                 'items' => [
+                    [
+                        'key'   =>  'sidebar_users_money_transfer',
+                        'label' => THelper::t('sidebar_users_money_transfer'),
+                        'url' => ['/business/user/money-transfer'],
+                        'action' => 'money-transfer',
+                    ],
+                    [
+                        'key'   =>  'sidebar_users_money_transfer_log',
+                        'label' => THelper::t('sidebar_users_money_transfer_log'),
+                        'url' => ['/business/user/money-transfer-log'],
+                        'action' => 'money-transfer-log',
+                    ],
+                    [
+                        'key'   =>  'sidebar_users_pincode_cancel',
+                        'label' => THelper::t('sidebar_users_pincode_cancel'),
+                        'url' => ['/business/user/pincode-cancel'],
+                        'action' => 'pincode-cancel',
+                    ],
                     [
                         'key'   =>  'sidebar_payment_card',
                         'label' => THelper::t('sidebar_payment_card'),

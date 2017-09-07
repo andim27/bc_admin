@@ -3622,7 +3622,7 @@ fieldset[disabled] .btn-gplus.active {
 }
 
 .panel .table-striped > tbody > tr td.status-planning-good{
-  background-color: #4bae5f;
+  /*background-color: #4bae5f;*/
 }
 .panel .table-striped > tbody > tr td.status-planning-wait{
   background-color: #fdf59a;
@@ -3634,7 +3634,7 @@ fieldset[disabled] .btn-gplus.active {
   background-color: #EE5757;
 }
 .panel .table-striped > tbody > tr td.status-planning-empty{
-  background-color: #989898;
+  /*background-color: #989898;*/
 }
 .attentionMakeOrder{
   padding: 5px;
