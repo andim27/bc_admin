@@ -2,11 +2,8 @@
 
 namespace app\modules\business\controllers;
 
-use app\models\ExecutionPosting;
-use app\models\LogWarehouse;
 use app\models\PartsAccessories;
-use app\models\PartsAccessoriesInWarehouse;
-use app\models\Warehouse;
+use app\models\PlanningPurchasing;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
@@ -16,18 +13,17 @@ class PlanningPurchasingController extends BaseController {
 
     public function actionPlanning()
     {
-        //$model = ExecutionPosting::find()->all();
+        $model = PlanningPurchasing::find()->all();
 
         return $this->render('planning',[
             'language' => Yii::$app->language,
-            //'model' => $model,
+            'model' => $model,
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
 
     public function actionSavePlanning()
     {
-        return $this->redirect('/' . Yii::$app->language .'/business/planning-purchasing/planning');
 
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert'=>'danger',
@@ -37,16 +33,38 @@ class PlanningPurchasingController extends BaseController {
 
         $request = Yii::$app->request->post();
 
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r($request);
-        echo "</xmp>";
-        die();
+        if(!empty($request)){
+            $model = new PlanningPurchasing();
+
+            $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
+            $model->need_collect = (int)$request['need'];
+            $model->date_create =  new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+            $complect = [];
+            foreach ($request['complect'] as $k=>$item){
+                $complect[] = [
+                    'parts_accessories_id' => $item ,
+                    'needForOne' => $request['needForOne'][$k] ,
+                    'priceForOne' => $request['priceForOne'][$k] ,
+                    'buy' => $request['buy'][$k] ,
+                ];
+            }
+            $model->complect = $complect;
+
+        }
+
+        if($model->save()){
+            Yii::$app->session->setFlash('alert' ,[
+                    'typeAlert'=>'success',
+                    'message'=>'Сохранения применились.'
+                ]
+            );
+        }
+
+        return $this->redirect('/' . Yii::$app->language .'/business/planning-purchasing/planning');
     }
    
     public function actionMakePlanning()
     {
-
         return $this->renderPartial('_make-planning',[
             'language' => Yii::$app->language
         ]);
@@ -79,5 +97,27 @@ class PlanningPurchasingController extends BaseController {
                 'count'             =>  $request['goodsLevel']
             ]
         );
+    }
+    
+    public function actionLookPlanning($id)
+    {
+        $model = PlanningPurchasing::findOne(['_id'=>new ObjectID($id)]);
+        
+        return $this->renderPartial('_look-planning',[
+            'model' => $model
+        ]);
+    }
+
+    public function actionRemovePlanning($id)
+    {
+        if(PlanningPurchasing::findOne(['_id'=>new ObjectID($id)])->delete()){
+            Yii::$app->session->setFlash('alert' ,[
+                    'typeAlert'=>'success',
+                    'message'=>'Удаление прошло успешно.'
+                ]
+            );
+        }
+
+        return $this->redirect('/' . Yii::$app->language .'/business/planning-purchasing/planning');
     }
 }

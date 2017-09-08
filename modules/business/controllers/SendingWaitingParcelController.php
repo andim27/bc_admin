@@ -341,6 +341,40 @@ class SendingWaitingParcelController extends BaseController {
         return $this->redirect(['sending-waiting-parcel']);
     }
 
+    public function actionAllSendingWaitingParcel()
+    {
+        $warehouse = Warehouse::getInfoWarehouse();
+        $warehouseId = (string)$warehouse->_id;
+
+        $model = SendingWaitingParcel::find();
+        if($warehouseId != '592426f6dca7872e64095b45'){
+            if(!empty($warehouse->headUser)){
+                $model=$model->where([
+                    '$or' => [
+                        ['from_where_send'=>['$in'=>Warehouse::getListHeadAdminWarehouseId((string)$warehouse->headUser)]],
+                        ['where_sent'=>['$in'=>Warehouse::getListHeadAdminWarehouseId((string)$warehouse->headUser)]]
+                    ]
+                ]);
+            } else{
+                $model=$model->where([
+                    '$or' => [
+                        ['from_where_send'=>$warehouseId],
+                        ['where_sent'=>$warehouseId]
+                    ]
+                ]);
+            }
+        }
+
+        $model = $model->all();
+
+
+
+        return $this->render('all-sending-waiting-parcel',[
+            'language' => Yii::$app->language,
+            'model' => $model
+        ]);
+    }
+
 
     /**
      * write-off goods in parcel

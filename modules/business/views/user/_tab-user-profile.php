@@ -117,9 +117,9 @@ use yii\helpers\ArrayHelper;
                             <?php if(!empty($model->cards)){?>
                                 <?php foreach($model->cards as $vCard){?>
                                     <?php if(!empty($vCard['card_value'])) {?>
-                                        <div class="itemCard" data-card="'+cardVal+'">
+                                        <div class="itemCard" data-card="<?=$vCard['card_type']?>">
                                             <div class="col-md-4 labelCard">
-                                                <?=THelper::t($listPaymentCards[$vCard['card_type']]);?>
+                                                <?=$listPaymentCards[$vCard['card_type']];?>
                                             </div>
                                             <div class="col-md-6">
                                                 <input type="hidden" name="ProfileForm[cards][<?=$vCard['card_type']?>][card_type]" value="<?=$vCard['card_type']?>">
