@@ -34,7 +34,13 @@ class Products extends ActiveRecord
             'productSet',
             'price',
             'idInMarket',
-            'sorting'
+            'sorting',
+            'bonusMoney',
+            'bonusPoints',
+            'bonusStocks',
+            'type',
+            'pinsVouchers',
+            'statusHide'
         ];
     }
 
@@ -64,12 +70,17 @@ class Products extends ActiveRecord
 
     }
 
-    public static function getListPack()
+    public static function getListPack($withoutHide=false)
     {
         $list = [];
-        //$list['all'] = 'Все паки';
 
-        $model = self::find()->orderBy(['productName'=>SORT_ASC])->all();
+        $model = self::find();
+        if($withoutHide==true){
+            $model = $model->where(['statusHide'=>['$ne'=>1]]);
+        }
+        $model = $model->orderBy(['productName'=>SORT_ASC])->all();
+
+
         if(!empty($model)){
             foreach ($model as $item) {
                 if(!empty($item->set) && count($item->set) > 0){

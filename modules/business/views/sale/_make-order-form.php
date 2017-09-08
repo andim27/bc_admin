@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use app\components\THelper;
 use app\models\Products;
 
-$listSet = Products::getListPack();
+$listSet = Products::getListPack(true);
 
 
 ?>

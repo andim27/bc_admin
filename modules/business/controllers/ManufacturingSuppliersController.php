@@ -2,17 +2,11 @@
 
 namespace app\modules\business\controllers;
 
-
-
 use app\models\CurrencyRate;
-use app\models\ExecutionPosting;
 use app\models\LogWarehouse;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\PartsOrdering;
-use app\models\Products;
-use app\models\SendingWaitingParcel;
-use app\models\StatusSales;
 use app\models\SuppliersPerformers;
 use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
@@ -277,7 +271,8 @@ class ManufacturingSuppliersController extends BaseController {
             $model->title = $request['PartsAccessories']['title'];
             $model->translations = ['en' => $request['PartsAccessories']['translations']['en']];
             $model->unit = $request['PartsAccessories']['unit'];
-
+            $model->delivery_from_chine = (int)(!empty($request['PartsAccessories']['delivery_from_chine']) ? '1' : '0');
+            
             if($model->save()){
 
                 Yii::$app->session->setFlash('alert' ,[
@@ -914,7 +909,7 @@ class ManufacturingSuppliersController extends BaseController {
                     'title'         =>  $item->title,
                     'inWarehouse'   =>  0,
                     'usedMonth'     =>  0,
-                    'timeDelivery'  =>  0,
+                    'timeDelivery'  =>  ((!empty($item->delivery_from_chine) && $item->delivery_from_chine==1) ? '30' : '0'),
                     'wait'          =>  0
                 ];
                 $listGoodsId[] = $item->_id;
@@ -973,9 +968,7 @@ class ManufacturingSuppliersController extends BaseController {
                     $statusGoods[$k] = 'wait';
                 }
                 else if($item['inWarehouse']>0){
-                    $needForDay = round(($item['inWarehouse']/30),2,PHP_ROUND_HALF_EVEN);
-
-                    //$needForDay = ceil($item['inWarehouse']/30);
+                    $needForDay = round(($item['usedMonth']/30),2,PHP_ROUND_HALF_EVEN);
 
                     $listGoods[$k]['needDay'] = $needForDay;
 

@@ -98,51 +98,54 @@ class SaleController extends BaseController {
     {
         $model = StatusSales::findOne(['idSale'=>new ObjectID($orderID)]);
 
-        $listGoodsForUpdate = [];
-        foreach ($model->set as $item) {
-            if((empty($goodsName) || $item->title == $goodsName) && $item->status != 'status_sale_new'){
+        if(!empty($model->set)){
+            
+            $listGoodsForUpdate = [];
+            foreach ($model->set as $item) {
+                if((empty($goodsName) || $item->title == $goodsName) && $item->status != 'status_sale_new'){
 
-                $listGoodsForUpdate[] = [
-                    'productTitle'  =>  $item->title,
-                    'oldStatus'     =>  $item->status,
-                    'userID'        =>  (string)$item->idUserChange,
-                ];
+                    $listGoodsForUpdate[] = [
+                        'productTitle'  =>  $item->title,
+                        'oldStatus'     =>  $item->status,
+                        'userID'        =>  (string)$item->idUserChange,
+                    ];
 
-                $item->status = 'status_sale_new';
-                $item->idUserChange = null;
-            }
-        }
-
-        if(!empty($listGoodsForUpdate)){
-            foreach ($listGoodsForUpdate as $item) {
-                $comment = new ReviewsSale();
-                $comment->idUser = new ObjectID(\Yii::$app->view->params['user']->id);
-                $comment->dateCreate = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
-                $comment->review = 'Откат статуса ('.$item['productTitle'].') ' . THelper::t($item['oldStatus']) . '->' . THelper::t('status_sale_new');
-
-                $model->reviews[] = $comment;
+                    $item->status = 'status_sale_new';
+                    $item->idUserChange = null;
+                }
             }
 
-            $model->refreshFromEmbedded();
-            $model->isAttributeChanged('reviewsSales');
-
-            if($model->save()){
-
+            if(!empty($listGoodsForUpdate)){
                 foreach ($listGoodsForUpdate as $item) {
-                    $warehouseID = Warehouse::getIdMyWarehouse($item['userID']);
-                    $goodsID = PartsAccessories::findOne(['title'=>$item['productTitle']]);
-                    $userWarehouse = PartsAccessoriesInWarehouse::findOne(['warehouse_id'=>new ObjectID($warehouseID),'parts_accessories_id'=>$goodsID->_id]);
-                    $userWarehouse->number++;
+                    $comment = new ReviewsSale();
+                    $comment->idUser = new ObjectID(\Yii::$app->view->params['user']->id);
+                    $comment->dateCreate = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                    $comment->review = 'Откат статуса ('.$item['productTitle'].') ' . THelper::t($item['oldStatus']) . '->' . THelper::t('status_sale_new');
 
-                    if($userWarehouse->save()){
-                        // add log
-                        LogWarehouse::setInfoLog([
-                            'action'                    =>  'return_in_warehouse',
-                            'parts_accessories_id'      =>  (string)$goodsID->_id,
-                            'number'                    =>  '1',
-                            'on_warehouse_id'           =>  $warehouseID,
-                            'hide_admin_warehouse_id'   =>  '1'
-                        ]);
+                    $model->reviews[] = $comment;
+                }
+
+                $model->refreshFromEmbedded();
+                $model->isAttributeChanged('reviewsSales');
+
+                if($model->save()){
+
+                    foreach ($listGoodsForUpdate as $item) {
+                        $warehouseID = Warehouse::getIdMyWarehouse($item['userID']);
+                        $goodsID = PartsAccessories::findOne(['title'=>$item['productTitle']]);
+                        $userWarehouse = PartsAccessoriesInWarehouse::findOne(['warehouse_id'=>new ObjectID($warehouseID),'parts_accessories_id'=>$goodsID->_id]);
+                        $userWarehouse->number++;
+
+                        if($userWarehouse->save()){
+                            // add log
+                            LogWarehouse::setInfoLog([
+                                'action'                    =>  'return_in_warehouse',
+                                'parts_accessories_id'      =>  (string)$goodsID->_id,
+                                'number'                    =>  '1',
+                                'on_warehouse_id'           =>  $warehouseID,
+                                'hide_admin_warehouse_id'   =>  '1'
+                            ]);
+                        }
                     }
                 }
             }

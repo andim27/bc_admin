@@ -1249,10 +1249,70 @@ class StatusSalesController extends BaseController {
         
         return $this->render('product-set',[
             'language' => Yii::$app->language,
-            'infoProduct'   =>  $infoProduct
+            'infoProduct'   =>  $infoProduct,
+            'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
 
+    /**
+     * popup for add and update info product
+     * @param string $id
+     * @return string
+     */
+    public function actionAddUpdateProductSet($id = '')
+    {
+        $model = new Products();
+
+        if(!empty($id)){
+            $model = $model::findOne(['_id'=>new ObjectID($id)]);
+        }
+
+        return $this->renderAjax('_add-update-product-set', [
+            'language'          => Yii::$app->language,
+            'model'             => $model
+        ]);
+    }
+    
+    public function actionSaveProductSet()
+    {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert' => 'danger',
+                'message' => 'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
+        $request = Yii::$app->request->post();
+
+        $model = new Products();
+
+        if(!empty($request['_id'])){
+            $model = $model::findOne(['_id'=>new ObjectID($request['_id'])]);
+        }
+
+        if(!empty($request)){
+
+            $model->product         = $request['product'];
+            $model->idInMarket      = $request['idInMarket'];
+            $model->productName     = $request['productName'];
+            $model->price           = $request['price'];
+            $model->bonusMoney      = $request['bonusMoney'];
+            $model->bonusPoints     = $request['bonusPoints'];
+            $model->bonusStocks     = $request['bonusStocks'];
+            $model->pinsVouchers    = (!empty($request['pinsVouchers']) ? explode("\r\n",$request['pinsVouchers']) : '');
+            $model->statusHide      = (int)(!empty($request['statusHide']) ? $request['statusHide'] : 0);
+
+            if($model->save()){
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'success',
+                        'message'=>'Сохранения применились.'
+                    ]
+                );
+            }
+        }
+
+        return $this->redirect('/' . Yii::$app->language .'/business/status-sales/product-set');
+    }
+    
     /**
      * @return string
      */

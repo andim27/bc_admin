@@ -27,6 +27,8 @@ class PlanningPurchasingController extends BaseController {
 
     public function actionSavePlanning()
     {
+        return $this->redirect('/' . Yii::$app->language .'/business/planning-purchasing/planning');
+
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert'=>'danger',
                 'message'=>'Сохранения не применились, что то пошло не так!!!'

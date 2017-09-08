@@ -46,7 +46,8 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
             'unit',            
             'interchangeable',
             'composite',
-            'translations'
+            'translations',
+            'delivery_from_chine'
         ];
     }
 
