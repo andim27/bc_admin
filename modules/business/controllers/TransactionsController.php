@@ -3,6 +3,7 @@
 namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
+use app\models\api\transactions\Withdrawal;
 use app\models\PaymentCard;
 use app\models\Transaction;
 use app\models\Users;
@@ -96,9 +97,12 @@ class TransactionsController extends BaseController
     public function actionWithdrawal()
     {
         $model = Transaction::find()
-            ->where(['forWhat'=> [
-                '$regex' => 'Withdrawal'
-            ]])
+            ->where([
+                'forWhat'=> [
+                    '$regex' => 'Withdrawal'
+                ],
+                'rollback' => ['$ne'=>true]
+            ])
             ->orderBy(['dateCreate'=>SORT_DESC])
             ->all();
 

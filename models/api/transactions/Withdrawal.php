@@ -42,6 +42,15 @@ class Withdrawal {
         return $apiClient->post($data, false) == 'OK';
     }
 
+    public static function remove($data)
+    {
+        $apiClient = new ApiClient('transactions/withdrawal');
+
+        $response = $apiClient->delete($data, false);
+
+        return $response == 'OK';
+    }
+
     /**
      * Convert response from API
      *
