@@ -485,8 +485,10 @@ class SettingController extends BaseController {
                 ->where(['_id'=> new ObjectID($request['id'])])
                 ->one();
 
+
             $model->rules->showMenu = (!empty($request['rule']['showMenu']) ? $request['rule']['showMenu'] : '');
             $model->rules->edit = (!empty($request['rule']['edit']) ? $request['rule']['edit'] : '');
+            $model->rules->transaction_cash = (!empty($request['rule']['transaction_cash']) ? $request['rule']['transaction_cash'] : '');
 
             $model->refreshFromEmbedded();
 

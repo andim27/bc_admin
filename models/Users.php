@@ -184,11 +184,12 @@ class RulesAdmin extends Model
 {
     public $showMenu;
     public $edit;
+    public $transaction_cash;
 
     public function rules()
     {
         return [
-            [['showMenu','edit'], 'safe'],
+            [['showMenu','edit','transaction_cash'], 'safe'],
         ];
     }
 }

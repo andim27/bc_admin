@@ -333,6 +333,7 @@ class SendingWaitingParcelController extends BaseController {
                 }
             }
 
+            $modelParcel->date_update = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
             $modelParcel->is_posting = (int)1;
 
             if($modelParcel->save()){}
