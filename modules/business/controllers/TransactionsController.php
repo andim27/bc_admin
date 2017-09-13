@@ -99,9 +99,10 @@ class TransactionsController extends BaseController
         $model = Transaction::find()
             ->where([
                 'forWhat'=> [
-                    '$regex' => 'Withdrawal'
+                    '$regex' => 'Withdrawal',
+                    //'$ne' => 'Withdrawal (Rollback)'
                 ],
-                'rollback' => ['$ne'=>true]
+                //'rollback' => ['$ne'=>true]
             ])
             ->orderBy(['dateCreate'=>SORT_DESC])
             ->all();
@@ -184,19 +185,15 @@ class TransactionsController extends BaseController
                 'message' => 'Сохранения не применились, что то пошло не так!!!'
             ]
         );
-        
-        $model = Transaction::findOne(['_id'=>new ObjectID($id)]);
 
-        $model->confirmed = -1;
+        $answer = Withdrawal::remove(['id'=>$id]);
 
-        if($model->save()){
-
+        if($answer == 'OK'){
             Yii::$app->session->setFlash('alert' ,[
                     'typeAlert'=>'success',
                     'message'=>'Сохранения применились.'
                 ]
             );
-
         }
 
         return $this->redirect('/' . Yii::$app->language .'/business/transactions/withdrawal');
