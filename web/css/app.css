@@ -3641,3 +3641,16 @@ fieldset[disabled] .btn-gplus.active {
   font-size: 14px;
   font-weight: bold;
 }
+
+.procurementPlanningWait{
+  color: #d8c708;
+  font-size: 16px;
+}
+.procurementPlanningAttention{
+  color: #f28e00;
+  font-size: 16px;
+}
+.procurementPlanningAlert{
+  color: #C80505;
+  font-size: 16px;
+}

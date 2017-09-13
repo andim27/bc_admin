@@ -2,6 +2,7 @@
 use app\components\THelper;
 use yii\helpers\Html;
 use yii\web\View;
+use kartik\widgets\Select2;
 ?>
 
 <?php if ($successText) { ?>
@@ -20,16 +21,17 @@ use yii\web\View;
 </div>
 <div class="row">
     <div class="col-md-6">
-        <?= Html::dropDownList(
-            'admin_list',
-            null,
-            $adminList,
-            [
-                'prompt' => THelper::t('setting_admin_rules_select_admin'),
+        <?= Select2::widget([
+            'name' => 'admin_list',
+            'data' => $adminList,
+            'options' => [
+                'placeholder' => THelper::t('setting_admin_rules_select_admin'),
                 'id' => 'admin-list',
                 'class' => 'form-control',
                 'onchange'=> 'showRules(this.value)'
-            ]) ?>
+            ]
+        ]);
+        ?>
     </div>
 </div>
 <div class="row">

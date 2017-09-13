@@ -60,7 +60,9 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
             <?=($infoComposite['number'] * $count)?>
         </div>
         <div class="col-md-1"><?=$warehouseCount?></div>
-        <div class="col-md-1"></div>
+        <div class="col-md-1">
+            <?=Html::hiddenInput('priceForOne[]','-')?>
+        </div>
         <div class="col-md-1"></div>
         <div class="col-md-1">
             <?=Html::hiddenInput('buy[]','-')?>
@@ -115,6 +117,9 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
                 </span>
                 <?=THelper::t($k)?>
             </div>
+            <?php if($k=='eur') { ?>
+                <?=Html::hiddenInput('priceForOne[]',round($item,3))?>
+            <?php } ?>
         <?php } ?>
     </div>
     <div class="col-md-1">

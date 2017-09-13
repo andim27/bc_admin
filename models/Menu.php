@@ -446,6 +446,13 @@ Class Menu
                         'url' => ['sending-waiting-parcel/sending-waiting-parcel'],
                         'action' => 'sending-waiting-parcel',
                     ],
+                    [
+                        'key'   =>  'all_sending_and_waiting_parcel',
+                        'label' => THelper::t('all_sending_waiting_parcel'),
+                        'url' => ['sending-waiting-parcel/all-sending-waiting-parcel'],
+                        'action' => 'all-sending-waiting-parcel',
+                    ],
+
                 ]
             ],
 

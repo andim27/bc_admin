@@ -39,9 +39,22 @@
             <?php foreach ($item['items'] as $subitem) { ?>
                 <div class="row <?=($bg == 'bg-light' ? $bg = 'bg-light dk' : $bg = 'bg-light')?>">
                     <div class="col-md-1"></div>
+                    <?php if($subitem['key'] != 'sidebar_order'){?>
                     <div class="col-md-7">
                         <label class="control-label switch-center"><?=$subitem['label']?></label>
                     </div>
+                    <?php } else {?>
+                        <div class="col-md-5">
+                            <label class="control-label switch-center"><?=$subitem['label']?></label>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="control-label switch-center">Проводка за наличные</label>
+                            <label class="switch">
+                                <input value="sidebar_order" class="btnRulesShow" type="checkbox" name="rule[transaction_cash][]" <?= ((!empty($model->rules->transaction_cash) && in_array('sidebar_order',(array)$model->rules->transaction_cash)) ? 'checked="checked"' : '')?>/>
+                                <span></span>
+                            </label>
+                        </div>
+                    <?php } ?>
                     <div class="col-md-2">
                         <label class="control-label switch-center"><?= THelper::t('rules_admin_display');?></label>
                         <label class="switch">

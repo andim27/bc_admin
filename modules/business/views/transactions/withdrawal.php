@@ -45,7 +45,7 @@ $listCard = PaymentCard::getListCards();
                             <?=(!empty($item->infoUser->secondName) ? $item->infoUser->secondName : '')?>
                         </td>
                         <td><?=$item->amount?></td>
-                        <td><?=THelper::t($listCard[(!empty($item->card['type']) ? $item->card['type'] : '1')])?></td>
+                        <td><?=$listCard[(!empty($item->card['type']) ? $item->card['type'] : '1')]?>..</td>
                         <td><?=(!empty($item->card['number']) ? $item->card['number'] : '')?></td>
                         <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
                         <td><?=THelper::t($item->getStatus())?></td>

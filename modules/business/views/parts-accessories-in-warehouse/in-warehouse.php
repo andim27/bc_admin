@@ -78,15 +78,24 @@ if($idWarehouse == '592426f6dca7872e64095b45'){
                         <th><?=THelper::t('number_in_stock')?></th>
                         <th><?=THelper::t('sold_during_period')?></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
-
                     <?php foreach ($model as $k=>$item) { ?>
                         <tr>
                             <td><?=$listGoods[(string)$item->parts_accessories_id]?></td>
                             <td><?=$item->number?></td>
                             <td><?=(!empty($implementation[$listGoods[(string)$item->parts_accessories_id]]) ? $implementation[$listGoods[(string)$item->parts_accessories_id]] : '0')?></td>
+                            <td>
+                                <?php if(!empty($arrayProcurementPlanning[(string)$item->parts_accessories_id]) && $arrayProcurementPlanning[(string)$item->parts_accessories_id]=='wait'){ ?>
+                                    <i class="fa fa-exclamation-triangle procurementPlanningWait" data-container="body" data-toggle="popover" data-placement="left" data-content="Данный товар доставляется"></i>
+                                <?php } else if(!empty($arrayProcurementPlanning[(string)$item->parts_accessories_id]) && $arrayProcurementPlanning[(string)$item->parts_accessories_id]=='attention'){ ?>
+                                    <i class="fa fa-exclamation-triangle procurementPlanningAttention" data-container="body" data-toggle="popover" data-placement="left" data-content="Данный товар заканчивается"></i>
+                                <?php } else if(!empty($arrayProcurementPlanning[(string)$item->parts_accessories_id]) && $arrayProcurementPlanning[(string)$item->parts_accessories_id]=='alert'){ ?>
+                                    <i class="fa fa-exclamation-triangle procurementPlanningAlert" data-container="body" data-toggle="popover" data-placement="left" data-content="Данного товара не достатотчно">
+                                <?php } ?>
+                            </td>
                             <td>
                                 <?php if($item->number>0){ ?>
                                 <?=Html::a(THelper::t('write_off'),['/business/parts-accessories-in-warehouse/cancellation','goodsID'=>(string)$item->parts_accessories_id],['data-toggle'=>'ajaxModal','class'=>'btn btn-danger'])?>

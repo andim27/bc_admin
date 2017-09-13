@@ -3,6 +3,7 @@
 namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
+use app\models\api\transactions\Withdrawal;
 use app\models\PaymentCard;
 use app\models\Transaction;
 use app\models\Users;
@@ -96,9 +97,13 @@ class TransactionsController extends BaseController
     public function actionWithdrawal()
     {
         $model = Transaction::find()
-            ->where(['forWhat'=> [
-                '$regex' => 'Withdrawal'
-            ]])
+            ->where([
+                'forWhat'=> [
+                    '$regex' => 'Withdrawal',
+                    //'$ne' => 'Withdrawal (Rollback)'
+                ],
+                'reduced' => ['$ne'=>false]
+            ])
             ->orderBy(['dateCreate'=>SORT_DESC])
             ->all();
 
@@ -180,19 +185,15 @@ class TransactionsController extends BaseController
                 'message' => 'Сохранения не применились, что то пошло не так!!!'
             ]
         );
-        
-        $model = Transaction::findOne(['_id'=>new ObjectID($id)]);
 
-        $model->confirmed = -1;
+        $answer = Withdrawal::remove(['id'=>$id]);
 
-        if($model->save()){
-
+        if($answer == 'OK'){
             Yii::$app->session->setFlash('alert' ,[
                     'typeAlert'=>'success',
                     'message'=>'Сохранения применились.'
                 ]
             );
-
         }
 
         return $this->redirect('/' . Yii::$app->language .'/business/transactions/withdrawal');

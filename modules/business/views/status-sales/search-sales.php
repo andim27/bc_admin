@@ -6,17 +6,22 @@
 
     /** @var $infoSale \app\models\Sales */
     /** @var $item \app\models\Sales */
+
+
+
 ?>
 
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('sidebar_cash_order') ?></h3>
 </div>
 
+<?php if(Users::checkRule('transaction_cash','sidebar_order') === true){?>
 <div class="row">
     <div class="col-md-offset-9 col-md-3 form-group">
         <?=Html::a('<i class="fa fa-plus"></i>' . THelper::t('create_order_paid_partner'),['/business/sale/make-order'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
     </div>
 </div>
+<?php } ?>
 
 <?php if(!empty($error)) {?>
     <div class="alert alert-danger"><?=$error?></div>

@@ -3,7 +3,9 @@
 namespace app\modules\business\controllers;
 
 use app\models\LogWarehouse;
+use DateTime;
 use app\models\PartsAccessoriesInWarehouse;
+use app\models\SendingWaitingParcel;
 use app\models\StatusSales;
 use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
@@ -89,6 +91,8 @@ class PartsAccessoriesInWarehouseController extends BaseController {
                 ->where(['warehouse_id' => new ObjectID($request['listWarehouse'])])
                 ->all();
         }
+
+        $arrayProcurementPlanning=$this->procurementPlanning();
         
         return $this->render('in-warehouse',[
             'language'          => Yii::$app->language,
@@ -96,6 +100,7 @@ class PartsAccessoriesInWarehouseController extends BaseController {
             'model'             => $model,
             'implementation'    => $implementation,
             'request'           => $request,
+            'arrayProcurementPlanning' => $arrayProcurementPlanning,
             'alert'             => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
@@ -311,4 +316,150 @@ class PartsAccessoriesInWarehouseController extends BaseController {
 
         return $this->redirect('/' . Yii::$app->language .'/business/parts-accessories-in-warehouse/all-cancellation-warehouse');
     }
+
+    public function actionXz()
+    {
+        $this->procurementPlanning();
+    }
+
+    protected function procurementPlanning()
+    {
+        $idWarehouse = Warehouse::getIdMyWarehouse();
+
+        $listGoods = [];
+        $statusGoods = [];
+
+        // in warehouse
+        $modelWarehouse = PartsAccessoriesInWarehouse::find()
+            ->where([
+                'warehouse_id'          => new ObjectID($idWarehouse)
+            ])
+            ->all();
+
+        if(!empty($modelWarehouse) && $idWarehouse!='592426f6dca7872e64095b45'){
+            foreach ($modelWarehouse as $item) {
+                $listGoods[(string)$item->parts_accessories_id] = [
+                    'inWarehouse'   =>  $item->number,
+                    'usedMonth'     =>  0,
+                    'timeDelivery'  =>  0,
+                    'countDelivery' =>  0,
+                    'wait'          =>  0
+                ];
+            }
+
+
+            // use for month
+            $to = strtotime(date('Y-m-d'. ' 23:59:59'));
+            $from = strtotime(date('Y-m-d' . ' 00:00:00',strtotime("-1 month", $to)));
+            $modelUse = LogWarehouse::find()
+                ->where([
+                    'date_create' => [
+                        '$gte' => new UTCDateTime($from * 1000),
+                        '$lt' => new UTCDateTime($to * 1000)
+                    ],
+                    'admin_warehouse_id' => new ObjectID($idWarehouse)
+                ])
+                ->all();
+            if($modelUse){
+                foreach ($modelUse as $item) {
+                    if (in_array($item->action,['status_sale_issued','cancellation','send_parcel'])){
+                        $listGoods[(string)$item->parts_accessories_id]['usedMonth'] += $item->number;
+                    }
+                }
+            }
+
+            //time delivery
+            $modelSendingWaitingParcel = SendingWaitingParcel::find()
+                ->where([
+                    'date_create' => [
+                        '$gte' => new UTCDateTime($from * 1000),
+                        '$lt' => new UTCDateTime($to * 1000)
+                    ],
+                    'where_sent'=>$idWarehouse,
+                    'is_posting'=>1
+                ])
+                ->all();
+            if(!empty($modelSendingWaitingParcel)){
+                foreach ($modelSendingWaitingParcel as $item) {
+                    $countDeliveryDays = date_diff(new DateTime($item->date_update->toDateTime()->format('Y-m-d H:i:s')), new DateTime($item->date_create->toDateTime()->format('Y-m-d H:i:s')))->days;
+
+                    if($countDeliveryDays == 0){
+                        $countDeliveryDays = 7;
+                    }
+
+                    if(!empty($item->part_parcel)){
+                        foreach ($item->part_parcel as $itemParcel){
+                            if(!empty($listGoods[$itemParcel['goods_id']])){
+                                $listGoods[$itemParcel['goods_id']]['timeDelivery'] += $countDeliveryDays;
+                                $listGoods[$itemParcel['goods_id']]['countDelivery']++;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            // wait delivery parcel
+            $modelSendingWaitingParcel = SendingWaitingParcel::find()->where(['where_sent'=>$idWarehouse,'is_posting'=>0])->all();
+            if(!empty($modelSendingWaitingParcel)){
+                foreach ($modelSendingWaitingParcel as $item) {
+                    if(!empty($item->part_parcel)){
+                        foreach ($item->part_parcel as $itemParcel){
+                            if(!empty($listGoods[$itemParcel['goods_id']])){
+                                $listGoods[$itemParcel['goods_id']]['wait'] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
+            foreach ($listGoods as $k=>$item) {
+                if($item['wait'] == '1'){
+                    $statusGoods[$k] = 'wait';
+                }
+                else if($item['inWarehouse']>0) {
+                    $needForDay = round(($item['usedMonth'] / 30), 2, PHP_ROUND_HALF_EVEN);
+
+                    $listGoods[$k]['needDay'] = $needForDay;
+
+                    if ($item['timeDelivery'] > 0 && $item['inWarehouse'] > (ceil($item['timeDelivery'] / $item['countDelivery']) + 7) * $needForDay) {
+                        $statusGoods[$k] = 'good';
+                    } else if ($item['timeDelivery'] > 0 && $item['inWarehouse'] <= ceil($item['timeDelivery'] / $item['countDelivery']) * $needForDay) {
+                        $statusGoods[$k] = 'alert';
+                    } else if ($item['timeDelivery'] > 0 && $item['inWarehouse'] <= (ceil($item['timeDelivery'] / $item['countDelivery']) + 7) * $needForDay) {
+                        $statusGoods[$k] = 'attention';
+                    } else if ($item['timeDelivery'] == 0 && $item['inWarehouse'] > 14 * $needForDay) {
+                        $statusGoods[$k] = 'good';
+                    } else if ($item['timeDelivery'] == 0 && $item['inWarehouse'] <= 7 * $needForDay) {
+                        $statusGoods[$k] = 'alert';
+                    } else if ($item['timeDelivery'] == 0 && $item['inWarehouse'] <= 14 * $needForDay) {
+                        $statusGoods[$k] = 'attention';
+                    } else {
+                        $statusGoods[$k] = 'alert';
+                    }
+                }
+                else if($item['inWarehouse']==0 && $item['usedMonth']>0){
+                    $statusGoods[$k] = 'alert';
+                }else{
+                    $statusGoods[$k] = 'empty';
+                }
+
+            }
+        }
+
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo "<xmp>";
+//        print_r($listGoods);
+//        echo "</xmp>";
+//        echo "<xmp>";
+//        print_r($statusGoods);
+//        echo "</xmp>";
+//        die();
+
+        return $statusGoods;
+
+    }
+
 }
