@@ -40,7 +40,7 @@ class Lang
      */
     public static function add($language, $key, $value, $comment = '', $originalValue = '')
     {
-        if (!self::validateLatin($key) && self::get($language, $key)) {
+        if (!self::validateLatin($key) || self::get($language, $key) || $key == $value) {
             return false;
         }
 
