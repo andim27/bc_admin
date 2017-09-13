@@ -102,7 +102,7 @@ class TransactionsController extends BaseController
                     '$regex' => 'Withdrawal',
                     //'$ne' => 'Withdrawal (Rollback)'
                 ],
-                //'rollback' => ['$ne'=>true]
+                'reduced' => ['$ne'=>false]
             ])
             ->orderBy(['dateCreate'=>SORT_DESC])
             ->all();
