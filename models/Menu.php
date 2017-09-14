@@ -195,7 +195,6 @@ Class Menu
                     ],
                 ]
             ],
-
             [
                 'key'   =>  'sidebar_transactions',
                 'label' => THelper::t('sidebar_transactions'),
@@ -240,7 +239,6 @@ Class Menu
                     ],
                 ]
             ],
-            
             [
                 'key'   =>  'sidebar_lottery',
                 'label' => THelper::t('sidebar_lottery'),
@@ -332,6 +330,13 @@ Class Menu
                         'label' => THelper::t('sidebar_report_for_cash'),
                         'url' => ['status-sales/report-for-cash'],
                         'action' => 'product-set',
+                    ],
+
+                    [
+                        'key'   =>  'sidebar_stock_warehouses',
+                        'label' => THelper::t('sidebar_stock_warehouses'),
+                        'url' => ['warehouses/stock-warehouses'],
+                        'action' => 'sidebar-stock-warehouses',
                     ],
                 ]
             ],

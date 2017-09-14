@@ -29,6 +29,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             'country',
             'headUser',
             'idUsers',
+            'stock'
         ];
     }
 
