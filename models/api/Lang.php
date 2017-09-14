@@ -49,7 +49,7 @@ class Lang
         $response = $apiClient->post([
             'countryId' => $language,
             'stringId' => $key,
-            'stringValue' => $value,
+            'stringValue' => $value ?: $key,
             'comment' => $comment,
             'originalStringValue' => $originalValue
         ]);
