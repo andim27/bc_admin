@@ -47,7 +47,7 @@ class THelper
             return $message ? $message : $key;
         } else {
             if (!api\Lang::get($useLang, $key)) {
-                $message = api\Lang::add($useLang, $key, $key, '', '');
+                $message = api\Lang::add($useLang, $key, "", '', '');
             }
 
             if ($message) {
