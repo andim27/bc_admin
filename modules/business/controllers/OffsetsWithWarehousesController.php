@@ -199,6 +199,8 @@ class OffsetsWithWarehousesController extends BaseController {
                             'amount_repayment_for_company'      => 0,
                             'amount_repayment_for_warehouse'    => 0,
                             'repayment'                         => ($repaymentCompanyWarehouse-$repaymentWarehouseCompany),
+                            'repayment_company'                 => $repaymentWarehouseCompany,
+                            'repayment_warehouse'               => $repaymentCompanyWarehouse,
                         ];
                     }
 
@@ -253,6 +255,8 @@ class OffsetsWithWarehousesController extends BaseController {
                                     'amount_repayment_for_company'      => 0,
                                     'amount_repayment_for_warehouse'    => 0,
                                     'repayment'                         => ($repaymentCompanyWarehouse-$repaymentWarehouseCompany),
+                                    'repayment_company'                 => $repaymentWarehouseCompany,
+                                    'repayment_warehouse'               => $repaymentCompanyWarehouse,
                                 ];
                             }
 
@@ -357,6 +361,8 @@ class OffsetsWithWarehousesController extends BaseController {
                             'amount_repayment_for_company'      => 0,
                             'amount_repayment_for_warehouse'    => 0,
                             'repayment'                         => ($repaymentCompanyWarehouse-$repaymentWarehouseCompany),
+                            'repayment_company'                 => $repaymentWarehouseCompany,
+                            'repayment_warehouse'               => $repaymentCompanyWarehouse,
                         ];
                     }
 
@@ -404,7 +410,6 @@ class OffsetsWithWarehousesController extends BaseController {
                             $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods('warehouse',$warehouseId,$productId);
 
                             if(empty($info[$countryCode][$warehouseId])){
-                                //TODO:KAA  персонализировать откуда идут зачисления
                                 $repaymentCompanyWarehouse = Repayment::getRepayment('warehouse',$warehouseId,'company_warehouse',$request['from'],$request['to']);
                                 $repaymentWarehouseCompany = Repayment::getRepayment('warehouse',$warehouseId,'warehouse_company',$request['from'],$request['to']);
 
@@ -415,6 +420,8 @@ class OffsetsWithWarehousesController extends BaseController {
                                     'amount_repayment_for_company'      => 0,
                                     'amount_repayment_for_warehouse'    => 0,
                                     'repayment'                         => ($repaymentCompanyWarehouse-$repaymentWarehouseCompany),
+                                    'repayment_company'                 => $repaymentWarehouseCompany,
+                                    'repayment_warehouse'               => $repaymentCompanyWarehouse,
                                 ];
                             }
 

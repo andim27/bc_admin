@@ -21,7 +21,7 @@ $infoGoodsInProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
         <th><?=THelper::t('amount_for_the_device')?></th>
         <th><?=THelper::t('amount_repayment_for_company')?></th>
         <th><?=THelper::t('amount_repayment_for_warehouse')?></th>
-        <th><?=THelper::t('difference')?></th>
+<!--        <th>--><?php //=THelper::t('difference'); ?><!--</th>-->
     </tr>
     </thead>
     <tbody>
@@ -35,14 +35,14 @@ $infoGoodsInProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
                 <td><?=$itemSet['amount_for_the_device']?></td>
                 <td><?=$itemSet['amount_repayment_for_company']?></td>
                 <td><?=$itemSet['amount_repayment_for_warehouse']?></td>
-                <td>
-                    <?php
-                    $difference = $itemSet['amount_repayment_for_company']-$itemSet['amount_repayment_for_warehouse'];
-                    ?>
-                    <span class="<?=($difference>0 ? 'text-danger' : 'text-success')?>">
-                        <?=abs($difference)?>
-                    </span>
-                </td>
+<!--                <td>-->
+<!--                    --><?php
+//                    $difference = $itemSet['amount_repayment_for_company']-$itemSet['amount_repayment_for_warehouse'];
+//                    ?>
+<!--                    <span class="--><?php //=($difference>0 ? 'text-danger' : 'text-success'); ?><!--">-->
+<!--                        --><?php //=abs($difference); ?>
+<!--                    </span>-->
+<!--                </td>-->
             </tr>
 
             <?php foreach($itemSet['set'] as $kGoods=>$itemGoods) { ?>
@@ -54,7 +54,7 @@ $infoGoodsInProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
                     <td><?=$itemGoods['amount_for_the_device']?></td>
                     <td><?=$itemGoods['amount_repayment_for_company']?></td>
                     <td><?=$itemGoods['amount_repayment_for_warehouse']?></td>
-                    <td>-</td>
+<!--                    <td>-</td>-->
                 </tr>
             <?php } ?>
         <?php } ?>
