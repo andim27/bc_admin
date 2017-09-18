@@ -25,14 +25,14 @@ if($object=='representative'){
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <?= THelper::t('amount_for_repayment_now') ?> -
-        <span class ="<?=($differenceRepaymentNow>=0 ? 'text-danger' : 'text-success')?>">
-            <?=abs($differenceRepaymentNow)?>
-        </span>
-    </div>
-</div>
+<!--<div class="row">-->
+<!--    <div class="col-md-12">-->
+<!--        --><?php //= THelper::t('amount_for_repayment_now'); ?><!-- --->
+<!--        <span class ="--><?php //=($differenceRepaymentNow>=0 ? 'text-danger' : 'text-success'); ?><!--">-->
+<!--            --><?php //=abs($differenceRepaymentNow); ?>
+<!--        </span>-->
+<!--    </div>-->
+<!--</div>-->
 
 <div class="row">
     <div class="col-md-12">

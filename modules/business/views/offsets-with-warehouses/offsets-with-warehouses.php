@@ -91,10 +91,12 @@ $listWarehouse = Warehouse::getArrayWarehouse();
                         <th><?=THelper::t('number_buy_prepayment')?></th>
                         <th><?=THelper::t('number_buy_cash')?></th>
                         <th><?=THelper::t('amount_for_the_device')?></th>
-                        <th><?=THelper::t('amount_repayment_for_company')?></th>
+                        <th><?=THelper::t('amount_repayment_for_representative')?></th>
                         <th><?=THelper::t('amount_repayment_for_warehouse')?></th>
-                        <th><?=THelper::t('difference')?></th>
-                        <th><?=THelper::t('repaid')?></th>
+                        <th><?=THelper::t('repayment_representative')?></th>
+                        <th><?=THelper::t('repayment_warehouse')?></th>
+<!--                        <th>--><?//=THelper::t('difference')?><!--</th>-->
+<!--                        <th>--><?//=THelper::t('repaid')?><!--</th>-->
                         <th><?=THelper::t('look_repaid')?></th>
                     </tr>
                     </thead>
@@ -114,19 +116,21 @@ $listWarehouse = Warehouse::getArrayWarehouse();
                                     <td><?=$itemWarehouse['amount_for_the_device']?></td>
                                     <td><?=$itemWarehouse['amount_repayment_for_company']?></td>
                                     <td><?=$itemWarehouse['amount_repayment_for_warehouse']?></td>
-                                    <td>
-                                        <?php
-                                            $difference = $itemWarehouse['amount_repayment_for_company']-$itemWarehouse['amount_repayment_for_warehouse'];
-                                        ?>
-                                        <span class="<?=($difference>0 ? 'text-danger' : 'text-success')?>">
-                                            <?=abs($difference)?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span>
-                                            <?=$itemWarehouse['repayment']?>
-                                        </span>
-                                    </td>
+                                    <td><?=$itemWarehouse['repayment_company']?></td>
+                                    <td><?=$itemWarehouse['repayment_warehouse']?></td>
+<!--                                    <td>-->
+<!--                                        --><?php
+//                                            $difference = $itemWarehouse['amount_repayment_for_company']-$itemWarehouse['amount_repayment_for_warehouse'];
+//                                        ?>
+<!--                                        <span class="--><?php //=($difference>0 ? 'text-danger' : 'text-success');?><!--">-->
+<!--                                            --><?php //=abs($difference);?>
+<!--                                        </span>-->
+<!--                                    </td>-->
+<!--                                    <td>-->
+<!--                                        <span>-->
+<!--                                            --><?php //=$itemWarehouse['repayment'];?>
+<!--                                        </span>-->
+<!--                                    </td>-->
                                     <td>
                                         <?=  Html::a('<i class="fa fa-eye text-info"></i>', ['/business/offsets-with-warehouses/repayment','object'=>'warehouse','id'=>$kWarehouse], ['class'=>'btn btn-default']); ?>
                                     </td>
