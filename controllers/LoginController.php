@@ -27,7 +27,7 @@ class LoginController extends \yii\web\Controller
 
         if (Yii::$app->request->post()) {
             $login = $_POST['LoginForm']['email'];
-            $apiUrl = Yii::$app->params['apiAddress'] . 'auth/admin/' . $login . '&' . $_POST['LoginForm']['password'];
+            $apiUrl = Yii::$app->params['apiAddress'] . 'auth/admin/' . urlencode(mb_strtolower($login)) . '&' . $_POST['LoginForm']['password'];
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_HEADER, 1);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
