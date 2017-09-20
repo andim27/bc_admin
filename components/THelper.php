@@ -2,6 +2,7 @@
 
 namespace app\components;
 
+use app\models\Langs;
 use Yii;
 use app\models\TranslateList;
 use app\models\api;
@@ -47,7 +48,7 @@ class THelper
             return $message ? $message : $key;
         } else {
             if (!api\Lang::get($useLang, $key)) {
-                $message = api\Lang::add($useLang, $key, "", '', '');
+                $message = api\Lang::add($useLang, $key, $key, '', '');
             }
 
             if ($message) {
