@@ -3,6 +3,7 @@
 namespace app\models\api;
 
 use app\components\ApiClient;
+use app\models\Langs;
 
 class Lang
 {
@@ -40,7 +41,13 @@ class Lang
      */
     public static function add($language, $key, $value, $comment = '', $originalValue = '')
     {
-        if (!self::validateLatin($key) || self::get($language, $key) || $key == $value) {
+        if (!self::validateLatin($key) || self::get($language, $key)) {
+            return false;
+        }
+
+        $item = Langs::find()->where(['countryId' => $language, 'stringId' => $key])->one();
+
+        if ($item && $item->stringValue) {
             return false;
         }
 
@@ -49,7 +56,7 @@ class Lang
         $response = $apiClient->post([
             'countryId' => $language,
             'stringId' => $key,
-            'stringValue' => $value ?: $key,
+            'stringValue' => $value,
             'comment' => $comment,
             'originalStringValue' => $originalValue
         ]);
