@@ -21,4 +21,11 @@ class PromotionController extends BaseController
             'promos' => Promos::find()->orderBy(['completed' => SORT_DESC, 'dateCompleted' => SORT_DESC])->all()
         ]);
     }
+
+    public function actionCurrent()
+    {
+        return $this->render('current', [
+            'promos' => Promos::find()->where(['type' => 'TYPE_SHL_200917'])->orderBy(['completed' => SORT_DESC, 'dateCompleted' => SORT_DESC])->all()
+        ]);
+    }
 }
