@@ -48,7 +48,7 @@
                             <?= $u->needSteps ?>
                         </td>
                         <td>
-
+                            0
                         </td>
                         <td>
                             2500
