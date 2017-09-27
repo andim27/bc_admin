@@ -14,9 +14,9 @@
                     <th><?= THelper::t('promotion_turkey_forum_table_city') ?></th>
                     <th><?= THelper::t('promotion_turkey_forum_table_steps') ?></th>
                     <th><?= THelper::t('promotion_turkey_forum_table_steps_need') ?></th>
-                    <th><?= THelper::t('promotion_turkey_forum_table_completed') ?></th>
                     <th><?= THelper::t('promotion_current_table_points_need') ?></th>
                     <th><?= THelper::t('promotion_current_table_points_completed') ?></th>
+                    <th><?= THelper::t('promotion_turkey_forum_table_completed') ?></th>
                     <th><?= THelper::t('promotion_travel_table_dateCompleted') ?></th>
                 </tr>
                 </thead>
