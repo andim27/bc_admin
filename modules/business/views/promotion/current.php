@@ -48,7 +48,7 @@
                             <?= $u->needSteps ?>
                         </td>
                         <td>
-                            <?= $u->salesSum ?>
+
                         </td>
                         <td>
                             2500
