@@ -25,7 +25,7 @@ class PromotionController extends BaseController
     public function actionCurrent()
     {
         return $this->render('current', [
-            'promos' => Promos::find()->where(['type' => 'TYPE_SHL_200917'])->orderBy(['completed' => SORT_DESC, 'dateCompleted' => SORT_DESC])->all()
+            'promos' => Promos::find()->where(['type' => 'TYPE_SHL_200917'])->orderBy(['steps' => SORT_DESC, 'salesSum' => SORT_DESC])->all()
         ]);
     }
 }
