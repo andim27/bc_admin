@@ -120,4 +120,59 @@ class PlanningPurchasingController extends BaseController {
 
         return $this->redirect('/' . Yii::$app->language .'/business/planning-purchasing/planning');
     }
+
+    public function actionMultiplierPlanningPurchasing(){
+        $info = [];
+        
+        $request = Yii::$app->request->post();
+
+        if(!empty($request)){
+//            header('Content-Type: text/html; charset=utf-8');
+//            echo "<xmp>";
+//            print_r($request);
+//            echo "</xmp>";
+//            die();
+
+            
+            $listId = [];
+            foreach ($request['wantMake']['id'] as $k=>$item){
+                $listId = new ObjectID($item);
+            }
+
+            $model = PartsAccessories::find()->where(['IN','_id',$listId])->all();
+
+            foreach ($model as $item) {
+                foreach ($item->composite as $itemComposite) {
+                    $info = $this->getComplectInfo($info,(string)$itemComposite['_id'],($request['wantMake']['count'][$k]*$itemComposite['number']));
+                }
+            }
+            
+        }
+
+        return $this->render('multiplier-planning-purchasing',[
+            'language' => Yii::$app->language,
+            'info' => $info,
+            'request' => $request,
+        ]);
+    }
+
+    protected function getComplectInfo($info,$id,$number){
+
+        $model = PartsAccessories::findOne(['_id'=>new ObjectID($id)]);
+        if(!empty($model->composite)){
+            foreach ($model->composite as $itemComposite){
+                $info = $this->getComplectInfo($info,(string)$itemComposite['_id'],($number*$itemComposite['number']));
+            }
+        } else {
+
+            if(empty($info[$id])){
+                $info[$id] = 0;
+            }
+
+            $info[$id] += $number;
+        }
+
+        return $info;
+    }
+
 }

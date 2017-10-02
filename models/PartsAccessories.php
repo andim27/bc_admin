@@ -47,7 +47,8 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
             'interchangeable',
             'composite',
             'translations',
-            'delivery_from_chine'
+            'delivery_from_chine',
+            'last_price_eur'
         ];
     }
 
@@ -164,6 +165,15 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         return $list;
     }
 
+    public static function getPricePurchase()
+    {
+        $model = self::find()->all();
+        $list = [];
+        foreach ($model as $item){
+            $list[(string)$item->_id] = (!empty($item->last_price_eur) ? $item->last_price_eur : '0');
+        }
 
+        return $list;
+    }
 
 }

@@ -64,6 +64,9 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
                         <th>
                             <?=THelper::t('unit')?>
                         </th>
+                        <th>
+                            <?=THelper::t('price_for_one_pcs')?>
+                        </th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -78,6 +81,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
                             <td><?=$item->title?></td>
                             <td><?=(!empty($countGoodsFromMyWarehouse[$item->_id->__toString()]) ? $countGoodsFromMyWarehouse[$item->_id->__toString()] : '0');?></td>
                             <td><?=THelper::t($item->unit)?></td>
+                            <td><?=$item->last_price_eur?></td>
                             <td class="status-planning-<?=(!empty($arrayProcurementPlanning[(string)$item->_id]) ? $arrayProcurementPlanning[(string)$item->_id] : '')?>">
                                 <?=(!empty($arrayProcurementPlanning[(string)$item->_id]) ? THelper::t('status-planning-'.$arrayProcurementPlanning[(string)$item->_id]) : '')?>
 <!--                                <i class="fa fa-dot-circle-o"></i>-->

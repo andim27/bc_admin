@@ -74,6 +74,14 @@ use kartik\widgets\Select2;
 
             <div class="row">
                 <div class="col-md-12">
+                    <?= $formCom->field($model, 'last_price_eur')->textInput([
+                        'disabled' => ((empty($model->last_price_eur)) ? false : true)
+                    ])->label(THelper::t('price_for_one_pcs')) ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
                     <div class="form-group">
                         <?= Html::label('Доставляется из Китая')?>
                         <?= Html::checkbox('PartsAccessories[delivery_from_chine]',((!empty($model->delivery_from_chine) && $model->delivery_from_chine==1)? true : false),[

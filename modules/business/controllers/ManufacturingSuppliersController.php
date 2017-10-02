@@ -272,7 +272,11 @@ class ManufacturingSuppliersController extends BaseController {
             $model->translations = ['en' => $request['PartsAccessories']['translations']['en']];
             $model->unit = $request['PartsAccessories']['unit'];
             $model->delivery_from_chine = (int)(!empty($request['PartsAccessories']['delivery_from_chine']) ? '1' : '0');
-            
+
+            if(!empty($request['PartsAccessories']['last_price_eur'])){
+                $model->last_price_eur = (float)$request['PartsAccessories']['last_price_eur'];
+            }
+
             if($model->save()){
 
                 Yii::$app->session->setFlash('alert' ,[
@@ -714,6 +718,12 @@ class ManufacturingSuppliersController extends BaseController {
                 );
 
                 $ActualCurrency = CurrencyRate::getActualCurrency();
+                $last_price_eur = round($request['price'] / $ActualCurrency[$request['currency']],2);
+
+                $modelPartsAccessories = PartsAccessories::findOne(['_id'=>new ObjectID($request['parts_accessories_id'])]);
+                $modelPartsAccessories->last_price_eur = $last_price_eur;
+                if($modelPartsAccessories->save()){}
+
                 // add log
                 LogWarehouse::setInfoLog([
                     'action'                    =>  'posting_ordering',
@@ -722,7 +732,7 @@ class ManufacturingSuppliersController extends BaseController {
 
                     'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
 
-                    'money'                     =>  round($request['price'] / $ActualCurrency[$request['currency']],2),
+                    'money'                     =>  $last_price_eur,
                 ]);
 
             }
@@ -787,7 +797,15 @@ class ManufacturingSuppliersController extends BaseController {
                     ]
                 );
 
+                $ActualCurrency = CurrencyRate::getActualCurrency();
+                $last_price_eur = round($modelPreOrder->price / $ActualCurrency[$modelPreOrder->currency],2);
+
                 $modelPreOrder->delete();
+
+
+                $modelPartsAccessories = PartsAccessories::findOne(['_id'=>$modelPreOrder->parts_accessories_id]);
+                $modelPartsAccessories->last_price_eur = $last_price_eur;
+                if($modelPartsAccessories->save()){}
 
                 // add log
                 LogWarehouse::setInfoLog([
