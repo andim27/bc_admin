@@ -888,33 +888,33 @@ class OffsetsWithWarehousesController extends BaseController {
     }
 
 
-    public function actionFix()
-    {
-        $model = RepaymentAmounts::find()->all();
-
-        foreach ($model as $item) {
-            $pricesWarehouse['0'] = [
-                'from_date' => new UTCDatetime(strtotime('2017-01-01') * 1000),
-                'price' => $item->price,
-            ];
-            $item->prices_warehouse=$pricesWarehouse;
-
-            $pricesRepresentative['0'] = [
-                'from_date' => new UTCDatetime(strtotime('2017-01-01') * 1000),
-                'price' => $item->price_representative,
-            ];
-            $item->prices_representative = $pricesRepresentative;
-
-//            header('Content-Type: text/html; charset=utf-8');
-//            echo "<xmp>";
-//            print_r($item);
-//            echo "</xmp>";
-//            die();
-
-            if($item->save()){}
-        }
-
-        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment-amounts');
-    }
+//    public function actionFix()
+//    {
+//        $model = RepaymentAmounts::find()->all();
+//
+//        foreach ($model as $item) {
+//            $pricesWarehouse['0'] = [
+//                'from_date' => new UTCDatetime(strtotime('2017-01-01') * 1000),
+//                'price' => $item->price,
+//            ];
+//            $item->prices_warehouse=$pricesWarehouse;
+//
+//            $pricesRepresentative['0'] = [
+//                'from_date' => new UTCDatetime(strtotime('2017-01-01') * 1000),
+//                'price' => $item->price_representative,
+//            ];
+//            $item->prices_representative = $pricesRepresentative;
+//
+////            header('Content-Type: text/html; charset=utf-8');
+////            echo "<xmp>";
+////            print_r($item);
+////            echo "</xmp>";
+////            die();
+//
+//            if($item->save()){}
+//        }
+//
+//        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment-amounts');
+//    }
 
 }
