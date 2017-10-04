@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use app\components\THelper;
 use app\models\PartsAccessories;
 use kartik\widgets\Select2;
+use app\models\CurrencyRate;
 ?>
 
 <div class="modal-dialog">
@@ -21,45 +22,32 @@ use kartik\widgets\Select2;
 
             <?=(!empty($model->_id) ? $formCom->field($model, '_id')->hiddenInput()->label(false) : '')?>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <?= $formCom->field($model, 'title')->widget(Select2::className(),[
-                        'data' => $existingProducts['ru'],
-                        'language' => 'ru',
-                        'options' => [
-                            'placeholder' => '',
-                            'multiple' => false
-                        ],
-                        'pluginOptions' => [
-                            'tags' => true
-                        ]
-                    ])->label('Название') ?>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <?= Html::label('Название(en)')?>
-                        <?= Select2::widget([
-                            'name' => 'PartsAccessories[translations][en]',
-                            'value' => (!empty($model->translations['en']) ? $model->translations['en'] : ''),
-                            'data' => $existingProducts['en'],
-                            'language' => 'ru',
-                            'options' => [
-                                'placeholder' => '',
-                                'multiple' => false
-                            ],
-                            'pluginOptions' => [
-                                'tags' => true
-                            ]
-                        ]);
-                        ?>
-                    </div>
-                </div>
-            </div>
+            <?= $formCom->field($model, 'title')->widget(Select2::className(),[
+                'data' => $existingProducts['ru'],
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => '',
+                    'multiple' => false
+                ],
+                'pluginOptions' => [
+                    'tags' => true
+                ]
+            ])->label('Название') ?>
 
-            <div class="row">
+            <?= $formCom->field($model, 'translations[en]')->widget(Select2::className(),[
+                'data' => $existingProducts['en'],
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => '',
+                    'multiple' => false
+                ],
+                'pluginOptions' => [
+                    'tags' => true
+                ]
+            ])->label('Название(en)') ?>
+
+            <div class="row form-group">
                 <div class="col-md-12">
                     <?=Html::dropDownList('PartsAccessories[unit]',(!empty($model->unit) ? $model->unit : ''),PartsAccessories::getListUnit(),[
                         'class'=>'form-control',
@@ -72,23 +60,32 @@ use kartik\widgets\Select2;
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-12">
+            <div class="row form-group">
+                <div class="col-md-9">
                     <?= $formCom->field($model, 'last_price_eur')->textInput([
                         'disabled' => ((empty($model->last_price_eur)) ? false : true)
                     ])->label(THelper::t('price_for_one_pcs')) ?>
                 </div>
+                <div class="col-md-3">
+                    <?=Html::label('Валюта')?>
+                    <?=Html::dropDownList('PartsAccessories[currency]',
+                        ((empty($model->last_price_eur)) ? 'uah' : 'eur'),
+                        CurrencyRate::getListCurrency(),[
+                            'class'=>'form-control',
+                            'id'=>'selectChangeStatus',
+                            'required'=>'required',
+                            'disabled' => ((empty($model->last_price_eur)) ? false : true)
+                        ])?>
+                </div>
             </div>
 
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-md-12">
-                    <div class="form-group">
-                        <?= Html::label('Доставляется из Китая')?>
-                        <?= Html::checkbox('PartsAccessories[delivery_from_chine]',((!empty($model->delivery_from_chine) && $model->delivery_from_chine==1)? true : false),[
-                            'class'=>''
-                        ]);
-                        ?>
-                    </div>
+                    <?= Html::label('Доставляется из Китая')?>
+                    <?= Html::checkbox('PartsAccessories[delivery_from_chine]',((!empty($model->delivery_from_chine) && $model->delivery_from_chine==1)? true : false),[
+                        'class'=>''
+                    ]);
+                    ?>
                 </div>
             </div>
 

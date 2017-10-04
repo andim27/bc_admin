@@ -64,14 +64,14 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
                     <?=Html::hiddenInput('product_id[]',$k)?>
                 </div>
                 <div class="col-md-3">
-                    <?=Html::input('number','price[]',(!empty($infoProduct[$k]) ? $infoProduct[$k]['price'] : 0 ),[
+                    <?=Html::input('number','price[]',(!empty($infoProduct[$k]['price_warehouse']) ? $infoProduct[$k]['price_warehouse'] : 0) ,[
                         'class'=>'form-control',
                         'min'=>'0',
                         'step'=>'0.01',
                     ])?>
                 </div>
                 <div class="col-md-3">
-                    <?=Html::input('number','price_representative[]',(!empty($infoProduct[$k]) ? $infoProduct[$k]['price_representative']: 0 ),[
+                    <?=Html::input('number','price_representative[]',(!empty($infoProduct[$k]['price_representative']) ? $infoProduct[$k]['price_representative'] : 0),[
                         'class'=>'form-control',
                         'min'=>'0',
                         'step'=>'0.01',

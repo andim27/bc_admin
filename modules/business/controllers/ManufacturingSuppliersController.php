@@ -110,7 +110,6 @@ class ManufacturingSuppliersController extends BaseController {
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/suppliers-performers');
     }
 
-
     /**
      * log transactions for Suppliers and Performers
      * @param $id
@@ -274,7 +273,8 @@ class ManufacturingSuppliersController extends BaseController {
             $model->delivery_from_chine = (int)(!empty($request['PartsAccessories']['delivery_from_chine']) ? '1' : '0');
 
             if(!empty($request['PartsAccessories']['last_price_eur'])){
-                $model->last_price_eur = (float)$request['PartsAccessories']['last_price_eur'];
+                $ActualCurrency = CurrencyRate::getActualCurrency();
+                $model->last_price_eur = (float)round($request['PartsAccessories']['last_price_eur'] / $ActualCurrency[$request['PartsAccessories']['currency']],3);
             }
 
             if($model->save()){

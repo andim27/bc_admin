@@ -54,8 +54,21 @@ class OffsetsWithWarehousesController extends BaseController {
             $model = RepaymentAmounts::find()->where(['warehouse_id'=>new ObjectID($id)])->all();
 
             foreach ($model as $item) {
-                $infoProduct[(string)$item->product_id]['price'] = $item->price;
-                $infoProduct[(string)$item->product_id]['price_representative'] = $item->price_representative;
+                $infoPriceWarehouse = 0;
+                if(!empty($item->prices_warehouse)){
+                    $infoPriceWarehouse = (array)$item->prices_warehouse;
+                    $infoPriceWarehouse = end($infoPriceWarehouse);
+                    $infoPriceWarehouse = $infoPriceWarehouse['price'];
+                }
+                $infoProduct[(string)$item->product_id]['price_warehouse'] = $infoPriceWarehouse;
+
+                $infoPriceRepresentative = 0;
+                if(!empty($item->prices_representative)) {
+                    $infoPriceRepresentative = (array)$item->prices_representative;
+                    $infoPriceRepresentative = end($infoPriceRepresentative);
+                    $infoPriceRepresentative = $infoPriceRepresentative['price'];
+                }
+                $infoProduct[(string)$item->product_id]['price_representative'] = $infoPriceRepresentative;
             }
         }
 
@@ -83,14 +96,39 @@ class OffsetsWithWarehousesController extends BaseController {
 
         if(!empty($request['warehouse_id'])){
 
-            RepaymentAmounts::deleteAll(['warehouse_id'=>new ObjectID($request['warehouse_id'])]);
-
             foreach ($request['product_id'] as $k=>$v){
-                $model = new RepaymentAmounts();
-                $model->warehouse_id = new ObjectID($request['warehouse_id']);
-                $model->product_id = new ObjectID($v);
-                $model->price = (float)$request['price'][$k];
-                $model->price_representative = (float)$request['price_representative'][$k];
+                $model = RepaymentAmounts::findOne(['warehouse_id'=>new ObjectID($request['warehouse_id']),'product_id'=>new ObjectID($v)]);
+                if(empty($model)){
+                    $model = new RepaymentAmounts();
+                    $model->warehouse_id = new ObjectID($request['warehouse_id']);
+                    $model->product_id = new ObjectID($v);
+                }
+
+                $infoPricesWarehouse = [];
+                if(!empty($model->prices_warehouse)){
+                    $infoPricesWarehouse = (array)$model->prices_warehouse;
+                    $lastInfoPricesWarehouse = end($infoPricesWarehouse);
+                }
+                if(!empty($request['price'][$k]) && (empty($lastInfoPricesWarehouse) || $lastInfoPricesWarehouse['price']!=$request['price'][$k])){
+                    $infoPricesWarehouse[] = [
+                        'from_date' =>  new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000),
+                        'price'     =>  (float)$request['price'][$k]
+                    ];
+                }
+                $model->prices_warehouse = $infoPricesWarehouse;
+
+                $infoPricesRepresentative = [];
+                if(!empty($model->prices_representative)){
+                    $infoPricesRepresentative = (array)$model->prices_representative;
+                    $lastInfoPricesRepresentative = end($infoPricesRepresentative);
+                }
+                if(!empty($request['price_representative'][$k]) && (empty($lastInfoPricesRepresentative) || $lastInfoPricesRepresentative['price']!=$request['price_representative'][$k])) {
+                    $infoPricesRepresentative[] = [
+                        'from_date' => new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000),
+                        'price' => (float)$request['price_representative'][$k]
+                    ];
+                }
+                $model->prices_representative = $infoPricesRepresentative;
 
                 if($model->save()){}
 
@@ -186,7 +224,7 @@ class OffsetsWithWarehousesController extends BaseController {
                 if ($dateCreate >= $from && $dateCreate <= $to && $item->sales->type != -1
                     && !empty($representativeId) && (empty($request['listRepresentative']) || $request['listRepresentative']==$representativeId)) {
 
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet('representative',$warehouseId,$productSetId);
+                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet('representative',$warehouseId,$productSetId,$item->sales->dateCreate);
 
                     if(empty($info[$representativeId])){
                         $repaymentCompanyWarehouse = Repayment::getRepayment('representative',$representativeId,'company_representative',$request['from'],$request['to']);
@@ -242,7 +280,7 @@ class OffsetsWithWarehousesController extends BaseController {
 
                             $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
 
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods('representative',$warehouseId,$productId);
+                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods('representative',$warehouseId,$productId,$itemSet['dateChange']);
 
                             if(empty($info[$representativeId])){
                                 $repaymentCompanyWarehouse = Repayment::getRepayment('representative',$representativeId,'company_representative',$request['from'],$request['to']);
@@ -348,7 +386,7 @@ class OffsetsWithWarehousesController extends BaseController {
 
 
 
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet('warehouse',$warehouseId,$productSetId);
+                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet('warehouse',$warehouseId,$productSetId,$item->sales->dateCreate);
 
                     if(empty($info[$countryCode][$warehouseId])){
                         $repaymentCompanyWarehouse = Repayment::getRepayment('warehouse',$warehouseId,'representative_warehouse',$request['from'],$request['to']);
@@ -407,7 +445,7 @@ class OffsetsWithWarehousesController extends BaseController {
 
                             $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
 
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods('warehouse',$warehouseId,$productId);
+                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods('warehouse',$warehouseId,$productId,$itemSet['dateChange']);
 
                             if(empty($info[$countryCode][$warehouseId])){
                                 $repaymentCompanyWarehouse = Repayment::getRepayment('warehouse',$warehouseId,'company_warehouse',$request['from'],$request['to']);
@@ -490,7 +528,7 @@ class OffsetsWithWarehousesController extends BaseController {
                 if ($dateCreate >= $from && $dateCreate <= $to && $item->sales->type != -1
                     && in_array($warehouseId,$arrayWarehouse)) {
 
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($request['object'],$warehouseId,$productSetId);
+                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($request['object'],$warehouseId,$productSetId,$item->sales->dateCreate);
                     
                     // info item pack
                     if(empty($info[$productSetId])){
@@ -559,7 +597,7 @@ class OffsetsWithWarehousesController extends BaseController {
 
                             $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
 
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($request['object'],$warehouseId,$productId);
+                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($request['object'],$warehouseId,$productId,$itemSet['dateChange']);
                             
                             // info pack
                             if(empty($info[$productSetId])){
@@ -809,7 +847,7 @@ class OffsetsWithWarehousesController extends BaseController {
                 $warehouseId = (!empty($infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id'] : 'none');
 
                 if($item->sales->type != -1 && in_array($warehouseId,$arrayWarehouse)) {
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($object,$warehouseId,$productSetId);
+                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($object,$warehouseId,$productSetId,$item->sales->dateCreate);
                     $info['amount_repayment_for_'.$directionRepayment] += $amountRepayment;
                 }
             }
@@ -833,7 +871,7 @@ class OffsetsWithWarehousesController extends BaseController {
 
                         if ($itemSet['status'] == 'status_sale_issued' && in_array($warehouseId,$arrayWarehouse)) {
                             $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($object,$warehouseId,$productId);
+                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($object,$warehouseId,$productId,$itemSet['dateChange']);
                             $info['amount_repayment_for_'.$object] += $amountRepayment;
                         }
                     }
@@ -849,5 +887,34 @@ class OffsetsWithWarehousesController extends BaseController {
         return $repayment;
     }
 
+
+    public function actionFix()
+    {
+        $model = RepaymentAmounts::find()->all();
+
+        foreach ($model as $item) {
+            $pricesWarehouse['0'] = [
+                'from_date' => new UTCDatetime(strtotime('2017-01-01') * 1000),
+                'price' => $item->price,
+            ];
+            $item->prices_warehouse=$pricesWarehouse;
+
+            $pricesRepresentative['0'] = [
+                'from_date' => new UTCDatetime(strtotime('2017-01-01') * 1000),
+                'price' => $item->price_representative,
+            ];
+            $item->prices_representative = $pricesRepresentative;
+
+//            header('Content-Type: text/html; charset=utf-8');
+//            echo "<xmp>";
+//            print_r($item);
+//            echo "</xmp>";
+//            die();
+
+            if($item->save()){}
+        }
+
+        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment-amounts');
+    }
 
 }
