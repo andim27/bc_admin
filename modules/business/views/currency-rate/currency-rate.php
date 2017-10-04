@@ -61,17 +61,35 @@ use yii\widgets\ActiveForm;
 
     <div class="col-sm-3 col-md-offset-2">
         <div class="form-group">
-            <?=Html::input('text','usd','',['class'=>'form-control','placeholder'=>'USD','required'=>'required','pattern'=>'[0-9]+([\.,][0-9]+)?'])?>
+            <?=Html::input('number','usd','',[
+                'class'=>'form-control',
+                'placeholder'=>'USD',
+                'required'=>'required',
+                'min'=>'0.01',
+                'step'=>'0.01',
+                ])?>
         </div>
     </div>
     <div class="col-sm-3">
         <div class="form-group">
-            <?=Html::input('text','uah','',['class'=>'form-control','placeholder'=>'UAH','required'=>'required'])?>
+            <?=Html::input('number','uah','',[
+                'class'=>'form-control',
+                'placeholder'=>'UAH',
+                'required'=>'required',
+                'min'=>'0.01',
+                'step'=>'0.01',
+            ])?>
         </div>
     </div>
     <div class="col-sm-3">
         <div class="form-group">
-            <?=Html::input('text','rub','',['class'=>'form-control','placeholder'=>'RUB','required'=>'required'])?>
+            <?=Html::input('number','rub','',[
+                'class'=>'form-control',
+                'placeholder'=>'RUB',
+                'required'=>'required',
+                'min'=>'0.01',
+                'step'=>'0.01',
+            ])?>
         </div>
     </div>
 

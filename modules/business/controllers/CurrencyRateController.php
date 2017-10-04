@@ -39,9 +39,9 @@ class CurrencyRateController extends BaseController {
         if(!empty($request)){
             $model->dateCreate = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
             $model->eur = 1;
-            $model->usd = $request['usd'];
-            $model->uah = $request['uah'];
-            $model->rub = $request['rub'];
+            $model->usd = (float)$request['usd'];
+            $model->uah = (float)$request['uah'];
+            $model->rub = (float)$request['rub'];
 
             if($model->save()){
 

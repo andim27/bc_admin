@@ -156,9 +156,7 @@ class ManufacturingSuppliersController extends BaseController {
      */
     public function actionPartsAccessories()
     {
-            
         $model = PartsAccessories::find()->all();
-
         $arrayProcurementPlanning = $this->procurementPlanning();
         
         return $this->render('parts-accessories',[
@@ -1159,107 +1157,195 @@ class ManufacturingSuppliersController extends BaseController {
 //        $this->redirect(['parts-accessories']);
 //    }
 
-/*
+
     public function actionFix()
     {
-        $infoReplaceTitle = [
-            'Прибор Life Balance' => 'Комплект для продажи Life Balance',
-            'Прибор Life Expert' => 'Комплект для продажи Life Expert',
-            'Прибор Life Expert PROFI' => 'Комплект для продажи Life Expert PROFI'
+        $updatePrice = [
+            '594d224fdca78765586c9262' => '0.52',
+            '594d224fdca78765586c9263' => '0.19',
+            '594d224fdca78765586c9264' => '2.88',
+            '594d224fdca78765586c9265' => 	'2',
+            '594d224fdca78765586c9266' => 	'1.5',
+            '594d224fdca78765586c9267' => 	'0.15',
+            '594d224fdca78765586c9268' =>	'0.05',
+            '594d224fdca78765586c9269' =>	'0.2',
+            '594d224fdca78765586c926a' =>	'10',
+            '594d224fdca78765586c926b' =>	'2',
+            '594d224fdca78765586c926c' =>	'2',
+            '594d224fdca78765586c926d' =>	'0.38',
+            '594d224fdca78765586c926e' =>	'0.25',
+            '594d224fdca78765586c926f' =>	'0.15',
+            '594d224fdca78765586c9270' =>	'0.16',
+            '594d224fdca78765586c9271' =>	'0.17',
+            '594d224fdca78765586c9274' =>	'0.06',
+            '594d224fdca78765586c9275' =>	'0.32',
+            '594d224fdca78765586c9276' =>	'0.39',
+            '594d224fdca78765586c9278' =>	'0.01',
+            '594d224fdca78765586c9279' =>	'0.01',
+            '594d224fdca78765586c927a' =>	'0.01',
+            '594d224fdca78765586c927b' =>	'0.01',
+            '594d224fdca78765586c927c' =>	'0.01',
+            '594d224fdca78765586c927d' =>	'0.01',
+            '594d224fdca78765586c927e' =>	'0.01',
+            '594d224fdca78765586c927f' =>	'0.01',
+            '594d224fdca78765586c9280' =>	'0.01',
+            '594d224fdca78765586c9281' =>	'0.01',
+            '594d224fdca78765586c9284' =>	'0.17',
+            '594d224fdca78765586c9285' =>	'0.001',
+            '594d224fdca78765586c9286' =>	'0.001',
+            '594d224fdca78765586c9287' =>	'0.001',
+            '594d224fdca78765586c9288' =>	'0.001',
+            '594d224fdca78765586c9289' =>	'0.001',
+            '594d224fdca78765586c928a' =>	'0.001',
+            '594d224fdca78765586c928b' =>	'0.001',
+            '594d224fdca78765586c928c' =>	'0.001',
+            '594d224fdca78765586c928d' =>	'0.001',
+            '594d224fdca78765586c928e' =>	'0.001',
+            '594d224fdca78765586c928f' =>	'0.001',
+            '594d224fdca78765586c9290' =>	'0.001',
+            '594d224fdca78765586c9291' =>	'0.001',
+            '594d224fdca78765586c9292' =>	'0.001',
+            '594d224fdca78765586c9293' =>	'0.001',
+            '594d224fdca78765586c9294' =>	'0.001',
+            '594d224fdca78765586c9295' =>	'0.001',
+            '594d224fdca78765586c9296' =>	'0.001',
+            '594d224fdca78765586c9297' =>	'0.001',
+            '594d224fdca78765586c9298' =>	'0.001',
+            '594d224fdca78765586c929d' =>	'0.004',
+            '594d224fdca78765586c929e' =>	'0.007',
+            '594d224fdca78765586c929f' =>	'0.007',
+            '594d224fdca78765586c92a0' =>	'0.01',
+            '594d224fdca78765586c92a1' =>	'0.01',
+            '594d224fdca78765586c92a2' =>	'0.02',
+            '594d224fdca78765586c92a3' =>	'0.01',
+            '594d224fdca78765586c92a4' =>	'0.014',
+            '594d224fdca78765586c92a9' =>	'0.07',
+            '594d224fdca78765586c92aa' =>	'0.008',
+            '594d224fdca78765586c92ab' =>	'0.18',
+            '594d224fdca78765586c92ae' =>	'0.008',
+            '594d224fdca78765586c92b0' =>	'0.17',
+            '594d224fdca78765586c92b2' =>	'0.1',
+            '595a410ddca7871f855fe863' =>	'0.01',
+            '595a410ddca7871f855fe864' =>	'0.01',
+            '595a410ddca7871f855fe865' =>	'0.01',
+            '595a410ddca7871f855fe866' =>	'0.01',
+            '595a410ddca7871f855fe867' =>	'0.05',
+            '595a410ddca7871f855fe868' =>	'0.05',
+            '595a410ddca7871f855fe869' =>	'0.05',
+            '595a410ddca7871f855fe86a' =>	'0.002',
+            '595a410ddca7871f855fe86b' =>	'0.002',
+            '595a410ddca7871f855fe86c' =>	'0.002',
+            '595a410ddca7871f855fe86d' =>	'0.002',
+            '595a410ddca7871f855fe86e' =>	'0.002',
+            '595a410ddca7871f855fe86f' =>	'0.002',
+            '595a410ddca7871f855fe870' =>	'0.002',
+            '595a410ddca7871f855fe871' =>	'0.004',
+            '595a410ddca7871f855fe873' =>	'0.002',
+            '595a410ddca7871f855fe874' =>	'0.002',
+            '595a410ddca7871f855fe875' =>	'0.59',
+            '595a410ddca7871f855fe876' =>	'1.2',
+            '595a410ddca7871f855fe877' =>	'0.14',
+            '595a410ddca7871f855fe878' =>	'0.04',
+            '595a410ddca7871f855fe879' =>	'0.8',
+            '595a410ddca7871f855fe87a' =>	'0.7',
+            '595a410ddca7871f855fe87b' =>	'2',
+            '595a410ddca7871f855fe87c' =>	'0.2',
+            '595a410ddca7871f855fe87d' =>	'0.015',
+            '595a410ddca7871f855fe87f' =>	'0.1',
+            '595a410ddca7871f855fe881' =>	'3.36',
+            '595a410ddca7871f855fe884' =>	'0.12',
+            '595a410ddca7871f855fe885' =>	'0.05',
+            '595a410ddca7871f855fe886' =>	'0.99',
+            '595a410ddca7871f855fe888' =>	'0.8',
+            '595a410ddca7871f855fe889' =>	'2',
+            '595a410ddca7871f855fe88a' =>	'0.2',
+            '595a410ddca7871f855fe88c' =>	'0.001',
+            '595a410ddca7871f855fe891' =>	'0.004',
+            '595a410ddca7871f855fe892' =>	'0.025',
+            '595a410ddca7871f855fe893' =>	'0.004',
+            '595a410ddca7871f855fe896' =>	'1',
+            '595a4e8adca787401828c081' =>	'1.74',
+            '595a5376dca78743e17eb831' =>	'1.74',
+            '595a53eadca7873b3e58fe42' =>	'0.8',
+            '595a5503dca7873b3e58fe43' =>	'1.2',
+            '595a58bbdca787401828c084' =>	'1',
+            '595a5a8bdca78740297cf2a3' =>	'4',
+            '595b57a3dca7874b21631618' =>	'3.7',
+            '595ba8e1dca7872aee699582' =>	'0.17',
+            '595baa12dca7872caa5e4793' =>	'0.04',
+            '59633c2ddca78725cf66fa32' =>	'0.001',
+            '59633c94dca787225769a1b4' =>	'0.04',
+            '59633cdcdca7871e1d5b16e4' =>	'0.001',
+            '59633d17dca78720b15d4772' =>	'0.001',
+            '59637417dca78730586503e2' =>	'0.01',
+            '596374eddca78761b11db902' =>	'0.002',
+            '59637929dca7875c024d27a2' =>	'0.001',
+            '59637d5cdca7876a2c23d1e4' =>	'0.004',
+            '59637daadca78736541401a3' =>	'1.004',
+            '59637de5dca78736541401a4' =>	'2.004',
+            '59637e24dca78720b15d4775' =>	'3.004',
+            '59637e9bdca7875c024d27a4' =>	'4.004',
+            '59647650dca7875a8c23ac42' =>	'0.025',
+            '59675b69dca787741f4ddcc2' =>	'0.002',
+            '596c619cdca787349e5b1e48' =>	'0.01',
+            '596c8ddedca7875b460d7ea3' =>	'0.004',
+            '596c9074dca78777f5687212' =>	'0.004',
+            '596db29fdca78718cd32b082' =>	'0.002',
+            '596db3aadca78718cd32b083' =>	'1.002',
+            '596f0689dca7876f5d4a3e54' =>	'0.004',
+            '596f06eddca78769853ec222' =>	'0.004',
+            '596f0749dca787698e6a7618' =>	'0.004',
+            '596f08ffdca787690100a026' =>	'0.001',
+            '596f0e3bdca787111877fbb4' =>	'0.004',
+            '596f0ea8dca7870aca355ac2' =>	'0.004',
+            '596f0f80dca7870c3e748c34' =>	'0.004',
+            '596f106ddca787085025cbe2' =>	'0.004',
+            '596f4eb0dca7874d827ff652' =>	'0.17',
+            '5975a113dca787460c0e7662' =>	'0.03',
+            '5976fa56dca7873a750ab9b2' =>	'0.8',
+            '59770958dca7873942505545' =>	'0.12',
+            '59772101dca787191935e439' =>	'0.99',
+            '59774d24dca7871c177d8952' =>	'0.2',
+            '59774d3adca7871c05108cf4' =>	'0.2',
+            '59774d4fdca7871f146a0e22' =>	'0.2',
+            '597aead8dca78756100e60b2' =>	'0.025',
+            '597aeae8dca7876d9a5d6402' =>	'0.025',
+            '597aeafedca7872e6d40e6a4' =>	'0.045',
+            '597af0a0dca7877d44750512' =>	'0.3',
+            '597b015bdca78779de4a4784' =>	'0.025',
+            '597b2349dca787234c2247a2' =>	'0.008',
+            '597b239bdca787325e1da252' =>	'0.006',
+            '597b23d8dca7872b421fd9e2' =>	'0.0046',
+            '597b248adca7872ec7215942' =>	'0.01',
+            '5981d4d8dca7873fe53be2b3' =>	'0.0037',
+            '5981d50bdca78740507152c3' =>	'0.0027',
+            '5981d539dca787479c796512' =>	'0.02',
+            '5982f614dca7873d714aa088' =>	'0.14',
+            '5982f627dca78734e011f1c4' =>	'0.14',
+            '5982f63cdca78716eb109922' =>	'0.14',
+            '5982f97ddca7873d714aa08b' =>	'2.88',
+            '59a006c4dca7875dda437015' =>	'0.002',
+            '59a008b3dca78760c0529912' =>	'0.002',
+            '59ae823cdca7872d2c7fd614' =>	'0.1',
+            '59ae825fdca787366a52a6a4' =>	'0.1',
+            '59ae829ddca7872d2c7fd615' =>	'0.2',
+            '59ae8384dca7873ae966b5a2' =>	'0.2',
+            '59ae83b1dca7873a3b1d3454' =>	'0.3',
+            '59b280cddca7876b1d4d7174' =>	'0.002',
+            '59b3c786dca7874c7e7a3d72' =>	'0.3',
+            '59b8ece5dca7873255301f24' =>	'0.0019',
+            '59cb90f8dca7877a190e9602' =>	'0.002',
+            '59d3658cdca7870b4e424012' =>	'0.01'
         ];
+        $ActualCurrency = CurrencyRate::getActualCurrency();
 
-        $infoReplaceId = [
-            '5924362adca78730ff4a3f22' => '59620f57dca78747631d3c62',
-            '59243648dca78730ff4a3f23' => '59620f49dca78761ae2d01c1',
-            '59243668dca78731c6788832' => '5975afe2dca78748ce5e7e02'
-        ];
+        foreach ($updatePrice as $k=>$item){
+            $last_price_eur = (float)round($item / $ActualCurrency['usd'],3);
+            $model = PartsAccessories::findOne(['_id'=>new ObjectID($k)]);
+            $model->last_price_eur = $last_price_eur;
 
-
-        // products
-        $modulProducts = Products::find()->all();
-        foreach ($modulProducts as $item){
-            if(!empty($item->productSet)){
-                $temp = $item->productSet;
-
-                foreach ($temp as $kV => $itemV){
-                    if(!empty($infoReplaceTitle[$itemV['setName']]) && !empty($infoReplaceId[$itemV['setId']])){
-                        $temp[$kV]['setName'] = $infoReplaceTitle[$itemV['setName']];
-                        $temp[$kV]['setId'] = $infoReplaceId[$itemV['setId']];
-                    }
-                }
-
-                $item->productSet = $temp;
-
-                if($item->save()){}
-            }
-
+            if($model->save()){}
         }
-
-        // status sale
-        $modulStatusSale = StatusSales::find()->all();
-        foreach ($modulStatusSale as $item){
-            if(!empty($item->setSales)){
-
-                $temp = $item->setSales;
-
-                foreach ($temp as $kV => $itemV) {
-                    if(!empty($infoReplaceTitle[$itemV['title']])){
-                        $temp[$kV]['title'] = $infoReplaceTitle[$itemV['title']];
-                    }
-                }
-
-                $item->setSales = $temp;
-
-                if($item->save()){}
-            }
-        }
-
-        // parts_accessories_in_warehouse
-        $modulPartsAccessoriesInWarehouse = PartsAccessoriesInWarehouse::find()->all();
-        foreach ($modulPartsAccessoriesInWarehouse as $item){
-            $temp = (string)$item->parts_accessories_id;
-
-            if(!empty($infoReplaceId[$temp])){
-                $item->parts_accessories_id = new ObjectID($infoReplaceId[$temp]);
-
-                if($item->save()){}
-            }
-
-        }
-
-        //log warehouse
-        $moduleLogWarehouse = LogWarehouse::find()->all();
-        foreach ($moduleLogWarehouse as $item){
-            $temp = (string)$item->parts_accessories_id;
-
-            if(!empty($infoReplaceId[$temp])){
-                $item->parts_accessories_id = new ObjectID($infoReplaceId[$temp]);
-
-                if($item->save()){}
-            }
-        }
-
-
-        //sending waiting parcel
-        $moduleSendingWaitingParcel = SendingWaitingParcel::find()->all();
-        foreach ($moduleSendingWaitingParcel as $item){
-
-            if(!empty($item->part_parcel)){
-
-                $temp = $item->part_parcel;
-
-                foreach ($temp as $kV => $itemV) {
-                    if(!empty($infoReplaceId[$itemV['goods_id']])){
-                        $temp[$kV]['goods_id'] = $infoReplaceId[$itemV['goods_id']];
-                    }
-                }
-
-                $item->part_parcel = $temp;
-
-                if($item->save()){}
-            }
-        }
-
 
         header('Content-Type: text/html; charset=utf-8');
         echo "<xmp>";
@@ -1270,6 +1356,6 @@ class ManufacturingSuppliersController extends BaseController {
 
 
     }
-*/
+
 
 }
