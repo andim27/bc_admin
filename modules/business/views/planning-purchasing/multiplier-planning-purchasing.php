@@ -17,6 +17,12 @@ $list = PartsAccessories::getListPartsAccessoriesWithComposite();
 $actualCurrency = CurrencyRate::getActualCurrency();
 
 $amount = 0;
+
+$listGoodsId = $listGoodsCount = '';
+if(!empty($request['wantMake']['id'])){
+    $listGoodsId = implode('::',$request['wantMake']['id']);
+    $listGoodsCount = implode('::',$request['wantMake']['count']);
+}
 ?>
 
 <div class="m-b-md">
@@ -82,35 +88,38 @@ $amount = 0;
 
 <?php ActiveForm::end(); ?>
 
-
-<?php if(!empty($info)) { ?>
-    <div class="row">
-        <div class="col-md-1 m-b col-md-offset-11">
-            <?= Html::button('<i class="fa fa-print"></i>', ['class' => 'btn btn-success btn-block btnPrint']) ?>
+<div class="blockGeneratedGoods">
+    <?php if(!empty($info)) { ?>
+        <div class="row">
+            <div class="col-md-1 m-b col-md-offset-10">
+                <?= Html::a('<i class="fa fa-file-o"></i>',['/business/planning-purchasing/multiplier-planning-purchasing-excel?listGoodsId='.$listGoodsId.'&listGoodsCount='.$listGoodsCount], ['class' => 'btn btn-success btn-block saveExcel']) ?>
+            </div>
+            <div class="col-md-1 m-b ">
+                <?= Html::button('<i class="fa fa-print"></i>', ['class' => 'btn btn-success btn-block btnPrint']) ?>
+            </div>
         </div>
-    </div>
 
-    <section class="panel panel-default">
-        <div class="table-responsive">
-            <table class="table table-translations table-striped datagrid m-b-sm infoNeed">
-                <thead>
-                <tr>
-                    <th>Товар</th>
-                    <th>Необходимо</th>
-                    <th>На складе</th>
-                    <th>Нужно заказать</th>
-                    <th>Цена за шт</th>
-                    <th>Сумма</th>
-                </tr>
-                </thead>
-                <tbody>
+        <section class="panel panel-default">
+            <div class="table-responsive">
+                <table class="table table-translations table-striped datagrid m-b-sm infoNeed">
+                    <thead>
+                    <tr>
+                        <th>Товар</th>
+                        <th>Необходимо</th>
+                        <th>На складе</th>
+                        <th>Нужно заказать</th>
+                        <th>Цена за шт</th>
+                        <th>Сумма</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     <?php foreach($info as $k=>$item) { ?>
                         <?php
-                            $inWarehouse = (!empty($partAccessoriesInWarehouse[$k]) ? $partAccessoriesInWarehouse[$k] : '0');
-                            $needCount = $item-$inWarehouse;
-                            $needCount = ($needCount > 0 ? $needCount : '0');
-                            $priceAmount = $partAccessoriesPricePurchase[$k]*$needCount;
-                            $amount += $priceAmount;
+                        $inWarehouse = (!empty($partAccessoriesInWarehouse[$k]) ? $partAccessoriesInWarehouse[$k] : '0');
+                        $needCount = $item-$inWarehouse;
+                        $needCount = ($needCount > 0 ? $needCount : '0');
+                        $priceAmount = $partAccessoriesPricePurchase[$k]*$needCount;
+                        $amount += $priceAmount;
                         ?>
                         <tr>
                             <td class="accessoriesTitle"><?=$partAccessoriesAll[$k];?></td>
@@ -134,17 +143,22 @@ $amount = 0;
                     <tr>
                         <td class="amount_rub"><?=($amount*$actualCurrency['rub'])?> rub</td>
                     </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-    <div class="row">
-        <div class="col-md-1 m-b col-md-offset-11">
-            <?= Html::button('<i class="fa fa-print"></i>', ['class' => 'btn btn-success btn-block btnPrint']) ?>
+        <div class="row">
+            <div class="col-md-1 m-b col-md-offset-10">
+                <?= Html::a('<i class="fa fa-file-o"></i>',['/business/planning-purchasing/multiplier-planning-purchasing-excel?listGoodsId='.$listGoodsId.'&listGoodsCount='.$listGoodsCount], ['class' => 'btn btn-success btn-block saveExcel']) ?>
+            </div>
+            <div class="col-md-1 m-b">
+                <?= Html::button('<i class="fa fa-print"></i>', ['class' => 'btn btn-success btn-block btnPrint']) ?>
+            </div>
         </div>
-    </div>
-<?php } ?>
+    <?php } ?>
+</div>
+
 
 <script type="text/javascript">
 
@@ -191,11 +205,15 @@ $amount = 0;
                     '</div>'+
                 '</div>'
             );
+
+            $('.countGoods').val('0');
+            $('.blockGeneratedGoods').html('');
         });
 
-    $('.wantMake').on('click','.removeGoods',function () {
-        $(this).closest(".row").remove();
-    });
+        $('.wantMake').on('click','.removeGoods',function () {
+            $(this).closest(".row").remove();
+            $('.blockGeneratedGoods').html('');
+        });
 
         $(document).on('click','.btnPrint', function() {
 
@@ -254,5 +272,6 @@ $amount = 0;
                 stylesheet : window.location.origin + '/css/print.css'
             });
         });
+
 
 </script>

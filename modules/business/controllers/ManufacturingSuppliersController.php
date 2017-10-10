@@ -2,6 +2,7 @@
 
 namespace app\modules\business\controllers;
 
+use app\components\THelper;
 use app\models\CurrencyRate;
 use app\models\LogWarehouse;
 use app\models\PartsAccessories;
@@ -167,6 +168,46 @@ class ManufacturingSuppliersController extends BaseController {
     }
 
     /**
+     * get excel list Parts and Accessories
+     */
+    public function actionPartsAccessoriesExcel()
+    {
+        $model = PartsAccessories::find()->all();
+        $countGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
+        $infoExport = [];
+        
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $infoExport[] = [
+                    'productTitle'      =>  $item->title,
+                    'count'             =>  (!empty($countGoodsFromMyWarehouse[$item->_id->__toString()]) ? $countGoodsFromMyWarehouse[$item->_id->__toString()] : '0'),
+                    'measure'           =>  THelper::t($item->unit),
+                    'priceForOne'       =>  $item->last_price_eur
+                ];
+            }
+        }
+
+        \moonland\phpexcel\Excel::export([
+            'models' => $infoExport,
+            'fileName' => 'export '.date('Y-m-d H:i:s'),
+            'columns' => [
+                'productTitle',
+                'count',
+                'measure',
+                'priceForOne',
+            ],
+            'headers' => [
+                'productTitle'      =>  'Товар',
+                'count'             =>  'Количество',
+                'measure'           =>  'Измеряем',
+                'priceForOne'       =>  'Цена за единицу (eur)'
+            ],
+        ]);
+
+        die();
+    }
+
+    /**
      * log transactions for Parts and Accessories
      * @param $id
      * @return string|\yii\web\Response
@@ -269,6 +310,8 @@ class ManufacturingSuppliersController extends BaseController {
             $model->translations = ['en' => $request['PartsAccessories']['translations']['en']];
             $model->unit = $request['PartsAccessories']['unit'];
             $model->delivery_from_chine = (int)(!empty($request['PartsAccessories']['delivery_from_chine']) ? '1' : '0');
+            $model->repair_fund = (int)(!empty($request['PartsAccessories']['repair_fund']) ? '1' : '0');
+            $model->exchange_fund = (int)(!empty($request['PartsAccessories']['exchange_fund']) ? '1' : '0');
 
             if(!empty($request['PartsAccessories']['last_price_eur'])){
                 $ActualCurrency = CurrencyRate::getActualCurrency();

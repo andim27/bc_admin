@@ -48,7 +48,9 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
             'composite',
             'translations',
             'delivery_from_chine',
-            'last_price_eur'
+            'last_price_eur',
+            'repair_fund',
+            'exchange_fund'
         ];
     }
 
@@ -172,6 +174,25 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         foreach ($model as $item){
             $list[(string)$item->_id] = (!empty($item->last_price_eur) ? $item->last_price_eur : '0');
         }
+
+        return $list;
+    }
+
+
+    public static function getListProductRepair()
+    {
+        $model = self::find()->where(['repair_fund'=>1])->all();
+
+        $list = ArrayInfoHelper::getArrayKeyValue($model,'_id','title');
+
+        return $list;
+    }
+
+    public static function getListProductExchange()
+    {
+        $model = self::find()->where(['exchange_fund'=>1])->all();
+
+        $list = ArrayInfoHelper::getArrayKeyValue($model,'_id','title');
 
         return $list;
     }

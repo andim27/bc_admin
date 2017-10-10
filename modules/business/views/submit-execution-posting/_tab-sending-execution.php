@@ -11,8 +11,23 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
 
 
 <div class="row">
-    <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>',['/business/submit-execution-posting/add-edit-sending-execution'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+    <div class="col-md-offset-6 col-md-3 form-group">
+        <?php //=Html::a('<i class="fa fa-wrench"></i>',[
+//            '/business/submit-execution-posting/add-edit-sending-repair'
+//        ],[
+//            'class'=>'btn btn-default btn-block',
+//            'data-toggle'=>'ajaxModal',
+//            'title'=>'Отправить на исполнение'
+//        ]);?>
+    </div>
+    <div class="col-md-3 form-group">
+        <?=Html::a('<i class="fa fa-plus"></i>',[
+            '/business/submit-execution-posting/add-edit-sending-execution'
+        ],[
+            'class'=>'btn btn-default btn-block',
+            'data-toggle'=>'ajaxModal',
+            'title'=>'Отправить на ремонт'
+        ])?>
     </div>
 </div>
 

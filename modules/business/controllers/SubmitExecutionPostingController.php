@@ -607,7 +607,53 @@ class SubmitExecutionPostingController extends BaseController {
             'dateInterval' => $dateInterval,
         ]);
     }
-    
+
+
+    public function actionAddEditSendingRepair($id='')
+    {
+        $model = '';
+        $list_component = [];
+//        if(!empty($id)){
+//            $model = ExecutionPosting::findOne(['_id'=>new ObjectID($id)]);
+//
+//            foreach ($model->list_component as $item) {
+//                if(!empty($item['parent_parts_accessories_id'])){
+//                    $list_component[(string)$item['parent_parts_accessories_id']][] = $item;
+//                } else {
+//                    $list_component[(string)$item['parts_accessories_id']][] = $item;
+//                }
+//            }
+//        }
+
+
+        return $this->renderPartial('_add-edit-sending-repair',[
+            'language' => Yii::$app->language,
+            'model' => $model,
+            'list_component' => $list_component
+        ]);
+    }
+
+    public function actionSaveSaveSendingRepair()
+    {
+        
+    }
+
+    public function actionCanRepair(){
+        $request = Yii::$app->request->post();
+        $count = 0;
+        if(!empty($request['partsAccessoriesId'])){
+            $model = PartsAccessoriesInWarehouse::findOne([
+                'warehouse_id'=>new ObjectID(Warehouse::getIdMyWarehouse()),
+                'parts_accessories_id'=>new ObjectID($request['partsAccessoriesId']),
+            ]);
+
+            if(!empty($model->number) && $model->number > 0){
+                $count = $model->number;
+            }
+        }
+
+        return $count;
+    }
     
     /**
      * return kit in warehouse before save update

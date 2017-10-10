@@ -43,7 +43,10 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
     <div class="row">
         <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
-        <div class="col-md-offset-9 col-md-3 form-group">
+        <div class="col-md-offset-6 col-md-3 form-group">
+            <?=Html::a('<i class="fa fa-file-o"></i>',['/business/manufacturing-suppliers/parts-accessories-excel'],['class'=>'btn btn-default btn-block'])?>
+        </div>
+        <div class="col-md-3 form-group">
             <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-parts-accessories'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
         </div>
     </div>
@@ -89,6 +92,12 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
                             <td>
                                 <?php if(!empty($item->delivery_from_chine) && $item->delivery_from_chine==1){ ?>
                                 <i class="fa fa-truck" data-toggle="tooltip" data-placement="top" title="Доставляется из Китая"></i>
+                                <?php } ?>
+                                <?php if(!empty($item->repair_fund) && $item->repair_fund==1){ ?>
+                                    <i class="fa fa-wrench" data-toggle="tooltip" data-placement="top" title="Ремонтный фонд"></i>
+                                <?php } ?>
+                                <?php if(!empty($item->exchange_fund) && $item->exchange_fund==1){ ?>
+                                    <i class="fa fa-retweet" data-toggle="tooltip" data-placement="top" title="Обменный фонд"></i>
                                 <?php } ?>
                             </td>
                             <td>

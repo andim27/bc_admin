@@ -4,8 +4,13 @@ use yii\helpers\ArrayHelper;
 use app\components\THelper;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
+use kartik\widgets\Select2;
+use app\models\Warehouse;
+use app\models\LogWarehouse;
 
-$listWarehouse = \app\models\Warehouse::getArrayWarehouse();
+$listWarehouse = Warehouse::getArrayWarehouse();
+$listAction = LogWarehouse::getAllAction()
+
 ?>
 
 <div class="m-b-md">
@@ -34,6 +39,19 @@ $listWarehouse = \app\models\Warehouse::getArrayWarehouse();
                 'class'=>'form-control infoUser',
                 'id'=>'infoWarehouse',
             ])?>
+    </div>
+
+    <div class="col-md-3 m-b">
+        <?= Select2::widget([
+            'name' => 'list_action',
+            'data' => $listAction,
+            'value' => (!empty($request['list_action']) ? $request['list_action'] : ''),
+            'options' => [
+                'placeholder' => 'Выберите действия',
+                'multiple' => true
+            ]
+        ]);
+        ?>
     </div>
 
     <div class="col-md-1 m-b">

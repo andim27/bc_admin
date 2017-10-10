@@ -34,6 +34,10 @@ class StatusSalesController extends BaseController {
         $infoSale = $infoUser = [];
         $error = '';
 
+        if($username = Yii::$app->session->getFlash('username', '', true)){
+            $request['login'] = $username;
+        }
+
         if(!empty($request)){
             $idUser = '';
 

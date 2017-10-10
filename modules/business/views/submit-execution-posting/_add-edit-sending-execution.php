@@ -6,6 +6,8 @@ use yii\helpers\ArrayHelper;
 use app\models\PartsAccessories;
 use app\models\SuppliersPerformers;
 use app\models\PartsAccessoriesInWarehouse;
+use kartik\widgets\Select2;
+
 
 $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
 
@@ -88,14 +90,14 @@ if(!empty($model)){
                         <?=Html::dropDownList('parts_accessories_id',
                             (!empty($model) ?  $model->parts_accessories_id : ''),
                             ArrayHelper::merge([''=>'выберите товар'],PartsAccessories::getListPartsAccessoriesWithComposite()),[
-                            'class'=>'form-control withComposite',
-                            'id'=>'selectGoods',
-                            'required'=>true,
-                            'disabled' => true,
-                            'options' => [
-                                '' => ['disabled' => true]
-                            ]
-                        ])?>
+                                'class'=>'form-control withComposite',
+                                'id'=>'selectGoods',
+                                'required'=>true,
+                                'disabled' => true,
+                                'options' => [
+                                    '' => ['disabled' => true]
+                                ]
+                            ])?>
                         <?=(!empty($model) ?  Html::hiddenInput('parts_accessories_id',(string)$model->parts_accessories_id) : '')?>
                     </div>
                     <div class="col-md-1">

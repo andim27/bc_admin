@@ -2,7 +2,9 @@
 
 namespace app\modules\business\controllers;
 
+use app\models\CurrencyRate;
 use app\models\PartsAccessories;
+use app\models\PartsAccessoriesInWarehouse;
 use app\models\PlanningPurchasing;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
@@ -127,26 +129,21 @@ class PlanningPurchasingController extends BaseController {
         $request = Yii::$app->request->post();
 
         if(!empty($request)){
-//            header('Content-Type: text/html; charset=utf-8');
-//            echo "<xmp>";
-//            print_r($request);
-//            echo "</xmp>";
-//            die();
 
-            
-            $listId = [];
+            $listId = $listCount = [];
             foreach ($request['wantMake']['id'] as $k=>$item){
-                $listId = new ObjectID($item);
+                $listId[] = new ObjectID($item);
+                $listCount[$item] = $request['wantMake']['count'][$k];
             }
 
             $model = PartsAccessories::find()->where(['IN','_id',$listId])->all();
 
+
             foreach ($model as $item) {
                 foreach ($item->composite as $itemComposite) {
-                    $info = $this->getComplectInfo($info,(string)$itemComposite['_id'],($request['wantMake']['count'][$k]*$itemComposite['number']));
+                    $info = $this->getComplectInfo($info,(string)$itemComposite['_id'],($listCount[(string)$item->_id]*$itemComposite['number']));
                 }
             }
-            
         }
 
         return $this->render('multiplier-planning-purchasing',[
@@ -154,6 +151,88 @@ class PlanningPurchasingController extends BaseController {
             'info' => $info,
             'request' => $request,
         ]);
+    }
+
+    public function actionMultiplierPlanningPurchasingExcel()
+    {
+
+        $request = Yii::$app->request->get();
+
+        $infoExport = $info = [];
+
+        if(!empty($request)){
+            $amount = 0;
+            $partAccessoriesInWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
+            $partAccessoriesAll = PartsAccessories::getListPartsAccessories();
+            $partAccessoriesPricePurchase = PartsAccessories::getPricePurchase();
+            $actualCurrency = CurrencyRate::getActualCurrency();
+
+            $request['listGoodsId'] = explode("::",$request['listGoodsId']);
+            $request['listGoodsCount'] = explode("::",$request['listGoodsCount']);
+
+            $listId = $listCount = [];
+            foreach ($request['listGoodsId'] as $k=>$item){
+                $listId[] = new ObjectID($item);
+                $listCount[$item] = $request['listGoodsCount'][$k];
+            }
+
+            $model = PartsAccessories::find()->where(['IN','_id',$listId])->all();
+
+            foreach ($model as $item) {
+                foreach ($item->composite as $itemComposite) {
+                    $info = $this->getComplectInfo($info,(string)$itemComposite['_id'],($listCount[(string)$item->_id]*$itemComposite['number']));
+                }
+            }
+
+            foreach ($info as $k=>$item) {
+                $inWarehouse = (!empty($partAccessoriesInWarehouse[$k]) ? $partAccessoriesInWarehouse[$k] : '0');
+                $needCount = $item-$inWarehouse;
+                $needCount = ($needCount > 0 ? $needCount : '0');
+                $priceAmount = $partAccessoriesPricePurchase[$k]*$needCount;
+                $amount += $priceAmount;
+                
+                $infoExport[] = [
+                    'productTitle'      =>  $partAccessoriesAll[$k],
+                    'needCount'         =>  $item,
+                    'inWarehouseCount'  =>  $inWarehouse,
+                    'needBuy'           =>  $needCount,
+                    'priceForOne'       =>  $partAccessoriesPricePurchase[$k],
+                    'amountPrice'       =>  $priceAmount
+                ];
+            }
+
+            $infoExport[] = [
+                'productTitle'      =>  'Итого',
+                'needCount'         =>  '',
+                'inWarehouseCount'  =>  $amount . ' eur',
+                'needBuy'           =>  round($amount*$actualCurrency['usd'],2) . ' usd',
+                'priceForOne'       =>  round($amount*$actualCurrency['uah'],2) . ' uah',
+                'amountPrice'       =>  round($amount*$actualCurrency['rub'],2) . ' rub',
+            ];
+        }
+
+        \moonland\phpexcel\Excel::export([
+            'models' => $infoExport,
+            'fileName' => 'export '.date('Y-m-d H:i:s'),
+            'columns' => [
+                'productTitle',
+                'needCount',
+                'inWarehouseCount',
+                'needBuy',
+                'priceForOne',
+                'amountPrice'
+            ],
+            'headers' => [
+                'productTitle'      =>  'Товар',
+                'needCount'         =>  'Необходимо',
+                'inWarehouseCount'  =>  'На складе',
+                'needBuy'           =>  'Нужно заказать',
+                'priceForOne'       =>  'Цена за шт',
+                'amountPrice'       =>  'Сумма'
+            ],
+        ]);
+
+        die();
     }
 
     protected function getComplectInfo($info,$id,$number){

@@ -141,11 +141,14 @@ class SetSales extends Model
     public $status;
     public $dateChange;
     public $idUserChange;
+    public $parts_accessories_id;
+    public $idExchange;
 
     public function rules()
     {
         return [
             [['title','status', 'dateChange', 'idUserChange'], 'required'],
+            [['parts_accessories_id','idExchange'], 'safe'],
         ];
     }
 }

@@ -4,10 +4,12 @@
     use app\components\THelper;
     use app\models\Users;
 
+    use app\components\AlertWidget;
+
     /** @var $infoSale \app\models\Sales */
     /** @var $item \app\models\Sales */
 
-
+    $alert = Yii::$app->session->getFlash('alert', '', true);
 
 ?>
 
@@ -15,17 +17,23 @@
     <h3 class="m-b-none"><?= THelper::t('sidebar_cash_order') ?></h3>
 </div>
 
-<?php if(Users::checkRule('transaction_cash','sidebar_order') === true){?>
+
 <div class="row">
-    <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>' . THelper::t('create_order_paid_partner'),['/business/sale/make-order'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+    <?php if(Users::checkRule('transaction_cash','sidebar_order') === true){?>
+    <div class="col-md-3 form-group pull-right">
+        <?=Html::a('<i class="fa fa-plus"></i> ' . THelper::t('create_order_paid_partner'),['/business/sale/make-order'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+    </div>
+    <?php } ?>
+    <div class="col-md-3 form-group pull-right">
+        <?php //=Html::a('<i class="fa fa-wrench"></i> ' . THelper::t('make_repair'),['/business/sale/make-repair'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal']); ?>
     </div>
 </div>
-<?php } ?>
+
 
 <?php if(!empty($error)) {?>
     <div class="alert alert-danger"><?=$error?></div>
 <?php } ?>
+<?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
 <div class="row">
     <?php $form = ActiveForm::begin([
@@ -98,8 +106,8 @@
             <tbody>
 
             <?php foreach ($infoSale as $item) { ?>
-
                 <?php if(!empty($item->statusSale->set)) {?>
+
                     <?php $infoSet = $item->statusSale->set; ?>
                 <tr id="row_<?=$item->_id->__toString()?>">
                     <td>

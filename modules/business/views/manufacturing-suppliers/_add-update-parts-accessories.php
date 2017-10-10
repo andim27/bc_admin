@@ -89,6 +89,27 @@ use app\models\CurrencyRate;
                 </div>
             </div>
 
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <?= Html::label('Ремонтный фонд')?>
+                    <?= Html::checkbox('PartsAccessories[repair_fund]',((!empty($model->repair_fund))? true : false),[
+                        'class'=>'flRepairFund'
+                    ]);
+                    ?>
+                    
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <?= Html::label('Обменный фонд')?>
+                    <?= Html::checkbox('PartsAccessories[exchange_fund]',((!empty($model->exchange_fund))? true : false),[
+                        'class'=>'flExchangeFund'
+                    ]);
+                    ?>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-12 text-right">
                     <?= Html::submitButton(THelper::t('settings_translation_edit_save'), ['class' => 'btn btn-success']) ?>
