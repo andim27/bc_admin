@@ -60,11 +60,13 @@ $userArray = Users::getListAdmin();
                             <div class="descrItem col-md-12">
                                 <?php if(!empty($item->idUsers)) { ?>
                                     <?php foreach($item->idUsers as $itemUser) { ?>
+                                        <?php if(!empty($userArray[$itemUser])) {?>
                                         <div class="input-group m-t-sm m-b-sm blItem">
                                             <span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>
                                             <input type="text" class="form-control input-sm" disabled="disabled" value="<?=$userArray[$itemUser]?>">
                                             <input type="hidden" name="idUsers[]" value="<?=$itemUser?>">
                                         </div>
+                                        <?php } ?>
                                     <?php } ?>
                                 <?php } ?>
                             </div>

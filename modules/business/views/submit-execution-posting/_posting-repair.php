@@ -116,7 +116,7 @@ $listComponent = PartsAccessories::getAllComponent((string)$model->parts_accesso
 
                 <div class="row">
                     <div class="col-md-6 text-left">
-                        <?= Html::a(THelper::t('disband_return'),['/business/submit-execution-posting/disband-return-execution','id'=>$model->_id->__toString()], ['class' => 'btn btn-success']) ?>
+                        <?php //= Html::a(THelper::t('disband_return'),['/business/submit-execution-posting/disband-return-execution','id'=>$model->_id->__toString()], ['class' => 'btn btn-success']); ?>
                     </div>
                     <div class="col-md-6 text-right">
                         <?= Html::submitButton(THelper::t('posting'), ['class' => 'btn btn-success assemblyBtn']) ?>
