@@ -34,7 +34,7 @@ $amount = [
 
     <?php $formStatus = ActiveForm::begin([
         'action' => '/' . $language . '/business/sale-report/info-sale-for-country-warehouse',
-        'options' => ['name' => 'selectGoods'],
+        'options' => ['name' => 'selectFilters'],
     ]); ?>
 
 
@@ -80,7 +80,11 @@ $amount = [
     </div>
 
     <div class="col-md-1 m-b">
-        <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
+        <?=Html::a('<i class="fa fa-file-o"></i>','#',['class'=>'btn btn-default btn-block exportExcel','title'=>'Выгрузка в excel'])?>
+    </div>
+
+    <div class="col-md-1 m-b">
+        <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-block btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -202,5 +206,15 @@ $amount = [
             $(this).closest('.row').find('.blChangeGoods select[name="listPack"]').prop( "disabled", true ).hide();
             $(this).closest('.row').find('.blChangeGoods select[name="listGoods"]').prop( "disabled", false ).show();
         }
+    });
+
+    $('.exportExcel').on('click',function (e) {
+        e.preventDefault();
+
+        formFilter = $('form[name="selectFilters"]');
+        formFilter.attr('action','<?=\yii\helpers\Url::to(['sale-report/info-sale-for-country-warehouse-excel'])?>').submit();
+        setTimeout(function() { formFilter.attr('action','<?=\yii\helpers\Url::to(['sale-report/info-sale-for-country-warehouse'])?>') }, 5000);
     })
+
+
 </script>
