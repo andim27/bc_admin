@@ -197,4 +197,25 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         return $list;
     }
 
+    /**
+     * @param $parts_accessories_id
+     * @return mixed
+     */
+    public static function getAllComponent($parts_accessories_id,$list)
+    {
+
+        $model = PartsAccessories::findOne(['_id'=>new ObjectID($parts_accessories_id)]);
+
+        if(!empty($model->composite)){
+            foreach ($model->composite as $item) {
+                $list = PartsAccessories::getAllComponent($item['_id'],$list);
+            }
+        } else {
+            $list[(string)$model->_id] = $model->title;
+        }
+
+        return $list;
+    }
+
+
 }

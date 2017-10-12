@@ -49,7 +49,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
     </div>
 
 
-    <script>
+    <script type="text/javascript">
         $('.table-translations').dataTable({
             language: TRANSLATION,
             lengthMenu: [ 25, 50, 75, 100 ],

@@ -237,6 +237,8 @@ class StatusSalesController extends BaseController {
 
         if(!empty($request) && !empty($request['status'])){
 
+            $myWarehouse = Warehouse::getIdMyWarehouse();
+
             $model = StatusSales::find()
                 ->where([
                     'idSale' => new ObjectID($request['idSale'])
@@ -258,6 +260,25 @@ class StatusSalesController extends BaseController {
                         $itemSet->status = $request['status'];
                         $itemSet->dateChange = new UTCDateTime(strtotime(date("Y-m-d H:i:s")) * 1000);
                         $itemSet->idUserChange =  new ObjectID($this->user->id);
+
+                        //add in warehouse exchange goods after repair
+                        if($request['status'] == 'status_sale_issued_after_repair' && !empty($itemSet->idExchange)){
+
+                            $modelPartsAccessoriesInWarehouseExchange = PartsAccessoriesInWarehouse::findOne([
+                                'parts_accessories_id'  =>  $itemSet->idExchange,
+                                'warehouse_id'          =>  new ObjectID($myWarehouse)
+                            ]);
+                            $modelPartsAccessoriesInWarehouseExchange->number++;
+                            if($modelPartsAccessoriesInWarehouseExchange->save()){
+                                // add log
+                                LogWarehouse::setInfoLog([
+                                    'action'                    =>  'return_exchange_after_repair',
+                                    'parts_accessories_id'      =>  (string)$itemSet->idExchange,
+                                    'number'                    =>  (float)'1',
+                                ]);
+                            }
+                            $itemSet->idExchange = '';
+                        }
                     }
 
                 }
@@ -283,10 +304,10 @@ class StatusSalesController extends BaseController {
                     LogWarehouse::setInfoLog([
                         'action'                    =>  $request['status'],
                         'parts_accessories_id'      =>  $idGoods,
-                        'number'                    =>  '1',
+                        'number'                    =>  (float)'1',
                     ]);
                     if(!empty($idGoods)){
-                        $myWarehouse = Warehouse::getIdMyWarehouse();
+
                         $modelPartsAccessoriesInWarehouse = PartsAccessoriesInWarehouse::findOne([
                             'parts_accessories_id'  =>  new ObjectID($idGoods),
                             'warehouse_id'          =>  new ObjectID($myWarehouse)

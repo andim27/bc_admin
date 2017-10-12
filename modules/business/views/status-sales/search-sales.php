@@ -25,7 +25,7 @@
     </div>
     <?php } ?>
     <div class="col-md-3 form-group pull-right">
-        <?php //=Html::a('<i class="fa fa-wrench"></i> ' . THelper::t('make_repair'),['/business/sale/make-repair'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal']); ?>
+        <?=Html::a('<i class="fa fa-wrench"></i> ' . THelper::t('make_repair'),['/business/sale/make-repair'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal']); ?>
     </div>
 </div>
 

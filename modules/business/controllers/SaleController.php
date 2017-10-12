@@ -178,6 +178,13 @@ class SaleController extends BaseController {
                     $modelExchange->number--;
                     if($modelExchange->save()){
                         $idExchange = $request['idGoodsExchange'];
+
+                        // add log
+                        LogWarehouse::setInfoLog([
+                            'action'                    =>  'issued_for_exchange_in_repair',
+                            'parts_accessories_id'      =>  $request['idGoodsExchange'],
+                            'number'                    =>  (int)1,
+                        ]);
                     }
                 }
 
@@ -192,18 +199,19 @@ class SaleController extends BaseController {
                 $infoSet['0']['dateChange'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
                 $infoSet['0']['idUserChange'] = new ObjectID($this->user->id);
                 if(!empty($idExchange)){
-                    $infoSet['0']['idExchange'] = $idExchange;
+                    $infoSet['0']['idExchange'] =  new ObjectID($idExchange);
                 }
+                $modelStatusSales->setSales = $infoSet;
 
                 $inforeviews = [];
                 $inforeviews['0']['idUser'] = new ObjectID($this->user->id);
-                $inforeviews['0']['reviews'] = 'Отправлен на ремонт ' . $infoProductForRepair->title;
+                $inforeviews['0']['review'] = 'Отправлен на ремонт ' . $infoProductForRepair->title;
                 if(!empty($idExchange)){
-                    $inforeviews['0']['reviews'] .= ' с выдачей на замену ' . $modelExchange->title;
+                    $inforeviews['0']['review'] .= ' с выдачей на замену ' . PartsAccessories::getNamePartsAccessories($idExchange);
                 }
                 $inforeviews['0']['dateCreate'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
 
-                $modelStatusSales->setSales = $infoSet;
+                $modelStatusSales->reviewsSales = $inforeviews;
 
                 if($modelStatusSales->save()){}
 
@@ -217,9 +225,14 @@ class SaleController extends BaseController {
 
                 }
                 $modelRepairGoodsInWarehouse->number++;
-                if($modelRepairGoodsInWarehouse->save()){}
-
-                //TODO:KAA add log
+                if($modelRepairGoodsInWarehouse->save()){
+                    // add log
+                    LogWarehouse::setInfoLog([
+                        'action'                    =>  'taken_for_repair',
+                        'parts_accessories_id'      =>  (string)$infoProductForRepair->_id,
+                        'number'                    =>  (int)1,
+                    ]);
+                }
 
                 Yii::$app->session->setFlash('username' ,$request['infoUser']['username']);
                 return $this->redirect('/' . Yii::$app->language .'/business/status-sales/search-sales');

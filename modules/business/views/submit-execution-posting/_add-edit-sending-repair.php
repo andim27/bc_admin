@@ -53,7 +53,6 @@ if(!empty($model)){
                 ]); ?>
 
                 <?=Html::hiddenInput('_id',(!empty($model) ? (string)$model->_id : ''));?>
-                <?=Html::hiddenInput('one_component',1);?>
 
                 <div class="form-group row infoDanger"></div>
 
@@ -90,7 +89,7 @@ if(!empty($model)){
                 </div>
 
                 <div class="form-group row">
-                    <div class="col-md-12">
+                    <div class="col-md-9">
                         <?=Html::label(THelper::t('sidebar_suppliers_performers'))?>
                         <?=Html::dropDownList('suppliers_performers_id',
                             (!empty($model) ? (string)$model->suppliers_performers_id : ''),
@@ -103,13 +102,19 @@ if(!empty($model)){
                                 ]
                             ])?>
                     </div>
+                    <div class="col-md-3">
+                        <?=Html::label(THelper::t('date_execution'))?>
+                        <?=Html::input('text','date_execution',(!empty($model->date_execution) ? $model->date_execution->toDateTime()->format('Y-m-d') : date('Y-m-d')),['class'=>'form-control datepicker-input','data-date-format'=>'yyyy-mm-dd'])?>
+                    </div>
                 </div>
 
+                <?php if(empty($model)){?>
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <?= Html::submitButton(THelper::t('save'), ['class' => 'btn btn-success assemblyBtn','style'=>'display:none']) ?>
                     </div>
                 </div>
+                <?php } ?>
 
                 <?php ActiveForm::end(); ?>
             </div>

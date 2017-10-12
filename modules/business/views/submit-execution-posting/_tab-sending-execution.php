@@ -12,13 +12,13 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
 
 <div class="row">
     <div class="col-md-offset-6 col-md-3 form-group">
-        <?php //=Html::a('<i class="fa fa-wrench"></i>',[
-//            '/business/submit-execution-posting/add-edit-sending-repair'
-//        ],[
-//            'class'=>'btn btn-default btn-block',
-//            'data-toggle'=>'ajaxModal',
-//            'title'=>'Отправить на исполнение'
-//        ]);?>
+        <?=Html::a('<i class="fa fa-wrench"></i>',[
+            '/business/submit-execution-posting/add-edit-sending-repair'
+        ],[
+            'class'=>'btn btn-default btn-block',
+            'data-toggle'=>'ajaxModal',
+            'title'=>'Отправить на ремонт'
+        ]);?>
     </div>
     <div class="col-md-3 form-group">
         <?=Html::a('<i class="fa fa-plus"></i>',[
@@ -26,7 +26,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
         ],[
             'class'=>'btn btn-default btn-block',
             'data-toggle'=>'ajaxModal',
-            'title'=>'Отправить на ремонт'
+            'title'=>'Отправить на исполнение'
         ])?>
     </div>
 </div>
@@ -54,6 +54,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
             </thead>
             <tbody>
             <?php foreach ($model as $item) { ?>
+                <?php if(!empty($item->list_component)){?>
                 <?php foreach ($item->list_component as $k=>$itemList) { ?>
                     <?php if($item->received == 0 && $item->posting != 1){?>
                     <tr>
@@ -63,12 +64,16 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                         <td><?= ($item->one_component == 1 ? THelper::t('component_replacement') : $listGoods[(string)$item->parts_accessories_id]) ?></td>
                         <td><?= (!empty($item->date_execution) ? $item->date_execution->toDateTime()->format('Y-m-d H:i:s') : '') ?></td>
                         <td><?= $listSuppliers[(string)$item->suppliers_performers_id] ?></td>
-                        <td><?= $item->fullname_whom_transferred ?></td>
+                        <td><?= ((!empty($item->repair) && $item->repair==1) ? 'Ремонт' : $item->fullname_whom_transferred) ?></td>
                         <td>
-                            <?=  Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/add-edit-sending-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']); ?>
+                            <?=  ((empty($item->repair) && $item->repair==0)
+                                ? Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/add-edit-sending-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal'])
+                                : '');
+                            ?>
                         </td>
                     </tr>
                     <?php } ?>
+                <?php } ?>
                 <?php } ?>
             <?php } ?>
             </tbody>

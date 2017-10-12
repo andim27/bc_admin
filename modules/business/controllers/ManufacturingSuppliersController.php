@@ -759,7 +759,7 @@ class ManufacturingSuppliersController extends BaseController {
                 );
 
                 $ActualCurrency = CurrencyRate::getActualCurrency();
-                $last_price_eur = round($request['price'] / $ActualCurrency[$request['currency']],2);
+                $last_price_eur = round(($request['price'] / $ActualCurrency[$request['currency']] / $request['number']),2);
 
                 $modelPartsAccessories = PartsAccessories::findOne(['_id'=>new ObjectID($request['parts_accessories_id'])]);
                 $modelPartsAccessories->last_price_eur = $last_price_eur;
@@ -839,10 +839,7 @@ class ManufacturingSuppliersController extends BaseController {
                 );
 
                 $ActualCurrency = CurrencyRate::getActualCurrency();
-                $last_price_eur = round($modelPreOrder->price / $ActualCurrency[$modelPreOrder->currency],2);
-
-                $modelPreOrder->delete();
-
+                $last_price_eur = round(($modelPreOrder->price / $ActualCurrency[$modelPreOrder->currency] / $modelPreOrder->number),2);
 
                 $modelPartsAccessories = PartsAccessories::findOne(['_id'=>$modelPreOrder->parts_accessories_id]);
                 $modelPartsAccessories->last_price_eur = $last_price_eur;
@@ -858,6 +855,7 @@ class ManufacturingSuppliersController extends BaseController {
                     'comment'                   =>  $countDeliveryDays
                 ]);
 
+                $modelPreOrder->delete();
             }
 
         }
