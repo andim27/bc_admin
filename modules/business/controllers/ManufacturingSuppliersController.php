@@ -498,13 +498,64 @@ class ManufacturingSuppliersController extends BaseController {
      */
     public function actionCompositeProducts()
     {
-        $model = PartsAccessories::find()->all();
+        $model = PartsAccessories::find()
+            ->where(['composite'=>['$ne' => [],'$exists' => true]])
+            ->all();
 
         return $this->render('composite-products',[
             'model' => $model,
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
 
+    }
+
+    public function actionCompositeProductsExcel()
+    {
+        $listPartsAccessories = PartsAccessories::getListPartsAccessories();
+
+        $model = PartsAccessories::find()
+            ->where(['composite'=>['$ne' => [],'$exists' => true]])
+            ->all();
+
+        $infoExport=[];
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $infoExport[] = [
+                    'productTitle'      =>  $item->title,
+                    'composition'       =>  '',
+                    'count'             =>  '',
+                    'unit'              =>  ''
+                ];
+
+                foreach ($item->composite as $itemComposite) {
+                    $infoExport[] = [
+                        'productTitle'      =>  '',
+                        'composition'       =>  (!empty($listPartsAccessories[(string)$itemComposite['_id']]) ? $listPartsAccessories[(string)$itemComposite['_id']] : '???'),
+                        'count'             =>  $itemComposite['number'],
+                        'unit'              =>  THelper::t($itemComposite['unit'])
+                    ];
+                }
+            }
+        }
+
+        \moonland\phpexcel\Excel::export([
+            'models' => $infoExport,
+            'fileName' => 'export-'.date("Y-m-d H:i:s"),
+            'columns' => [
+                'productTitle',
+                'composition',
+                'count',
+                'unit'
+            ],
+            'headers' => [
+                'productTitle'  =>  'Товар',
+                'composition'   =>  'Состав',
+                'count'         =>  'Количество',
+                'unit'          =>  'Единица измерения'
+            ],
+        ]);
+
+        die();
     }
 
     /**
