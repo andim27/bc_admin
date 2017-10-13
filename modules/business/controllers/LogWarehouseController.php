@@ -61,7 +61,7 @@ class LogWarehouseController extends BaseController {
 
     public function actionMoveOnWarehouseForMonth()
     {
-        $infoProduct = $actionDontKnow = [];
+        $infoProduct = $infoProductAmount = $actionDontKnow = [];
         $infoAction = [
             'issued'        =>  ['status_sale_issued',],
             'posting'       =>  ['posting_parcel'],
