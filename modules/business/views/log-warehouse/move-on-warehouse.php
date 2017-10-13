@@ -9,7 +9,7 @@ use app\models\Warehouse;
 use app\models\LogWarehouse;
 
 $listWarehouse = Warehouse::getArrayWarehouse();
-$listAction = LogWarehouse::getAllAction()
+$listAction = LogWarehouse::getAllAction();
 
 ?>
 

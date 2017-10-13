@@ -2,6 +2,7 @@
 
 namespace app\modules\business\controllers;
 
+use app\components\THelper;
 use app\models\api\Product;
 use app\models\LogWarehouse;
 use app\models\PartsAccessoriesInWarehouse;
@@ -19,12 +20,6 @@ class LogWarehouseController extends BaseController {
     {
 
         $request = Yii::$app->request->post();
-
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo "<xmp>";
-//        print_r($request);
-//        echo "</xmp>";
-//        die();
 
         if(empty($request)){
             $request['infoWarehouse'] = '';
@@ -64,6 +59,98 @@ class LogWarehouseController extends BaseController {
         ]);
     }
 
+    public function actionMoveOnWarehouseForMonth()
+    {
+        $infoProduct = $actionDontKnow = [];
+        $infoAction = [
+            'issued'        =>  ['status_sale_issued',],
+            'posting'       =>  ['posting_parcel'],
+            'send'          =>  ['send_parcel'],
+            'cancellation'  =>  [],
+
+            'skip_status'   => ['status_sale_delivered']
+        ];
+
+        $request = Yii::$app->request->post();
+
+        if(empty($request)){
+            $request['infoWarehouse'] = '';
+            $request['to'] = date("Y-m");
+            $request['from'] = date("Y-01");
+        }
+
+        $model = '';
+        if(!empty($request['infoWarehouse'])){
+
+
+            $model = LogWarehouse::find()
+                ->where([
+                    'date_create' => [
+                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                    ],
+                    'admin_warehouse_id' => new ObjectID($request['infoWarehouse'])
+                ])
+                ->all();
+
+            $infoProduct = [];
+            if(!empty($model)){
+                
+                foreach ($model as $item) {
+
+                    $dateCreate = $item->date_create->toDateTime()->format('Y-m');
+
+                    if(empty($infoProduct[$dateCreate][(string)$item->parts_accessories_id])){
+                        $infoProduct[$dateCreate][(string)$item->parts_accessories_id] = [
+                            'title'         =>  $item->infoPartsAccessories->title,
+                            'issued'        =>  0,
+                            'posting'       =>  0,
+                            'send'          =>  0,
+                            'cancellation'  =>  0,
+                        ];
+                    }
+                    
+                    if(empty($infoProductAmount[(string)$item->parts_accessories_id])){
+                        $infoProductAmount[(string)$item->parts_accessories_id] = [
+                            'title'         =>  $item->infoPartsAccessories->title,
+                            'issued'        =>  0,
+                            'posting'       =>  0,
+                            'send'          =>  0,
+                            'cancellation'  =>  0,
+                        ];
+                    }
+
+                    if(in_array($item->action,$infoAction['issued'])){
+                        $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['issued']+=$item->number;
+                        $infoProductAmount[(string)$item->parts_accessories_id]['issued']+=$item->number;
+                    } else if(in_array($item->action,$infoAction['posting'])){
+                        $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['posting']+=$item->number;
+                        $infoProductAmount[(string)$item->parts_accessories_id]['posting']+=$item->number;
+                    } else if(in_array($item->action,$infoAction['send'])){
+                        $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['send']+=$item->number;
+                        $infoProductAmount[(string)$item->parts_accessories_id]['send']+=$item->number;
+                    }else if(in_array($item->action,$infoAction['cancellation'])){
+                        $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['cancellation']+=$item->number;
+                        $infoProductAmount[(string)$item->parts_accessories_id]['cancellation']+=$item->number;
+                    } else if(in_array($item->action,$infoAction['skip_status'])){
+
+                    }else {
+                        $actionDontKnow[$item->action] = THelper::t($item->action);
+                    }
+                }
+            }
+            
+
+        }
+
+        return $this->render('move-on-warehouse-for-month',[
+            'language'          => Yii::$app->language,
+            'request'           => $request,
+            'infoProduct'       => $infoProduct,
+            'infoProductAmount' => $infoProductAmount,
+            'actionDontKnow'    => $actionDontKnow
+        ]);
+    }
 
     public function actionCancellationCancelletion($id)
     {
@@ -106,78 +193,5 @@ class LogWarehouseController extends BaseController {
         die();
     }
 
-
-//    public function actionFix(){
-//        $info = [];
-//
-//        $notReturn=[new ObjectID('5942f34525d78a537b80c957'),new ObjectID('5967abfffef1bec01df24676'),new ObjectID('5975e6eebf20b4440f2cfa47')];
-//
-//
-//        $modelSaleStatus = StatusSales::find()->where(['NOT IN','idSale',$notReturn])->all();
-//        /** @var StatusSales $item */
-//        foreach ($modelSaleStatus as $item){
-//            if(!empty($item->reviewsSales)){
-//                $tempRev=[];
-//                foreach ($item->reviewsSales as $itemRev){
-//                    $line = strpos($itemRev['review'],'Выдан->Выдан');
-//                    if($line !== false){
-//                        if(empty($info[(string)$itemRev['idUser']][$itemRev['dateCreate']->toDateTime()->format('Y-m-d H:i:s')])){
-//                            $info[(string)$itemRev['idUser']][$itemRev['dateCreate']->toDateTime()->format('Y-m-d H:i:s')]['idSale'] = (string)$item->idSale;
-//                            $info[(string)$itemRev['idUser']][$itemRev['dateCreate']->toDateTime()->format('Y-m-d H:i:s')]['loginClient'] = $item->sales->username;
-//                            $info[(string)$itemRev['idUser']][$itemRev['dateCreate']->toDateTime()->format('Y-m-d H:i:s')]['count'] = 0;
-//                            $info[(string)$itemRev['idUser']][$itemRev['dateCreate']->toDateTime()->format('Y-m-d H:i:s')]['log'] = 0;
-//                        }
-//
-//                        $info[(string)$itemRev['idUser']][$itemRev['dateCreate']->toDateTime()->format('Y-m-d H:i:s')]['count']++;
-//
-//                    } else{
-//                        $tempRev[]=$itemRev;
-//                    }
-//                }
-//                $item->reviewsSales = $tempRev;
-//
-//                if($item->save()){
-//
-//                }
-//            }
-//        }
-//
-//
-//
-//        /*******************************************************************************/
-//        $model = LogWarehouse::find()->where(['action'=>'status_sale_issued'])->all();
-//
-//        /** @var LogWarehouse $item */
-//        foreach ($model as $item){
-//            $userInfo = (string)$item->who_performed_action;
-//            $timeInfo = $item->date_create->toDateTime()->format('Y-m-d H:i:s');
-//
-//            if(!empty($info[$userInfo][$timeInfo]['count']) && $info[$userInfo][$timeInfo]['count']!=$info[$userInfo][$timeInfo]['log']){
-//                $info[$userInfo][$timeInfo]['log']++;
-//                $info[$userInfo][$timeInfo]['return'][] = (string)$item->_id;
-//
-//                $modelGoods=PartsAccessoriesInWarehouse::findOne([
-//                    'warehouse_id'  =>  $item->admin_warehouse_id,
-//                    'parts_accessories_id'  => $item->parts_accessories_id
-//                ]);
-//
-//                $modelGoods->number += $item->number;
-//
-//                if($modelGoods->save()){
-//                    $item->delete();
-//                }
-//
-//            }
-//
-//        }
-//
-//
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo "<xmp>";
-//        print_r($info);
-//        echo "</xmp>";
-//        die();
-//
-//    }
 
 }

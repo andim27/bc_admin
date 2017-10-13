@@ -303,6 +303,16 @@ class PartsAccessoriesInWarehouseController extends BaseController {
 
                     if($infoWarahouse->save()){
                         if($model->save()){
+                            // add log
+                            LogWarehouse::setInfoLog([
+                                'action'                    =>  'cancellation_cancellation',
+                                'parts_accessories_id'      =>  (string)$model->parts_accessories_id,
+                                'number'                    =>  $model->number,
+                                'admin_warehouse_id'        =>  (string)$model->admin_warehouse_id,
+                                'comment'                   =>  'Отмена списания за ' . $model->date_create->toDateTime()->format('Y-m-d H:i:s'),
+                                'cancellation'              =>  $request['_id'],
+                            ]);
+
                             Yii::$app->session->setFlash('alert' ,[
                                     'typeAlert'=>'success',
                                     'message'=>'Сохранения применились.'
@@ -315,11 +325,6 @@ class PartsAccessoriesInWarehouseController extends BaseController {
         }
 
         return $this->redirect('/' . Yii::$app->language .'/business/parts-accessories-in-warehouse/all-cancellation-warehouse');
-    }
-
-    public function actionXz()
-    {
-        $this->procurementPlanning();
     }
 
     protected function procurementPlanning()
