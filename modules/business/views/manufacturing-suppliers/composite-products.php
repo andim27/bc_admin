@@ -14,9 +14,11 @@ $listPartsAccessories = PartsAccessories::getListPartsAccessories();
 
 <div class="row">
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
-
-    <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-composite-products'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+    <div class="col-md-offset-6 col-md-3 form-group">
+        <?=Html::a('<i class="fa fa-file-o"></i>',['/business/manufacturing-suppliers/composite-products-excel'],['class'=>'btn btn-default btn-block','title'=>'Экспорт в excel'])?>
+    </div>
+    <div class="col-md-3 form-group">
+        <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-composite-products'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal','title'=>'Добавить комплектацию'])?>
     </div>
 </div>
 
@@ -47,7 +49,7 @@ $listPartsAccessories = PartsAccessories::getListPartsAccessories();
                                     <?php foreach ($item->composite as $itemComposite) { ?>
 
                                         <?=(!empty($listPartsAccessories[(string)$itemComposite['_id']]) ?
-                                            $listPartsAccessories[(string)$itemComposite['_id']] . '<br>' :
+                                            $listPartsAccessories[(string)$itemComposite['_id']] . ' - '.$itemComposite['number'].' '.THelper::t($itemComposite['unit']).'<br>' :
                                             '????<br>')
                                         ?>
 

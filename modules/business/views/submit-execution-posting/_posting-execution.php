@@ -38,7 +38,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                         <?=Html::hiddenInput('',$model->number,['class'=>'orderingExecution']);?>
                     </div>
                     <div class="col-md-2">
-                        Оприходованно:
+                        Оприходовано:
                     </div>
                     <div class="col-md-2">
                         <?=$model->received?>

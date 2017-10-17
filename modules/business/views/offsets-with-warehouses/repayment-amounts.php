@@ -50,15 +50,30 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
                 <tbody>
 
                 <?php foreach ($model as $k=>$item) { ?>
+                    <?php
+                        $infoPriceWarehouse = 0;
+                        if(!empty($item->prices_warehouse)){
+                            $infoPriceWarehouse = (array)$item->prices_warehouse;
+                            $infoPriceWarehouse = end($infoPriceWarehouse);
+                            $infoPriceWarehouse = $infoPriceWarehouse['price'];
+                        }
+                        
+                        $infoPriceRepresentative = 0;
+                        if(!empty($item->prices_representative)) {
+                            $infoPriceRepresentative = (array)$item->prices_representative;
+                            $infoPriceRepresentative = end($infoPriceRepresentative);
+                            $infoPriceRepresentative = $infoPriceRepresentative['price'];
+                        }
+                    ?>
                     <tr>
                         <td><?=($k+1)?></td>
                         <td><?=$listWarehouse[(string)$item->warehouse_id]?></td>
                         <td><?=$listProduct[(string)$item->product_id]?></td>
                         <td>
-                            <?=$item->price?>
+                            <?=$infoPriceWarehouse;?>
                         </td>
                         <td>
-                            <?=$item->price_representative?>
+                            <?=$infoPriceRepresentative;?>
                         </td>
                         <td>
                             <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/offsets-with-warehouses/add-update-repayment-amounts','id'=>(string)$item->warehouse_id], ['data-toggle'=>'ajaxModal']) ?>

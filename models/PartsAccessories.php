@@ -47,7 +47,10 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
             'interchangeable',
             'composite',
             'translations',
-            'delivery_from_chine'
+            'delivery_from_chine',
+            'last_price_eur',
+            'repair_fund',
+            'exchange_fund'
         ];
     }
 
@@ -164,6 +167,55 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
         return $list;
     }
 
+    public static function getPricePurchase()
+    {
+        $model = self::find()->all();
+        $list = [];
+        foreach ($model as $item){
+            $list[(string)$item->_id] = (!empty($item->last_price_eur) ? $item->last_price_eur : '0');
+        }
+
+        return $list;
+    }
+
+
+    public static function getListProductRepair()
+    {
+        $model = self::find()->where(['repair_fund'=>1])->all();
+
+        $list = ArrayInfoHelper::getArrayKeyValue($model,'_id','title');
+
+        return $list;
+    }
+
+    public static function getListProductExchange()
+    {
+        $model = self::find()->where(['exchange_fund'=>1])->all();
+
+        $list = ArrayInfoHelper::getArrayKeyValue($model,'_id','title');
+
+        return $list;
+    }
+
+    /**
+     * @param $parts_accessories_id
+     * @return mixed
+     */
+    public static function getAllComponent($parts_accessories_id,$list)
+    {
+
+        $model = PartsAccessories::findOne(['_id'=>new ObjectID($parts_accessories_id)]);
+
+        if(!empty($model->composite)){
+            foreach ($model->composite as $item) {
+                $list = PartsAccessories::getAllComponent($item['_id'],$list);
+            }
+        } else {
+            $list[(string)$model->_id] = $model->title;
+        }
+
+        return $list;
+    }
 
 
 }

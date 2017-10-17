@@ -100,6 +100,12 @@ $listAdmin = Users::getListAdmin();
                                             <th>
                                                 <?=THelper::t('number_difference')?>
                                             </th>
+                                            <th>
+                                                <?=THelper::t('current_balance')?>
+                                            </th>
+                                            <th>
+                                                <?=THelper::t('in_way')?>
+                                            </th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -116,6 +122,8 @@ $listAdmin = Users::getListAdmin();
                                                     <td>
                                                         <?=($item['books'] - $item['issue'])?>
                                                     </td>
+                                                    <td><?=$item['current_balance']?></td>
+                                                    <td><?=$item['in_way']?></td>
                                             <?php } ?>
                                         <?php } ?>
                                         </tbody>

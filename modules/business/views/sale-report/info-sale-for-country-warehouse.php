@@ -14,6 +14,14 @@ $listCountry = Settings::getListCountry();
 $listPack = Products::getListPack();
 $listGoods = Products::getListGoods();
 
+$amount = [
+    'ordering'  => 0,
+    'issued'    => 0,
+    'in_stock'  => 0,
+    'send'      => 0,
+    'repair'    => 0,
+    'margin'    => 0,
+];
 
 
 ?>
@@ -26,7 +34,7 @@ $listGoods = Products::getListGoods();
 
     <?php $formStatus = ActiveForm::begin([
         'action' => '/' . $language . '/business/sale-report/info-sale-for-country-warehouse',
-        'options' => ['name' => 'selectGoods'],
+        'options' => ['name' => 'selectFilters'],
     ]); ?>
 
 
@@ -72,7 +80,11 @@ $listGoods = Products::getListGoods();
     </div>
 
     <div class="col-md-1 m-b">
-        <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
+        <?=Html::a('<i class="fa fa-file-o"></i>','#',['class'=>'btn btn-default btn-block exportExcel','title'=>'Выгрузка в excel'])?>
+    </div>
+
+    <div class="col-md-1 m-b">
+        <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-block btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -125,6 +137,16 @@ $listGoods = Products::getListGoods();
                             <?php foreach($infoSale as $k=>$itemWarehouse) { ?>
                                 <?php foreach($itemWarehouse as $kWarehouse=>$itemGoods) { ?>
                                     <?php foreach($itemGoods as $kGoods=>$item) { ?>
+                                        <?php
+                                            $margin = $item['issued'] + $item['send'] + $item['in_stock'] - $item['all'];
+
+                                            $amount['ordering'] += $item['all'];
+                                            $amount['issued'] += $item['issued'];
+                                            $amount['in_stock'] += $item['in_stock'];
+                                            $amount['send'] += $item['send'];
+                                            $amount['repair'] += $item['repair'];
+                                            $amount['margin'] += $margin;
+                                        ?>
                                         <tr>
                                             <td><?=(!empty($listCountry[$k]) ? $listCountry[$k] : 'none') ?></td>
                                             <td><?=$kWarehouse?></td>
@@ -136,9 +158,6 @@ $listGoods = Products::getListGoods();
                                             <td><?=$item['send']?></td>
                                             <?php } ?>
                                             <td>
-                                                <?php
-                                                $margin = $item['issued'] + $item['send'] + $item['in_stock'] - $item['all'];
-                                                ?>
                                                 <span class="<?=($margin>=0 ? 'text-success' : 'text-danger')?>"><?=($margin)?></span>
                                             </td>
                                             <td><?=$item['repair']?></td>
@@ -148,6 +167,21 @@ $listGoods = Products::getListGoods();
                             <?php } ?>
                         <?php } ?>
                     </tbody>
+                    <tfooter>
+                        <tr>
+                            <th>Итого:</th>
+                            <th></th>
+                            <th></th>
+                            <th><?=$amount['ordering']?></th>
+                            <th><?=$amount['issued']?></th>
+                            <?php if(!empty($request['listGoods'])) { ?>
+                            <th><?=$amount['in_stock']?></th>
+                            <th><?=$amount['send']?></th>
+                            <?php } ?>
+                            <th><?=$amount['margin']?></th>
+                            <th><?=$amount['repair']?></th>
+                        </tr>
+                    </tfooter>
                 </table>
             </div>
 
@@ -172,5 +206,15 @@ $listGoods = Products::getListGoods();
             $(this).closest('.row').find('.blChangeGoods select[name="listPack"]').prop( "disabled", true ).hide();
             $(this).closest('.row').find('.blChangeGoods select[name="listGoods"]').prop( "disabled", false ).show();
         }
+    });
+
+    $('.exportExcel').on('click',function (e) {
+        e.preventDefault();
+
+        formFilter = $('form[name="selectFilters"]');
+        formFilter.attr('action','<?=\yii\helpers\Url::to(['sale-report/info-sale-for-country-warehouse-excel'])?>').submit();
+        setTimeout(function() { formFilter.attr('action','<?=\yii\helpers\Url::to(['sale-report/info-sale-for-country-warehouse'])?>') }, 5000);
     })
+
+
 </script>

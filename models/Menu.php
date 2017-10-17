@@ -291,6 +291,12 @@ Class Menu
                         'url' => ['/business/promotion/turkey-forum'],
                         'action' => 'turkey-forum',
                     ],
+                    [
+                        'key'   =>  'sidebar_promotion_current',
+                        'label' => THelper::t('sidebar_promotion_current'),
+                        'url' => ['/business/promotion/current'],
+                        'action' => 'current',
+                    ],
                 ]
             ],
             [

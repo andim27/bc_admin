@@ -26,6 +26,8 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
             '_id',
             'warehouse_id',
             'product_id',
+            'prices_warehouse',
+            'prices_representative',
             'price',
             'price_representative',
         ];
@@ -71,25 +73,36 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
     }
 
     
-    public static function CalculateRepaymentSet($object,$warehouse_id,$set_id)
+    public static function CalculateRepaymentSet($object,$warehouseId,$setId,$dateComparison)
     {
         $amount = 0;
 
-        $pricePr = '';
+        $pricePr = '_warehouse';
         if($object=='representative'){
             $pricePr = '_representative';
         }
 
-        $infoSet = Products::getListGoodsWithKey($set_id);
+        $infoSet = Products::getListGoodsWithKey($setId);
         if(!empty($infoSet)){
+
+            $dateComparison = $dateComparison->__toString()/1000;
+
             foreach ($infoSet as $k=>$item) {
                 $model = RepaymentAmounts::findOne([
-                    'warehouse_id'  =>  new ObjectID($warehouse_id),
+                    'warehouse_id'  =>  new ObjectID($warehouseId),
                     'product_id'  =>  new ObjectID($k),
                 ]);
 
-                if(!empty($model)){
-                    $amount += $model->{'price'.$pricePr};
+                if(!empty($model->{'prices'.$pricePr})){
+                    $arrayPrice = $model->{'prices'.$pricePr};
+                    foreach ($arrayPrice as $kPrice=>$itemPrice) {
+                        $fromDate = $itemPrice['from_date']->__toString()/1000;
+                        $toDate = (!empty($arrayPrice[$kPrice+1]['from_date']) ? $arrayPrice[$kPrice+1]['from_date']->__toString()/1000 : time());
+                        if($fromDate<=$dateComparison && $dateComparison<$toDate){
+                            $amount += $itemPrice['price'];
+                            break;
+                        }
+                    }
                 }
 
             }
@@ -98,11 +111,11 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
         return $amount;
     }
 
-    public static function CalculateRepaymentGoods($object,$warehouse_id,$set_id)
+    public static function CalculateRepaymentGoods($object,$warehouse_id,$set_id,$dateComparison)
     {
         $amount = 0;
 
-        $pricePr = '';
+        $pricePr = '_warehouse';
         if($object=='representative'){
             $pricePr = '_representative';
         }
@@ -113,8 +126,23 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
         ]);
 
         if(!empty($model)){
-            $amount = $model->{'price'.$pricePr};
+
+            $dateComparison = $dateComparison->__toString()/1000;
+
+            if(!empty($model->{'prices'.$pricePr})){
+                $arrayPrice = $model->{'prices'.$pricePr};
+                foreach ($arrayPrice as $kPrice=>$itemPrice) {
+                    $fromDate = $itemPrice['from_date']->__toString()/1000;
+                    $toDate = (!empty($arrayPrice[$kPrice+1]['from_date']) ? $arrayPrice[$kPrice+1]['from_date']->__toString()/1000 : time());
+
+                    if($fromDate<=$dateComparison && $dateComparison<$toDate){
+                        $amount = $itemPrice['price'];
+                        break;
+                    }
+                }
+            }
         }
+
 
         return $amount;
     }

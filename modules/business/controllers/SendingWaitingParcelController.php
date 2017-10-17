@@ -209,8 +209,7 @@ class SendingWaitingParcelController extends BaseController {
                     ]);
                 }
 
-
-            } 
+            }
         }
 
         return $this->redirect(['sending-waiting-parcel']);

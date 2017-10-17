@@ -35,7 +35,8 @@ class Promos extends ActiveRecord
             'country',
             'city',
             'firstName',
-            'secondName'
+            'secondName',
+            'salesSum'
         ];
     }
 

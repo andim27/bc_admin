@@ -10,7 +10,7 @@ $listWarehouse = Warehouse::getArrayWarehouse();
 $listAdmin = Users::getListAdmin();
 ?>
 
-<section class="panel panel-default">
+<section class="panel panel-default scrollX">
     <div class="row">
         <div class="col-md-offset-9 col-md-3 form-group">
             <?=Html::a('<i class="fa fa-plus"></i>',['/business/sending-waiting-parcel/add-edit-parcel'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>

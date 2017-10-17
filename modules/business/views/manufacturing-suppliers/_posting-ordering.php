@@ -70,7 +70,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
                     <div class="col-md-4">
                         <?=Html::label('Валюта')?>
                         <?=Html::dropDownList('currency',
-                            '',
+                            'uah',
                             CurrencyRate::getListCurrency(),[
                             'class'=>'form-control',
                             'id'=>'selectChangeStatus',

@@ -22,7 +22,6 @@ $listWarehouse = Warehouse::getArrayWarehouse();
 <div class="row blQuery">
 
     <?php $formStatus = ActiveForm::begin([
-        'action' => '/' . $language . '/business/offsets-with-warehouses/offsets-with-warehouses',
         'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
     ]); ?>
 

@@ -46,7 +46,7 @@ class CurrencyRate extends \yii2tech\embedded\mongodb\ActiveRecord
 
     public static function getActualCurrency()
     {
-        $model = self::find()->orderBy(['dateCreate'>SORT_DESC])->one()->toArray();
+        $model = self::find()->orderBy(['dateCreate'=>SORT_DESC])->one()->toArray();
 
         $model['eur'] = 1;
 

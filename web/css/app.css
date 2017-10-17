@@ -3654,3 +3654,7 @@ fieldset[disabled] .btn-gplus.active {
   color: #C80505;
   font-size: 16px;
 }
+
+.scrollX{
+  overflow-x: scroll;
+}

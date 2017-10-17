@@ -322,18 +322,6 @@ class SubmitExecutionPostingController extends BaseController {
         return false;
     }
 
-//    /**
-//     * recalculate how we cane make
-//     * @return mixed
-//     */
-//    public function actionCalculateKit()
-//    {
-//        $request = Yii::$app->request->post();
-//
-//        $count = PartsAccessoriesInWarehouse::getHowMuchCanCollect($request['id'],$request['listComponents']);
-//
-//        return $count;
-//    }
 
     /**
      * popup info posting execution
@@ -607,7 +595,246 @@ class SubmitExecutionPostingController extends BaseController {
             'dateInterval' => $dateInterval,
         ]);
     }
-    
+
+
+    public function actionAddEditSendingRepair($id='')
+    {
+        $model = '';
+        $list_component = [];
+//        if(!empty($id)){
+//            $model = ExecutionPosting::findOne(['_id'=>new ObjectID($id)]);
+//
+//            foreach ($model->list_component as $item) {
+//                if(!empty($item['parent_parts_accessories_id'])){
+//                    $list_component[(string)$item['parent_parts_accessories_id']][] = $item;
+//                } else {
+//                    $list_component[(string)$item['parts_accessories_id']][] = $item;
+//                }
+//            }
+//        }
+
+
+        return $this->renderPartial('_add-edit-sending-repair',[
+            'language' => Yii::$app->language,
+            'model' => $model,
+            'list_component' => $list_component
+        ]);
+    }
+
+    public function actionSaveSendingRepair()
+    {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+        
+        $request = Yii::$app->request->post();
+
+        if(!empty($request)){
+            $myWarehouse = Warehouse::getIdMyWarehouse();
+
+            if(!empty($request['_id'])){
+                //TODO: KAA сделать редактирование
+                die();
+            } else {
+                $model = new ExecutionPosting();
+            }
+
+            $model->one_component = (int)1;
+            $model->repair = (int)1;
+            $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
+            $model->number = (float)$request['number'];
+            $model->received = (float)'0';
+            $model->fullname_whom_transferred = '';
+
+            $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
+            $model->date_execution = new UTCDatetime(strtotime((!empty($request['date_execution']) ? $request['date_execution'] : date("Y-m-d H:i:s"))) * 1000);
+            $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            if($model->save()){
+                $modelPartsAccessoriesInWarehouse = PartsAccessoriesInWarehouse::findOne([
+                    'parts_accessories_id'  =>  new ObjectID($request['parts_accessories_id']),
+                    'warehouse_id'          =>  new ObjectID($myWarehouse)
+                ]);
+
+                $modelPartsAccessoriesInWarehouse->number -= $request['number'];
+
+                if($modelPartsAccessoriesInWarehouse->save()){
+                    // add log
+                    LogWarehouse::setInfoLog([
+                        'action'                    =>  'send_for_repair',
+                        'parts_accessories_id'      =>  (string)$request['parts_accessories_id'],
+                        'number'                    =>  (float)$request['number'],
+                        'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
+
+                    ]);
+                }
+
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert'=>'success',
+                        'message'=>'Сохранения применились.'
+                    ]
+                );
+
+            }
+        }
+
+        return $this->redirect('/'.Yii::$app->language.'/business/submit-execution-posting/execution-posting');
+    }
+
+    public function actionCanRepair(){
+        $request = Yii::$app->request->post();
+        $count = 0;
+        if(!empty($request['partsAccessoriesId'])){
+            $model = PartsAccessoriesInWarehouse::findOne([
+                'warehouse_id'=>new ObjectID(Warehouse::getIdMyWarehouse()),
+                'parts_accessories_id'=>new ObjectID($request['partsAccessoriesId']),
+            ]);
+
+            if(!empty($model->number) && $model->number > 0){
+                $count = $model->number;
+            }
+        }
+
+        return $count;
+    }
+
+    public function actionPostingRepair($id)
+    {
+        $model = ExecutionPosting::findOne(['_id'=>new ObjectID($id)]);
+
+        $list_component = [];
+
+        if(!empty($model->list_component)){
+            foreach ($model->list_component as $item) {
+                if(!empty($item['parent_parts_accessories_id'])){
+                    $list_component[(string)$item['parent_parts_accessories_id']][] = $item;
+                } else {
+                    $list_component[(string)$item['parts_accessories_id']][] = $item;
+                }
+            }
+        }
+
+        Yii::$app->assetManager->bundles = [
+            'yii\bootstrap\BootstrapPluginAsset' => false,
+            'yii\bootstrap\BootstrapAsset' => false,
+            'yii\web\JqueryAsset' => false,
+        ];
+
+        return $this->renderAjax('_posting-repair',[
+            'language' => Yii::$app->language,
+            'model' => $model,
+            'list_component' => $list_component
+        ]);
+    }
+
+    public function actionSavePostingRepair(){
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
+        $request = Yii::$app->request->post();
+
+        if(!empty($request)){
+
+            $myWarehouse = Warehouse::getIdMyWarehouse();
+
+            $modelPostingRepair =  ExecutionPosting::findOne(['_id'=>new ObjectID($request['_id'])]);
+            $listComponent = [];
+            if(!empty(!empty($request['parts_accessories_id']))){
+                foreach ($request['parts_accessories_id'] as $k=>$item) {
+                    $listComponent[] = [
+                        'parts_accessories_id'  => new ObjectID($item),
+                        'number'                => $request['number'][$k],
+                        'reserve'               => (float)'0'
+                    ];
+
+                    $differentNumber = $request['number'][$k] - $request['number_use'][$k];
+                    if($differentNumber > 0){
+                        //subtract from warehouse
+                        $modelComponent = PartsAccessoriesInWarehouse::findOne([
+                            'warehouse_id'=>new ObjectID($myWarehouse),
+                            'parts_accessories_id'=>new ObjectID($item)
+                        ]);
+                        $modelComponent->number -= abs($differentNumber);
+                        if($modelComponent->save()){
+                            //add log
+                            LogWarehouse::setInfoLog([
+                                'action'                    =>  'cancellation_on_repair',
+                                'parts_accessories_id'      =>  $item,
+                                'number'                    =>  (float)abs($differentNumber),
+                                'suppliers_performers_id'   =>  (string)$modelPostingRepair->suppliers_performers_id,
+                            ]);
+                        }
+                    } else if($differentNumber<0){
+                        //add in warehouse
+                        $modelComponent = PartsAccessoriesInWarehouse::findOne([
+                            'warehouse_id'=>new ObjectID($myWarehouse),
+                            'parts_accessories_id'=>new ObjectID($item)
+                        ]);
+                        $modelComponent->number -= abs($differentNumber);
+                        if($modelComponent->save()){
+                            //add log
+                            LogWarehouse::setInfoLog([
+                                'action'                    =>  'add_from_repair',
+                                'parts_accessories_id'      =>  $item,
+                                'number'                    =>  (float)abs($differentNumber),
+                                'suppliers_performers_id'   =>  (string)$modelPostingRepair->suppliers_performers_id,
+                            ]);
+                        }
+                    } else{
+                        //no change
+                    }
+
+                }
+                $modelPostingRepair->list_component = $listComponent;
+            }
+
+            $model = PartsAccessoriesInWarehouse::findOne([
+                'parts_accessories_id'  =>  $modelPostingRepair->parts_accessories_id,
+                'warehouse_id'          =>  new ObjectID($myWarehouse)
+            ]);
+
+            if(empty($model)){
+                $model = new PartsAccessoriesInWarehouse();
+                $model->parts_accessories_id = $modelPostingRepair->parts_accessories_id;
+                $model->warehouse_id = new ObjectID($myWarehouse);
+                $model->number = 0;
+            }
+
+            $model->number += $request['received'];
+
+            if($model->save()){
+                //add log
+                LogWarehouse::setInfoLog([
+                    'action'                    =>  'add_posting_repair',
+                    'parts_accessories_id'      =>  (string)$modelPostingRepair->parts_accessories_id,
+                    'number'                    =>  (float)$request['received'],
+                    'suppliers_performers_id'   =>  (string)$modelPostingRepair->suppliers_performers_id,
+                ]);
+
+                $modelPostingRepair->received += $request['received'];
+
+                if($modelPostingRepair->received == $modelPostingRepair->number){
+                    $modelPostingRepair->posting = 1;
+                }
+
+                if($modelPostingRepair->save()){
+                    Yii::$app->session->setFlash('alert' ,[
+                            'typeAlert'=>'success',
+                            'message'=>'Сохранения применились.'
+                        ]
+                    );
+                }
+            }
+
+        }
+
+        return $this->redirect('/'.Yii::$app->language.'/business/submit-execution-posting/execution-posting');
+    }
     
     /**
      * return kit in warehouse before save update
@@ -739,28 +966,4 @@ class SubmitExecutionPostingController extends BaseController {
         return $countCancellationPerformer;
     }
 
-/*
-    public function actionFix()
-    {
-        $list = [
-            '595e60d1dca7877ad12258e2',
-            '595e5ed1dca787052448de05',
-            '595e5ea4dca787052448de02',
-        ];
-
-        foreach ($list as $item){
-            $model = ExecutionPosting::findOne(['_id'=>new ObjectID($item)]);
-
-            if(!empty($model)){
-                $model->delete();
-            }
-        }
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r('ok');
-        echo "</xmp>";
-        die();
-    }
-*/
 }

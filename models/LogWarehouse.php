@@ -138,4 +138,19 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         
         return $infoPrice;
     }
+
+    /**
+     * get all used status
+     * @return array|bool
+     */
+    public static function getAllAction()
+    {
+        $list = [];
+        $listAction = self::getCollection()->distinct('action');
+        foreach ($listAction as $item) {
+            $list[$item] = THelper::t($item);
+        }
+
+        return $list;
+    }
 }

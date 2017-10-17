@@ -13,6 +13,7 @@ use app\models\Products;
 use app\models\ProductSet;
 use app\models\ReviewsSale;
 use app\models\Sales;
+use app\models\SendingWaitingParcel;
 use app\models\StatusSales;
 use app\models\Users;
 use app\models\Warehouse;
@@ -33,6 +34,10 @@ class StatusSalesController extends BaseController {
         $request = Yii::$app->request->post();
         $infoSale = $infoUser = [];
         $error = '';
+
+        if($username = Yii::$app->session->getFlash('username', '', true)){
+            $request['login'] = $username;
+        }
 
         if(!empty($request)){
             $idUser = '';
@@ -233,6 +238,8 @@ class StatusSalesController extends BaseController {
 
         if(!empty($request) && !empty($request['status'])){
 
+            $myWarehouse = Warehouse::getIdMyWarehouse();
+
             $model = StatusSales::find()
                 ->where([
                     'idSale' => new ObjectID($request['idSale'])
@@ -254,6 +261,25 @@ class StatusSalesController extends BaseController {
                         $itemSet->status = $request['status'];
                         $itemSet->dateChange = new UTCDateTime(strtotime(date("Y-m-d H:i:s")) * 1000);
                         $itemSet->idUserChange =  new ObjectID($this->user->id);
+
+                        //add in warehouse exchange goods after repair
+                        if($request['status'] == 'status_sale_issued_after_repair' && !empty($itemSet->idExchange)){
+
+                            $modelPartsAccessoriesInWarehouseExchange = PartsAccessoriesInWarehouse::findOne([
+                                'parts_accessories_id'  =>  $itemSet->idExchange,
+                                'warehouse_id'          =>  new ObjectID($myWarehouse)
+                            ]);
+                            $modelPartsAccessoriesInWarehouseExchange->number++;
+                            if($modelPartsAccessoriesInWarehouseExchange->save()){
+                                // add log
+                                LogWarehouse::setInfoLog([
+                                    'action'                    =>  'return_exchange_after_repair',
+                                    'parts_accessories_id'      =>  (string)$itemSet->idExchange,
+                                    'number'                    =>  (float)'1',
+                                ]);
+                            }
+                            $itemSet->idExchange = '';
+                        }
                     }
 
                 }
@@ -279,10 +305,10 @@ class StatusSalesController extends BaseController {
                     LogWarehouse::setInfoLog([
                         'action'                    =>  $request['status'],
                         'parts_accessories_id'      =>  $idGoods,
-                        'number'                    =>  '1',
+                        'number'                    =>  (float)'1',
                     ]);
                     if(!empty($idGoods)){
-                        $myWarehouse = Warehouse::getIdMyWarehouse();
+
                         $modelPartsAccessoriesInWarehouse = PartsAccessoriesInWarehouse::findOne([
                             'parts_accessories_id'  =>  new ObjectID($idGoods),
                             'warehouse_id'          =>  new ObjectID($myWarehouse)
@@ -822,7 +848,6 @@ class StatusSalesController extends BaseController {
                     $infoGoods[$item->product]['amount'] += $item->price;
                 }
 
-
                 // info goods
                 if(!empty($item->statusSale->set)){
                     foreach($item->statusSale->set as $itemSet){
@@ -902,13 +927,66 @@ class StatusSalesController extends BaseController {
                 }
             }
         }
+
+        $listIdGoods = $filterIdGoods = [];
+        $allListGoods = PartsAccessories::getListPartsAccessories();
+        foreach($infoSetGoods as $k=>$item){
+            $id = array_search($k,$allListGoods);
+            if(!empty($id)){
+                $listIdGoods[$id] = $k;
+                $filterIdGoods[] = new ObjectID($id);
+            }
+            $infoSetGoods[$k]['current_balance'] = '0';
+            $infoSetGoods[$k]['in_way'] = '0';
+        }
+
+
+        if(!empty($request['listAdmin']) && $request['listAdmin'] != 'placeh'){
+            $warehouseId = Warehouse::getIdMyWarehouse($request['listAdmin']);
+            $filterWarehouse = ['warehouse_id'=>new ObjectID($warehouseId)];
+            $filterWhereSent = ['where_sent'=>$warehouseId];
+        }
+        else if(!empty($request['listWarehouse']) && $request['listWarehouse'] != 'all'){
+            $filterWarehouse = ['warehouse_id'=>new ObjectID($request['listWarehouse'])];
+            $filterWhereSent = ['where_sent'=>$request['listWarehouse']];
+        } else {
+            $filterWarehouse = $filterWhereSent = [];
+        }
+
+        //get info current balance warehouse
+        $modelCurrentBalanceWarehouse = PartsAccessoriesInWarehouse::find()
+            ->where(['IN','parts_accessories_id',$filterIdGoods])
+            ->andFilterWhere($filterWarehouse)
+            ->all();
+        if(!empty($modelCurrentBalanceWarehouse)){
+            foreach ($modelCurrentBalanceWarehouse as $item) {
+                $infoSetGoods[$listIdGoods[(string)$item->parts_accessories_id]]['current_balance'] += $item->number;
+            }
+        }
+
+        //get info about goods in the way
+        $modelInWay = SendingWaitingParcel::find()
+            ->where(['is_posting'=>0])
+            ->andFilterWhere($filterWhereSent)
+            ->all();
+        if(!empty($modelInWay)){
+            foreach ($modelInWay as $item) {
+                if(!empty($item->part_parcel)){
+                    foreach ($item->part_parcel as $item) {
+                        if(!empty($listIdGoods[$item['goods_id']])){
+                            $infoSetGoods[$listIdGoods[$item['goods_id']]]['in_way'] += $item['goods_count'];
+                        }
+                    }
+                }
+            }
+        }
+
         return $this->render('consolidated-report-sales',[
             'language' => Yii::$app->language,
             'dateInterval' => $dateInterval,
             'infoGoods' => $infoGoods,
             'infoSetGoods' => $infoSetGoods,
-            
-            
+
             'request' => $request,
         ]);
     }

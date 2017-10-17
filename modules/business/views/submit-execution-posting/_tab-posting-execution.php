@@ -30,27 +30,50 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                     <td><?= $item->number ?></td>
                     <td><?= (!empty($item->date_execution) ? $item->date_execution->toDateTime()->format('Y-m-d H:i:s') : '') ?></td>
                     <td><?= $listSuppliers[(string)$item->suppliers_performers_id] ?></td>
-                    <td><?= $item->fullname_whom_transferred ?></td>
+                    <td><?= ((!empty($item->repair) && $item->repair==1) ? 'Ремонт' : $item->fullname_whom_transferred) ?></td>
                     <td>
-                        <?php if($item->posting != 1){?>
-                            Осталось <?=($item->number - $item->received)?>
-                            <?=Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/posting-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal'])?>
-                        <?php } else { ?>
-                            <?php
+                        <?php if(!empty($item->repair) && $item->repair == 1){ ?>
+                            <?php if($item->posting != 1){?>
+                                На ремонте <?=($item->number - $item->received)?>
+                                <?=Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/posting-repair','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal'])?>
+                            <?php } else { ?>
+                                <?php
                                 if($item->number == $item->received) {
-                                    $titleL = 'Выполнен';
+                                    $titleL = 'Отремонтировано';
                                     $classL = 'text-info';
                                 } else if ($item->received == 0) {
                                     $titleL = 'Расформировано';
                                     $classL = 'text-danger';
                                 } else {
-                                    $titleL = 'Выполнен частично';
+                                    $titleL = 'Отремонтировано частично';
                                     $classL = 'text-warning';
                                 }
-                            ?>
+                                ?>
 
-                            <?= Html::a($titleL, ['/business/submit-execution-posting/look-posting-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal','class'=>$classL])?>
+                                <?= Html::a($titleL, ['/business/submit-execution-posting/look-posting-repair','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal','class'=>$classL])?>
 
+                            <?php } ?>
+                        <?php } else {?>
+                            <?php if($item->posting != 1){?>
+                                Осталось <?=($item->number - $item->received)?>
+                                <?=Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/posting-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal'])?>
+                            <?php } else { ?>
+                                <?php
+                                    if($item->number == $item->received) {
+                                        $titleL = 'Выполнен';
+                                        $classL = 'text-info';
+                                    } else if ($item->received == 0) {
+                                        $titleL = 'Расформировано';
+                                        $classL = 'text-danger';
+                                    } else {
+                                        $titleL = 'Выполнен частично';
+                                        $classL = 'text-warning';
+                                    }
+                                ?>
+
+                                <?= Html::a($titleL, ['/business/submit-execution-posting/look-posting-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal','class'=>$classL])?>
+
+                            <?php } ?>
                         <?php } ?>
                     </td>
                 </tr>

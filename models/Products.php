@@ -171,6 +171,7 @@ class Products extends ActiveRecord
 
         return !empty($model) ? $model->{$field} : '';
     }
+
     
 }
 

@@ -10,7 +10,7 @@ $listWarehouse = Warehouse::getArrayWarehouse();
 $listAdmin = Users::getListAdmin();
 ?>
 
-<section class="panel panel-default">
+<section class="panel panel-default scrollX">
     <div class="table-responsive">
         <table class="table table-translations table-striped datagrid m-b-sm">
             <thead>
