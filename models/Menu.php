@@ -196,6 +196,20 @@ Class Menu
                 ]
             ],
             [
+                'key'   =>  'sidebar_reference',
+                'label' => THelper::t('sidebar_reference'),
+                'url' => '#',
+                'controller' => 'reference',
+                'items' => [
+                    [
+                        'key'   =>  'sidebar_career',
+                        'label' => THelper::t('sidebar_career'),
+                        'url' => ['/business/reference/career'],
+                        'action' => 'admin',
+                    ],
+                ]
+            ],
+            [
                 'key'   =>  'sidebar_transactions',
                 'label' => THelper::t('sidebar_transactions'),
                 'url' => '#',
