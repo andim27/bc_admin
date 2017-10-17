@@ -77,7 +77,14 @@ class PartsAccessoriesInWarehouseController extends BaseController {
 
                             $implementation[$itemSet['title']]++;
 
+
+//                            $dateCreate = $itemSet['dateChange']->toDateTime()->format('Y-m');
+//                            if(empty($infoProduct[$dateCreate][$itemSet['title']])){
+//                                $infoProduct[$dateCreate][$itemSet['title']] = 0;
+//                            }
+//                            $infoProduct[$dateCreate][$itemSet['title']]++;
                         }
+
                     }
                 }
 
@@ -93,7 +100,8 @@ class PartsAccessoriesInWarehouseController extends BaseController {
         }
 
         $arrayProcurementPlanning=$this->procurementPlanning();
-        
+
+
         return $this->render('in-warehouse',[
             'language'          => Yii::$app->language,
             'idWarehouse'       => $idWarehouse,

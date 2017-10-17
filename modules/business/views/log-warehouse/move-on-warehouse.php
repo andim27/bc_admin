@@ -84,7 +84,7 @@ $listAction = LogWarehouse::getAllAction();
                 <tbody>
 
                 <?php foreach ($model as $k=>$item) { ?>
-                    <tr>
+                    <tr data-id="<?=(string)$item->_id?>">
                         <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
                         <td><?=THelper::t($item->action)?></td>
                         <td><?=$item->adminInfo->secondName . ' ' .$item->adminInfo->firstName?></td>

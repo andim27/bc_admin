@@ -64,9 +64,9 @@ class LogWarehouseController extends BaseController {
         $infoProduct = $infoProductAmount = $actionDontKnow = [];
         $infoAction = [
             'issued'        =>  ['status_sale_issued',],
-            'posting'       =>  ['posting_parcel'],
+            'posting'       =>  ['posting_parcel','write_off_parcel_and_add_warehouse','return_in_warehouse'],
             'send'          =>  ['send_parcel'],
-            'cancellation'  =>  [],
+            'cancellation'  =>  ['cancellation'],
 
             'skip_status'   => ['status_sale_delivered']
         ];
@@ -89,7 +89,10 @@ class LogWarehouseController extends BaseController {
                         '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
                         '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
                     ],
-                    'admin_warehouse_id' => new ObjectID($request['infoWarehouse'])
+                    '$or' => [
+                        ['admin_warehouse_id' => new ObjectID($request['infoWarehouse'])],
+                        ['on_warehouse_id' => new ObjectID($request['infoWarehouse'])]
+                    ]
                 ])
                 ->all();
 
@@ -127,11 +130,15 @@ class LogWarehouseController extends BaseController {
                         $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['posting']+=$item->number;
                         $infoProductAmount[(string)$item->parts_accessories_id]['posting']+=$item->number;
                     } else if(in_array($item->action,$infoAction['send'])){
-                        $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['send']+=$item->number;
-                        $infoProductAmount[(string)$item->parts_accessories_id]['send']+=$item->number;
+                        if((string)$item->admin_warehouse_id==$request['infoWarehouse']){
+                            $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['send']+=$item->number;
+                            $infoProductAmount[(string)$item->parts_accessories_id]['send']+=$item->number;
+                        }
                     }else if(in_array($item->action,$infoAction['cancellation'])){
-                        $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['cancellation']+=$item->number;
-                        $infoProductAmount[(string)$item->parts_accessories_id]['cancellation']+=$item->number;
+                        if($item->confirmation_action != '-1'){
+                            $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['cancellation']+=$item->number;
+                            $infoProductAmount[(string)$item->parts_accessories_id]['cancellation']+=$item->number;
+                        }
                     } else if(in_array($item->action,$infoAction['skip_status'])){
 
                     }else {
