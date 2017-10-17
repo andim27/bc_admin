@@ -26,7 +26,10 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
             <div>
                 <?php $formCom = ActiveForm::begin([
                     'action' => '/' . $language . '/business/sending-waiting-parcel/save-posting-parcel',
-                    'options' => ['enctype' => 'multipart/form-data'],
+                    'options' => [
+                        'enctype' => 'multipart/form-data',
+                        'class'     =>  'formPostingParcel'
+                    ],
                 ]); ?>
 
                 <?=Html::hiddenInput('id', (string)$model->_id)?>
@@ -71,3 +74,9 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $('.formPostingParcel').submit(function() {
+        $(this).find('.assemblyBtn').hide();
+    });
+</script>

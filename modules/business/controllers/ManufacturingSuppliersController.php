@@ -179,6 +179,7 @@ class ManufacturingSuppliersController extends BaseController {
         if(!empty($model)){
             foreach ($model as $item) {
                 $infoExport[] = [
+                    'productArticle'    =>  $item->article,
                     'productTitle'      =>  $item->title,
                     'count'             =>  (!empty($countGoodsFromMyWarehouse[$item->_id->__toString()]) ? $countGoodsFromMyWarehouse[$item->_id->__toString()] : '0'),
                     'measure'           =>  THelper::t($item->unit),
@@ -191,12 +192,14 @@ class ManufacturingSuppliersController extends BaseController {
             'models' => $infoExport,
             'fileName' => 'export '.date('Y-m-d H:i:s'),
             'columns' => [
+                'productArticle',
                 'productTitle',
                 'count',
                 'measure',
                 'priceForOne',
             ],
             'headers' => [
+                'productArticle'    =>  'Артикул',
                 'productTitle'      =>  'Товар',
                 'count'             =>  'Количество',
                 'measure'           =>  'Измеряем',
@@ -307,6 +310,7 @@ class ManufacturingSuppliersController extends BaseController {
 
         if(!empty($request)){
             $model->title = $request['PartsAccessories']['title'];
+            $model->article = $request['PartsAccessories']['article'];
             $model->translations = ['en' => $request['PartsAccessories']['translations']['en']];
             $model->unit = $request['PartsAccessories']['unit'];
             $model->delivery_from_chine = (int)(!empty($request['PartsAccessories']['delivery_from_chine']) ? '1' : '0');

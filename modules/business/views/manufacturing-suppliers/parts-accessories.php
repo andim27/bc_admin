@@ -57,7 +57,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
                 <table class="table table-translations table-striped datagrid m-b-sm">
                     <thead>
                     <tr>
-                        <th>№</th>
+                        <th><?=THelper::t('article')?></th>
                         <th>
                             <?=THelper::t('name_product')?>
                         </th>
@@ -80,7 +80,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
                     <?php foreach ($model as $k=>$item) { ?>
                         <tr>
-                            <td><?=($k+1)?></td>
+                            <td><?=$item->article?></td>
                             <td><?=$item->title?></td>
                             <td><?=(!empty($countGoodsFromMyWarehouse[$item->_id->__toString()]) ? $countGoodsFromMyWarehouse[$item->_id->__toString()] : '0');?></td>
                             <td><?=THelper::t($item->unit)?></td>

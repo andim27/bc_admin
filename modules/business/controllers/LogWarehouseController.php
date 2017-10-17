@@ -199,6 +199,4 @@ class LogWarehouseController extends BaseController {
         echo "</xmp>";
         die();
     }
-
-
 }
