@@ -22,6 +22,11 @@ use app\models\CurrencyRate;
 
             <?=(!empty($model->_id) ? $formCom->field($model, '_id')->hiddenInput()->label(false) : '')?>
 
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <?= $formCom->field($model, 'article')->textInput()->label(THelper::t('article')) ?>
+                </div>
+            </div>
 
             <?= $formCom->field($model, 'title')->widget(Select2::className(),[
                 'data' => $existingProducts['ru'],

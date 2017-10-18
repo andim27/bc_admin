@@ -41,7 +41,10 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
             <div>
                 <?php $formCom = ActiveForm::begin([
                     'action' => '/' . $language . '/business/sending-waiting-parcel/save-parcel',
-                    'options' => ['enctype' => 'multipart/form-data'],
+                    'options' => [
+                        'enctype' => 'multipart/form-data',
+                        'class'     =>  'formAddEditParcel'
+                    ],
                 ]); ?>
 
                 <?=Html::hiddenInput('id',(!empty($model->id) ? $model->id : ''))?>
@@ -247,5 +250,12 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
     function howGoodsNeed() {
 
     }
+
+    //hide btn when send form
+    $('.formAddEditParcel').submit(function() {
+        $(this).find('.sendBtn').hide();
+    });
+
+
 
 </script>
