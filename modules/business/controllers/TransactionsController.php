@@ -2,6 +2,7 @@
 
 namespace app\modules\business\controllers;
 
+use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api\transactions\Withdrawal;
 use app\models\PaymentCard;
@@ -57,7 +58,7 @@ class TransactionsController extends BaseController
     {
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert' => 'danger',
-                'message' => 'Сохранения не применились, что то пошло не так!!!'
+                'message' => THelper::t('save_did_not_applied')
             ]
         );
 
@@ -78,8 +79,8 @@ class TransactionsController extends BaseController
             if($model->save()){
 
                 Yii::$app->session->setFlash('alert' ,[
-                        'typeAlert'=>'success',
-                        'message'=>'Сохранения применились.'
+                        'typeAlert' => 'success',
+                        'message' => THelper::t('save_applied')
                     ]
                 );
 
@@ -136,7 +137,7 @@ class TransactionsController extends BaseController
     {
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert' => 'danger',
-                'message' => 'Сохранения не применились, что то пошло не так!!!'
+                'message' => THelper::t('save_did_not_applied')
             ]
         );
 
@@ -148,7 +149,7 @@ class TransactionsController extends BaseController
 
             if(!empty($model)){
 
-                $infoUser = Users::findOne(['_id'=>$model->idFrom]);
+                $infoUser = Users::findOne(['_id' => $model->idFrom]);
 
                 if($infoUser->moneys > $model->amount){
 
@@ -158,14 +159,18 @@ class TransactionsController extends BaseController
 
                     if($model->save() && $infoUser->save()){
                         Yii::$app->session->setFlash('alert' ,[
-                                'typeAlert'=>'success',
-                                'message'=>'Сохранения применились.'
+                                'typeAlert' => 'success',
+                                'message' => THelper::t('save_applied')
                             ]
                         );
                     }
+                } else {
+                    Yii::$app->session->setFlash('alert' ,[
+                            'typeAlert' => 'danger',
+                            'message' => THelper::t('not_enough_money')
+                        ]
+                    );
                 }
-
-
             }
 
         }
@@ -182,7 +187,7 @@ class TransactionsController extends BaseController
     {
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert' => 'danger',
-                'message' => 'Сохранения не применились, что то пошло не так!!!'
+                'message' => THelper::t('save_did_not_applied')
             ]
         );
 
@@ -190,8 +195,8 @@ class TransactionsController extends BaseController
 
         if($answer == 'OK'){
             Yii::$app->session->setFlash('alert' ,[
-                    'typeAlert'=>'success',
-                    'message'=>'Сохранения применились.'
+                    'typeAlert' => 'success',
+                    'message' => THelper::t('save_applied')
                 ]
             );
         }

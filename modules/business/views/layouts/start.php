@@ -90,7 +90,7 @@
                         <?php foreach (Yii::$app->session->getAllFlashes() as $key => $message) { ?>
                             <div class="m-t-md alert alert-<?= $key ?>">
                                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <?= $message ?>
+                                <?= is_array($message) ? $message[0] : $message ?>
                             </div>
                         <?php } ?>
                         <?= $content ?>
