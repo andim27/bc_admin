@@ -2,7 +2,6 @@
 
 namespace app\components;
 
-use app\models\Langs;
 use Yii;
 use app\models\TranslateList;
 use app\models\api;
@@ -20,41 +19,48 @@ use app\models\api;
  */
 class THelper
 {
+    const CACHE_TIME = 3600;
+
     /**
      * @param $key
-     * @param string $lang
+     * @param string $language
      * @return mixed|string
      */
-    public static function t($key, $lang = '')
+    public static function t($key, $language = '')
     {
-        if ($lang == '') {
-            $useLang = Yii::$app->language;
-        } else {
-            $useLang = $lang;
-        }
+        $language = $language ?: Yii::$app->language;
 
         if (Yii::$app->params['useCache']) {
-            $cacheKey = md5($useLang . '_' . $key);
-            $message = Yii::$app->cache->get($cacheKey);
-            if (! $message) {
-                $message = api\Lang::get($useLang, $key);
-                Yii::$app->cache->set($cacheKey, $message, 3 * 3600);
-            }
+            $stringValue = self::getCachedStringValue($language, $key);
         } else {
-            $message = api\Lang::get($useLang, $key);
+            $stringValue = api\Lang::get($language, $key);
         }
 
-        if ($message) {
-            return $message ? $message : $key;
-        } else {
-            if (!api\Lang::get($useLang, $key)) {
-                $message = api\Lang::add($useLang, $key, $key, '', '');
-            }
+        if (empty($stringValue)) {
+            $stringValue = api\Lang::add($language, $key, $key, '', '');
 
-            if ($message) {
-                return $message->stringValue;
-            }
+            $stringValue = $stringValue ? $stringValue->stringValue : $key;
         }
+
+        return $stringValue ? $stringValue : $key;
+    }
+
+    /**
+     * @param $language
+     * @param $key
+     * @return mixed|string
+     */
+    private static function getCachedStringValue($language, $key)
+    {
+        $cacheKey = md5($language . '_' . $key);
+        $stringValue = Yii::$app->cache->get($cacheKey);
+
+        if (! $stringValue) {
+            $stringValue = api\Lang::get($language, $key);
+            Yii::$app->cache->set($cacheKey, $stringValue, 3 * self::CACHE_TIME);
+        }
+
+        return $stringValue;
     }
 
     /**
@@ -69,5 +75,4 @@ class THelper
 
         return $value;
     }
-
 }
