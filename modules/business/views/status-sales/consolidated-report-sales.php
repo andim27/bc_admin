@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\Warehouse;
 use app\models\Users;
-
+use kartik\widgets\Select2;
 
 $listWarehouse = Warehouse::getArrayWarehouse();
 $listAdmin = Users::getListAdmin();
@@ -36,25 +36,53 @@ $listAdmin = Users::getListAdmin();
         </div>
 
         <div class="col-md-2 m-b blChangeWarehouse">
-            <?=Html::dropDownList('listWarehouse',(!empty($request['listWarehouse']) ? $request['listWarehouse'] : 'all'),$listWarehouse,[
-                'class'=>'form-control listWarehouse',
-                'id'=>'listWarehouse',
-                'disabled' => ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? false : true),
-                'style' =>  ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? '' : 'display:none'),
-                'options' => [
-                    //(!empty($request['listWarehouse']) ? $request['listWarehouse'] : 'all') => ['disabled' => true],
-                ]
-            ])?>
+            <div style="<?=((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? '' : 'display:none')?>">
+                <?= Select2::widget([
+                    'name' => 'listWarehouse',
+                    'data' => $listWarehouse,
+                    'value' => (!empty($request['listWarehouse']) ? $request['listWarehouse'] : 'all'),
+                    'options' => [
+                        'placeholder' => 'Выберите действия',
+                        'disabled' => ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? false : true)
+                    ]
+                ]);
+                ?>
+            </div>
 
-            <?=Html::dropDownList('listAdmin',(!empty($request['listAdmin']) ? $request['listAdmin'] : 'placeh'),$listAdmin,[
-                'class'=>'form-control listAdmin',
-                'id'=>'listAdmin',
-                'disabled' => ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? true : false),
-                'style' =>  ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? 'display:none' : ''),
-                'options' => [
-                    //(!empty($request['listAdmin']) ? $request['listAdmin'] : 'placeh') => ['disabled' => true],
-                ]
-            ])?>
+            <div style="<?=((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? 'display:none' : '');?>">
+                <?= Select2::widget([
+                    'name' => 'listAdmin',
+                    'data' => $listAdmin,
+                    'value' => (!empty($request['listAdmin']) ? $request['listAdmin'] : 'placeh'),
+                    'options' => [
+                        'placeholder' => 'Выберите действия',
+                        'disabled' => ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? true : false)
+                    ]
+                ]);
+                ?>
+            </div>
+
+
+
+<!--            --><?php //=Html::dropDownList('listWarehouse',(!empty($request['listWarehouse']) ? $request['listWarehouse'] : 'all'),$listWarehouse,[
+//                'class'=>'form-control listWarehouse',
+//                'id'=>'listWarehouse',
+//                'disabled' => ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? false : true),
+//                'style' =>  ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? '' : 'display:none'),
+//                'options' => [
+//                    //(!empty($request['listWarehouse']) ? $request['listWarehouse'] : 'all') => ['disabled' => true],
+//                ]
+//            ]);?>
+
+<!--            --><?php //=Html::dropDownList('listAdmin',(!empty($request['listAdmin']) ? $request['listAdmin'] : 'placeh'),$listAdmin,[
+//                'class'=>'form-control listAdmin',
+//                'id'=>'listAdmin',
+//                'disabled' => ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? true : false),
+//                'style' =>  ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? 'display:none' : ''),
+//                'options' => [
+//                    //(!empty($request['listAdmin']) ? $request['listAdmin'] : 'placeh') => ['disabled' => true],
+//                ]
+//            ]);?>
         </div>
         <div class="col-md-1 m-b">
             <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
@@ -204,11 +232,11 @@ $listAdmin = Users::getListAdmin();
 
         $('.btnflWarehouse').on('change',function () {
             if($(this).is(':checked')) {
-                $(this).closest('.row').find('.blChangeWarehouse select[name="listWarehouse"]').prop( "disabled", false ).show();
-                $(this).closest('.row').find('.blChangeWarehouse select[name="listAdmin"]').prop( "disabled", true ).hide();
+                $(this).closest('.row').find('.blChangeWarehouse select[name="listWarehouse"]').prop( "disabled", false ).closest('div').show();
+                $(this).closest('.row').find('.blChangeWarehouse select[name="listAdmin"]').prop( "disabled", true ).closest('div').hide();
             } else{
-                $(this).closest('.row').find('.blChangeWarehouse select[name="listWarehouse"]').prop( "disabled", true ).hide();
-                $(this).closest('.row').find('.blChangeWarehouse select[name="listAdmin"]').prop( "disabled", false ).show();
+                $(this).closest('.row').find('.blChangeWarehouse select[name="listWarehouse"]').prop( "disabled", true ).closest('div').hide();
+                $(this).closest('.row').find('.blChangeWarehouse select[name="listAdmin"]').prop( "disabled", false ).closest('div').show();
             }
         })
     </script>
