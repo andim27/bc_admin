@@ -62,6 +62,8 @@ class SettingController extends BaseController {
 
             $checkResult = api\Lang::get($translationForm->countryId, $translationForm->stringId);
 
+            THelper::clearCache($translationForm->countryId, $translationForm->stringId);
+
             if ($checkResult) {
                 $result = api\Lang::update(
                     $translationForm->id,
@@ -73,7 +75,6 @@ class SettingController extends BaseController {
                 );
             } else {
                 $result = api\Lang::add(
-
                     $translationForm->countryId,
                     $translationForm->stringId,
                     $translationForm->stringValue,
