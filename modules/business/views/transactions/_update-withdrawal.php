@@ -46,7 +46,7 @@ $listCard = PaymentCard::getListCards();
                     <tr>
                         <td><?= THelper::t('card_type') ?></td>
                         <td class="info">
-                            <?=THelper::t($listCard[(!empty($model->card['type']) ? $model->card['type'] : '1')])?>
+                            <?=$listCard ? THelper::t($listCard[(!empty($model->card['type']) ? $model->card['type'] : '1')]) : ''?>
                         </td>
                     </tr>
                     <tr>

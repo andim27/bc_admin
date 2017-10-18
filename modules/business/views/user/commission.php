@@ -65,7 +65,7 @@
                                                     <th width="20%"><?= $value->amount ?></th>
                                                     <th width="20%"><?= $value->saldoFrom ?></th>
                                                     <th width="20%"><?= $value->forWhat ?></th>
-                                                    <th width="20%"><?= gmdate('d.m.Y', date('U', strtotime($value->dateReduce))) ?></th>
+                                                    <th width="20%"><?= !empty($value->dateReduce) ? gmdate('d.m.Y', date('U', strtotime($value->dateReduce))) : '' ?></th>
                                                 </tr>
                                             <?php } ?>
                                             </tbody>
