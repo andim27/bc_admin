@@ -81,6 +81,11 @@ use app\models\Products;
     $('.getGoods').on('click',function (e) {
         e.preventDefault();
 
+        if($('.infoUser').val() == ''){
+            alert('Введите данные о клиенте!');
+            return false;
+        }
+
         $.ajax({
             url: '<?=\yii\helpers\Url::to(['sale/sale-get-products'])?>',
             type: 'POST',

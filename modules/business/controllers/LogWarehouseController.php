@@ -5,6 +5,7 @@ namespace app\modules\business\controllers;
 use app\components\THelper;
 use app\models\api\Product;
 use app\models\LogWarehouse;
+use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
 use app\models\Sales;
@@ -198,5 +199,131 @@ class LogWarehouseController extends BaseController {
         print_r('fail');
         echo "</xmp>";
         die();
+    }
+
+
+    public function actionFix()
+    {
+        $idArray = [];
+
+        $modelOrder = StatusSales::find()->all();
+
+        foreach ($modelOrder as $item) {
+            if(!empty($item->setSales)){
+                $indicator = 0;
+                $array = [];
+                foreach ($item->setSales as $itemSet) {
+                    if($itemSet['status']=='status_sale_issued'){
+
+                        if(empty($array[$itemSet['title']])){
+                            $array[$itemSet['title']] = 0;
+                        } else {
+                            $indicator=1;
+                        }
+
+                        $array[$itemSet['title']]++;
+                    }
+                }
+
+                if($indicator==1){
+                    $idArray[] = $item;
+                }
+            }
+        }
+
+        $table = '';
+        foreach ($idArray as $item) {
+            $listGoods=$listCount='';
+            if(!empty($item->setSales)){
+                foreach ($item->setSales as $itemSet) {
+                    $modelLog = LogWarehouse::find()->where(['date_create'=>$itemSet['dateChange']])->all();
+
+                    $listCount .= count($modelLog).'-'.(!empty($modelLog) ? (string)$modelLog['0']->_id : '').'<br>';
+
+                    $listGoods.='<a target="_blank" href="/ru/business/log-warehouse/apply-fix?id='.(string)$item->idSale.'&title='.$itemSet['title'].'">fix</a>'.$itemSet['title'] . ' - ('.$itemSet['status'].')'.$itemSet['dateChange']->toDateTime()->format('Y-m-d H:i:s').' -------------'.(string)$itemSet['idUserChange'].'<br>';
+                }
+            }
+
+
+            $listRev='';
+            if(!empty($item->reviewsSales)){
+                foreach ($item->reviewsSales as $itemRev) {
+                    $listRev.=$itemRev['review'].'-'.$itemRev['dateCreate']->toDateTime()->format('Y-m-d H:i:s').'<br>';
+                }
+            }
+
+
+            $table .= '
+                <tr>
+                    <td style="border-bottom: 1px solid #000"> '.(string)$item->idSale.'
+                    <td style="border-bottom: 1px solid #000"> '.$listCount.'
+                    <td style="border-bottom: 1px solid #000"> '.$listGoods.'
+                    <td style="border-bottom: 1px solid #000"> '.$listRev.'
+            ';
+        }
+
+        $table = '<table>'.$table.'</table>';
+
+        echo $table;die();
+
+    }
+
+    public function actionApplyFix($id,$title)
+    {
+        $arrayGoods = PartsAccessories::getListPartsAccessoriesForSaLe();
+
+        $modelStatusSale= StatusSales::findOne(['idSale'=>new ObjectID($id)]);
+        foreach ($modelStatusSale->setSales as $item) {
+            if($item['title']==$title && $item['status']=='status_sale_issued'){
+                $dateUse = $item['dateChange'];
+                break;
+            }
+        }
+
+
+        $listRev=[];
+        if(!empty($modelStatusSale->reviewsSales)){
+            foreach ($modelStatusSale->reviewsSales as $itemRev) {
+                $listRev[]=$itemRev;
+                if($itemRev['dateCreate']==$dateUse){
+                    $listRev[]=$itemRev;
+                }
+            }
+        }
+        $modelStatusSale->reviewsSales = $listRev;
+
+        if($modelStatusSale->save()){}
+
+        $modelLog = LogWarehouse::find()->where(['date_create'=>$dateUse])->one();
+
+        $modelLogNew = new LogWarehouse();
+        $modelLogNew->action = $modelLog->action;
+        $modelLogNew->who_performed_action = $modelLog->who_performed_action;
+        $modelLogNew->parts_accessories_id = $modelLog->parts_accessories_id;
+        $modelLogNew->number = $modelLog->number;
+        $modelLogNew->suppliers_performers_id = $modelLog->suppliers_performers_id;
+        $modelLogNew->admin_warehouse_id = $modelLog->admin_warehouse_id;
+        $modelLogNew->on_warehouse_id = $modelLog->on_warehouse_id;
+        $modelLogNew->money = $modelLog->money;
+        $modelLogNew->comment = $modelLog->comment;
+        $modelLogNew->date_create = $modelLog->date_create;
+
+        if($modelLogNew->save()){}
+
+
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r($dateUse->toDateTime()->format('Y-m-d H:i:s'));
+        echo "</xmp>";
+        echo "<xmp>";
+        print_r($id);
+        echo "</xmp>";
+        echo "<xmp>";
+        print_r($title);
+        echo "</xmp>";
+        die();
+
+        //5978ac393d073f3d0b411fd5
     }
 }
