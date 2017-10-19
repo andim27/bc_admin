@@ -42,6 +42,7 @@ $listAdmin = Users::getListAdmin();
                     'data' => $listWarehouse,
                     'value' => (!empty($request['listWarehouse']) ? $request['listWarehouse'] : 'all'),
                     'options' => [
+                        'class'=>'listWarehouse',
                         'placeholder' => 'Выберите действия',
                         'disabled' => ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? false : true)
                     ]
@@ -55,6 +56,7 @@ $listAdmin = Users::getListAdmin();
                     'data' => $listAdmin,
                     'value' => (!empty($request['listAdmin']) ? $request['listAdmin'] : 'placeh'),
                     'options' => [
+                        'class'=>'listAdmin',
                         'placeholder' => 'Выберите действия',
                         'disabled' => ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? true : false)
                     ]
@@ -218,12 +220,12 @@ $listAdmin = Users::getListAdmin();
 
             if($('.btnflWarehouse').is(':checked')){
                 $flWarehouse = 1;
-                $listWarehouse = $('.listWarehouse').prop('selected',true).val();
+                $listWarehouse = $('.listWarehouse').val();
                 $listAdmin = '';
             } else {
                 $flWarehouse = 0;
                 $listWarehouse = '';
-                $listAdmin = $('.listAdmin').prop('selected',true).val();
+                $listAdmin = $('.listAdmin').val();
             }
 
             document.location = "/business/status-sales/export-consolidated-report?from="+$dateFrom+"&to="+$dateTo+"&flWarehouse="+$flWarehouse+"&listWarehouse="+$listWarehouse+"&listAdmin="+$listAdmin;

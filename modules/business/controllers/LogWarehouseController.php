@@ -326,4 +326,28 @@ class LogWarehouseController extends BaseController {
 
         //5978ac393d073f3d0b411fd5
     }
+
+
+    public function actionShowCancellation()
+    {
+        $model = Sales::find()->where(['type'=>-1])->all();
+
+        $list = [];
+        foreach ($model as $item) {
+            if(!empty($item->statusSale)){
+                    if(!empty($item->statusSale->setSales)){
+                        foreach ($item->statusSale->setSales as $itemSet) {
+                            if($itemSet['status']=='status_sale_issued' && !in_array((string)$item->_id,$list)){
+                                $list[] = (string)$item->_id;
+                                echo $item->username.'<br>';
+                            }
+                        }
+
+                    }
+
+            }
+        }
+        die();
+
+    }
 }
