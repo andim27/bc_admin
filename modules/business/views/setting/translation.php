@@ -4,16 +4,23 @@
 use yii\widgets\LinkPager;
 
 ?>
+
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('settings_translation_title'); ?></h3>
+    <h3 class="m-b-none"><?= THelper::t('sidebar_stock_warehouses'); ?></h3>
 </div>
 <div class="row">
-    <div class="col-md-3 m-b">
+    <div class="col-md-2 m-b">
         <?= Html::dropDownList('languages', $language, $translationList, ['id' => 'languages-list', 'class' => 'form-control']) ?>
     </div>
-    <div class="col-md-3 m-b m-t-xs">
+    <div class="col-md-2 m-b m-t-xs">
         <?= Html::checkbox('empty_values', false, ['label' => THelper::t('empty_values')]) ?>
     </div>
+
+    <div class="col-md-2">
+        <?= Html::a(THelper::t('add_translation'), ['/business/setting/add-translation/', 'l' => $language], ['class' => 'btn btn-info', 'data-toggle'=>'ajaxModal']) ?>
+    </div>
+
     <div class="col-md-6 m-b text-right">
         <?= Html::a(THelper::t('settings_translation_export_to_excel'), ['/business/setting/export-translation/', 'l' => $language], ['class' => 'btn btn-success']) ?>
         <?= Html::a(THelper::t('settings_translation_import_from_excel'), ['/business/setting/import-translation/', 'l' => $language], ['class' => 'btn btn-success', 'data-toggle'=>'ajaxModal']) ?>

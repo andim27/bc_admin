@@ -254,6 +254,55 @@ class SettingController extends BaseController {
         ]);
     }
 
+    /**
+     * @return string|Response
+     */
+    public function actionAddTranslation()
+    {
+        $request = Yii::$app->request;
+        $translationForm = new TranslationForm(false);
+        $requestLanguage = $request->get('l');
+        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
+
+        if ($request->isAjax && !$request->isPost) {
+            $translationForm->countryId = $language;
+
+            return $this->renderAjax('add_translation', [
+                'translationForm' => $translationForm
+            ]);
+        }
+
+        if ($request->isPost) {
+            $translationForm->load($request->post());
+
+            if ($translationForm->validate()) {
+                if (api\Lang::get($translationForm->countryId, $translationForm->stringId)) {
+                    Yii::$app->session->setFlash('warning', $translationForm->stringId . ' ' . THelper::t('exists'));
+
+                    return $this->redirect('/' . Yii::$app->language .'/business/setting/translation?l=' . $translationForm->countryId);
+                }
+
+                $result = api\Lang::add(
+                    $translationForm->countryId,
+                    $translationForm->stringId,
+                    $translationForm->stringValue,
+                    $translationForm->comment,
+                    $translationForm->originalStringValue
+                );
+
+                if ($result) {
+                    Yii::$app->session->setFlash('success', THelper::t('setting_admin_add_success'));
+                } else {
+                    Yii::$app->session->setFlash('danger', THelper::t('setting_admin_add_error'));
+                }
+            } else {
+                Yii::$app->session->setFlash('danger', THelper::t('setting_admin_add_error') . ':' . json_encode($translationForm->errors));
+            }
+        }
+
+        return  $this->redirect('/' . Yii::$app->language .'/business/setting/translation?l=' . $translationForm->countryId);
+    }
+
     public function actionImportTranslation()
     {
         ini_set('memory_limit', '-1');
