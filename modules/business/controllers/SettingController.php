@@ -291,7 +291,7 @@ class SettingController extends BaseController {
                 );
 
                 if ($result) {
-                    Yii::$app->session->setFlash('success', THelper::t('setting_admin_add_success'));
+                    Yii::$app->session->setFlash('success', THelper::t('translation_add_success'));
                 } else {
                     Yii::$app->session->setFlash('danger', THelper::t('setting_admin_add_error'));
                 }

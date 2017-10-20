@@ -13,7 +13,7 @@ use yii\widgets\LinkPager;
     <div class="col-md-2 m-b">
         <?= Html::dropDownList('languages', $language, $translationList, ['id' => 'languages-list', 'class' => 'form-control']) ?>
     </div>
-    <div class="col-md-2 m-b m-t-xs">
+    <div class="col-md-3 m-b m-t-xs">
         <?= Html::checkbox('empty_values', false, ['label' => THelper::t('empty_values')]) ?>
     </div>
 
@@ -21,7 +21,7 @@ use yii\widgets\LinkPager;
         <?= Html::a(THelper::t('add_translation'), ['/business/setting/add-translation/', 'l' => $language], ['class' => 'btn btn-info', 'data-toggle'=>'ajaxModal']) ?>
     </div>
 
-    <div class="col-md-6 m-b text-right">
+    <div class="col-md-5 m-b text-right">
         <?= Html::a(THelper::t('settings_translation_export_to_excel'), ['/business/setting/export-translation/', 'l' => $language], ['class' => 'btn btn-success']) ?>
         <?= Html::a(THelper::t('settings_translation_import_from_excel'), ['/business/setting/import-translation/', 'l' => $language], ['class' => 'btn btn-success', 'data-toggle'=>'ajaxModal']) ?>
     </div>
