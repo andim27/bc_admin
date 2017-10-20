@@ -14,11 +14,25 @@ class TranslationForm extends Model {
     public $comment;
     public $stringValue;
     public $originalStringValue;
+    public $requiredFields = ['countryId', 'stringId', 'stringValue'];
 
+    /**
+     * TranslationForm constructor.
+     * @param bool $edit
+     */
+    public function __construct($edit = true)
+    {
+        parent::__construct();
+        $this->requiredFields = $edit ? $this->requiredFields + ['id'] : $this->requiredFields;
+    }
+
+    /**
+     * @return array
+     */
     public function rules() {
         return
             [
-                [['id', 'countryId', 'stringId', 'stringValue'], 'required', 'message' => THelper::t('required_field')],
+                [$this->requiredFields, 'required', 'message' => THelper::t('required_field')],
                 [['comment', 'originalStringValue'], 'string']
             ];
     }
