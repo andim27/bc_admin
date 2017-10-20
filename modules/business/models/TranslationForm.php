@@ -23,7 +23,7 @@ class TranslationForm extends Model {
     public function __construct($edit = true)
     {
         parent::__construct();
-        $this->requiredFields = $edit ? $this->requiredFields + ['id'] : $this->requiredFields;
+        $this->requiredFields = $edit ? array_merge($this->requiredFields, ['id']) : $this->requiredFields;
     }
 
     /**
