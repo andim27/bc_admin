@@ -446,10 +446,11 @@ class UserController extends BaseController
                         $purcahseUser = $users[$idUser];
                     }
 
+
                     $nestedData[$columns[0]] = $purchase->dateCreate->toDateTime()->format('Y-m-d H:i:s');
                     $nestedData[$columns[1]] = $purchase->product;
-                    $nestedData[$columns[2]] = $product->productName;
-                    $nestedData[$columns[3]] = $product->price;
+                    $nestedData[$columns[2]] = (!empty($product->productName) ? $product->productName : '');
+                    $nestedData[$columns[3]] = (!empty($product->price) ? $product->price : '');
                     $nestedData[$columns[4]] = $purchase->bonusPoints;
                     $nestedData[$columns[5]] = $purcahseUser->username;
                     $nestedData[$columns[6]] = $purcahseUser->firstName . ' ' . $purcahseUser->secondName;
@@ -457,7 +458,9 @@ class UserController extends BaseController
                         Html::a('<i class="fa fa-trash-o"></i>', ['/business/user/cancel-purchase', 'id' => strval($purchase->_id)], ['onclick' => 'return confirmCancellation();']) : 
                         THelper::t('users_purchase_deleted'));
 
-                    $data[] = $nestedData;
+                    if(!empty($product->productName) && !empty($product->price)){
+                        $data[] = $nestedData;
+                    }
                 }
 
                 return [

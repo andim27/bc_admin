@@ -3658,3 +3658,30 @@ fieldset[disabled] .btn-gplus.active {
 .scrollX{
   overflow-x: scroll;
 }
+
+
+.capsLock{
+  text-replace:uppercase;
+}
+.height250{
+  height: 250px;
+}
+
+.text-color-4c6cc1{
+  color:#4c6cc1;
+}
+.text-color-4cc0c1{
+  color:#4cc0c1;
+}
+.text-color-c14cba{
+  color:#c14cba;
+}
+.text-color-ffe00e{
+  color:#ffe00e;
+}
+.text-color-c14d4c{
+  color:#c14d4c;
+}
+.text-color-61c14c{
+  color:#61c14c;
+}

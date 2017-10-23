@@ -85,7 +85,7 @@ $contractorInfo = [];
                                         <?=Html::input('number','numberUseInterchangeable['.$kInterchangeable.']','0',[
                                             'class'=>'form-control needSendInterchangeable',
                                             'pattern'=>'\d*',
-                                            'step'=>'1',
+                                            'step'=>'0.01',
                                         ]);?>
                                     </div>
                                     <div class="col-md-1">
