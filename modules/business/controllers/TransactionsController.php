@@ -153,7 +153,7 @@ class TransactionsController extends BaseController
 
                 if($infoUser->moneys > $model->amount){
 
-                    $infoUser->moneys -= $model->amount;
+                    //$infoUser->moneys -= $model->amount;
 
                     $model->confirmed = 1;
 
