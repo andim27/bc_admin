@@ -151,23 +151,12 @@ class TransactionsController extends BaseController
 
                 $infoUser = Users::findOne(['_id' => $model->idFrom]);
 
-                if($infoUser->moneys > $model->amount){
+                $model->confirmed = 1;
 
-                    //$infoUser->moneys -= $model->amount;
-
-                    $model->confirmed = 1;
-
-                    if($model->save() && $infoUser->save()){
-                        Yii::$app->session->setFlash('alert' ,[
-                                'typeAlert' => 'success',
-                                'message' => THelper::t('save_applied')
-                            ]
-                        );
-                    }
-                } else {
+                if($model->save() && $infoUser->save()){
                     Yii::$app->session->setFlash('alert' ,[
-                            'typeAlert' => 'danger',
-                            'message' => THelper::t('not_enough_money')
+                            'typeAlert' => 'success',
+                            'message' => THelper::t('save_applied')
                         ]
                     );
                 }
