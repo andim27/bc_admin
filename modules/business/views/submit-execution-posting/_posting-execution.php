@@ -133,6 +133,13 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 
 
 <script type="text/javascript">
+    $('form[name="savePartsAccessories"]').keydown(function(event){
+        if(event.keyCode == 13) {
+            event.preventDefault();
+            return false;
+        }
+    });
+
     $('.postingExecution').on('change',function(){
         checkBeforeSend();
     });
@@ -190,6 +197,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 alreadyUse = parseFloat($(this).closest('.row').find('.alreadyUse').val());
                 wantUse = parseFloat($(this).val());
                 needForOne = parseFloat($(this).closest('.row').find('.needForOne').val());
+
                 if(wantUse > (wasSend-alreadyUse)){
                     answer = 0;
                     $(this).closest('.blInterchangeable').find(".infoDangerExecution").html(
@@ -199,11 +207,23 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                         '</div>'
                     );
                 }
-                needUseInterchangeable += (wantUse/needForOne);
+                needUseInterchangeable += 1 *(wantUse/needForOne).toFixed(2);
+
+
+                console.log('***1***');
+                console.log(wantUse);
+                console.log(needForOne);
+                console.log('***2***');
+                console.log(needUseInterchangeable);
+                console.log('***3***');
+                console.log((wantUse/needForOne));
+                console.log('********----**************');
             });
 
             if(needPosting!=needUseInterchangeable){
                 answer = 0;
+
+                console.log(needPosting +'!='+ needUseInterchangeable);
 
                 $(this).closest('.blInterchangeable').find(".infoDangerExecution").html(
                     '<div class="alert alert-danger fade in">' +
