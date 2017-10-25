@@ -42,6 +42,7 @@ class AppAsset extends AssetBundle
         '/js/charts/flot/jquery.flot.tooltip.min.js',
         '/js/charts/flot/jquery.flot.resize.js',
         '/js/charts/flot/jquery.flot.grow.js',
+        '/js/charts/flot/jquery.flot.pie.min.js',
         '/js/sortable/jquery.sortable.js',
         '/js/datatables/jquery.dataTables.min.js',
         '/js/fileinput.min.js',
