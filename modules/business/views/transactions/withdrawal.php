@@ -67,7 +67,7 @@ $listCard = PaymentCard::getListCards();
     $('.table-translations').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],
-        "order": [[ 5, "desc" ]]
+        order: [[ 8, "desc" ]]
     });
 </script>
 
