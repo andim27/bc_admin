@@ -80,6 +80,7 @@ class Products extends ActiveRecord
         }
         $model = $model->orderBy(['productName'=>SORT_ASC])->all();
 
+
         if(!empty($model)){
             foreach ($model as $item) {
                 if(!empty($item->set) && count($item->set) > 0){

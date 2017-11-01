@@ -398,10 +398,15 @@ class SettingController extends BaseController {
          */
         $translation = '';
         $translations = api\Lang::getAll($request->get('countryId'));
-        foreach ($translations as $t) {
-            if ($t->stringId == $request->get('stringId')) {
-                $translation = $t;
-                break;
+
+        if (isset($translations->stringId) && $translations->stringId == $request->get('stringId')) {
+            $translation = $translations;
+        } else {
+            foreach ($translations as $t) {
+                if (isset($t->stringId) && $t->stringId == $request->get('stringId')) {
+                    $translation = $t;
+                    break;
+                }
             }
         }
 

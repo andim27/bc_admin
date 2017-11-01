@@ -26,7 +26,6 @@ class SaleReportController extends BaseController
     public function actionInfoWaitSaleByUser()
     {
 
-        $listCountry['all'] = 'Все страны';
         $allListCountry = Settings::getListCountry();
 
         $request =  Yii::$app->request->post();
@@ -35,100 +34,101 @@ class SaleReportController extends BaseController
 
         $infoSale = $infoGoods = [];
 
-        $model = StatusSales::find()
-            ->where(['IN','setSales.status',['status_sale_new','status_sale_delivered',
-                'status_sale_repairs_under_warranty',
-                'status_sale_repair_without_warranty',]
+        $dateTo = date("Y-m-d");
+        $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));;
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime(strtotime($dateFrom) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($dateTo . '23:59:59') * 1000)
+                ]
             ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere(['in','product',Products::productIDWithSet()])
             ->all();
+
+        $listCountry['all'] = 'Все страны';
+
         if(!empty($model)){
-            $listIdSale = ArrayHelper::getColumn($model,'idSale');
+            /** @var \app\models\Sales $item */
+            foreach ($model as $item) {
+                $tempInfoUser = [];
+                if(!empty($item->statusSale) && ($request['countryReport'] == 'all' || $request['countryReport'] == $item->infoUser->country)){
 
-            $model = Sales::find()
-                ->where(['IN','_id',$listIdSale])
-                ->andWhere([
-                    'type' => [
-                        '$ne'   =>  -1
-                    ]
-                ])
-                ->andWhere(['in','product',Products::productIDWithSet()])
-                ->all();
+                    $tempInfoUser['_id'] = (string)$item->_id;
 
-
-            if(!empty($model)){
-                /** @var \app\models\Sales $item */
-                foreach ($model as $item) {
-                    $tempInfoUser = [];
-                    if(!empty($item->statusSale) && ($request['countryReport'] == 'all' || $request['countryReport'] == $item->infoUser->country)){
-
-                        $tempInfoUser['_id'] = (string)$item->_id;
-
-                        $tempInfoUser['name'] = $item->infoUser->secondName . ' ' . $item->infoUser->firstName . '('. $item->infoUser->username.')';
-                        $tempInfoUser['country'] = $item->infoUser->country;
-                        $tempInfoUser['city'] = $item->infoUser->city;
-                        $tempInfoUser['address'] = $item->infoUser->address;
+                    $tempInfoUser['name'] = $item->infoUser->secondName . ' ' . $item->infoUser->firstName . '('. $item->infoUser->username.')';
+                    $tempInfoUser['country'] = $item->infoUser->country;
+                    $tempInfoUser['city'] = $item->infoUser->city;
+                    $tempInfoUser['address'] = $item->infoUser->address;
 
 
-                        $tempInfoUser['phone']= [];
-                        if(!empty($item->infoUser->phoneNumber)){
-                            $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],[$item->infoUser->phoneNumber]);
-                        }
-                        if(!empty($item->infoUser->phoneNumber2)){
-                            $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],[$item->infoUser->phoneNumber2]);
-                        }
-                        if(!empty($item->infoUser->settings['phoneViber'])){
-                            $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],['Viber' => $item->infoUser->settings['phoneViber']]);
-                        }
-                        if(!empty($item->infoUser->settings['phoneFB'])){
-                            $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],['FB' => $item->infoUser->settings['phoneFB']]);
-                        }
-                        if(!empty($item->infoUser->settings['phoneTelegram'])){
-                            $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],['Telegram' => $item->infoUser->settings['phoneTelegram']]);
-                        }
-                        if(!empty($item->infoUser->settings['phoneWhatsApp'])){
-                            $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],['WhatsApp' => $item->infoUser->settings['phoneWhatsApp']]);
-                        }
-
-                        $tempInfoUser['date_create'] = $item->dateCreate->toDateTime()->format('Y-m-d H:i:s');
-                        $tempInfoUser['type'] = $item->type;
-
-                        /** @var StatusSales $itemSet */
-                        foreach($item->statusSale->set as $k=>$itemSet){
 
 
-                            if($request['goodsReport'] == 'all' || $request['goodsReport'] == $itemSet->title) {
+                    $tempInfoUser['phone']= [];
+                    if(!empty($item->infoUser->phoneNumber)){
+                        $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],[$item->infoUser->phoneNumber]);
+                    }
+                    if(!empty($item->infoUser->phoneNumber2)){
+                        $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],[$item->infoUser->phoneNumber2]);
+                    }
+                    if(!empty($item->infoUser->settings['phoneViber'])){
+                        $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],['Viber' => $item->infoUser->settings['phoneViber']]);
+                    }
+                    if(!empty($item->infoUser->settings['phoneFB'])){
+                        $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],['FB' => $item->infoUser->settings['phoneFB']]);
+                    }
+                    if(!empty($item->infoUser->settings['phoneTelegram'])){
+                        $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],['Telegram' => $item->infoUser->settings['phoneTelegram']]);
+                    }
+                    if(!empty($item->infoUser->settings['phoneWhatsApp'])){
+                        $tempInfoUser['phone'] = ArrayHelper::merge($tempInfoUser['phone'],['WhatsApp' => $item->infoUser->settings['phoneWhatsApp']]);
+                    }
 
-                                $tempInfoGoods = [];
+                    $tempInfoUser['date_create'] = $item->dateCreate->toDateTime()->format('Y-m-d H:i:s');
+                    $tempInfoUser['type'] = $item->type;
+                                        
+                    /** @var StatusSales $itemSet */
+                    foreach($item->statusSale->set as $k=>$itemSet){
 
-                                $tempInfoGoods['countryWarehouse'] = 'none';
-                                $tempInfoGoods['nameWarehouse'] = '';
 
-                                if(!empty($itemSet->idUserChange)){
-                                    $infoWarehouse = Warehouse::getInfoWarehouse((string)$itemSet->idUserChange);
+                        if($request['goodsReport'] == 'all' || $request['goodsReport'] == $itemSet->title) {
 
-                                    if(!empty($infoWarehouse->country)){
-                                        $tempInfoGoods['countryWarehouse'] = $infoWarehouse->country;
-                                        $tempInfoGoods['nameWarehouse'] = $infoWarehouse->title;
+                            $tempInfoGoods = [];
 
-                                        if(empty($listCountry[$infoWarehouse->country])){
-                                            $listCountry[$infoWarehouse->country] = $allListCountry[$infoWarehouse->country];
-                                        }
+                            $tempInfoGoods['countryWarehouse'] = 'none';
+                            $tempInfoGoods['nameWarehouse'] = '';
+
+                            if(!empty($itemSet->idUserChange)){
+                                $infoWarehouse = Warehouse::getInfoWarehouse((string)$itemSet->idUserChange);
+
+                                if(!empty($infoWarehouse->country)){
+                                    $tempInfoGoods['countryWarehouse'] = $infoWarehouse->country;
+                                    $tempInfoGoods['nameWarehouse'] = $infoWarehouse->title;
+
+                                    if(empty($listCountry[$infoWarehouse->country])){
+                                        $listCountry[$infoWarehouse->country] = $allListCountry[$infoWarehouse->country];
                                     }
                                 }
+                            }
 
-                                $tempInfoGoods['key'] = $k;
-                                $tempInfoGoods['goods'] = $itemSet->title;
-                                $tempInfoGoods['status'] = $itemSet->status;
+                            $tempInfoGoods['key'] = $k;
+                            $tempInfoGoods['goods'] = $itemSet->title;
+                            $tempInfoGoods['status'] = $itemSet->status;
 
-                                $infoGoods[$itemSet->title] = (!empty($infoGoods[$itemSet->title]) ? ($infoGoods[$itemSet->title] +1) : '1');
+                            $infoGoods[$itemSet->title] = (!empty($infoGoods[$itemSet->title]) ? ($infoGoods[$itemSet->title] +1) : '1');
 
-                                if (!in_array($itemSet->status, ['status_sale_issued', 'status_sale_issued_after_repair'])) {
-                                    $infoSale[] = ArrayHelper::merge($tempInfoUser, $tempInfoGoods);
-                                }
+                            if (!in_array($itemSet->status, ['status_sale_issued', 'status_sale_issued_after_repair'])) {
+                                $infoSale[] = ArrayHelper::merge($tempInfoUser, $tempInfoGoods);
                             }
                         }
-
                     }
+
                 }
             }
         }

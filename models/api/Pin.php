@@ -20,16 +20,4 @@ class Pin {
         return (isset($response->pin) && $response->pin) ? $response->pin : '';
     }
 
-    /**
-     * @param $pin
-     * @return mixed
-     */
-    public static function checkPin($pin)
-    {
-        $apiClient = new ApiClient('system/checkPin/' . $pin);
-
-        $response = $apiClient->get();
-
-        return (!empty($response) ? $response : false);
-    }
 }
