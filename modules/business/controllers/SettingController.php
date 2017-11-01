@@ -99,15 +99,31 @@ class SettingController extends BaseController {
         $language = $requestLanguage ?: Yii::$app->language;
 
         $language = $request->get('language') ?: $language;
-        // $translations = api\Lang::getAll($language);
-        //hh(count($translations));
+
         $translations = Langs::find()->where(['countryId' => $language]);
 
         if ($search = $request->get('search')['value']) {
-            $translations->andFilterWhere(['or',
+            $stringId = Langs::find()->where(['countryId' => 'ru'])->andFilterWhere(['or',
                 ['like', 'stringId', $search],
                 ['like', 'stringValue', $search]
             ]);
+
+            $filterParams = ['or',
+                ['like', 'stringValue', $search],
+                ['like', 'stringId', $search]
+            ];
+
+            if ($stringId && ($stringIds = $stringId->all())) {
+                $keys = [];
+
+                foreach ($stringIds as $item) {
+                    array_push($keys, $item->stringId);
+                }
+
+                array_push($filterParams, ['in', 'stringId', $keys]);
+            }
+
+            $translations->andFilterWhere($filterParams);
         }
 
         if ($order = $request->get('order')[0]) {
