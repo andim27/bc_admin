@@ -142,6 +142,19 @@ class Users extends ActiveRecord
         return $this->statistics;
     }
 
+    public static function getStatisticBonusEquity()
+    {
+        return Transaction::find()
+            ->where(['amount'])
+            ->where([
+                'idTo'=>new ObjectID(\Yii::$app->view->params['user']->id),
+                'forWhat' => [
+                    '$regex' => 'For stocks'
+                ]
+            ])
+            ->sum('amount');
+    }
+
     public static function checkHeadAdmin()
     {
         $infoWarehouse = Warehouse::find()->where(['headUser'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
