@@ -48,25 +48,6 @@ class DefaultController extends BaseController
             '10'    => 'VipCoin',
         ];
 
-        //Purchase for a partner
-        //Closing steps
-        //Creating voucher for product
-        //Charity
-        //Cancellation purchase for a partner global
-        //Auto extension BS
-        //Auto bonus
-        //Withdrawal
-        //Confirmation of withdrawal from
-        //Cancellation of withdrawal
-        //Entering the money
-
-//        $xz = Transaction::getCollection()->distinct('forWhat');
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo "<xmp>";
-//        print_r($xz);
-//        echo "</xmp>";
-//        die();
-
         $statisticInfo = [
             'request'                       =>[],
             // интервалы выборки
@@ -131,12 +112,6 @@ class DefaultController extends BaseController
         $queryDateTo = strtotime($statisticInfo['request']['to'].'-'.$countDay.' 23:59:59') * 1000;
 
         // зарегистрировалось за выбранный период
-//        $model = Users::find()->select(['created'])->where([
-//            'created' => [
-//                '$gte' => new UTCDatetime($queryDateFrom),
-//                '$lte' => new UTCDateTime($queryDateTo)
-//            ]
-//        ])->all();
         $model = (new \yii\mongodb\Query())
             ->select(['created'])
             ->from('users')
@@ -160,13 +135,7 @@ class DefaultController extends BaseController
         }
         unset($model);
 
-        // совершили первую покупку за выбранный период
-//        $model = Users::find()->select(['firstPurchase'])->where([
-//            'firstPurchase' => [
-//                '$gte' => new UTCDatetime($queryDateFrom),
-//                '$lte' => new UTCDateTime($queryDateTo)
-//            ]
-//        ])->all();
+        // первая покупка за выбранный период
         $model = (new \yii\mongodb\Query())
             ->select(['firstPurchase'])
             ->from('users')
@@ -192,21 +161,6 @@ class DefaultController extends BaseController
         }
         unset($model);
 
-//        $model = Sales::find()->select(['dateCreate','price','product','username','project'])->where([
-//            'dateCreate' => [
-//                '$gte' => new UTCDatetime($queryDateFrom),
-//                '$lte' => new UTCDateTime($queryDateTo)
-//            ],
-//            'type'=>[
-//                '$ne'=>-1
-//            ],
-//            'product'=>[
-//                '$ne'=>'0'
-//            ],
-//            'username' =>[
-//                '$ne'=>'main'
-//            ]
-//        ])->all();
         $model = (new \yii\mongodb\Query())
             ->select(['dateCreate','price','product','username','project'])
             ->from('sales')
@@ -237,29 +191,22 @@ class DefaultController extends BaseController
                 $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] += $item['price'];
                 $statisticInfo['generalReceiptMoney'] += $item['price'];
 
-                if(!empty($typeProject[$listProductsType[$item['product']]])){
-                    $statisticInfo['generalReceiptMoney_'.$typeProject[$listProductsType[$item['product']]]] += $item['price'];
+                if (!empty($typeProject[$listProductsType[$item['product']]])) {
+                    $statisticInfo['generalReceiptMoney_' . $typeProject[$listProductsType[$item['product']]]] += $item['price'];
                 }
 
                 // собираем информацию по товарам для товарооборота
-                if(empty($statisticInfo['tradeTurnover']['listProduct'][$item['product']])){
+                if (empty($statisticInfo['tradeTurnover']['listProduct'][$item['product']])) {
                     $statisticInfo['tradeTurnover']['listProduct'][$item['product']] = [
-                        'title' =>  $listProductsTitle[$item['product']],
-                        'price' =>  0,
-                        'count' =>  0
+                        'title' => $listProductsTitle[$item['product']],
+                        'price' => 0,
+                        'count' => 0
                     ];
                 }
                 $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['price'] = $item['price'];
                 $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['count']++;
 
-                // собираем информацию для формирования максимального чека
-                if(empty($statisticInfo['tradeTurnover']['forUser'][$item['username']])){
-                    $statisticInfo['tradeTurnover']['forUser'][$item['username']] = 0;
-                }
-                $statisticInfo['tradeTurnover']['forUser'][$item['username']] += $item['price'];
             }
-            arsort($statisticInfo['tradeTurnover']['forUser']);
-            $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,10);
         }
         unset($model);
 
@@ -286,44 +233,12 @@ class DefaultController extends BaseController
         }
 
 
-
-
-//        $statisticInfo['receiptVoucher'] = Transaction::find()
-//            ->select(['amount'])
-//            ->where([
-//                'dateCreate' => [
-//                    '$gte' => new UTCDatetime($queryDateFrom),
-//                    '$lte' => new UTCDateTime($queryDateTo)
-//                ],
-//                'forWhat' => [
-//                    '$regex' => 'Creating voucher for product',
-//                    '$options' => 'i'
-//                ],
-//            ])
-//            ->sum('amount');
-
-//        $statisticInfo['onPersonalAccounts'] = Users::find()->where(['username' => ['$ne'=>'main']])->sum('moneys');
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['firstPurchase'])
             ->from('users')
             ->where(['username' => ['$ne'=>'main']])
             ->sum('moneys');
 
-
-//        $statisticInfo['orderedForWithdrawal'] = Transaction::find()
-//            ->select(['amount'])
-//            ->where([
-//                'dateCreate' => [
-//                    '$gte' => new UTCDatetime($queryDateFrom),
-//                    '$lte' => new UTCDateTime($queryDateTo)
-//                ],
-//                'forWhat'=> [
-//                    '$regex' => 'Withdrawal',
-//                ],
-//                'reduced' => ['$ne'=>false],
-//                'confirmed' => 0
-//            ])
-//            ->sum('amount');
         $statisticInfo['orderedForWithdrawal'] = (new \yii\mongodb\Query())
             ->select(['amount'])
             ->from('transactions')
@@ -342,22 +257,8 @@ class DefaultController extends BaseController
 
 
 
-//        $model = Transaction::find()
-//            ->select(['amount','dateCreate'])
-//            ->where([
-//                'dateCreate' => [
-//                    '$gte' => new UTCDatetime($queryDateFrom),
-//                    '$lte' => new UTCDateTime($queryDateTo)
-//                ],
-//                'forWhat' => [
-//                    '$regex' => 'purchase for',
-//                    '$options' => 'i'
-//                ],
-//            ])
-//            ->all();
-
         $model = (new \yii\mongodb\Query())
-            ->select(['amount','dateCreate', 'forWhat'])
+            ->select(['amount','dateCreate', 'forWhat', 'idTo'])
             ->from('transactions')
             ->where([
                 'dateCreate' => [
@@ -400,23 +301,20 @@ class DefaultController extends BaseController
                 }
                 $statisticInfo['feesCommissionMonth'][$dateCreate] += $item['amount'];
                 $statisticInfo['feesCommission'] += $item['amount'];
+
+                // собираем информацию для формирования максимального чека
+                if(empty($statisticInfo['tradeTurnover']['forUser'][(string)$item['idTo']])){
+                    $statisticInfo['tradeTurnover']['forUser'][(string)$item['idTo']] = 0;
+                }
+                $statisticInfo['tradeTurnover']['forUser'][(string)$item['idTo']] += $item['amount'];
             }
+            arsort($statisticInfo['tradeTurnover']['forUser']);
+            $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,10);
+
+
         }
 
-//        $model = Transaction::find()
-//            ->select(['amount','dateCreate'])
-//            ->where([
-//                'dateCreate' => [
-//                    '$gte' => new UTCDatetime($queryDateFrom),
-//                    '$lte' => new UTCDateTime($queryDateTo)
-//                ],
-//                'forWhat'=> [
-//                    '$regex' => 'Withdrawal',
-//                ],
-//                'reduced' => ['$ne'=>false],
-//                'confirmed'=>1
-//            ])
-//            ->all();
+
         $model = (new \yii\mongodb\Query())
             ->select(['amount','dateCreate'])
             ->from('transactions')
