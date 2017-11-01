@@ -539,6 +539,7 @@ class SettingController extends BaseController {
             $model->rules->showMenu = (!empty($request['rule']['showMenu']) ? $request['rule']['showMenu'] : '');
             $model->rules->edit = (!empty($request['rule']['edit']) ? $request['rule']['edit'] : '');
             $model->rules->transaction_cash = (!empty($request['rule']['transaction_cash']) ? $request['rule']['transaction_cash'] : '');
+            $model->rules->show_statistic = (!empty($request['rule']['show_statistic']) ? $request['rule']['show_statistic'] : '');
 
             $model->refreshFromEmbedded();
 
