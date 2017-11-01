@@ -172,16 +172,15 @@ class DefaultController extends BaseController
                 'type'=>[
                     '$ne'=>-1
                 ],
-                'product'=>[
-                    '$ne'=>'0'
-                ],
+                'productType'=>['$nin'=>[0,4]],
+                'product'=>['$ne'=>'0'],
                 'username' =>[
                     '$ne'=>'main'
                 ]
             ])
             ->all();
-        if(!empty($model)) {
 
+        if(!empty($model)) {
             foreach ($model as $item) {
                 $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
 
@@ -285,6 +284,11 @@ class DefaultController extends BaseController
                     [
                         'forWhat' => [
                             '$regex' => 'Mentor bonus'
+                        ]
+                    ],
+                    [
+                        'forWhat' => [
+                            '$regex' => 'For stocks'
                         ]
                     ],
                 ]

@@ -528,7 +528,7 @@ HTML;
                 label: 'Товарооборотов'
             }, {
                 data: arrayIssuedCommission,
-                label: 'выданных комиссионных'
+                label: 'Выданных комиссионных'
             }],
             {
                 series: {
@@ -565,7 +565,7 @@ HTML;
                 },
                 tooltip: true,
                 tooltipOpts: {
-                    content: "комиссионных %y.4 euro",
+                    content: "%s - %y.4 euro",
                     defaultTheme: false,
                     shifts: {
                         x: 0,
@@ -600,7 +600,7 @@ HTML;
 
         var da = [
             {
-                label: 'Живых дененг',
+                label: 'Живых денег',
                 data: <?=($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher'])?>
             },
             {
