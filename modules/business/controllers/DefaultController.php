@@ -231,6 +231,13 @@ class DefaultController extends BaseController
             $statisticInfo['receiptVoucher'] += $statisticInfo['receiptVoucher_'.$k];
         }
 
+//        $model = Pins::find()->where(['isDelete'=>true])->all();
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo "<xmp>";
+//        print_r(count($model));
+//        echo "</xmp>";
+//        die();
+
 
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['firstPurchase'])

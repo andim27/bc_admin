@@ -5,17 +5,19 @@ use yii\helpers\ArrayHelper;
 use app\components\THelper;
 
 use app\models\PartsAccessories;
+use app\models\SuppliersPerformers;
+
 
 $listGoods = PartsAccessories::getListPartsAccessories();
-
+$listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
 
 ?>
 
-<div class="modal-dialog modal-more-lg ">
+<div class="modal-dialog modal-more-lg popupPostingExecution">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
-            <h4 class="modal-title">Оприходование: <?=$listGoods[(string)$model->parts_accessories_id]?></h4>
+            <h4 class="modal-title">Оприходование: <span><?=$listGoods[(string)$model->parts_accessories_id]?></span></h4>
         </div>
 
         <div class="modal-body">
@@ -26,6 +28,9 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 ]); ?>
 
                 <?=Html::hiddenInput('_id',(string)$model->_id);?>
+                <?=Html::hiddenInput('',$model->fullname_whom_transferred,['class'=>'fullnameWhomTransferred']);?>
+                <?=Html::hiddenInput('',$model->date_execution->toDateTime()->format('Y-m-d H:i:s'),['class'=>'dateExecution']);?>
+                <?=Html::hiddenInput('',$listSuppliers[(string)$model->suppliers_performers_id],['class'=>'SuppliersPerformers']);?>
 
                 <div class="form-group row infoDanger"></div>
 
@@ -77,7 +82,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                                 <?php foreach($items as $k=>$item){ ?>
                                                 <div class="form-group row">
                                                     <div class="col-md-7">
-                                                        <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control','disabled'=>'disabled']);?>
+                                                        <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
                                                     </div>
                                                     <div class="col-md-2">
                                                         <?=Html::hiddenInput('number_for_one',$item['number'],['class'=>'needForOne'])?>
@@ -90,7 +95,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                                         <?=Html::input('text','need_use['.(string)$item['parts_accessories_id'].']','0',['class'=>'form-control needUse','disabled'=>($item['number_use']=='0' ? true : false)]);?>
                                                     </div>
                                                     <div class="col-md-1">
-                                                        <?=Html::input('text','',$item['reserve'],['class'=>'form-control','disabled'=>'disabled']);?>
+                                                        <?=Html::input('text','',$item['reserve'],['class'=>'form-control partNeedReserve','disabled'=>'disabled']);?>
                                                     </div>
                                                 </div>
                                                 <?php } ?>
@@ -100,13 +105,13 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                             <?php $item=$items['0']; ?>
                                             <div class="form-group row">
                                                 <div class="col-md-7">
-                                                    <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control','disabled'=>'disabled']);?>
+                                                    <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <?=Html::input('text','',($item['number']*$model->number),['class'=>'form-control needSend','disabled'=>'disabled']);?>
                                                 </div>
                                                 <div class="col-md-1">
-                                                    <?=Html::input('text','',$item['reserve'],['class'=>'form-control','disabled'=>'disabled']);?>
+                                                    <?=Html::input('text','',$item['reserve'],['class'=>'form-control partNeedReserve','disabled'=>'disabled']);?>
                                                 </div>
                                             </div>
                                         <?php } ?>
@@ -122,6 +127,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                         <?= Html::a(THelper::t('disband_return'),['/business/submit-execution-posting/disband-return-execution','id'=>$model->_id->__toString()], ['class' => 'btn btn-success']) ?>
                     </div>
                     <div class="col-md-6 text-right">
+                        <?= Html::button(THelper::t('print'), ['class' => 'btn btn-success btnPrint','type'=>'button']) ?>
                         <?= Html::submitButton(THelper::t('posting'), ['class' => 'btn btn-success assemblyBtn']) ?>
                     </div>
                 </div>
@@ -147,6 +153,59 @@ $listGoods = PartsAccessories::getListPartsAccessories();
     $('.needUse').on('change',function(){
         checkBeforeSend();
     });
+
+    $(".btnPrint").on('click', function() {
+
+        tempBl = '';
+                $(".popupPostingExecution .blPartsAccessories").find('.form-group.row').each(function () {
+                        title = $(this).find('.partTitle').val();
+                        tempBl +=
+                                '<tr>' +
+                                '<td>'+  title +
+                                '<td>'+ $(this).find('.needSend').val() +
+                                '<td>'+ $(this).find('.partNeedReserve').val();
+                    });
+
+                printFile =
+                        '<table>' +
+                        '<tr>' +
+                        '<th colspan="4">Выполненная заявка на исполнение' +
+                        '<tr>' +
+                        '<td><b>Собираем<b>'+
+                        '<td colspan="3">' + $(".popupPostingExecution .modal-title span").text() +
+                        '<tr>' +
+                        '<td><b>Заказано<b>'+
+                        '<td colspan="3">' + $(".popupPostingExecution .orderingExecution").val()  + ' шт.' +
+                        '<tr>' +
+                        '<td><b>Собранно<b>'+
+                        '<td colspan="3">' + $(".popupPostingExecution .receivedExecution").val() + ' шт.' +
+                        '<tr>' +
+                        '<th colspan="4">Необходимо:' +
+                        '<tr>' +
+                        '<td> Коплектующая' +
+                        '<td> Отправленно' +
+                        '<td> Запас' +
+
+                            tempBl +
+
+                           '<tr>' +
+                        '<td><b>Кому выдано<b>'+
+                        '<td colspan="3">' + $(".popupPostingExecution .fullnameWhomTransferred").val() +
+
+                            '<tr>' +
+                        '<td><b>Поставщики и исполнители<b>'+
+                        '<td colspan="3">' + $(".popupPostingExecution .SuppliersPerformers").val() +
+
+                            '<tr>' +
+                        '<td><b>Дата исполнения<b>'+
+                        '<td colspan="3">' + $(".popupPostingExecution .dateExecution").val() +
+
+                            '</table>';
+
+                    $.print(printFile,{
+                            stylesheet : window.location.origin + '/css/print.css'
+                });
+            });
 
     function checkBeforeSend(){
         answer = checkWantCan();
@@ -210,14 +269,6 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 needUseInterchangeable += 1 *(wantUse/needForOne).toFixed(2);
 
 
-                console.log('***1***');
-                console.log(wantUse);
-                console.log(needForOne);
-                console.log('***2***');
-                console.log(needUseInterchangeable);
-                console.log('***3***');
-                console.log((wantUse/needForOne));
-                console.log('********----**************');
             });
 
             if(needPosting!=needUseInterchangeable){
