@@ -22,7 +22,7 @@ HTML;
         <h3 class="m-b-none"><?= THelper::t('main_title'); ?></h3>
     </div>
 
-    <?php if(Users::checkRule('show_statistic','sidebar_home') === true){?>
+<?php if(Users::checkRule('show_statistic','sidebar_home') === true){?>
     <section class="panel panel-default">
         <div class="row">
             <div class="col-md-12">
@@ -108,8 +108,8 @@ HTML;
                     data: arrayPaidPartners,
                     label: labelPaid
                 },{
-                data: arrayConnectPartners,
-                label: labelRegistrations
+                    data: arrayConnectPartners,
+                    label: labelRegistrations
                 }
             ],
             {
@@ -397,81 +397,81 @@ HTML;
     </section>
 
 
-<!--    <section class="panel panel-default">-->
-<!--        <header class="panel-heading font-bold">-->
-<!--            График остатков на лицевых счетах за заданный период !!!!!!!!!!!!!!!-->
-<!--        </header>-->
-<!--        <div class="panel-body">-->
-<!--            <div id="flot-balances-personal-accounts" class="height250"></div>-->
-<!--        </div>-->
-<!--    </section>-->
-<!--    <script type="text/javascript">-->
-<!---->
-<!--        var arrayBalancesPersonalAccounts = [-->
-<!--            [0, 2.4],-->
-<!--            [1, 3.4 ],-->
-<!--            [2, 4.5 ]-->
-<!---->
-<!--        ];-->
-<!--        var arrayOrderedForWithdrawal = [-->
-<!--            [0, 1.5],-->
-<!--            [1, 1 ],-->
-<!--            [2, 2.5 ]-->
-<!---->
-<!--        ];-->
-<!---->
-<!--        $("#flot-balances-personal-accounts").length && $.plot($("#flot-balances-personal-accounts"), [{-->
-<!--                data: arrayBalancesPersonalAccounts,-->
-<!--                label: 'На балансе'-->
-<!--            }, {-->
-<!--                data: arrayOrderedForWithdrawal,-->
-<!--                label: 'Заказано на вывод'-->
-<!--            }],-->
-<!--            {-->
-<!--                series: {-->
-<!--                    lines: {-->
-<!--                        show: true,-->
-<!--                        lineWidth: 1,-->
-<!--                        fill: true,-->
-<!--                        fillColor: {-->
-<!--                            colors: [{-->
-<!--                                opacity: 0.2-->
-<!--                            }, {-->
-<!--                                opacity: 0.1-->
-<!--                            }]-->
-<!--                        }-->
-<!--                    },-->
-<!--                    points: {-->
-<!--                        show: true-->
-<!--                    },-->
-<!--                    shadowSize: 2-->
-<!--                },-->
-<!--                grid: {-->
-<!--                    hoverable: true,-->
-<!--                    clickable: true,-->
-<!--                    tickColor: "#f0f0f0",-->
-<!--                    borderWidth: 0-->
-<!--                },-->
-<!--                colors: ["#dddddd","#ff6b3f"],-->
-<!--                xaxis: {-->
-<!--                    ticks:dateLabel-->
-<!--                },-->
-<!--                yaxis: {-->
-<!--                    ticks: 10,-->
-<!--                    tickDecimals: 0-->
-<!--                },-->
-<!--                tooltip: true,-->
-<!--                tooltipOpts: {-->
-<!--                    content: "'%s' of %x.1 is %y.4",-->
-<!--                    defaultTheme: false,-->
-<!--                    shifts: {-->
-<!--                        x: 0,-->
-<!--                        y: 20-->
-<!--                    }-->
-<!--                }-->
-<!--            }-->
-<!--        );-->
-<!--    </script>-->
+    <!--    <section class="panel panel-default">-->
+    <!--        <header class="panel-heading font-bold">-->
+    <!--            График остатков на лицевых счетах за заданный период !!!!!!!!!!!!!!!-->
+    <!--        </header>-->
+    <!--        <div class="panel-body">-->
+    <!--            <div id="flot-balances-personal-accounts" class="height250"></div>-->
+    <!--        </div>-->
+    <!--    </section>-->
+    <!--    <script type="text/javascript">-->
+    <!---->
+    <!--        var arrayBalancesPersonalAccounts = [-->
+    <!--            [0, 2.4],-->
+    <!--            [1, 3.4 ],-->
+    <!--            [2, 4.5 ]-->
+    <!---->
+    <!--        ];-->
+    <!--        var arrayOrderedForWithdrawal = [-->
+    <!--            [0, 1.5],-->
+    <!--            [1, 1 ],-->
+    <!--            [2, 2.5 ]-->
+    <!---->
+    <!--        ];-->
+    <!---->
+    <!--        $("#flot-balances-personal-accounts").length && $.plot($("#flot-balances-personal-accounts"), [{-->
+    <!--                data: arrayBalancesPersonalAccounts,-->
+    <!--                label: 'На балансе'-->
+    <!--            }, {-->
+    <!--                data: arrayOrderedForWithdrawal,-->
+    <!--                label: 'Заказано на вывод'-->
+    <!--            }],-->
+    <!--            {-->
+    <!--                series: {-->
+    <!--                    lines: {-->
+    <!--                        show: true,-->
+    <!--                        lineWidth: 1,-->
+    <!--                        fill: true,-->
+    <!--                        fillColor: {-->
+    <!--                            colors: [{-->
+    <!--                                opacity: 0.2-->
+    <!--                            }, {-->
+    <!--                                opacity: 0.1-->
+    <!--                            }]-->
+    <!--                        }-->
+    <!--                    },-->
+    <!--                    points: {-->
+    <!--                        show: true-->
+    <!--                    },-->
+    <!--                    shadowSize: 2-->
+    <!--                },-->
+    <!--                grid: {-->
+    <!--                    hoverable: true,-->
+    <!--                    clickable: true,-->
+    <!--                    tickColor: "#f0f0f0",-->
+    <!--                    borderWidth: 0-->
+    <!--                },-->
+    <!--                colors: ["#dddddd","#ff6b3f"],-->
+    <!--                xaxis: {-->
+    <!--                    ticks:dateLabel-->
+    <!--                },-->
+    <!--                yaxis: {-->
+    <!--                    ticks: 10,-->
+    <!--                    tickDecimals: 0-->
+    <!--                },-->
+    <!--                tooltip: true,-->
+    <!--                tooltipOpts: {-->
+    <!--                    content: "'%s' of %x.1 is %y.4",-->
+    <!--                    defaultTheme: false,-->
+    <!--                    shifts: {-->
+    <!--                        x: 0,-->
+    <!--                        y: 20-->
+    <!--                    }-->
+    <!--                }-->
+    <!--            }-->
+    <!--        );-->
+    <!--    </script>-->
 
     <section class="panel panel-default">
         <div class="row m-l-none m-r-none bg-light lter">
@@ -734,16 +734,16 @@ HTML;
         <div class="table-responsive panel-body">
             <table class="table table-translations table-striped datagrid m-b-sm tableTradeTurnover">
                 <thead>
-                    <tr>
-                        <th>код товара</th>
-                        <th><?=THelper::t('name_product')?></th>
-                        <th><?=THelper::t('Price')?></th>
-                        <th><?=THelper::t('sold_PCs')?></th>
-                        <th><?=THelper::t('turnover')?></th>
-                    </tr>
+                <tr>
+                    <th>код товара</th>
+                    <th><?=THelper::t('name_product')?></th>
+                    <th><?=THelper::t('Price')?></th>
+                    <th><?=THelper::t('sold_PCs')?></th>
+                    <th><?=THelper::t('turnover')?></th>
+                </tr>
                 </thead>
                 <tbody>
-                    <?php if(!empty($statisticInfo['tradeTurnover']['listProduct'])){?>
+                <?php if(!empty($statisticInfo['tradeTurnover']['listProduct'])){?>
                     <?php foreach ($statisticInfo['tradeTurnover']['listProduct'] as $k=>$item) {?>
                         <tr>
                             <td><?=$k;?></td>
@@ -753,7 +753,7 @@ HTML;
                             <td><?=($item['price'] * $item['count']);?></td>
                         </tr>
                     <?php } ?>
-                    <?php } ?>
+                <?php } ?>
                 </tbody>
             </table>
         </div>
@@ -766,7 +766,7 @@ HTML;
         });
     </script>
 
-    
+
     <section class="panel panel-default">
         <header class="panel-heading font-bold">
             Таблица максимальных чеков за заданный перод
@@ -784,30 +784,30 @@ HTML;
                 </thead>
                 <tbody>
                 <?php if(!empty($statisticInfo['tradeTurnover']['forUser'])){?>
-                <?php foreach ($statisticInfo['tradeTurnover']['forUser'] as $k=>$item) {?>
+                    <?php foreach ($statisticInfo['tradeTurnover']['forUser'] as $k=>$item) {?>
                         <?php $infoUser = Users::findOne(['_id'=>new \MongoDB\BSON\ObjectID($k)]);?>
-                    <tr>
-                        <td><?=$infoUser->username?></td>
-                        <td>
-                            <?=(!empty($infoUser->secondName) ? $infoUser->secondName : ''); ?>
-                            <?=(!empty($infoUser->firstName) ? $infoUser->firstName : ''); ?>
-                        </td>
-                        <td><?=(!empty($infoUser->email) ? $infoUser->email : '')?></td>
-                        <td><?=(!empty($infoUser->phoneNumber) ? $infoUser->phoneNumber : '')?></td>
-                        <td><?=$item?></td>
-                    </tr>
-                <?php } ?>
+                        <tr>
+                            <td><?=$infoUser->username?></td>
+                            <td>
+                                <?=(!empty($infoUser->secondName) ? $infoUser->secondName : ''); ?>
+                                <?=(!empty($infoUser->firstName) ? $infoUser->firstName : ''); ?>
+                            </td>
+                            <td><?=(!empty($infoUser->email) ? $infoUser->email : '')?></td>
+                            <td><?=(!empty($infoUser->phoneNumber) ? $infoUser->phoneNumber : '')?></td>
+                            <td><?=$item?></td>
+                        </tr>
+                    <?php } ?>
                 <?php } ?>
                 </tbody>
             </table>
         </div>
     </section>
     <script type="text/javascript">
-    $('.tableMaxCheck').dataTable({
-        language: TRANSLATION,
-        lengthMenu: [ 25, 50, 75, 100 ],
-        "order": [[ 4, "desc" ]]
-    });
+        $('.tableMaxCheck').dataTable({
+            language: TRANSLATION,
+            lengthMenu: [ 25, 50, 75, 100 ],
+            "order": [[ 4, "desc" ]]
+        });
     </script>
-    
-    <?php } ?>
+
+<?php } ?>

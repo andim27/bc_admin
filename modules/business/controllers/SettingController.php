@@ -60,11 +60,11 @@ class SettingController extends BaseController {
 
         if ($request->isPost && $translationForm->load($request->post())) {
 
-            $checkResult = api\Lang::get($translationForm->countryId, $translationForm->stringId);
+            $checkResult = Langs::find()->where(['countryId' => $translationForm->countryId, 'stringId' => $translationForm->stringId])->one();
 
             THelper::clearCache($translationForm->countryId, $translationForm->stringId);
 
-            if ($checkResult) {
+            if (!is_null($checkResult)) {
                 $result = api\Lang::update(
                     $translationForm->id,
                     $translationForm->countryId,
