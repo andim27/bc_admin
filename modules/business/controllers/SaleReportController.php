@@ -2,6 +2,7 @@
 
 namespace app\modules\business\controllers;
 
+use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api;
 use app\models\PartsAccessoriesInWarehouse;
@@ -1011,5 +1012,84 @@ class SaleReportController extends BaseController
 
         die();
 
+    }
+    
+    public function actionReportProjectVipcoin(){
+
+        $allListCountry = Settings::getListCountry();
+        $totatPrice = 0;
+        $infoSale = [];
+        $listCountry = [];
+        $listCity = [];
+
+        $request =  Yii::$app->request->post();
+
+
+        if(empty($request)){
+            $request['to']=date("Y-m-d");
+            $date = strtotime('-3 month', strtotime($request['to']));
+            $request['from'] = date('Y-m-d', $date);
+        }
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime(strtotime($request['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere([
+                'productType' => [
+                    '$in' => [9,10]
+                ]
+            ])
+            ->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+
+                $listCountry[$item->infoUser->country] = $allListCountry[$item->infoUser->country];
+
+                if(empty($request['countryReport']) || ($request['countryReport']==$item->infoUser->country)){
+                    $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
+                    $listCity[$city] = $city;
+
+                    if(empty($request['cityReport']) || in_array($city,$request['cityReport'])){
+                        $infoSale[] = [
+                            'dateCreate' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
+                            'userCountry'=>$allListCountry[$item->infoUser->country],
+                            'userCity'=>$city,
+                            'userAddress'=>$item->infoUser->address,
+                            'userName'=>$item->infoUser->secondName .' ' . $item->infoUser->firstName,
+                            'userPhone'=>$item->infoUser->phoneNumber . ' / ' . $item->infoUser->phoneNumber2,
+                            'productName' => $item->productName,
+                            'productPrice' => $item->price
+                        ];
+
+                        $totatPrice += $item->price;
+                    }
+                }
+
+
+            }
+
+            asort($listCountry);
+            asort($listCity);
+        }
+       
+
+        return $this->render('report-project-vipcoin',[
+                'language' => Yii::$app->language,
+                'request' => $request,
+                'totatPrice' => $totatPrice,
+                'infoSale' => $infoSale,
+                'listCountry' => $listCountry,
+                'listCity' => $listCity
+            ]
+        );
     }
 }
