@@ -27,9 +27,7 @@ use yii\bootstrap\Html;
             'separator' => '-',
             'pluginOptions' => [
                 'autoclose' => true,
-                'format' => 'yyyy-mm',
-                'startView'=>'year',
-                'minViewMode'=>'months',
+                'format' => 'yyyy-mm-dd'
             ]
         ]); ?>    
     </div>
