@@ -216,15 +216,21 @@ class SaleController extends BaseController {
                 if($modelStatusSales->save()){}
 
                 /** add repair goods in warehouse */
-                $modelRepairGoodsInWarehouse = PartsAccessoriesInWarehouse::findOne(['parts_accessories_id'=>$infoProductForRepair->_id]);
+                $modelRepairGoodsInWarehouse = PartsAccessoriesInWarehouse::findOne([
+                    'parts_accessories_id'=>$infoProductForRepair->_id,
+                    'warehouse_id'        =>new ObjectID($idWarehouse)
+                ]);
                 if(empty($modelRepairGoodsInWarehouse)){
                     $modelRepairGoodsInWarehouse = new PartsAccessoriesInWarehouse();
                     $modelRepairGoodsInWarehouse->parts_accessories_id = $infoProductForRepair->_id;
                     $modelRepairGoodsInWarehouse->warehouse_id = new ObjectID($idWarehouse);
                     $modelRepairGoodsInWarehouse->number = (int)0;
+                } else {
 
                 }
+
                 $modelRepairGoodsInWarehouse->number++;
+
                 if($modelRepairGoodsInWarehouse->save()){
                     // add log
                     LogWarehouse::setInfoLog([
