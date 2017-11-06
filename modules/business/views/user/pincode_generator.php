@@ -1,0 +1,151 @@
+<?php
+    use app\components\THelper;
+    use yii\helpers\Html;
+    use yii\bootstrap\ActiveForm;
+?>
+<div class="m-b-md">
+    <h3 class="m-b-none"><?= THelper::t('pincode_generate_title') ?></h3>
+</div>
+<div class="row">
+    <section class="panel panel-default" style="width: 50%">
+        <?php $form = ActiveForm::begin(['id' => $model->formName(), 'enableAjaxValidation' => true]); ?>
+            <div class="col-md-12">
+                <?= $form->field($model, 'pin')->label(THelper::t('pin')) ?>
+            </div>
+
+            <div class="col-md-12">
+                <?php $model->product = $defaultProduct?>
+
+                <?= $form->field($model, 'product')->dropDownList($productList, [
+                    'class' => 'form-control',
+                    'id' => 'product-list',
+                    'prompt' => THelper::t('user_purchase_add_select_product')
+                ])->label(THelper::t('product')); ?>
+
+                <br>
+            </div>
+
+            <div class="col-md-12" style="margin-bottom: 15px;">
+               <div>
+                   <?php $productData = $productListData[$defaultProduct]; ?>
+
+                   <?=THelper::t('price')?>: <strong><span id="price"><?=$productData['price']?></span></strong>
+                   <?=THelper::t('points')?>: <strong><span id="bonus-points"><?=$productData['bonusPoints']?></span></strong>
+               </div>
+            </div>
+
+            <div class="col-md-12">
+                <?= $form->field($model, 'quantity')->textInput(['value' => 1])->label(THelper::t('quantity')) ?>
+            </div>
+
+            <?php if ($pincode) { ?>
+                <div class="col-md-11">
+                    <div id="pincode" class="well"><?=$pincode?></div>
+                    <input type="hidden" id="hidden-pincode" value="<?=$pincode?>">
+                </div>
+
+                <div class="col-md-1" style="padding: 15px 0px;">
+                    <button id="copy-to-clipboard" title="<?=THelper::t('copy_to_clipboard')?>"><i class="fa fa-files-o" aria-hidden="true"></i></button>
+                </div>
+            <?php } ?>
+
+            <div class="col-md-12">
+                <div class="checkbox">
+                    <?= $form->field($model, 'isLogin')->checkbox(['id' => 'is-login', 'label' => THelper::t('direct_replenishment')]); ?>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <?= $form->field($model, 'partnerLogin')->textInput(['id' => 'login', 'disabled' => true])->label(THelper::t('login')) ?>
+            </div>
+
+            <div class="col-md-12">
+                <?= Html::submitButton(THelper::t('apply'), array('class' => 'btn btn-s-md btn-success')); ?>
+            </div>
+
+
+        <?php ActiveForm::end(); ?>
+
+    </section>
+</div>
+<br>
+<script>
+    var $productList = $('#product-list');
+    var $isLogin = $('#is-login');
+    var $login = $('#login');
+    var $price = $('#price');
+    var $bonusPoints = $('#bonus-points');
+    var $copyToClipboard = $('#copy-to-clipboard');
+    var $hiddenPincode = $('#hidden-pincode');
+    var $form = $('#<?=$model->formName()?>');
+
+    var productsData = <?=json_encode($productListData)?>;
+
+
+    /**
+     * Handlers
+     */
+    $(document).ready(function () {
+        switchLoginField();
+        clearFields();
+    });
+
+    $isLogin.on('change', function () {
+        switchLoginField();
+    });
+
+    $productList.on('change', function () {
+        loadProductData($(this).val());
+    });
+
+    $copyToClipboard.on('click', function (e) {
+        e.preventDefault();
+        var pinCode = $hiddenPincode.val();
+
+        if(copyToClipboard(pinCode)) {
+            alert('<?=THelper::t('text_copied_to_clipboard')?>: ' + pinCode);
+        }
+    });
+
+
+    /**
+     *  Functions
+     */
+    function switchLoginField() {
+        $login.attr('disabled', !$isLogin.is(':checked'));
+    }
+
+    function loadProductData($productId) {
+        var product = productsData[$productId];
+
+        $price.text(product.price);
+        $bonusPoints.text(product.bonusPoints);
+    }
+
+    function clearFields(){
+        $form.find('input[name="<?=$model->formName()?>[pin]"]').val('');
+        $form.find('input[name="<?=$model->formName()?>[partnerLogin]"]').val('');
+    }
+
+    function copyToClipboard(text) {
+        if (window.clipboardData && window.clipboardData.setData) {
+            // IE specific code path to prevent textarea being shown while dialog is visible.
+            return clipboardData.setData("Text", text);
+
+        } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+            var textarea = document.createElement("textarea");
+            textarea.textContent = text;
+            textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+            } catch (ex) {
+                console.warn("Copy to clipboard failed.", ex);
+                return false;
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    }
+</script>
