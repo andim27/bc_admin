@@ -3,8 +3,10 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use app\components\THelper;
-use app\models\SuppliersPerformers;
+
 use app\models\PartsAccessories;
+use app\models\SuppliersPerformers;
+
 
 $listGoods = PartsAccessories::getListPartsAccessories();
 $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
@@ -26,7 +28,6 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 ]); ?>
 
                 <?=Html::hiddenInput('_id',(string)$model->_id);?>
-
                 <?=Html::hiddenInput('',$model->fullname_whom_transferred,['class'=>'fullnameWhomTransferred']);?>
                 <?=Html::hiddenInput('',$model->date_execution->toDateTime()->format('Y-m-d H:i:s'),['class'=>'dateExecution']);?>
                 <?=Html::hiddenInput('',$listSuppliers[(string)$model->suppliers_performers_id],['class'=>'SuppliersPerformers']);?>
@@ -74,32 +75,32 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                                     </div>
                                     <?php foreach($list_component as $items){ ?>
                                         <?php if(count($items)>1){ ?>
-                                        <div class="panel panel-default blInterchangeable">
-                                            <div class="panel-body">
-                                                <div class="infoDangerExecution"></div>
+                                            <div class="panel panel-default blInterchangeable">
+                                                <div class="panel-body">
+                                                    <div class="infoDangerExecution"></div>
 
-                                                <?php foreach($items as $k=>$item){ ?>
-                                                <div class="form-group row">
-                                                    <div class="col-md-7">
-                                                        <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <?=Html::hiddenInput('number_for_one',$item['number'],['class'=>'needForOne'])?>
-                                                        <?=Html::input('text','',($item['number_use']),['class'=>'form-control needSend','disabled'=>'disabled']);?>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <?=Html::input('text','',!empty($item['use_for_received']) ? $item['use_for_received'] : 0,['class'=>'form-control alreadyUse','disabled'=>'disabled']);?>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <?=Html::input('text','need_use['.(string)$item['parts_accessories_id'].']','0',['class'=>'form-control needUse','disabled'=>($item['number_use']=='0' ? true : false)]);?>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <?=Html::input('text','',$item['reserve'],['class'=>'form-control partNeedReserve','disabled'=>'disabled']);?>
-                                                    </div>
+                                                    <?php foreach($items as $k=>$item){ ?>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-7">
+                                                                <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <?=Html::hiddenInput('number_for_one',$item['number'],['class'=>'needForOne'])?>
+                                                                <?=Html::input('text','',($item['number_use']),['class'=>'form-control needSend','disabled'=>'disabled']);?>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <?=Html::input('text','',!empty($item['use_for_received']) ? $item['use_for_received'] : 0,['class'=>'form-control alreadyUse','disabled'=>'disabled']);?>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <?=Html::input('text','need_use['.(string)$item['parts_accessories_id'].']','0',['class'=>'form-control needUse','disabled'=>($item['number_use']=='0' ? true : false)]);?>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <?=Html::input('text','',$item['reserve'],['class'=>'form-control partNeedReserve','disabled'=>'disabled']);?>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
                                                 </div>
-                                                <?php } ?>
                                             </div>
-                                        </div>
                                         <?php } else {?>
                                             <?php $item=$items['0']; ?>
                                             <div class="form-group row">
@@ -127,7 +128,6 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                     </div>
                     <div class="col-md-6 text-right">
                         <?= Html::button(THelper::t('print'), ['class' => 'btn btn-success btnPrint','type'=>'button']) ?>
-
                         <?= Html::submitButton(THelper::t('posting'), ['class' => 'btn btn-success assemblyBtn']) ?>
                     </div>
                 </div>
@@ -207,7 +207,6 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
         });
     });
 
-
     function checkBeforeSend(){
         answer = checkWantCan();
         if(answer == 1){
@@ -269,10 +268,14 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 }
                 needUseInterchangeable += 1 *(wantUse/needForOne).toFixed(2);
 
+
             });
 
             if(needPosting!=needUseInterchangeable){
                 answer = 0;
+
+                console.log(needPosting +'!='+ needUseInterchangeable);
+
                 $(this).closest('.blInterchangeable').find(".infoDangerExecution").html(
                     '<div class="alert alert-danger fade in">' +
                     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +

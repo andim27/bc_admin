@@ -403,6 +403,13 @@ Class Menu
                         'url' => ['offsets-with-warehouses/offsets-with-representative'],
                         'action' => 'offsets-with-representative',
                     ],
+
+                    [
+                        'key'   =>  'sidebar_report_project_vipcoin',
+                        'label' => THelper::t('sidebar_report_project_vipcoin'),
+                        'url' => ['sale-report/report-project-vipcoin'],
+                        'action' => 'report-project-vipcoin',
+                    ],
                 ]
             ],
 
