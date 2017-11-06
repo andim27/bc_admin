@@ -238,7 +238,8 @@ class PartsAccessoriesInWarehouseController extends BaseController {
             $dateInterval['from'] =  $request['from'];
         } else {
             $dateInterval['to'] = date("Y-m-d");
-            $dateInterval['from'] = date("Y-01-01");
+            $date = strtotime('-1 month', strtotime($dateInterval['to']));
+            $dateInterval['from'] = date('Y-m-d', $date);
         }
 
         $model = LogWarehouse::find()

@@ -75,9 +75,18 @@ class DefaultController extends BaseController
             //Приход ваучерами по программе vipcoin
             'receiptVoucher_VipCoin'        => 0,
             //Приход ваучерами по программе Wellness
-            'receiptVoucher_Wellness'     => 0,
+            'receiptVoucher_Wellness'       => 0,
             //Приход ваучерами по программе VipVip
-            'receiptVoucher_VipVip'   => 0,
+            'receiptVoucher_VipVip'         => 0,
+
+            // отмена за ваучеры
+            'cancellationVoucher'                => 0,
+            //отмена ваучерами по программе vipcoin
+            'cancellationVoucher_VipCoin'        => 0,
+            //отмена ваучерами по программе Wellness
+            'cancellationVoucher_Wellness'       => 0,
+            //отмена ваучерами по программе VipVip
+            'cancellationVoucher_VipVip'         => 0,
 
             // на лицевых считах
             'onPersonalAccounts'            => 0,
@@ -216,6 +225,7 @@ class DefaultController extends BaseController
             }
         }
 
+        // приходы по pin
         foreach ($arrayQuery as $k=>$item){
             $statisticInfo['receiptVoucher_'.$k] = Transaction::find()
                 ->select(['amount'])
@@ -231,13 +241,25 @@ class DefaultController extends BaseController
             $statisticInfo['receiptVoucher'] += $statisticInfo['receiptVoucher_'.$k];
         }
 
-//        $model = Pins::find()->where(['isDelete'=>true])->all();
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo "<xmp>";
-//        print_r(count($model));
-//        echo "</xmp>";
-//        die();
+        // отмены по pin
+        $model = Pins::find()->where([
+            'dateCreate' => [
+                '$gte' => new UTCDatetime($queryDateFrom),
+                '$lte' => new UTCDateTime($queryDateTo)
+            ],
+            'isDelete' => true
+        ])->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $infoPin = api\Pin::checkPin($item->pin);
 
+                if(!empty($typeProject[$infoPin->type])){
+                    $statisticInfo['cancellationVoucher_'.$typeProject[$infoPin->type]] += $infoPin->price;
+                    $statisticInfo['cancellationVoucher'] += $infoPin->price;
+                }
+
+            }
+        }
 
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['firstPurchase'])
@@ -297,7 +319,7 @@ class DefaultController extends BaseController
                         'forWhat' => [
                             '$regex' => 'For stocks'
                         ]
-                    ],
+                    ]
                 ]
             ])
             ->all();
@@ -318,10 +340,62 @@ class DefaultController extends BaseController
                     $statisticInfo['tradeTurnover']['forUser'][(string)$item['idTo']] = 0;
                 }
                 $statisticInfo['tradeTurnover']['forUser'][(string)$item['idTo']] += $item['amount'];
+
+
+
             }
+
+        }
+
+
+        // отмены транзакций
+        $model = (new \yii\mongodb\Query())
+            ->select(['amount','dateCreate', 'forWhat', 'idTo','idFrom'])
+            ->from('transactions')
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('000000000000000000000001')
+                ],
+                'type'=>1,
+            ])
+            ->andWhere([
+                '$or' =>[
+                    [
+                        'forWhat' => [
+                            '$regex' => 'Cancellation purchase for a partner'
+                        ]
+                    ]
+                ]
+            ])
+            ->all();
+
+
+        if(!empty($model)) {
+            foreach ($model as $item) {
+                $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
+
+                if (empty($statisticInfo['feesCommissionMonth'][$dateCreate])) {
+                    $statisticInfo['feesCommissionMonth'][$dateCreate] = 0;
+                }
+                $statisticInfo['feesCommissionMonth'][$dateCreate] -= $item['amount'];
+                $statisticInfo['feesCommission'] -= $item['amount'];
+
+                // собираем информацию для формирования максимального чека
+                if(empty($statisticInfo['tradeTurnover']['forUser'][(string)$item['idFrom']])){
+                    $statisticInfo['tradeTurnover']['forUser'][(string)$item['idFrom']] = 0;
+                }
+                $statisticInfo['tradeTurnover']['forUser'][(string)$item['idFrom']] -= $item['amount'];
+
+            }
+        }
+
+        if(!empty($statisticInfo['tradeTurnover']['forUser'])){
             arsort($statisticInfo['tradeTurnover']['forUser']);
             $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,10);
-
 
         }
 

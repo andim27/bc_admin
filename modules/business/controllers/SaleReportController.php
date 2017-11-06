@@ -1016,6 +1016,9 @@ class SaleReportController extends BaseController
     
     public function actionReportProjectVipcoin(){
 
+
+        $infoWarehouse = Warehouse::getInfoWarehouse();
+
         $allListCountry = Settings::getListCountry();
         $totatPrice = 0;
         $infoSale = [];
@@ -1024,11 +1027,14 @@ class SaleReportController extends BaseController
 
         $request =  Yii::$app->request->post();
 
-
         if(empty($request)){
             $request['to']=date("Y-m-d");
             $date = strtotime('-3 month', strtotime($request['to']));
             $request['from'] = date('Y-m-d', $date);
+        } else {
+            if((string)$infoWarehouse->_id != '592426f6dca7872e64095b45' ){
+                $request['countryReport'] = $infoWarehouse->country;
+            }
         }
 
         $model = Sales::find()

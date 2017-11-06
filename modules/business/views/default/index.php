@@ -177,7 +177,7 @@ HTML;
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher'])), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']+$statisticInfo['cancellationVoucher'])), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход деньгами</small>
                 </a>
             </div>
@@ -188,7 +188,7 @@ HTML;
                     <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher']-$statisticInfo['cancellationVoucher']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход ваучерами</small>
                 </a>
             </div>
@@ -215,7 +215,7 @@ HTML;
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney_Wellness']-$statisticInfo['receiptVoucher_Wellness'])), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney_Wellness']-$statisticInfo['receiptVoucher_Wellness']+$statisticInfo['cancellationVoucher_Wellness'])), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход деньгами по проекту Wellness</small>
                 </a>
             </div>
@@ -226,7 +226,7 @@ HTML;
                     <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_Wellness']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_Wellness']-$statisticInfo['cancellationVoucher_Wellness']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход ваучерами по проекту Wellness</small>
                 </a>
             </div>
@@ -253,7 +253,7 @@ HTML;
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney_VipVip']-$statisticInfo['receiptVoucher_VipVip'])), 0, ',', ' ');?>  <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney_VipVip']-$statisticInfo['receiptVoucher_VipVip']+$statisticInfo['cancellationVoucher_VipVip'])), 0, ',', ' ');?>  <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход деньгами по проекту VipVip</small>
                 </a>
             </div>
@@ -264,7 +264,7 @@ HTML;
                     <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_VipVip']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_VipVip']-$statisticInfo['cancellationVoucher_VipVip']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход ваучерами по проекту VipVip</small>
                 </a>
             </div>
@@ -291,7 +291,7 @@ HTML;
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney_VipCoin']-$statisticInfo['receiptVoucher_VipCoin'])), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney_VipCoin']-$statisticInfo['receiptVoucher_VipCoin']+$statisticInfo['cancellationVoucher_VipCoin'])), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход деньгами по проекту VipCoin</small>
                 </a>
             </div>
@@ -302,7 +302,7 @@ HTML;
                     <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_VipCoin']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_VipCoin']-$statisticInfo['cancellationVoucher_VipCoin']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход ваучерами по проекту VipCoin</small>
                 </a>
             </div>
@@ -787,7 +787,7 @@ HTML;
                     <?php foreach ($statisticInfo['tradeTurnover']['forUser'] as $k=>$item) {?>
                         <?php $infoUser = Users::findOne(['_id'=>new \MongoDB\BSON\ObjectID($k)]);?>
                         <tr>
-                            <td><?=$infoUser->username?></td>
+                            <td><?=(!empty($infoUser->username) ? $infoUser->username : $k)?></td>
                             <td>
                                 <?=(!empty($infoUser->secondName) ? $infoUser->secondName : ''); ?>
                                 <?=(!empty($infoUser->firstName) ? $infoUser->firstName : ''); ?>
