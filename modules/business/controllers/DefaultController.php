@@ -183,9 +183,6 @@ class DefaultController extends BaseController
                 ],
                 'productType'=>['$nin'=>[0,4]],
                 'product'=>['$ne'=>'0'],
-
-                //'product'=>['$nin'=>['0','6','7','8','9','10','11','12','13','14','28','29','30','31','32','33','34']],
-
                 'username' =>[
                     '$ne'=>'main'
                 ]
@@ -250,13 +247,20 @@ class DefaultController extends BaseController
                 '$gte' => new UTCDatetime($queryDateFrom),
                 '$lte' => new UTCDateTime($queryDateTo)
             ],
-            'isDelete' => true
+            '$or' => [
+                ['isDelete' => true],
+                [
+                    //'used'=>true,
+                    'userId'=>new ObjectId('573a0d76965dd0fb16f60bfe')
+                ]
+            ]
         ])->all();
+
         if(!empty($model)){
             foreach ($model as $item) {
                 $infoPin = api\Pin::checkPin($item->pin);
 
-                if(!empty($typeProject[$infoPin->type])){
+                if(!empty($infoPin->type) && !empty($typeProject[$infoPin->type])){
                     $statisticInfo['cancellationVoucher_'.$typeProject[$infoPin->type]] += $infoPin->price;
                     $statisticInfo['cancellationVoucher'] += $infoPin->price;
                 }

@@ -504,7 +504,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['feesCommission']-$statisticInfo['issuedCommission'])),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Не выдано</small>
+                    <small class="text-muted text-uc capsLock">Выдано паками и товарами</small>
                 </a>
             </div>
         </div>
