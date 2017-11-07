@@ -193,6 +193,12 @@ Class Menu
                         'url' => ['/business/setting/whitelabel'],
                         'action' => 'whitelabel',
                     ],
+                    [
+                        'key'   =>  'sidebar_notifications',
+                        'label' => THelper::t('sidebar_notifications'),
+                        'url' => '/business/notification/index',
+                        'action' => 'notification',
+                    ],
                 ]
             ],
             [
@@ -250,6 +256,12 @@ Class Menu
                         'label' => THelper::t('sidebar_users_commission'),
                         'url' => ['/business/user/commission'],
                         'action' => 'commission',
+                    ],
+                    [
+                        'key'   =>  'sidebar_pincode_generator',
+                        'label' => THelper::t('sidebar_pincode_generator'),
+                        'url' => ['/business/user/pincode-generator'],
+                        'action' => 'pincode-generator',
                     ],
                 ]
             ],

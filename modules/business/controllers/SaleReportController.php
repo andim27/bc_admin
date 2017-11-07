@@ -18,7 +18,7 @@ use Yii;
 use yii\helpers\ArrayHelper;
 
 
-class SaleReportController extends BaseController 
+class SaleReportController extends BaseController
 {
     /**
      * report not issued goods for client
@@ -150,7 +150,7 @@ class SaleReportController extends BaseController
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
-    
+
     public function actionChangeWarehouse()
     {
         $request = Yii::$app->request->get();
@@ -171,7 +171,7 @@ class SaleReportController extends BaseController
             'info' => $info,
         ]);
     }
-    
+
     public function actionSaveChangeWarehouse(){
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert' => 'danger',
@@ -201,7 +201,7 @@ class SaleReportController extends BaseController
 
         return $this->redirect('/' . Yii::$app->language .'/business/sale-report/info-wait-sale-by-user');
     }
-    
+
     public function actionInfoSaleForCountry()
     {
         $listGoodsWithKey = Products::getListGoodsWithKey();
@@ -211,7 +211,7 @@ class SaleReportController extends BaseController
         if(empty($request['send_kh'])){
             $request['send_kh'] = 0;
         }
-        
+
         if(empty($request['flGoods'])){
             if(empty($request['listGoods'])){
                 $request['listGoods'] = 'all';
@@ -298,7 +298,7 @@ class SaleReportController extends BaseController
 
                         $infoSale[$country][$item->productName]['all']++;
                     }
-                /** GOODS */
+                    /** GOODS */
                 } else {
                     foreach ($item->statusSale->set as $itemSet){
 
@@ -349,7 +349,7 @@ class SaleReportController extends BaseController
             $modelSending = SendingWaitingParcel::find()
                 ->where(['is_posting' => (int)0])
                 ->orWhere(['is_posting' => (string)0]);
-            
+
             if($request['send_kh']==1){
                 $modelSending = $modelSending->andWhere(['from_where_send'=>'592426f6dca7872e64095b45'])->all();
             } else {
@@ -425,7 +425,7 @@ class SaleReportController extends BaseController
             'request'       =>   $request
         ]);
     }
-    
+
     public function actionInfoSaleForCountryWarehouse()
     {
         $listCountry = Settings::getListCountry();
@@ -590,8 +590,8 @@ class SaleReportController extends BaseController
 
             }
         }
-        
-        
+
+
         if(!empty($request['listGoods'])) {
 
             $selectWarehouseKh = [];
@@ -603,7 +603,7 @@ class SaleReportController extends BaseController
             $modelSending = SendingWaitingParcel::find()
                 ->where(['is_posting' => (int)0])
                 ->orWhere(['is_posting' => (string)0]);
-            
+
             if($request['send_kh']==1){
                 $modelSending = $modelSending->andWhere(['from_where_send'=>'592426f6dca7872e64095b45'])->all();
             } else {
@@ -675,9 +675,9 @@ class SaleReportController extends BaseController
                     }
                 }
             }
-            
+
         }
-      
+
         asort($listCountryWarehouse);
 
         return $this->render('info-sale-for-country-warehouse',[
@@ -950,7 +950,7 @@ class SaleReportController extends BaseController
             'repair'    => 0,
             'margin'    => 0,
         ];
-        
+
         $infoExport = [];
         if(!empty($infoSale)){
             foreach ($infoSale as $k=>$itemWarehouse) {
@@ -963,7 +963,7 @@ class SaleReportController extends BaseController
                         $amount['send'] += $item['send'];
                         $amount['repair'] += $item['repair'];
                         $amount['margin'] += $margin;
-                        
+
                         $infoExport[] = [
                             'country'           =>  (!empty($listCountry[$k]) ? $listCountry[$k] : 'none'),
                             'warehouse'         =>  $kWarehouse,
@@ -979,7 +979,7 @@ class SaleReportController extends BaseController
                         ];
                     }
                 }
-                
+
             }
         }
 
@@ -1013,7 +1013,7 @@ class SaleReportController extends BaseController
         die();
 
     }
-    
+
     public function actionReportProjectVipcoin(){
 
 
@@ -1086,7 +1086,7 @@ class SaleReportController extends BaseController
             asort($listCountry);
             asort($listCity);
         }
-       
+
 
         return $this->render('report-project-vipcoin',[
                 'language' => Yii::$app->language,

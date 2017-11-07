@@ -3,6 +3,9 @@
 namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
+use app\models\api\Product;
+use app\models\api\Sale;
+use app\models\api\User;
 use app\models\Langs;
 use app\models\MoneyTransfer;
 use app\models\Pins;
@@ -11,14 +14,15 @@ use app\models\Sales;
 use app\models\Transaction;
 use app\models\Users;
 use app\modules\business\models\PincodeCancelForm;
+use app\modules\business\models\PincodeGenerateForm;
 use app\modules\business\models\ProfileForm;
 use app\modules\business\models\PurchaseForm;
 use Yii;
 use app\models\api;
 use app\modules\business\models\UsersReferrals;
-use app\models\User;
 use yii\base\Object;
 use yii\data\Pagination;
+use yii\helpers\Url;
 use yii\web\Response;
 use yii\helpers\Html;
 use app\components\THelper;
@@ -31,6 +35,7 @@ use MongoDB\BSON\UTCDatetime;
 class UserController extends BaseController
 {
     const LIMIT = 500;
+    const DEFAULT_PRODUCT = 14;
 
     /**
      * @return string
@@ -815,4 +820,68 @@ class UserController extends BaseController
         ]);
     }
 
+    public function actionPincodeGenerator()
+    {
+        $productList = [];
+        $productListData = [];
+        $pincode = null;
+        $defaultProduct = self::DEFAULT_PRODUCT; //Пополнение счета оплаты
+        $model = new PincodeGenerateForm();
+        $request = Yii::$app->request;
+
+        if ($request->isPost && $model->load($request->post())) {
+
+            if ($request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+
+                return ActiveForm::validate($model);
+            }
+
+            if (compareShortPin($model->pin)) {
+                $pin = api\Pin::createPinForProduct($model->product, $model->quantity);
+
+                if ($model->isLogin && $pin) {
+                    $response = Sale::buy([
+                        'iduser' => api\User::get($model->partnerLogin),
+                        'pin' => $pin,
+                        'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null
+                    ]);
+
+                    if ($response === 'OK') {
+                        Yii::$app->session->setFlash('success', THelper::t('partner_payment_is_success'));
+                    } else {
+                        Yii::$app->session->setFlash('danger', THelper::t('partner_payment_is_unsuccessful')
+                            . ' ' . '<span style="display:none;">' . $response . '</span>');
+                    }
+                }
+
+                $pincode = $pin;
+            } else {
+                Yii::$app->session->setFlash('danger', THelper::t('pin_is_incorrect'));
+            }
+        }
+
+        foreach (Product::all() as $product) {
+            $productList[$product->product] = $product->productName;
+            $productListData[$product->product] = [
+                'price' => $product->price,
+                'bonusPoints' => $product->bonusPoints
+            ];
+        }
+
+        return $this->render('pincode_generator', [
+            'model' => $model,
+            'productList' => $productList,
+            'productListData' => $productListData,
+            'defaultProduct' => $defaultProduct,
+            'pincode' => !empty($pincode) ? $pincode : null
+        ]);
+    }
+
+}
+
+function compareShortPin($pin){
+    //@todo algorithm
+
+    return $pin === '1234';
 }

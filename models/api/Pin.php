@@ -8,12 +8,13 @@ class Pin {
 
     /**
      * @param $idInMarket
-     * @param $userId
+     * @param int $qty
      * @return mixed
+     * @internal param $userId
      */
-    public static function createPinForProduct($idInMarket)
+    public static function createPinForProduct($idInMarket, $qty = 1)
     {
-        $apiClient = new ApiClient('system/pin/' . $idInMarket . '&1');
+        $apiClient = new ApiClient('system/pin/' . $idInMarket . '&' . $qty);
 
         $response = $apiClient->get();
 

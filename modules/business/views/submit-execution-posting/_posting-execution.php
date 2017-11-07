@@ -75,32 +75,32 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                                     </div>
                                     <?php foreach($list_component as $items){ ?>
                                         <?php if(count($items)>1){ ?>
-                                        <div class="panel panel-default blInterchangeable">
-                                            <div class="panel-body">
-                                                <div class="infoDangerExecution"></div>
+                                            <div class="panel panel-default blInterchangeable">
+                                                <div class="panel-body">
+                                                    <div class="infoDangerExecution"></div>
 
-                                                <?php foreach($items as $k=>$item){ ?>
-                                                <div class="form-group row">
-                                                    <div class="col-md-7">
-                                                        <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <?=Html::hiddenInput('number_for_one',$item['number'],['class'=>'needForOne'])?>
-                                                        <?=Html::input('text','',($item['number_use']),['class'=>'form-control needSend','disabled'=>'disabled']);?>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <?=Html::input('text','',!empty($item['use_for_received']) ? $item['use_for_received'] : 0,['class'=>'form-control alreadyUse','disabled'=>'disabled']);?>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <?=Html::input('text','need_use['.(string)$item['parts_accessories_id'].']','0',['class'=>'form-control needUse','disabled'=>($item['number_use']=='0' ? true : false)]);?>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <?=Html::input('text','',$item['reserve'],['class'=>'form-control partNeedReserve','disabled'=>'disabled']);?>
-                                                    </div>
+                                                    <?php foreach($items as $k=>$item){ ?>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-7">
+                                                                <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <?=Html::hiddenInput('number_for_one',$item['number'],['class'=>'needForOne'])?>
+                                                                <?=Html::input('text','',($item['number_use']),['class'=>'form-control needSend','disabled'=>'disabled']);?>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <?=Html::input('text','',!empty($item['use_for_received']) ? $item['use_for_received'] : 0,['class'=>'form-control alreadyUse','disabled'=>'disabled']);?>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <?=Html::input('text','need_use['.(string)$item['parts_accessories_id'].']','0',['class'=>'form-control needUse','disabled'=>($item['number_use']=='0' ? true : false)]);?>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <?=Html::input('text','',$item['reserve'],['class'=>'form-control partNeedReserve','disabled'=>'disabled']);?>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
                                                 </div>
-                                                <?php } ?>
                                             </div>
-                                        </div>
                                         <?php } else {?>
                                             <?php $item=$items['0']; ?>
                                             <div class="form-group row">
@@ -157,55 +157,55 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
     $(".btnPrint").on('click', function() {
 
         tempBl = '';
-                $(".popupPostingExecution .blPartsAccessories").find('.form-group.row').each(function () {
-                        title = $(this).find('.partTitle').val();
-                        tempBl +=
-                                '<tr>' +
-                                '<td>'+  title +
-                                '<td>'+ $(this).find('.needSend').val() +
-                                '<td>'+ $(this).find('.partNeedReserve').val();
-                    });
+        $(".popupPostingExecution .blPartsAccessories").find('.form-group.row').each(function () {
+            title = $(this).find('.partTitle').val();
+            tempBl +=
+                '<tr>' +
+                '<td>'+  title +
+                '<td>'+ $(this).find('.needSend').val() +
+                '<td>'+ $(this).find('.partNeedReserve').val();
+        });
 
-                printFile =
-                        '<table>' +
-                        '<tr>' +
-                        '<th colspan="4">Выполненная заявка на исполнение' +
-                        '<tr>' +
-                        '<td><b>Собираем<b>'+
-                        '<td colspan="3">' + $(".popupPostingExecution .modal-title span").text() +
-                        '<tr>' +
-                        '<td><b>Заказано<b>'+
-                        '<td colspan="3">' + $(".popupPostingExecution .orderingExecution").val()  + ' шт.' +
-                        '<tr>' +
-                        '<td><b>Собранно<b>'+
-                        '<td colspan="3">' + $(".popupPostingExecution .receivedExecution").val() + ' шт.' +
-                        '<tr>' +
-                        '<th colspan="4">Необходимо:' +
-                        '<tr>' +
-                        '<td> Коплектующая' +
-                        '<td> Отправленно' +
-                        '<td> Запас' +
+        printFile =
+            '<table>' +
+            '<tr>' +
+            '<th colspan="4">Выполненная заявка на исполнение' +
+            '<tr>' +
+            '<td><b>Собираем<b>'+
+            '<td colspan="3">' + $(".popupPostingExecution .modal-title span").text() +
+            '<tr>' +
+            '<td><b>Заказано<b>'+
+            '<td colspan="3">' + $(".popupPostingExecution .orderingExecution").val()  + ' шт.' +
+            '<tr>' +
+            '<td><b>Собранно<b>'+
+            '<td colspan="3">' + $(".popupPostingExecution .receivedExecution").val() + ' шт.' +
+            '<tr>' +
+            '<th colspan="4">Необходимо:' +
+            '<tr>' +
+            '<td> Коплектующая' +
+            '<td> Отправленно' +
+            '<td> Запас' +
 
-                            tempBl +
+            tempBl +
 
-                           '<tr>' +
-                        '<td><b>Кому выдано<b>'+
-                        '<td colspan="3">' + $(".popupPostingExecution .fullnameWhomTransferred").val() +
+            '<tr>' +
+            '<td><b>Кому выдано<b>'+
+            '<td colspan="3">' + $(".popupPostingExecution .fullnameWhomTransferred").val() +
 
-                            '<tr>' +
-                        '<td><b>Поставщики и исполнители<b>'+
-                        '<td colspan="3">' + $(".popupPostingExecution .SuppliersPerformers").val() +
+            '<tr>' +
+            '<td><b>Поставщики и исполнители<b>'+
+            '<td colspan="3">' + $(".popupPostingExecution .SuppliersPerformers").val() +
 
-                            '<tr>' +
-                        '<td><b>Дата исполнения<b>'+
-                        '<td colspan="3">' + $(".popupPostingExecution .dateExecution").val() +
+            '<tr>' +
+            '<td><b>Дата исполнения<b>'+
+            '<td colspan="3">' + $(".popupPostingExecution .dateExecution").val() +
 
-                            '</table>';
+            '</table>';
 
-                    $.print(printFile,{
-                            stylesheet : window.location.origin + '/css/print.css'
-                });
-            });
+        $.print(printFile,{
+            stylesheet : window.location.origin + '/css/print.css'
+        });
+    });
 
     function checkBeforeSend(){
         answer = checkWantCan();
