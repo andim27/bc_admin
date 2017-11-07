@@ -181,8 +181,9 @@ class DefaultController extends BaseController
                 'type'=>[
                     '$ne'=>-1
                 ],
-                'productType'=>['$nin'=>[0,4]],
-                'product'=>['$ne'=>'0'],
+                //'productType'=>['$nin'=>[0,4]],
+                //'product'=>['$ne'=>'0'],
+                'product'=>['$nin'=>['0','6','7','8','9','10','11','12','13','14','28','29','30','31','32','33','34']],
                 'username' =>[
                     '$ne'=>'main'
                 ]
