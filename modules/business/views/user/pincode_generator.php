@@ -7,7 +7,7 @@
     <h3 class="m-b-none"><?= THelper::t('pincode_generate_title') ?></h3>
 </div>
 <div class="row">
-    <section class="panel panel-default" style="width: 50%">
+    <section class="panel panel-default">
         <?php $form = ActiveForm::begin(['id' => $model->formName(), 'enableAjaxValidation' => true]); ?>
             <div class="col-md-12">
                 <?= $form->field($model, 'pin')->label(THelper::t('pin')) ?>
@@ -39,13 +39,12 @@
             </div>
 
             <?php if ($pincode) { ?>
-                <div class="col-md-11">
-                    <div id="pincode" class="well"><?=$pincode?></div>
+                <div class="col-md-12">
+                    <div id="pincode" class="well" style="font-size: 2vw;">
+                        <?=$pincode?>
+                        <button id="copy-to-clipboard" class="pull-right" title="<?=THelper::t('copy_to_clipboard')?>" style="margin-top: -3px;"><i class="fa fa-files-o" aria-hidden="true"></i></button>
+                    </div>
                     <input type="hidden" id="hidden-pincode" value="<?=$pincode?>">
-                </div>
-
-                <div class="col-md-1" style="padding: 15px 0px;">
-                    <button id="copy-to-clipboard" title="<?=THelper::t('copy_to_clipboard')?>"><i class="fa fa-files-o" aria-hidden="true"></i></button>
                 </div>
             <?php } ?>
 
@@ -59,8 +58,8 @@
                 <?= $form->field($model, 'partnerLogin')->textInput(['id' => 'login', 'disabled' => true])->label(THelper::t('login')) ?>
             </div>
 
-            <div class="col-md-12">
-                <?= Html::submitButton(THelper::t('apply'), array('class' => 'btn btn-s-md btn-success')); ?>
+            <div class="col-md-12 text-center">
+                <?= Html::submitButton(THelper::t('apply'), array('class' => 'btn btn-s-md btn-success', 'style' => 'margin-bottom:15px')); ?>
             </div>
 
 
