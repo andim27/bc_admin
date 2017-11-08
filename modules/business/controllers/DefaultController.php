@@ -338,6 +338,16 @@ class DefaultController extends BaseController
                         'forWhat' => [
                             '$regex' => 'For stocks'
                         ]
+                    ],
+                    [
+                        'forWhat' => [
+                            '$regex' => 'Executive bonus'
+                        ]
+                    ],
+                    [
+                        'forWhat' => [
+                            '$regex' => 'Bonus per the achievement'
+                        ]
                     ]
                 ]
             ])
@@ -449,7 +459,7 @@ class DefaultController extends BaseController
 
 
         // infoBonus
-        $listBonus = ['mentorBonus','careerBonus','executiveBonus','worldBonus','autoBonus','propertyBonus'];
+        $listBonus = ['worldBonus','autoBonus','propertyBonus'];
         foreach ($listBonus as $itemBonus) {
             $statisticInfo['bonus'][$itemBonus] = (new \yii\mongodb\Query())
                 ->select(['statistics.'.$itemBonus])
@@ -461,6 +471,45 @@ class DefaultController extends BaseController
                 ])
                 ->sum('statistics.'.$itemBonus);
         }
+
+        $statisticInfo['bonus']['executiveBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Executive bonus'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $statisticInfo['bonus']['careerBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Bonus per the achievement'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $statisticInfo['bonus']['mentorBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Mentor bonus'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
 
         $statisticInfo['bonus']['equityBonus'] = Transaction::find()
             ->select(['amount'])
@@ -541,6 +590,12 @@ class DefaultController extends BaseController
             }else{
                 $statisticInfo['issuedCommissionMonth'][$iDate] = [$i,round($statisticInfo['issuedCommissionMonth'][$iDate])];
             }
+            
+            if(empty($statisticInfo['feesCommissionMonth'][$iDate])){
+                $statisticInfo['feesCommissionMonth'][$iDate] = [$i,0];
+            }else{
+                $statisticInfo['feesCommissionMonth'][$iDate] = [$i,round($statisticInfo['feesCommissionMonth'][$iDate])];
+            }
 
             $statisticInfo['dateInterval'][] = [$i,$iDate];
 
@@ -551,6 +606,7 @@ class DefaultController extends BaseController
         ksort($statisticInfo['ofThemPaidForMonth']);
         ksort($statisticInfo['generalReceiptMoneyMonth']);
         ksort($statisticInfo['issuedCommissionMonth']);
+        ksort($statisticInfo['feesCommissionMonth']);
 
 //        header('Content-Type: text/html; charset=utf-8');
 //        echo "<xmp>";

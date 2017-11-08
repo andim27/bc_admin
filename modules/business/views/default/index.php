@@ -521,14 +521,14 @@ HTML;
     <script type="text/javascript">
         var arrayProfit = <?=json_encode(array_values($statisticInfo['generalReceiptMoneyMonth']))?>;
 
-        var arrayIssuedCommission = <?=json_encode(array_values($statisticInfo['issuedCommissionMonth']))?>;
+        var arrayFeesCommission = <?=json_encode(array_values($statisticInfo['feesCommissionMonth']))?>;
 
         $("#flot-trade-turnover").length && $.plot($("#flot-trade-turnover"), [{
                 data: arrayProfit,
                 label: 'Товарооборотов'
             }, {
-                data: arrayIssuedCommission,
-                label: 'Выданных комиссионных'
+                data: arrayFeesCommission,
+                label: 'Начисленных комиссионных'
             }],
             {
                 series: {
@@ -581,6 +581,9 @@ HTML;
         <div class="row m-l-none m-r-none bg-light lter">
             <div class="col-sm-6 col-md-6 padder-v">
                 <div class="panel panel-default">
+                    <header class="panel-heading font-bold">
+                        Отношение товарооборота к живым деньгам
+                    </header>
                     <div class="panel-body">
                         <div id="flot-pie" class="height400"></div>
                     </div>
@@ -589,6 +592,9 @@ HTML;
             </div>
             <div class="col-sm-6 col-md-6 padder-v">
                 <div class="panel panel-default">
+                    <header class="panel-heading font-bold">
+                        Отношение товарооборота к коммисионым
+                    </header>
                     <div class="panel-body">
                         <div id="flot-pie2" class="height400"></div>
                     </div>
@@ -604,7 +610,7 @@ HTML;
                 data: <?=($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']+$statisticInfo['cancellationVoucher'])?>
             },
             {
-                label: 'Товарооборот',
+                label: '',
                 data: <?=($statisticInfo['generalReceiptMoney']-($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']+$statisticInfo['cancellationVoucher']))?>
             }
         ];
@@ -639,7 +645,7 @@ HTML;
                 data: <?=$statisticInfo['feesCommission']?>
             },
             {
-                label: 'Товарооборот',
+                label: '',
                 data: <?=($statisticInfo['generalReceiptMoney']-$statisticInfo['feesCommission'])?>
             }
         ];
