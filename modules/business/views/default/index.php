@@ -605,7 +605,7 @@ HTML;
             },
             {
                 label: 'Товарооборот',
-                data: <?=$statisticInfo['generalReceiptMoney']?>
+                data: <?=($statisticInfo['generalReceiptMoney']-($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']))?>
             }
         ];
 
@@ -640,7 +640,7 @@ HTML;
             },
             {
                 label: 'Товарооборот',
-                data: <?=$statisticInfo['generalReceiptMoney']?>
+                data: <?=($statisticInfo['generalReceiptMoney']-$statisticInfo['feesCommission'])?>
             }
         ];
         $("#flot-pie2").length && $.plot($("#flot-pie2"), da2, {
