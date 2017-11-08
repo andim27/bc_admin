@@ -601,11 +601,11 @@ HTML;
         var da = [
             {
                 label: 'Живых денег',
-                data: <?=($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher'])?>
+                data: <?=($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']+$statisticInfo['cancellationVoucher'])?>
             },
             {
                 label: 'Товарооборот',
-                data: <?=($statisticInfo['generalReceiptMoney']-($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']))?>
+                data: <?=($statisticInfo['generalReceiptMoney']-($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']+$statisticInfo['cancellationVoucher']))?>
             }
         ];
 
