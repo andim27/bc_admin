@@ -268,6 +268,18 @@ class DefaultController extends BaseController
             }
         }
 
+        // проверка что б приход деньгами не был отрицательным,
+        // возникает это при условии что пин коды
+        // не активированы но сформированны
+        $listTypeProject = ['VipVip','Wellness','VipCoin'];
+        foreach ($listTypeProject as $item){
+            if($statisticInfo['generalReceiptMoney_'.$item] < ($statisticInfo['receiptVoucher_'.$item]+$statisticInfo['cancellationVoucher_'.$item])){
+                $statisticInfo['receiptVoucher_'.$item] = $statisticInfo['generalReceiptMoney_'.$item];
+                $statisticInfo['cancellationVoucher_'.$item] = 0;
+            }
+        }
+
+
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['firstPurchase'])
             ->from('users')
@@ -433,6 +445,76 @@ class DefaultController extends BaseController
                 $statisticInfo['issuedCommission'] += $item['amount'];
             }
         }
+
+
+
+        // infoBonus
+        $listBonus = ['mentorBonus','careerBonus','executiveBonus','worldBonus','autoBonus','propertyBonus'];
+        foreach ($listBonus as $itemBonus) {
+            $statisticInfo['bonus'][$itemBonus] = (new \yii\mongodb\Query())
+                ->select(['statistics.'.$itemBonus])
+                ->from('users')
+                ->where([
+                    'username' => [
+                        '$nin' => ['main','datest1','danilchenkoalex']
+                    ]
+                ])
+                ->sum('statistics.'.$itemBonus);
+        }
+
+        $statisticInfo['bonus']['equityBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'For stocks'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $statisticInfo['bonus']['teamBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Closing steps'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $connectingBonusAdd = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Purchase for a partner'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $connectingBonusCancellation = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Cancellation purchase for a partner'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('000000000000000000000001')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+        $statisticInfo['bonus']['connectingBonus'] = $connectingBonusAdd - $connectingBonusCancellation;
+
 
         $i = 0;
         for ($iDate=$statisticInfo['request']['from'];$iDate<=$statisticInfo['request']['to'];$iDate=date('Y-m',strtotime('+1 month', strtotime($iDate)))) {
