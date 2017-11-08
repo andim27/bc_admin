@@ -424,7 +424,7 @@ class DefaultController extends BaseController
 
         if(!empty($statisticInfo['tradeTurnover']['forUser'])){
             arsort($statisticInfo['tradeTurnover']['forUser']);
-            $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,10);
+            $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,20);
 
         }
 

@@ -593,7 +593,7 @@ HTML;
             <div class="col-sm-6 col-md-6 padder-v">
                 <div class="panel panel-default">
                     <header class="panel-heading font-bold">
-                        Отношение товарооборота к коммисионым
+                        Отношение товарооборота к комиссионым
                     </header>
                     <div class="panel-body">
                         <div id="flot-pie2" class="height400"></div>
