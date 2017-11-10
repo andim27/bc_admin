@@ -1369,13 +1369,13 @@ class StatusSalesController extends BaseController {
 
         if(!empty($request)){
 
-            $model->product         = $request['product'];
-            $model->idInMarket      = $request['idInMarket'];
+            $model->product         = (int)$request['product'];
+            $model->idInMarket      = (int)$request['idInMarket'];
             $model->productName     = $request['productName'];
-            $model->price           = $request['price'];
-            $model->bonusMoney      = $request['bonusMoney'];
-            $model->bonusPoints     = $request['bonusPoints'];
-            $model->bonusStocks     = $request['bonusStocks'];
+            $model->price           = (int)$request['price'];
+            $model->bonusMoney      = (int)$request['bonusMoney'];
+            $model->bonusPoints     = (int)$request['bonusPoints'];
+            $model->bonusStocks     = (int)$request['bonusStocks'];
             $model->pinsVouchers    = (!empty($request['pinsVouchers']) ? explode("\r\n",$request['pinsVouchers']) : '');
             $model->statusHide      = (int)(!empty($request['statusHide']) ? $request['statusHide'] : 0);
 

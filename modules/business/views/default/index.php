@@ -756,7 +756,7 @@ HTML;
                             <td><?=$item['title'];?></td>
                             <td><?=$item['price'];?></td>
                             <td><?=$item['count'];?></td>
-                            <td><?=($item['price'] * $item['count']);?></td>
+                            <td><?=($item['amount']);?></td>
                         </tr>
                     <?php } ?>
                 <?php } ?>

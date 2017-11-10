@@ -188,7 +188,7 @@ class DefaultController extends BaseController
                 ]
             ])
             ->all();
-
+        $xz=0;
         if(!empty($model)) {
             foreach ($model as $item) {
                 $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
@@ -208,16 +208,19 @@ class DefaultController extends BaseController
                     $statisticInfo['tradeTurnover']['listProduct'][$item['product']] = [
                         'title' => $listProductsTitle[$item['product']],
                         'price' => 0,
-                        'count' => 0
+                        'count' => 0,
+                        'amount'=> 0
                     ];
                 }
                 $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['price'] = $item['price'];
                 $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['count']++;
+                $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['amount'] += $item['price'];
 
+                $xz += $item['price'];
             }
         }
         unset($model);
-
+        
         $arrayQuery=[];
         foreach ($listProducts as $listProduct) {
             if(!empty($typeProject[$listProduct->type])){

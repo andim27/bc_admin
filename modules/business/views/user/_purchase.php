@@ -46,13 +46,13 @@
                     <?= gmdate('d.m.Y', $purchase->dateCreate) ?>
                 </td>
                 <td>
-                    <?= $product->product ?>
+                    <?= (!empty($product->product) ? $product->product : '') ?>
                 </td>
                 <td>
-                    <?= $product->productName ?>
+                    <?= (!empty($product->productName) ? $product->productName : '') ?>
                 </td>
                 <td>
-                    <?= $product->price ?>
+                    <?= (!empty($product->price) ? $product->price : '') ?>
                 </td>
                 <td>
                     <?= $purchase->bonusPoints ?>
