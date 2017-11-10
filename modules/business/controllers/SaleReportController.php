@@ -27,15 +27,28 @@ class SaleReportController extends BaseController
     public function actionInfoWaitSaleByUser()
     {
 
+        $infoWarehouse = Warehouse::getInfoWarehouse();
+
         $allListCountry = Settings::getListCountry();
 
         $request =  Yii::$app->request->post();
-        $request['countryReport'] = (empty($request['countryReport']) ? 'all' : $request['countryReport']);
+        //$request['countryReport'] = (empty($request['countryReport']) ? 'all' : $request['countryReport']);
+
+        if(empty($request['countryReport'])) {
+            if ((string)$infoWarehouse->_id != '592426f6dca7872e64095b45') {
+                $request['countryReport'] = $infoWarehouse->country;
+            } else {
+                $request['countryReport'] = 'all';
+            }
+        }
+
         $request['goodsReport'] = (empty($request['goodsReport']) ? 'all' : $request['goodsReport']);
 
         $infoSale = $infoGoods = [];
 
-        $listCountry['all'] = 'Все страны';
+        if ((string)$infoWarehouse->_id == '592426f6dca7872e64095b45') {
+            $listCountry['all'] = 'Все страны';
+        }
 
         $model = StatusSales::find()
             ->where(['IN','setSales.status',['status_sale_new','status_sale_delivered',
@@ -70,8 +83,6 @@ class SaleReportController extends BaseController
                         $tempInfoUser['country'] = $item->infoUser->country;
                         $tempInfoUser['city'] = $item->infoUser->city;
                         $tempInfoUser['address'] = $item->infoUser->address;
-
-
 
 
                         $tempInfoUser['phone']= [];
@@ -1098,4 +1109,5 @@ class SaleReportController extends BaseController
             ]
         );
     }
+
 }
