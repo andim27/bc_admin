@@ -78,7 +78,7 @@ HTML;
                     <i class="fa fa-sign-out fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong>0</strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['removeUsers']?></strong></span>
                     <small class="text-muted text-uc capsLock">Исключенно</small>
                 </a>
             </div>

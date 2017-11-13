@@ -59,6 +59,8 @@ class DefaultController extends BaseController
             // инф. об оплаченных из зарегестрировавшихся
             'ofThemPaid'                    => 0,
             'ofThemPaidForMonth'            => [],
+            //удаленные пользователи
+            'removeUsers'                   => 0,
 
             // общий приход
             'generalReceiptMoney'           => 0,
@@ -169,6 +171,18 @@ class DefaultController extends BaseController
             }
         }
         unset($model);
+
+
+        $statisticInfo['removeUsers'] = (new \yii\mongodb\Query())
+             ->select(['deletedUsers.number'])
+             ->from('statistics')
+             ->where([
+                 'deletedUsers.date' => [
+                     '$gte' => new UTCDatetime($queryDateFrom),
+                     '$lte' => new UTCDateTime($queryDateTo)
+                 ]
+             ])
+             ->sum('deletedUsers.number');
 
         $model = (new \yii\mongodb\Query())
             ->select(['dateCreate','price','product','username','project'])
