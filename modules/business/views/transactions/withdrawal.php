@@ -18,7 +18,13 @@ $listCard = PaymentCard::getListCards();
 <div class="row" style="padding: 0 15px 0 15px;">
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 </div>
+<div class="row">
+    <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
+    <div class="col-md-offset-9 col-md-3 form-group">
+        <?=Html::a('<i class="fa fa-file-o"></i>',['/business/transactions/withdrawal-excel'],['class'=>'btn btn-default btn-block','title'=>'Выгрузка в excel'])?>
+    </div>
+</div>
 <?php if(!empty($model)) { ?>
     <section class="panel panel-default">
         <div class="table-responsive">
@@ -45,7 +51,7 @@ $listCard = PaymentCard::getListCards();
                             <?=(!empty($item->infoUser->secondName) ? $item->infoUser->secondName : '')?>
                         </td>
                         <td><?=$item->amount?></td>
-                        <td><?=$listCard ? $listCard[(!empty($item->card['type']) ? $item->card['type'] : '1')] : ''?>..</td>
+                        <td><?=($listCard ? $listCard[(!empty($item->card['type']) ? $item->card['type'] : '1')] : '')?></td>
                         <td><?=(!empty($item->card['number']) ? $item->card['number'] : '')?></td>
                         <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
                         <td><?=THelper::t($item->getStatus())?></td>
