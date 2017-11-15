@@ -87,7 +87,10 @@ $listAction = LogWarehouse::getAllAction();
                     <tr data-id="<?=(string)$item->_id?>">
                         <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
                         <td><?=THelper::t($item->action)?></td>
-                        <td><?=$item->adminInfo->secondName . ' ' .$item->adminInfo->firstName?></td>
+                        <td>
+                            <?=(!empty($item->adminInfo->secondName) ? $item->adminInfo->secondName : '') ?>
+                            <?=(!empty($item->adminInfo->firstName) ? $item->adminInfo->firstName : '') ?>
+                        </td>
                         <td><?=(!empty($item->admin_warehouse_id) ? $item->adminWarehouseInfo->title : '')?></td>
                         <td><?=(!empty($item->on_warehouse_id) ? $item->onWarehouseInfo->title : '')?></td>
                         <td><?=$item->infoPartsAccessories->title?></td>
