@@ -372,7 +372,7 @@ HTML;
 
     <section class="panel panel-default">
         <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-6 col-md-6 padder-v b-r b-light">
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
@@ -383,7 +383,7 @@ HTML;
                 </a>
             </div>
 
-            <div class="col-sm-6 col-md-6 padder-v b-r b-light">
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
@@ -391,6 +391,17 @@ HTML;
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['orderedForWithdrawal']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Заказано на вывод</small>
+                </a>
+            </div>
+
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Пополненно</small>
                 </a>
             </div>
         </div>
@@ -503,7 +514,7 @@ HTML;
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['feesCommission']-$statisticInfo['issuedCommission'])),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['feesCommission']-$statisticInfo['issuedCommission']-$statisticInfo['onPersonalAccounts'])),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Выдано паками и товарами</small>
                 </a>
             </div>

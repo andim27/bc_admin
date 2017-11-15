@@ -350,7 +350,7 @@ class PartsAccessoriesInWarehouseController extends BaseController {
             ])
             ->all();
 
-        if(!empty($modelWarehouse) && $idWarehouse!='592426f6dca7872e64095b45'){
+        if(!empty($modelWarehouse) && $idWarehouse!='5a056671dca7873e022be781'){
             foreach ($modelWarehouse as $item) {
                 $listGoods[(string)$item->parts_accessories_id] = [
                     'inWarehouse'   =>  $item->number,

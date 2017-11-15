@@ -22,7 +22,7 @@ class WarehousesController extends BaseController {
         $headAdminId = '';
         $hideFilter = 0;
         $infoWarehouse = Warehouse::getInfoWarehouse();
-        if((string)$infoWarehouse->_id != '592426f6dca7872e64095b45'){
+        if((string)$infoWarehouse->_id != '5a056671dca7873e022be781'){
             $hideFilter = 1;
 
             $headAdminId = (string)$infoWarehouse->headUser;

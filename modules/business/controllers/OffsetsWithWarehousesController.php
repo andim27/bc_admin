@@ -194,7 +194,7 @@ class OffsetsWithWarehousesController extends BaseController {
         }
 
         $warehouseUserId = Warehouse::getIdMyWarehouse();
-        if($hideFilter == '0' && $warehouseUserId != '592426f6dca7872e64095b45'){
+        if($hideFilter == '0' && $warehouseUserId != '5a056671dca7873e022be781'){
             return $this->redirect(['repayment','object'=>'warehouse','id'=>$warehouseUserId]);
         }
 
@@ -350,7 +350,7 @@ class OffsetsWithWarehousesController extends BaseController {
             $request['listWarehouse'] = '';
         }
 
-        if($myWarehouseId != '592426f6dca7872e64095b45'){
+        if($myWarehouseId != '5a056671dca7873e022be781'){
             $request['listWarehouse'] = $myWarehouseId;
         }
 
@@ -674,7 +674,7 @@ class OffsetsWithWarehousesController extends BaseController {
 
         if($object == 'representative'){
             $hideBtnAdd = 0;
-            if((string)$infoWarehouse->_id != '592426f6dca7872e64095b45'){
+            if((string)$infoWarehouse->_id != '5a056671dca7873e022be781'){
                 $directionTitle = 'Компании';
             } else {
                 $userInfo = Users::findOne(['_id'=>new ObjectID($id)]);
@@ -689,7 +689,7 @@ class OffsetsWithWarehousesController extends BaseController {
                 $directionTitle = $infoWarehouseHeadAdmins->title;
                 $hideBtnAdd = 0;
             } else {
-                if((string)$infoWarehouse->_id == '592426f6dca7872e64095b45'){
+                if((string)$infoWarehouse->_id == '5a056671dca7873e022be781'){
                     $hideBtnAdd = 1;
                     $directionTitle = $infoWarehouseHeadAdmins->title . ' / ';
                 } else {
@@ -730,7 +730,7 @@ class OffsetsWithWarehousesController extends BaseController {
             $directionRepayment = 'company';
 
             $myWarehouseId = Warehouse::getIdMyWarehouse();
-            if($myWarehouseId != '592426f6dca7872e64095b45'){
+            if($myWarehouseId != '5a056671dca7873e022be781'){
                 $typeRepayment = $object.'_'.$directionRepayment;
             } else{
                 $typeRepayment = $directionRepayment.'_'.$object;

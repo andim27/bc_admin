@@ -92,6 +92,8 @@ class DefaultController extends BaseController
 
             // на лицевых считах
             'onPersonalAccounts'            => 0,
+            //пополнение
+            'refill'                        => 0,
 
             // заказано на вывод
             'orderedForWithdrawal'          => 0,
@@ -579,6 +581,65 @@ class DefaultController extends BaseController
             ])
             ->sum('amount');
         $statisticInfo['bonus']['connectingBonus'] = $connectingBonusAdd - $connectingBonusCancellation;
+
+
+//        $entering_money = Transaction::find()
+//            ->select(['amount','idTo','dateCreate'])
+//            ->where([
+//                'forWhat' => [
+//                    '$regex' => 'Entering the money'
+//                ],
+//                'idTo' => [
+//                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+//                ],
+//                'type'=>1,
+//            ])->orderBy(['amount'=>SORT_DESC])->all();
+//        $xz='';
+//        foreach ($entering_money as $k=>$item) {
+//            $xz .= '<tr><td>'.$item->dateCreate->toDateTime()->format('Y-m-d H:i:s').'<td>'.Users::findOne(['_id'=>$item->idTo])->username. '<td>' . $item->amount;
+//            if($k==50)break;
+//        }
+//
+//        $xz = '<table>'.$xz.'</table>';
+//        echo $xz;
+//        die();
+
+        $entering_money = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'forWhat' => [
+                    '$regex' => 'Entering the money'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $entering_money_caneletion = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'forWhat' => [
+                    '$regex' => 'Entering the money \\(Rollback'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1
+            ])
+            ->sum('amount');
+
+        $statisticInfo['refill'] = $entering_money - $entering_money_caneletion;
+
 
 
         $i = 0;
