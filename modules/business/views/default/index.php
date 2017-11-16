@@ -177,7 +177,7 @@ HTML;
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']+$statisticInfo['cancellationVoucher'])), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход деньгами</small>
                 </a>
             </div>
@@ -215,7 +215,7 @@ HTML;
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney_Wellness']-$statisticInfo['receiptVoucher_Wellness']+$statisticInfo['cancellationVoucher_Wellness'])), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_Wellness']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход деньгами по проекту Wellness</small>
                 </a>
             </div>
@@ -253,7 +253,7 @@ HTML;
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney_VipVip']-$statisticInfo['receiptVoucher_VipVip']+$statisticInfo['cancellationVoucher_VipVip'])), 0, ',', ' ');?>  <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_VipVip']), 0, ',', ' ');?>  <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход деньгами по проекту VipVip</small>
                 </a>
             </div>
@@ -291,7 +291,7 @@ HTML;
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['generalReceiptMoney_VipCoin']-$statisticInfo['receiptVoucher_VipCoin']+$statisticInfo['cancellationVoucher_VipCoin'])), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_VipCoin']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Приход деньгами по проекту VipCoin</small>
                 </a>
             </div>

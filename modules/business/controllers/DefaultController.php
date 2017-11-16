@@ -81,6 +81,16 @@ class DefaultController extends BaseController
             //Приход ваучерами по программе VipVip
             'receiptVoucher_VipVip'         => 0,
 
+            // приход за деньги
+            'receiptMoney'                  => 0,
+            //Приход за деньги по программе vipcoin
+            'receiptMoney_VipCoin'          => 0,
+            //Приход за деньги по программе Wellness
+            'receiptMoney_Wellness'         => 0,
+            //Приход за деньги по программе VipVip
+            'receiptMoney_VipVip'           => 0,
+            
+
             // отмена за ваучеры
             'cancellationVoucher'                => 0,
             //отмена ваучерами по программе vipcoin
@@ -123,7 +133,7 @@ class DefaultController extends BaseController
 
         $queryDateFrom = strtotime($statisticInfo['request']['from'].'-01 00:00:00') * 1000;
         $queryDateTo = strtotime($statisticInfo['request']['to'].'-'.$countDay.' 23:59:59') * 1000;
-
+        
         // зарегистрировалось за выбранный период
         $model = (new \yii\mongodb\Query())
             ->select(['created'])
@@ -204,7 +214,6 @@ class DefaultController extends BaseController
                 ]
             ])
             ->all();
-        
         if(!empty($model)) {
             foreach ($model as $item) {
                 $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
@@ -296,7 +305,18 @@ class DefaultController extends BaseController
                 $statisticInfo['cancellationVoucher_'.$item] = 0;
             }
         }
-
+        
+        // приход живыми деньгами
+        $infoBuyForMoney = $this->getProductBuyForMoney($statisticInfo['request']['from'].'-01',$statisticInfo['request']['to'].'-'.$countDay);
+        if(!empty($infoBuyForMoney)){
+            foreach ($infoBuyForMoney as $k=>$item){
+                $statisticInfo['receiptMoney'] += $item;
+                $type = Products::findOne(['idInMarket'=>$k]);
+                if(!empty($type->type) && !empty($typeProject[$type->type])){
+                    $statisticInfo['receiptMoney_'.$typeProject[$type->type]] += $item;
+                }
+            }
+        }
 
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['firstPurchase'])
@@ -694,4 +714,20 @@ class DefaultController extends BaseController
         return $statisticInfo;
     }
 
+    protected function getProductBuyForMoney($date_from,$date_to)
+    {
+        $ch = curl_init();
+        
+        curl_setopt($ch, CURLOPT_URL,"http://vipsite.biz/admin/statistic.php");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query(['date_from' => $date_from,'date_to'=>$date_to]));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $server_output = curl_exec ($ch);
+
+        curl_close ($ch);
+
+        return json_decode($server_output,TRUE);
+    }
+    
 }
