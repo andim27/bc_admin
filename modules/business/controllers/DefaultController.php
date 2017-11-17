@@ -34,13 +34,17 @@ class DefaultController extends BaseController
 
     protected function getStatisticInfo(){
 
+        $debag = [];
+
         $listProducts = Products::find()->all();
         $listProductsTitle = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','productName');
         $listProductsType = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','type');
 
         $typeProject = [
             '1'     => 'VipVip',
+            '2'     => 'BusinessSupport',
             '3'     => 'VipVip',
+            '4'     => 'BalanceTopUp',
             '5'     => 'Wellness',
             '7'     => 'Wellness',
             '8'     => 'Wellness',
@@ -72,6 +76,9 @@ class DefaultController extends BaseController
             //Приход по программе VipVip
             'generalReceiptMoney_VipVip'   => 0,
 
+            'generalReceiptMoney_BalanceTopUp'   => 0,
+            'generalReceiptMoney_BusinessSupport'   => 0,
+
             // приход за ваучеры
             'receiptVoucher'                => 0,
             //Приход ваучерами по программе vipcoin
@@ -81,6 +88,9 @@ class DefaultController extends BaseController
             //Приход ваучерами по программе VipVip
             'receiptVoucher_VipVip'         => 0,
 
+            'receiptVoucher_BalanceTopUp'         => 0,
+            'receiptVoucher_BusinessSupport'         => 0,
+
             // приход за деньги
             'receiptMoney'                  => 0,
             //Приход за деньги по программе vipcoin
@@ -89,7 +99,10 @@ class DefaultController extends BaseController
             'receiptMoney_Wellness'         => 0,
             //Приход за деньги по программе VipVip
             'receiptMoney_VipVip'           => 0,
-            
+
+            'receiptMoney_BalanceTopUp'           => 0,
+            'receiptMoney_BusinessSupport'           => 0,
+
 
             // отмена за ваучеры
             'cancellationVoucher'                => 0,
@@ -99,6 +112,9 @@ class DefaultController extends BaseController
             'cancellationVoucher_Wellness'       => 0,
             //отмена ваучерами по программе VipVip
             'cancellationVoucher_VipVip'         => 0,
+
+            'cancellationVoucher_BalanceTopUp'         => 0,
+            'cancellationVoucher_BusinessSupport'         => 0,
 
             // на лицевых считах
             'onPersonalAccounts'            => 0,
@@ -214,6 +230,7 @@ class DefaultController extends BaseController
                 ]
             ])
             ->all();
+
         if(!empty($model)) {
             foreach ($model as $item) {
                 $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
@@ -226,6 +243,19 @@ class DefaultController extends BaseController
 
                 if (!empty($typeProject[$listProductsType[$item['product']]])) {
                     $statisticInfo['generalReceiptMoney_' . $typeProject[$listProductsType[$item['product']]]] += $item['price'];
+
+                    //debag
+//                    if($typeProject[$listProductsType[$item['product']]]=='VipCoin'){
+//                        if(empty($debag['generalReceiptMoney_VipCoin_pack'][$item['product']])){
+//                            $debag['generalReceiptMoney_VipCoin_pack'][$item['product']] = 0;
+//                        }
+//                        $debag['generalReceiptMoney_VipCoin_pack'][$item['product']]++;
+//
+//                        if($item['product'] == '42'){
+//                            $debag['pack_42_date_buy'][] = $item['dateCreate']->toDateTime()->format('Y-m-d H:i:s');
+//                        }
+//                    }
+
                 }
 
                 // собираем информацию по товарам для товарооборота
@@ -245,12 +275,39 @@ class DefaultController extends BaseController
         }
         unset($model);
 
+
         $arrayQuery=[];
         foreach ($listProducts as $listProduct) {
             if(!empty($typeProject[$listProduct->type])){
                 $arrayQuery[$typeProject[$listProduct->type]][] = 'Creating pin for product '.$listProduct->productName;
             }
         }
+
+        //debag
+//        foreach ($arrayQuery['VipCoin'] as $k=>$item){
+//            $info = Transaction::find()
+//                ->select(['amount','dateCreate','idFrom'])
+//                ->where([
+//                    'dateCreate' => [
+//                        '$gte' => new UTCDatetime($queryDateFrom),
+//                        '$lte' => new UTCDateTime($queryDateTo)
+//                    ]
+//                ])
+//                ->andWhere(['IN','forWhat',$item])
+//                ->all();
+//
+//
+//            $debag['create_pin_vipcoin'][] = $item.'-'.count($info);
+//
+//            foreach($info as $itemI){
+//
+//                $infoUser = Users::findOne(['_id'=>$itemI['idFrom']]);
+//
+//                $debag['date_create_pin_vipcoin'][$item][$itemI['dateCreate']->toDateTime()->format('Y-m-d H:i:s')] = $infoUser->username;
+//            }
+//        }
+
+
 
         // приходы по pin
         foreach ($arrayQuery as $k=>$item){
@@ -267,6 +324,40 @@ class DefaultController extends BaseController
 
             $statisticInfo['receiptVoucher'] += $statisticInfo['receiptVoucher_'.$k];
         }
+
+
+
+        //debag
+//        $debag['pinsSum']=0;
+//        $model = Pins::find()->where([
+//            'dateCreate' => [
+//                '$gte' => new UTCDatetime($queryDateFrom),
+//                '$lte' => new UTCDateTime($queryDateTo)
+//            ],
+//            'userId'=>['$ne' =>new ObjectId('573a0d76965dd0fb16f60bfe')],
+//            //'isDelete' => false
+//        ])->all();
+//        if(!empty($model)){
+//            foreach ($model as $item) {
+//                $infoPin = api\Pin::checkPin($item->pin);
+//
+//                if(!empty($infoPin->product) && in_array($infoPin->product,[40,41,42,43])){
+//
+//                    if(empty($debag['pins'][$infoPin->product])){
+//                        $debag['pins'][$infoPin->product] = 0;
+//                    }
+//
+//
+//
+//                    $debag['pins'][$infoPin->product]++;
+//
+//                    $debag['pinsSum']+= $infoPin->price;
+//                }
+//
+//            }
+//        }
+
+
 
         // отмены по pin
         $model = Pins::find()->where([
@@ -314,9 +405,21 @@ class DefaultController extends BaseController
                 $type = Products::findOne(['idInMarket'=>$k]);
                 if(!empty($type->type) && !empty($typeProject[$type->type])){
                     $statisticInfo['receiptMoney_'.$typeProject[$type->type]] += $item;
+
+                    //debag
+//                    if($typeProject[$type->type] == 'VipCoin'){
+//                        $debag['live_money'][] = $k;
+//                    }
                 }
             }
         }
+
+//
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo "<xmp>";
+//        print_r($debag);
+//        echo "</xmp>";
+//        die();
 
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['firstPurchase'])

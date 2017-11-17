@@ -309,6 +309,83 @@ HTML;
         </div>
     </section>
 
+
+    <!-- приход по проекту BusinessSupport -->
+    <section class="panel panel-default">
+        <div class="row m-l-none m-r-none bg-light lter">
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_BusinessSupport']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Общий приход по проекту BusinessSupport</small>
+                </a>
+            </div>
+
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
+                    <i class="fa fa-money fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_BusinessSupport']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Приход деньгами по проекту BusinessSupport</small>
+                </a>
+            </div>
+
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_BusinessSupport']-$statisticInfo['cancellationVoucher_BusinessSupport']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Приход ваучерами по проекту BusinessSupport</small>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- приход по проекту BalanceTopUp -->
+    <section class="panel panel-default">
+        <div class="row m-l-none m-r-none bg-light lter">
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_BalanceTopUp']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Общий приход по проекту BalanceTopUp</small>
+                </a>
+            </div>
+
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
+                    <i class="fa fa-money fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_BalanceTopUp']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Приход деньгами по проекту BalanceTopUp</small>
+                </a>
+            </div>
+
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_BalanceTopUp']-$statisticInfo['cancellationVoucher_BalanceTopUp']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Приход ваучерами по проекту BalanceTopUp</small>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <section class="panel panel-default">
         <header class="panel-heading font-bold">
             График оборота по заданному критерию
@@ -379,7 +456,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['onPersonalAccounts']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">На лицевых счетах</small>
+                    <small class="text-muted text-uc capsLock">На лицевых счетах на  текущий момент</small>
                 </a>
             </div>
 
@@ -509,14 +586,16 @@ HTML;
             </div>
 
             <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round(($statisticInfo['feesCommission']-$statisticInfo['issuedCommission']-$statisticInfo['onPersonalAccounts'])),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Выдано паками и товарами</small>
-                </a>
+<!--                <span class="fa-stack fa-2x pull-left m-r-sm">-->
+<!--                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>-->
+<!--                    <i class="fa fa-usd fa-stack-1x text-white"></i>-->
+<!--                </span>-->
+<!--                <a class="clear" href="#">-->
+<!--                    <span class="h3 block m-t-xs"><strong>-->
+                            <?php//=number_format(round(($statisticInfo['feesCommission']-$statisticInfo['issuedCommission']-$statisticInfo['onPersonalAccounts'])),0,',',' ')?>
+<!--                            <i class="fa fa-eur"></i></strong></span>-->
+<!--                    <small class="text-muted text-uc capsLock">Выдано паками и товарами</small>-->
+<!--                </a>-->
             </div>
         </div>
     </section>
