@@ -52,6 +52,15 @@ class DefaultController extends BaseController
             '10'    => 'VipCoin',
         ];
 
+        $liveMoney = [
+            '05'  =>  5774.62,
+            '06'  =>  2000,
+            '07'  =>  29423.08,
+            '08'  =>  4957.63,
+            '09'  =>  69955.77,
+            '10'  =>  85032.24,
+        ];
+
         $statisticInfo = [
             'request'                       =>[],
             // интервалы выборки
@@ -389,13 +398,13 @@ class DefaultController extends BaseController
         // проверка что б приход деньгами не был отрицательным,
         // возникает это при условии что пин коды
         // не активированы но сформированны
-        $listTypeProject = ['VipVip','Wellness','VipCoin'];
-        foreach ($listTypeProject as $item){
-            if($statisticInfo['generalReceiptMoney_'.$item] < ($statisticInfo['receiptVoucher_'.$item]+$statisticInfo['cancellationVoucher_'.$item])){
-                $statisticInfo['receiptVoucher_'.$item] = $statisticInfo['generalReceiptMoney_'.$item];
-                $statisticInfo['cancellationVoucher_'.$item] = 0;
-            }
-        }
+//        $listTypeProject = ['VipVip','Wellness','VipCoin'];
+//        foreach ($listTypeProject as $item){
+//            if($statisticInfo['generalReceiptMoney_'.$item] < ($statisticInfo['receiptVoucher_'.$item]+$statisticInfo['cancellationVoucher_'.$item])){
+//                $statisticInfo['receiptVoucher_'.$item] = $statisticInfo['generalReceiptMoney_'.$item];
+//                $statisticInfo['cancellationVoucher_'.$item] = 0;
+//            }
+//        }
         
         // приход живыми деньгами
         $infoBuyForMoney = $this->getProductBuyForMoney($statisticInfo['request']['from'].'-01',$statisticInfo['request']['to'].'-'.$countDay);
@@ -412,6 +421,16 @@ class DefaultController extends BaseController
 //                    }
                 }
             }
+        }
+        $i = 0;
+        for ($iDate=$statisticInfo['request']['from'];$iDate<=$statisticInfo['request']['to'];$iDate=date('Y-m',strtotime('+1 month', strtotime($iDate)))) {
+            $month = date('m',strtotime($iDate));
+            if(!empty($liveMoney[$month])){
+                $statisticInfo['receiptMoney'] += $liveMoney[$month];
+                $statisticInfo['receiptMoney_BalanceTopUp'] += $liveMoney[$month];
+            }
+
+            $i++;
         }
 
 //
