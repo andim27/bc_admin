@@ -17,9 +17,22 @@
     
         <?php foreach ($items as $item) { ?>
         <div class="row <?=($bg == 'bg-light' ? $bg = 'bg-light dk' : $bg = 'bg-light')?>">
-            <div class="col-md-8">
-                <label class="control-label switch-center"><?=$item['label']?></label>
-            </div>
+            <?php if($item['key'] != 'sidebar_home'){?>
+                <div class="col-md-8">
+                    <label class="control-label switch-center"><?=$item['label']?></label>
+                </div>
+            <?php } else {?>
+                <div class="col-md-6">
+                    <label class="control-label switch-center"><?=$item['label']?></label>
+                </div>
+                <div class="col-md-2">
+                    <label class="control-label switch-center">Отображать статистику</label>
+                    <label class="switch">
+                        <input value="sidebar_home" class="btnRulesShow" type="checkbox" name="rule[show_statistic][]" <?= ((!empty($model->rules->show_statistic) && in_array('sidebar_home',(array)$model->rules->show_statistic)) ? 'checked="checked"' : '')?>/>
+                        <span></span>
+                    </label>
+                </div>
+            <?php } ?>
             <div class="col-md-2">
                 <label class="control-label switch-center"><?= THelper::t('rules_admin_display');?></label>
                 <label class="switch">
