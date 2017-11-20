@@ -13,7 +13,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
 $listGoods = PartsAccessories::getListPartsAccessories();
 
 $listWarehouse = [];
-if($idWarehouse == '592426f6dca7872e64095b45'){
+if($idWarehouse == '5a056671dca7873e022be781'){
     $listWarehouse = Warehouse::getArrayWarehouse();
 } else {
     if(Users::checkHeadAdmin()){

@@ -34,18 +34,31 @@ class DefaultController extends BaseController
 
     protected function getStatisticInfo(){
 
+        $debag = [];
+
         $listProducts = Products::find()->all();
         $listProductsTitle = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','productName');
         $listProductsType = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','type');
 
         $typeProject = [
             '1'     => 'VipVip',
+            '2'     => 'BusinessSupport',
             '3'     => 'VipVip',
+            '4'     => 'BalanceTopUp',
             '5'     => 'Wellness',
             '7'     => 'Wellness',
             '8'     => 'Wellness',
             '9'     => 'VipCoin',
             '10'    => 'VipCoin',
+        ];
+
+        $liveMoney = [
+            '05'  =>  5774.62,
+            '06'  =>  2000,
+            '07'  =>  29423.08,
+            '08'  =>  4957.63,
+            '09'  =>  69955.77,
+            '10'  =>  85032.24,
         ];
 
         $statisticInfo = [
@@ -59,6 +72,8 @@ class DefaultController extends BaseController
             // инф. об оплаченных из зарегестрировавшихся
             'ofThemPaid'                    => 0,
             'ofThemPaidForMonth'            => [],
+            //удаленные пользователи
+            'removeUsers'                   => 0,
 
             // общий приход
             'generalReceiptMoney'           => 0,
@@ -70,6 +85,9 @@ class DefaultController extends BaseController
             //Приход по программе VipVip
             'generalReceiptMoney_VipVip'   => 0,
 
+            'generalReceiptMoney_BalanceTopUp'   => 0,
+            'generalReceiptMoney_BusinessSupport'   => 0,
+
             // приход за ваучеры
             'receiptVoucher'                => 0,
             //Приход ваучерами по программе vipcoin
@@ -78,6 +96,22 @@ class DefaultController extends BaseController
             'receiptVoucher_Wellness'       => 0,
             //Приход ваучерами по программе VipVip
             'receiptVoucher_VipVip'         => 0,
+
+            'receiptVoucher_BalanceTopUp'         => 0,
+            'receiptVoucher_BusinessSupport'         => 0,
+
+            // приход за деньги
+            'receiptMoney'                  => 0,
+            //Приход за деньги по программе vipcoin
+            'receiptMoney_VipCoin'          => 0,
+            //Приход за деньги по программе Wellness
+            'receiptMoney_Wellness'         => 0,
+            //Приход за деньги по программе VipVip
+            'receiptMoney_VipVip'           => 0,
+
+            'receiptMoney_BalanceTopUp'           => 0,
+            'receiptMoney_BusinessSupport'           => 0,
+
 
             // отмена за ваучеры
             'cancellationVoucher'                => 0,
@@ -88,8 +122,13 @@ class DefaultController extends BaseController
             //отмена ваучерами по программе VipVip
             'cancellationVoucher_VipVip'         => 0,
 
+            'cancellationVoucher_BalanceTopUp'         => 0,
+            'cancellationVoucher_BusinessSupport'         => 0,
+
             // на лицевых считах
             'onPersonalAccounts'            => 0,
+            //пополнение
+            'refill'                        => 0,
 
             // заказано на вывод
             'orderedForWithdrawal'          => 0,
@@ -119,7 +158,7 @@ class DefaultController extends BaseController
 
         $queryDateFrom = strtotime($statisticInfo['request']['from'].'-01 00:00:00') * 1000;
         $queryDateTo = strtotime($statisticInfo['request']['to'].'-'.$countDay.' 23:59:59') * 1000;
-
+        
         // зарегистрировалось за выбранный период
         $model = (new \yii\mongodb\Query())
             ->select(['created'])
@@ -170,6 +209,18 @@ class DefaultController extends BaseController
         }
         unset($model);
 
+
+        $statisticInfo['removeUsers'] = (new \yii\mongodb\Query())
+             ->select(['deletedUsers.number'])
+             ->from('statistics')
+             ->where([
+                 'deletedUsers.date' => [
+                     '$gte' => new UTCDatetime($queryDateFrom),
+                     '$lte' => new UTCDateTime($queryDateTo)
+                 ]
+             ])
+             ->sum('deletedUsers.number');
+
         $model = (new \yii\mongodb\Query())
             ->select(['dateCreate','price','product','username','project'])
             ->from('sales')
@@ -183,9 +234,6 @@ class DefaultController extends BaseController
                 ],
                 'productType'=>['$nin'=>[0,4]],
                 'product'=>['$ne'=>'0'],
-
-                //'product'=>['$nin'=>['0','6','7','8','9','10','11','12','13','14','28','29','30','31','32','33','34']],
-
                 'username' =>[
                     '$ne'=>'main'
                 ]
@@ -204,6 +252,19 @@ class DefaultController extends BaseController
 
                 if (!empty($typeProject[$listProductsType[$item['product']]])) {
                     $statisticInfo['generalReceiptMoney_' . $typeProject[$listProductsType[$item['product']]]] += $item['price'];
+
+                    //debag
+//                    if($typeProject[$listProductsType[$item['product']]]=='VipCoin'){
+//                        if(empty($debag['generalReceiptMoney_VipCoin_pack'][$item['product']])){
+//                            $debag['generalReceiptMoney_VipCoin_pack'][$item['product']] = 0;
+//                        }
+//                        $debag['generalReceiptMoney_VipCoin_pack'][$item['product']]++;
+//
+//                        if($item['product'] == '42'){
+//                            $debag['pack_42_date_buy'][] = $item['dateCreate']->toDateTime()->format('Y-m-d H:i:s');
+//                        }
+//                    }
+
                 }
 
                 // собираем информацию по товарам для товарооборота
@@ -211,15 +272,18 @@ class DefaultController extends BaseController
                     $statisticInfo['tradeTurnover']['listProduct'][$item['product']] = [
                         'title' => $listProductsTitle[$item['product']],
                         'price' => 0,
-                        'count' => 0
+                        'count' => 0,
+                        'amount'=> 0
                     ];
                 }
                 $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['price'] = $item['price'];
                 $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['count']++;
+                $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['amount'] += $item['price'];
 
             }
         }
         unset($model);
+
 
         $arrayQuery=[];
         foreach ($listProducts as $listProduct) {
@@ -227,6 +291,32 @@ class DefaultController extends BaseController
                 $arrayQuery[$typeProject[$listProduct->type]][] = 'Creating pin for product '.$listProduct->productName;
             }
         }
+
+        //debag
+//        foreach ($arrayQuery['VipCoin'] as $k=>$item){
+//            $info = Transaction::find()
+//                ->select(['amount','dateCreate','idFrom'])
+//                ->where([
+//                    'dateCreate' => [
+//                        '$gte' => new UTCDatetime($queryDateFrom),
+//                        '$lte' => new UTCDateTime($queryDateTo)
+//                    ]
+//                ])
+//                ->andWhere(['IN','forWhat',$item])
+//                ->all();
+//
+//
+//            $debag['create_pin_vipcoin'][] = $item.'-'.count($info);
+//
+//            foreach($info as $itemI){
+//
+//                $infoUser = Users::findOne(['_id'=>$itemI['idFrom']]);
+//
+//                $debag['date_create_pin_vipcoin'][$item][$itemI['dateCreate']->toDateTime()->format('Y-m-d H:i:s')] = $infoUser->username;
+//            }
+//        }
+
+
 
         // приходы по pin
         foreach ($arrayQuery as $k=>$item){
@@ -244,25 +334,111 @@ class DefaultController extends BaseController
             $statisticInfo['receiptVoucher'] += $statisticInfo['receiptVoucher_'.$k];
         }
 
+
+
+        //debag
+//        $debag['pinsSum']=0;
+//        $model = Pins::find()->where([
+//            'dateCreate' => [
+//                '$gte' => new UTCDatetime($queryDateFrom),
+//                '$lte' => new UTCDateTime($queryDateTo)
+//            ],
+//            'userId'=>['$ne' =>new ObjectId('573a0d76965dd0fb16f60bfe')],
+//            //'isDelete' => false
+//        ])->all();
+//        if(!empty($model)){
+//            foreach ($model as $item) {
+//                $infoPin = api\Pin::checkPin($item->pin);
+//
+//                if(!empty($infoPin->product) && in_array($infoPin->product,[40,41,42,43])){
+//
+//                    if(empty($debag['pins'][$infoPin->product])){
+//                        $debag['pins'][$infoPin->product] = 0;
+//                    }
+//
+//
+//
+//                    $debag['pins'][$infoPin->product]++;
+//
+//                    $debag['pinsSum']+= $infoPin->price;
+//                }
+//
+//            }
+//        }
+
+
+
         // отмены по pin
         $model = Pins::find()->where([
             'dateCreate' => [
                 '$gte' => new UTCDatetime($queryDateFrom),
                 '$lte' => new UTCDateTime($queryDateTo)
             ],
-            'isDelete' => true
+            '$or' => [
+                ['isDelete' => true],
+                [
+                    //'used'=>true,
+                    'userId'=>new ObjectId('573a0d76965dd0fb16f60bfe')
+                ]
+            ]
         ])->all();
+
         if(!empty($model)){
             foreach ($model as $item) {
                 $infoPin = api\Pin::checkPin($item->pin);
 
-                if(!empty($typeProject[$infoPin->type])){
+                if(!empty($infoPin->type) && !empty($typeProject[$infoPin->type])){
                     $statisticInfo['cancellationVoucher_'.$typeProject[$infoPin->type]] += $infoPin->price;
                     $statisticInfo['cancellationVoucher'] += $infoPin->price;
                 }
 
             }
         }
+
+        // проверка что б приход деньгами не был отрицательным,
+        // возникает это при условии что пин коды
+        // не активированы но сформированны
+//        $listTypeProject = ['VipVip','Wellness','VipCoin'];
+//        foreach ($listTypeProject as $item){
+//            if($statisticInfo['generalReceiptMoney_'.$item] < ($statisticInfo['receiptVoucher_'.$item]+$statisticInfo['cancellationVoucher_'.$item])){
+//                $statisticInfo['receiptVoucher_'.$item] = $statisticInfo['generalReceiptMoney_'.$item];
+//                $statisticInfo['cancellationVoucher_'.$item] = 0;
+//            }
+//        }
+        
+        // приход живыми деньгами
+        $infoBuyForMoney = $this->getProductBuyForMoney($statisticInfo['request']['from'].'-01',$statisticInfo['request']['to'].'-'.$countDay);
+        if(!empty($infoBuyForMoney)){
+            foreach ($infoBuyForMoney as $k=>$item){
+                $statisticInfo['receiptMoney'] += $item;
+                $type = Products::findOne(['idInMarket'=>$k]);
+                if(!empty($type->type) && !empty($typeProject[$type->type])){
+                    $statisticInfo['receiptMoney_'.$typeProject[$type->type]] += $item;
+
+                    //debag
+//                    if($typeProject[$type->type] == 'VipCoin'){
+//                        $debag['live_money'][] = $k;
+//                    }
+                }
+            }
+        }
+        $i = 0;
+        for ($iDate=$statisticInfo['request']['from'];$iDate<=$statisticInfo['request']['to'];$iDate=date('Y-m',strtotime('+1 month', strtotime($iDate)))) {
+            $month = date('m',strtotime($iDate));
+            if(!empty($liveMoney[$month])){
+                $statisticInfo['receiptMoney'] += $liveMoney[$month];
+                $statisticInfo['receiptMoney_BalanceTopUp'] += $liveMoney[$month];
+            }
+
+            $i++;
+        }
+
+//
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo "<xmp>";
+//        print_r($debag);
+//        echo "</xmp>";
+//        die();
 
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['firstPurchase'])
@@ -321,6 +497,16 @@ class DefaultController extends BaseController
                     [
                         'forWhat' => [
                             '$regex' => 'For stocks'
+                        ]
+                    ],
+                    [
+                        'forWhat' => [
+                            '$regex' => 'Executive bonus'
+                        ]
+                    ],
+                    [
+                        'forWhat' => [
+                            '$regex' => 'Bonus per the achievement'
                         ]
                     ]
                 ]
@@ -398,7 +584,7 @@ class DefaultController extends BaseController
 
         if(!empty($statisticInfo['tradeTurnover']['forUser'])){
             arsort($statisticInfo['tradeTurnover']['forUser']);
-            $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,10);
+            $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,20);
 
         }
 
@@ -430,6 +616,174 @@ class DefaultController extends BaseController
             }
         }
 
+
+
+        // infoBonus
+        $listBonus = ['worldBonus','autoBonus','propertyBonus'];
+        foreach ($listBonus as $itemBonus) {
+            $statisticInfo['bonus'][$itemBonus] = (new \yii\mongodb\Query())
+                ->select(['statistics.'.$itemBonus])
+                ->from('users')
+                ->where([
+                    'username' => [
+                        '$nin' => ['main','datest1','danilchenkoalex']
+                    ]
+                ])
+                ->sum('statistics.'.$itemBonus);
+        }
+
+        $statisticInfo['bonus']['executiveBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Executive bonus'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $statisticInfo['bonus']['careerBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Bonus per the achievement'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $statisticInfo['bonus']['mentorBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Mentor bonus'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $statisticInfo['bonus']['equityBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'For stocks'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $statisticInfo['bonus']['teamBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Closing steps'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $connectingBonusAdd = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Purchase for a partner'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $connectingBonusCancellation = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'forWhat' => [
+                    '$regex' => 'Cancellation purchase for a partner'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('000000000000000000000001')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+        $statisticInfo['bonus']['connectingBonus'] = $connectingBonusAdd - $connectingBonusCancellation;
+
+
+//        $entering_money = Transaction::find()
+//            ->select(['amount','idTo','dateCreate'])
+//            ->where([
+//                'forWhat' => [
+//                    '$regex' => 'Entering the money'
+//                ],
+//                'idTo' => [
+//                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+//                ],
+//                'type'=>1,
+//            ])->orderBy(['amount'=>SORT_DESC])->all();
+//        $xz='';
+//        foreach ($entering_money as $k=>$item) {
+//            $xz .= '<tr><td>'.$item->dateCreate->toDateTime()->format('Y-m-d H:i:s').'<td>'.Users::findOne(['_id'=>$item->idTo])->username. '<td>' . $item->amount;
+//            if($k==50)break;
+//        }
+//
+//        $xz = '<table>'.$xz.'</table>';
+//        echo $xz;
+//        die();
+
+        $entering_money = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'forWhat' => [
+                    '$regex' => 'Entering the money'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+
+        $entering_money_caneletion = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'forWhat' => [
+                    '$regex' => 'Entering the money \\(Rollback'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1
+            ])
+            ->sum('amount');
+
+        $statisticInfo['refill'] = $entering_money - $entering_money_caneletion;
+
+
+
         $i = 0;
         for ($iDate=$statisticInfo['request']['from'];$iDate<=$statisticInfo['request']['to'];$iDate=date('Y-m',strtotime('+1 month', strtotime($iDate)))) {
             if(empty($statisticInfo['newRegistrationForMonth'][$iDate])){
@@ -455,6 +809,12 @@ class DefaultController extends BaseController
             }else{
                 $statisticInfo['issuedCommissionMonth'][$iDate] = [$i,round($statisticInfo['issuedCommissionMonth'][$iDate])];
             }
+            
+            if(empty($statisticInfo['feesCommissionMonth'][$iDate])){
+                $statisticInfo['feesCommissionMonth'][$iDate] = [$i,0];
+            }else{
+                $statisticInfo['feesCommissionMonth'][$iDate] = [$i,round($statisticInfo['feesCommissionMonth'][$iDate])];
+            }
 
             $statisticInfo['dateInterval'][] = [$i,$iDate];
 
@@ -465,6 +825,7 @@ class DefaultController extends BaseController
         ksort($statisticInfo['ofThemPaidForMonth']);
         ksort($statisticInfo['generalReceiptMoneyMonth']);
         ksort($statisticInfo['issuedCommissionMonth']);
+        ksort($statisticInfo['feesCommissionMonth']);
 
 //        header('Content-Type: text/html; charset=utf-8');
 //        echo "<xmp>";
@@ -475,4 +836,20 @@ class DefaultController extends BaseController
         return $statisticInfo;
     }
 
+    protected function getProductBuyForMoney($date_from,$date_to)
+    {
+        $ch = curl_init();
+        
+        curl_setopt($ch, CURLOPT_URL,"http://vipsite.biz/admin/statistic.php");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query(['date_from' => $date_from,'date_to'=>$date_to]));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $server_output = curl_exec ($ch);
+
+        curl_close ($ch);
+
+        return json_decode($server_output,TRUE);
+    }
+    
 }

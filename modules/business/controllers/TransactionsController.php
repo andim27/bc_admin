@@ -101,13 +101,12 @@ class TransactionsController extends BaseController
             ->where([
                 'forWhat'=> [
                     '$regex' => 'Withdrawal',
-                    //'$ne' => 'Withdrawal (Rollback)'
+                    '$ne' => 'Withdrawal (Rollback)'
                 ],
                 'reduced' => ['$ne'=>false],
             ])
             ->orderBy(['confirmed' => SORT_DESC, 'dateCreate' => SORT_DESC])
             ->all();
-
 
         return $this->render('withdrawal',[
             'model' => $model,
@@ -115,6 +114,67 @@ class TransactionsController extends BaseController
         ]);
     }
 
+    
+    public function actionWithdrawalExcel()
+    {
+        $model = Transaction::find()
+            ->where([
+                'forWhat'=> [
+                    '$regex' => 'Withdrawal',
+                    '$ne' => 'Withdrawal (Rollback)'
+                ],
+                'reduced' => ['$ne'=>false],
+            ])
+            ->orderBy(['confirmed' => SORT_DESC, 'dateCreate' => SORT_DESC])
+            ->all();
+
+        $listCard = PaymentCard::getListCards();
+        
+        $infoExport = [];
+
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $infoExport[] = [
+                    'from_whom'     =>  (!empty($item->infoUser->username) ? $item->infoUser->username : ''),
+                    'full_name'     =>  (!empty($item->infoUser->firstName) ? $item->infoUser->firstName : '') . ' ' . (!empty($item->infoUser->secondName) ? $item->infoUser->secondName : ''),
+                    'amount'        =>  $item->amount,
+                    'card_type'     =>  ($listCard ? $listCard[(!empty($item->card['type']) ? $item->card['type'] : '1')] : ''),
+                    'card_number'   =>  (!empty($item->card['number']) ? $item->card['number'] : ''),
+                    'date_create'   =>  $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
+                    'status'        =>  THelper::t($item->getStatus()),
+                    'date_reduce'   =>  (!empty($item->dateReduce) ? $item->dateReduce->toDateTime()->format('Y-m-d H:i:s') : date('Y-m-d H:i:s')),
+                ];
+            }
+        }
+
+        \moonland\phpexcel\Excel::export([
+            'models' => $infoExport,
+            'fileName' => 'export '.date('Y-m-d H:i:s'),
+            'columns' => [
+                'from_whom',
+                'full_name',
+                'amount',
+                'card_type',
+                'card_number',
+                'date_create',
+                'status',
+                'date_reduce',
+            ],
+            'headers' => [
+                'from_whom'     =>  THelper::t('from_whom'),
+                'full_name'     =>  THelper::t('full_name'),
+                'amount'        =>  THelper::t('amount'),
+                'card_type'     =>  THelper::t('card_type'),
+                'card_number'   =>  THelper::t('card_number'),
+                'date_create'   =>  THelper::t('date_create'),
+                'status'        =>  THelper::t('status'),
+                'date_reduce'   =>  THelper::t('date_reduce'),
+            ],
+        ]);
+
+        die();
+    }
+    
     /**
      * popup with info withdrawal 
      * @param $id

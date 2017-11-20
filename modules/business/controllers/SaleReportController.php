@@ -27,15 +27,28 @@ class SaleReportController extends BaseController
     public function actionInfoWaitSaleByUser()
     {
 
+        $infoWarehouse = Warehouse::getInfoWarehouse();
+
         $allListCountry = Settings::getListCountry();
 
         $request =  Yii::$app->request->post();
-        $request['countryReport'] = (empty($request['countryReport']) ? 'all' : $request['countryReport']);
+        //$request['countryReport'] = (empty($request['countryReport']) ? 'all' : $request['countryReport']);
+
+        if(empty($request['countryReport'])) {
+            if ((string)$infoWarehouse->_id != '5a056671dca7873e022be781') {
+                $request['countryReport'] = $infoWarehouse->country;
+            } else {
+                $request['countryReport'] = 'all';
+            }
+        }
+
         $request['goodsReport'] = (empty($request['goodsReport']) ? 'all' : $request['goodsReport']);
 
         $infoSale = $infoGoods = [];
 
-        $listCountry['all'] = 'Все страны';
+        if ((string)$infoWarehouse->_id == '5a056671dca7873e022be781') {
+            $listCountry['all'] = 'Все страны';
+        }
 
         $model = StatusSales::find()
             ->where(['IN','setSales.status',['status_sale_new','status_sale_delivered',
@@ -70,8 +83,6 @@ class SaleReportController extends BaseController
                         $tempInfoUser['country'] = $item->infoUser->country;
                         $tempInfoUser['city'] = $item->infoUser->city;
                         $tempInfoUser['address'] = $item->infoUser->address;
-
-
 
 
                         $tempInfoUser['phone']= [];
@@ -351,7 +362,7 @@ class SaleReportController extends BaseController
                 ->orWhere(['is_posting' => (string)0]);
 
             if($request['send_kh']==1){
-                $modelSending = $modelSending->andWhere(['from_where_send'=>'592426f6dca7872e64095b45'])->all();
+                $modelSending = $modelSending->andWhere(['from_where_send'=>'5a056671dca7873e022be781'])->all();
             } else {
                 $modelSending = $modelSending->all();
             }
@@ -596,7 +607,7 @@ class SaleReportController extends BaseController
 
             $selectWarehouseKh = [];
             if($request['send_kh']==1){
-                $selectWarehouseKh = ['from_where_send'=>new ObjectID('592426f6dca7872e64095b45')];
+                $selectWarehouseKh = ['from_where_send'=>new ObjectID('5a056671dca7873e022be781')];
             }
 
             // get info about sending parcel with goods
@@ -605,7 +616,7 @@ class SaleReportController extends BaseController
                 ->orWhere(['is_posting' => (string)0]);
 
             if($request['send_kh']==1){
-                $modelSending = $modelSending->andWhere(['from_where_send'=>'592426f6dca7872e64095b45'])->all();
+                $modelSending = $modelSending->andWhere(['from_where_send'=>'5a056671dca7873e022be781'])->all();
             } else {
                 $modelSending = $modelSending->all();
             }
@@ -858,7 +869,7 @@ class SaleReportController extends BaseController
 
             $selectWarehouseKh = [];
             if($request['send_kh']==1){
-                $selectWarehouseKh = ['from_where_send'=>new ObjectID('592426f6dca7872e64095b45')];
+                $selectWarehouseKh = ['from_where_send'=>new ObjectID('5a056671dca7873e022be781')];
             }
 
             // get info about sending parcel with goods
@@ -867,7 +878,7 @@ class SaleReportController extends BaseController
                 ->orWhere(['is_posting' => (string)0]);
 
             if($request['send_kh']==1){
-                $modelSending = $modelSending->andWhere(['from_where_send'=>'592426f6dca7872e64095b45'])->all();
+                $modelSending = $modelSending->andWhere(['from_where_send'=>'5a056671dca7873e022be781'])->all();
             } else {
                 $modelSending = $modelSending->all();
             }
@@ -1032,7 +1043,7 @@ class SaleReportController extends BaseController
             $date = strtotime('-3 month', strtotime($request['to']));
             $request['from'] = date('Y-m-d', $date);
         } else {
-            if((string)$infoWarehouse->_id != '592426f6dca7872e64095b45' ){
+            if((string)$infoWarehouse->_id != '5a056671dca7873e022be781' ){
                 $request['countryReport'] = $infoWarehouse->country;
             }
         }
@@ -1098,4 +1109,5 @@ class SaleReportController extends BaseController
             ]
         );
     }
+
 }
