@@ -51,10 +51,10 @@ class DefaultController extends BaseController
             '9'     => 'VipCoin',
             '10'    => 'VipCoin',
         ];
-        
+
         $liveMoney = [
-            '04'  =>  46512.71,
-            '05'  =>  47993.03,
+            '04'  =>  26765.11,
+            '05'  =>  32410.16,
             '06'  =>  31633.04,
             '07'  =>  45791.55,
             '08'  =>  29052.08,

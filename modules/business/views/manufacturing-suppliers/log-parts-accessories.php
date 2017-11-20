@@ -57,7 +57,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                     <tr>
                         <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
                         <td><?=THelper::t($item->action)?></td>
-                        <td><?=(!empty($item->adminInfo) ? $item->adminInfo->secondName . ' ' .$item->adminInfo->firstName : '')?></td>
+                        <td><?=(!empty($item->adminInfo) ? $item->adminInfo->secondName . ' ' .$item->adminInfo->firstName : 'None')?></td>
                         <td><?=$item->number?></td>
                         <td><?=(!empty($item->money) ? $item->money . ' EUR' : '')?></td>
                         <td><?=$item->comment?></td>
