@@ -83,12 +83,14 @@ class LogWarehouseController extends BaseController {
         $model = '';
         if(!empty($request['infoWarehouse'])){
 
+            $infoDateTo = explode("-",$request['to']);
+            $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
 
             $model = LogWarehouse::find()
                 ->where([
                     'date_create' => [
-                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
-                        '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                        '$gte' => new UTCDateTime(strtotime($request['from'].'-01') * 1000),
+                        '$lte' => new UTCDateTime(strtotime($request['to'].'-'.$countDay . '23:59:59') * 1000)
                     ],
                     '$or' => [
                         ['admin_warehouse_id' => new ObjectID($request['infoWarehouse'])],
