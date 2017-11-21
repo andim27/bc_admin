@@ -347,7 +347,7 @@ class SendingWaitingParcelController extends BaseController {
         $warehouseId = (string)$warehouse->_id;
 
         $model = SendingWaitingParcel::find();
-        if(Warehouse::checkWarehouseKharkov($warehouseId)){
+        if(Warehouse::checkWarehouseKharkov($warehouseId)===false){
             if(!empty($warehouse->headUser)){
                 $model=$model->where([
                     '$or' => [
