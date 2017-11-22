@@ -15,6 +15,7 @@ use MongoDB\BSON\UTCDatetime;
 use Yii;
 use app\controllers\BaseController;
 use DateTime;
+use yii\data\Pagination;
 
 class ManufacturingSuppliersController extends BaseController {
 
@@ -223,11 +224,19 @@ class ManufacturingSuppliersController extends BaseController {
             if(!empty($request)){
                 $dateInterval['to'] = $request['to'];
                 $dateInterval['from'] =  $request['from'];
+            } else if (Yii::$app->request->isAjax) {
+                $request =  Yii::$app->request->get();
+                $dateInterval['to'] = $request['to'];
+                $dateInterval['from'] =  $request['from'];
             } else {
                 $dateInterval['to'] = date("Y-m-d");
                 $dateInterval['from'] = date("Y-01-01");
             }
 
+            $columns = [
+                'date_create', 'action', 'who_performed_action', 'number', 'money', 'comment'
+            ];
+            
             $model = LogWarehouse::find()
                 ->where(['parts_accessories_id'=> new ObjectID($id)])
                 ->andWhere([
@@ -235,15 +244,62 @@ class ManufacturingSuppliersController extends BaseController {
                         '$gte' => new UTCDatetime(strtotime($dateInterval['from']) * 1000),
                         '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
                     ]
-                ])
-                ->orderBy(['date_create'=>SORT_DESC])
-                ->all();
+                ]);
+
+            if (!empty($request['search']['value']) && $search = $request['search']['value']) {
+                $model->andFilterWhere(['or',
+                    ['like', 'comment', $search],
+                ]);
+            }
+
+            if (!empty($request['order']['0']) && $order = $request['order']['0']) {
+                $model->orderBy([$columns[$order['column']] => ($order['dir'] === 'asc' ? SORT_ASC : SORT_DESC)]);
+            }
+            
+
+            $countQuery = clone $model;
+            $pages = new Pagination(['totalCount' => $countQuery->count()]);
+
+            if (Yii::$app->request->isAjax) {
+
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+                $data = [];
+
+                $model = $model
+                    ->offset($request['start'] ?: $pages->offset)
+                    ->limit($request['length'] ?: $pages->limit);
+
+                $count = $model->count();
+
+                foreach ($model->all() as $key => $item){
+                    $nestedData = [];
+
+                    $nestedData[$columns[0]] = $item->date_create->toDateTime()->format('Y-m-d H:i:s');
+                    $nestedData[$columns[1]] = THelper::t($item->action);
+                    $nestedData[$columns[2]] = (!empty($item->adminInfo) ? $item->adminInfo->secondName . ' ' .$item->adminInfo->firstName : 'None');
+                    $nestedData[$columns[3]] = $item->number;
+                    $nestedData[$columns[4]] = (!empty($item->money) ? $item->money . ' EUR' : '');
+                    $nestedData[$columns[5]] = $item->comment;
+
+                    $data[] = $nestedData;
+                }
+
+                return [
+                    'draw' => $request['draw'],
+                    'data' => $data,
+                    'recordsTotal' => $count,
+                    'recordsFiltered' => $count
+                ];
+            }
+
 
             return $this->render('log-parts-accessories',[
                 'language' => Yii::$app->language,
                 'id' => $id,
-                'model' => $model,
+                //'model' => $model,
                 'dateInterval' => $dateInterval,
+                'pages' => $pages,
             ]);
         }
         return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/suppliers-performers');
