@@ -14,7 +14,7 @@ $listAction = LogWarehouse::getAllAction();
 ?>
 
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('log') ?></h3>
+    <h3 class="m-b-none">Логирование</h3>
 </div>
 
 
@@ -22,7 +22,7 @@ $listAction = LogWarehouse::getAllAction();
 
     <?php $formStatus = ActiveForm::begin([
         'action' => '/' . $language . '/business/log-warehouse/move-on-warehouse',
-        'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
+        'options' => ['name' => 'formLog', 'data-pjax' => '1'],
     ]); ?>
 
     <div class="col-md-3">
@@ -36,8 +36,7 @@ $listAction = LogWarehouse::getAllAction();
     <div class="col-md-2 m-b">
         <?=Html::dropDownList('infoWarehouse', $request['infoWarehouse'],
             ArrayHelper::merge([''=>THelper::t('all_warehouse')],$listWarehouse),[
-                'class'=>'form-control infoUser',
-                'id'=>'infoWarehouse',
+                'class'=>'form-control infoWarehouse'
             ])?>
     </div>
 
@@ -55,7 +54,11 @@ $listAction = LogWarehouse::getAllAction();
     </div>
 
     <div class="col-md-1 m-b">
-        <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success btn-block']) ?>
+    </div>
+
+    <div class="col-md-1 m-b">
+        <?=Html::a('<i class="fa fa-file-o"></i>',['javascript:void(0);'],['class'=>'btn btn-default btn-block exportExcel','title'=>'Export Excel'])?>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -107,11 +110,24 @@ $listAction = LogWarehouse::getAllAction();
 
 
 
-    <script>
-        $('.table-translations').dataTable({
-            language: TRANSLATION,
-            lengthMenu: [ 25, 50, 75, 100 ],
-            "order": [[ 0, "desc" ]]
-        });
-    </script>
+<script>
+    $('.table-translations').dataTable({
+        language: TRANSLATION,
+        lengthMenu: [ 25, 50, 75, 100 ],
+        "order": [[ 0, "desc" ]]
+    });
+
+    $('.exportExcel').on('click',function (e) {
+        e.preventDefault();
+
+        formFilter = $('form[name="formLog"]');
+
+        if(formFilter.find('.infoWarehouse').val()==''){
+            alert('Выберите склад');
+            return false;
+        }
+
+        formFilter.attr('action','<?=\yii\helpers\Url::to(['log-warehouse/move-on-warehouse-excel'])?>').submit();
+    })
+</script>
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>

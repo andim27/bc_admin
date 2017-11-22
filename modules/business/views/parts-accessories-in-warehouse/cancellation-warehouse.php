@@ -67,7 +67,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                             <td><?=$listGoods[(string)$item->parts_accessories_id]?></td>
                             <td><?=$item->number?></td>
                             <td><?=$listWarehouse[(string)$item->admin_warehouse_id]?></td>
-                            <td><?=$item->adminInfo->secondName . ' ' .$item->adminInfo->firstName?></td>
+                            <td><?=(!empty($item->adminInfo) ? $item->adminInfo->secondName . ' ' .$item->adminInfo->firstName : '')?></td>
                             <td><?=$item->comment?></td>
                         </tr>
                     <?php } ?>

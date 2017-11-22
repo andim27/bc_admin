@@ -60,6 +60,80 @@ class LogWarehouseController extends BaseController {
         ]);
     }
 
+    public function actionMoveOnWarehouseExcel()
+    {
+
+        $request = Yii::$app->request->post();
+
+        $infoExport = [];
+        if(!empty($request['infoWarehouse'])){
+
+            $whereAction = [];
+            if(!empty($request['list_action'])){
+                $whereAction = ['IN','action',$request['list_action']];
+            }
+
+            $model = LogWarehouse::find()
+                ->where([
+                    'date_create' => [
+                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                    ],
+                    '$or' => [
+                        ['admin_warehouse_id' => new ObjectID($request['infoWarehouse'])],
+                        ['on_warehouse_id' => new ObjectID($request['infoWarehouse'])]
+                    ]
+                ])
+                ->andFilterWhere($whereAction)
+                ->all();
+
+            if(!empty($model)){
+                foreach ($model as $item) {
+                    $infoExport[] = [
+                        'date'          =>  $item->date_create->toDateTime()->format('Y-m-d H:i:s'),
+                        'action'        =>  THelper::t($item->action),
+                        'whoDoing'      =>  (!empty($item->adminInfo) ? $item->adminInfo->secondName .' '. $item->adminInfo->firstName : ''),
+                        'fromWarehouse' =>  (!empty($item->admin_warehouse_id) ? $item->adminWarehouseInfo->title : ''),
+                        'toWarehouse'   =>  (!empty($item->on_warehouse_id) ? $item->onWarehouseInfo->title : ''),
+                        'goods'         =>  $item->infoPartsAccessories->title,
+                        'count'         =>  $item->number,
+                        'price'         =>  (!empty($item->money) ? $item->money . ' EUR' : ''),
+                        'comment'       =>  (!empty($item->comment) ? $item->comment : ''),
+                    ];
+                }
+            }
+        }
+
+        \moonland\phpexcel\Excel::export([
+            'models' => $infoExport,
+            'fileName' => 'export '.date('Y-m-d H:i:s'),
+            'columns' => [
+                'date',
+                'action',
+                'whoDoing',
+                'fromWarehouse',
+                'toWarehouse',
+                'goods',
+                'count',
+                'price',
+                'comment',
+            ],
+            'headers' => [
+                'date'          =>  'Дата',
+                'action'        =>  'Действие',
+                'whoDoing'      =>  'Кто проводил',
+                'fromWarehouse' =>  'Склад -->',
+                'toWarehouse'   =>  'Склад <---',
+                'goods'         =>  'Товар',
+                'count'         =>  'Количество',
+                'price'         =>  'Цена',
+                'comment'       =>  'Коментарий',
+            ],
+        ]);
+
+        die();
+    }
+
     public function actionMoveOnWarehouseForMonth()
     {
         $infoProduct = $infoProductAmount = $actionDontKnow = [];
