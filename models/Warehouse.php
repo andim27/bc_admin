@@ -203,4 +203,17 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
 
         return $list;
     }
+    
+    public static function checkWarehouseKharkov($idWarehouse = '')
+    {
+        if(!empty($idWarehouse)){
+            $idWarehouse = self::getIdMyWarehouse();
+        }
+        
+        if(in_array($idWarehouse,['5a056671dca7873e022be781','592426f6dca7872e64095b45'])){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

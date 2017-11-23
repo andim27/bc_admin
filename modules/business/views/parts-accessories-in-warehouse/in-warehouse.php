@@ -13,7 +13,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
 $listGoods = PartsAccessories::getListPartsAccessories();
 
 $listWarehouse = [];
-if($idWarehouse == '5a056671dca7873e022be781'){
+if(Warehouse::checkWarehouseKharkov($idWarehouse)){
     $listWarehouse = Warehouse::getArrayWarehouse();
 } else {
     if(Users::checkHeadAdmin()){

@@ -1042,10 +1042,10 @@ class SaleReportController extends BaseController
             $request['to']=date("Y-m-d");
             $date = strtotime('-3 month', strtotime($request['to']));
             $request['from'] = date('Y-m-d', $date);
-        } else {
-            if((string)$infoWarehouse->_id != '5a056671dca7873e022be781' ){
-                $request['countryReport'] = $infoWarehouse->country;
-            }
+        }
+
+        if(Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)===false){
+            $request['countryReport'] = $infoWarehouse->country;
         }
 
         $model = Sales::find()

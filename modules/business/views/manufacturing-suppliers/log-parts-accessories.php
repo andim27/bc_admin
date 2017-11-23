@@ -37,47 +37,57 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 
 </div>
 
-<?php if(!empty($model)) { ?>
-    <section class="panel panel-default">
-        <div class="table-responsive">
-            <table class="table table-translations table-striped datagrid m-b-sm">
-                <thead>
-                <tr>
-                    <th>Дата</th>
-                    <th>Действие</th>
-                    <th>Кто проводил</th>
-                    <th>Количество</th>
-                    <th>Цена</th>
-                    <th>Коментарий</th>
-                </tr>
-                </thead>
-                <tbody>
 
-                <?php foreach ($model as $k=>$item) { ?>
-                    <tr>
-                        <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
-                        <td><?=THelper::t($item->action)?></td>
-                        <td><?=$item->adminInfo->secondName . ' ' .$item->adminInfo->firstName?></td>
-                        <td><?=$item->number?></td>
-                        <td><?=(!empty($item->money) ? $item->money . ' EUR' : '')?></td>
-                        <td><?=$item->comment?></td>
-                    </tr>
-                <?php } ?>
-                </tbody>
-            </table>
-        </div>
-    </section>
-<?php } ?>
+<section class="panel panel-default">
+    <div class="table-responsive">
+        <table class="table table-translations table-striped datagrid m-b-sm">
+            <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Действие</th>
+                <th>Кто проводил</th>
+                <th>Количество</th>
+                <th>Цена</th>
+                <th>Коментарий</th>
+            </tr>
+            </thead>
+            <tbody>
 
-
+            </tbody>
+        </table>
+    </div>
+</section>
 
 <script>
-    $('.table-translations').dataTable({
+    var table = $('.table-translations');
+
+    table = table.dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '/' + LANG + '/business/manufacturing-suppliers/log-parts-accessories',
+            "data": function ( d ) {
+                d.id = "<?=$id?>",
+                d.from = "<?= $dateInterval['from'] ?>";
+                d.to = "<?= $dateInterval['to'] ?>"
+            }
+        },
+        "columns": [
+            {"data": "date_create"},
+            {"data": "action"},
+            {"data": "who_performed_action"},
+            {"data": "number"},
+            {"data": "money"},
+            {"data": "comment"}
+        ],
         "order": [[ 0, "desc" ]]
     });
+
+
 </script>
+
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
 
 
