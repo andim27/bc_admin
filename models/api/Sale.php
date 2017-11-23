@@ -132,4 +132,27 @@ class Sale {
         return $response == 'OK';
     }
 
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    public static function buy(array $data)
+    {
+        $params = [
+            'iduser' => $data['iduser'],
+            'pin' => $data['pin'],
+            'project' => 1
+        ];
+
+        $warehouse = [];
+
+        if (!empty($data['warehouse'])) {
+            $warehouse = ['warehouse' => $data['warehouse']];
+        }
+
+        $apiClient = new ApiClient('sales');
+
+        return $apiClient->post(array_merge($params, $warehouse), false);
+    }
+
 }
