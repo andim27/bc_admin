@@ -842,8 +842,14 @@ class UserController extends BaseController
                 $pin = api\Pin::createPinForProduct($product ? $product->idInMarket : null, $model->quantity);
 
                 if ($model->isLogin && $pin) {
+                    $partner = api\User::get($model->partnerLogin);
+
+                    if (!$partner) {
+                        Yii::$app->session->setFlash('danger', THelper::t('partner_not_found'));
+                    }
+
                     $response = Sale::buy([
-                        'iduser' => api\User::get($model->partnerLogin),
+                        'iduser' => $partner->id,
                         'pin' => $pin,
                         'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null
                     ]);
@@ -852,7 +858,7 @@ class UserController extends BaseController
                         Yii::$app->session->setFlash('success', THelper::t('partner_payment_is_success'));
                     } else {
                         Yii::$app->session->setFlash('danger', THelper::t('partner_payment_is_unsuccessful')
-                            . ' ' . '<span style="display:none;">' . $response . '</span>');
+                            . ' ' . '<span style="display:none;">' . $response . ' ' . $partner->id . '</span>');
                     }
                 }
 
