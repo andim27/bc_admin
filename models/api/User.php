@@ -59,6 +59,7 @@ class User
     public $promotions;
     public $warehouseName;
     public $cards;
+    public $isDelete;
 
     /**
      * Return user
@@ -453,6 +454,10 @@ class User
 
                 if (isset($object->cards)) {
                     $user->cards = $object->cards;
+                }
+
+                if (isset($object->isDelete)) {
+                    $user->isDelete = $object->isDelete;
                 }
 
                 $result[] = $user;
