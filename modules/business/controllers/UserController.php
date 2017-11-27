@@ -866,6 +866,15 @@ class UserController extends BaseController
             } else {
                 Yii::$app->session->setFlash('danger', THelper::t('pin_is_incorrect'));
             }
+
+
+            if(!empty($pincode) && !empty($model->loan)){
+                $modelPin = Pins::findOne(['pin'=>$pincode]);
+                if(!empty($modelPin)){
+                    $modelPin->loan=(boolean)true;
+                    if($modelPin->save()){}
+                }
+            }
         }
 
         foreach (Product::all() as $product) {
@@ -876,6 +885,8 @@ class UserController extends BaseController
             ];
         }
 
+
+
         return $this->render('pincode_generator', [
             'model' => $model,
             'productList' => $productList,
@@ -883,6 +894,36 @@ class UserController extends BaseController
             'defaultProduct' => $defaultProduct,
             'pincode' => !empty($pincode) ? $pincode : null
         ]);
+    }
+
+
+    public function actionSearchListUsers($q = null, $id = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['id' => '', 'text' => '']];
+
+        $dataUsers = \app\models\Users::getAllUsers();
+        if (!is_null($q)) {
+            $input = preg_quote($q, '~'); // don't forget to quote input string!
+            $result = preg_grep('~' . $input . '~', $dataUsers);
+            if(!empty($result)){
+                $out['results'] = [];
+                foreach ($result as $k=>$item) {
+                    $out['results'][] = [
+                        'id'        =>  $k,
+                        'text'      =>  $item
+                    ];
+                }
+            }
+        }
+        elseif ($id > 0) {
+            $out['results'] = ['id' => $id, 'text' => $dataUsers[$id]];
+        }
+
+
+
+        return $out;
     }
 
 }

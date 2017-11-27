@@ -30,6 +30,7 @@ class Pins extends ActiveRecord
             'isDelete',
             'isActivate',
             'pin',
+            'loan',
             'author',
             'dateCreate'
         ];

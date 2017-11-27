@@ -13,6 +13,7 @@ class PincodeGenerateForm extends Model
     public $quantity;
     public $isLogin;
     public $partnerLogin;
+    public $loan;
 
     /**
      * @return array
@@ -21,7 +22,7 @@ class PincodeGenerateForm extends Model
     {
         return [
             [['pin', 'product', 'quantity'], 'required', 'message' => THelper::t('required_field')],
-            [['isLogin'], 'boolean'],
+            [['isLogin','loan'], 'boolean'],
             [['quantity'], 'integer'],
             ['partnerLogin', function($attribute, $params){
                 if ($this->partnerLogin && ! User::get($this->partnerLogin)) {

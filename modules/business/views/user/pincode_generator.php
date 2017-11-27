@@ -25,6 +25,10 @@
                 <br>
             </div>
 
+            <div class="col-md-12">
+                <?= $form->field($model, 'loan')->checkbox([],[false])->label(THelper::t('loan')) ?>
+            </div>
+
             <div class="col-md-12" style="margin-bottom: 15px;">
                <div>
                    <?php $productData = $productListData[$defaultProduct]; ?>

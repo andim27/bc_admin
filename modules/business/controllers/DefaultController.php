@@ -840,7 +840,7 @@ class DefaultController extends BaseController
     protected function getProductBuyForMoney($date_from,$date_to)
     {
         $ch = curl_init();
-        
+
         curl_setopt($ch, CURLOPT_URL,"http://vipsite.biz/admin/statistic.php");
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query(['date_from' => $date_from,'date_to'=>$date_to]));

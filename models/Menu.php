@@ -263,6 +263,13 @@ Class Menu
                         'url' => ['/business/user/pincode-generator'],
                         'action' => 'pincode-generator',
                     ],
+
+                    [
+                        'key'   =>  'sidebar_loans',
+                        'label' => THelper::t('sidebar_loans'),
+                        'url' => ['/business/loan/loans'],
+                        'action' => 'loans',
+                    ],
                 ]
             ],
             [
