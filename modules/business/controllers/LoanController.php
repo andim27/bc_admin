@@ -109,6 +109,7 @@ class LoanController extends BaseController {
         if(!empty($request)){
             $model->user_id = new ObjectID($request['LoanRepayment']['user_id']);
             $model->amount = (double)$request['LoanRepayment']['amount'];
+            $model->comment = $request['LoanRepayment']['comment'];
             $model->who_sent_transaction = new ObjectID($this->user->id);
             $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
             
@@ -152,7 +153,8 @@ class LoanController extends BaseController {
                     $info[$dateCr] = [
                         'userSentTransaction'   => '-',
                         'amountLoan'            => $infoPin->price,
-                        'amountRepayment'       => '0'
+                        'amountRepayment'       => '0',
+                        'comment'               => ''
                     ];
 
                 }
@@ -170,7 +172,8 @@ class LoanController extends BaseController {
                 $info[$dateCr] = [
                     'userSentTransaction'   => !empty($infoUserRepayment->username) ? $infoUserRepayment->username : 'None',
                     'amountLoan'            => '0',
-                    'amountRepayment'       => $item->amount
+                    'amountRepayment'       => $item->amount,
+                    'comment'               => $item->comment
                 ];
             }
         }

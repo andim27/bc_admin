@@ -21,7 +21,7 @@ use kartik\widgets\Select2;
 
             <div class="row form-group">
                 <div class="col-md-12">
-                    <?= $formCom->field($model, 'amount')->textInput(['type'=>'number','pattern'=>'\d*','step'=>'1','min'=>'1'])->label(THelper::t('amount')) ?>
+                    <?= $formCom->field($model, 'amount')->textInput(['type'=>'number','pattern'=>'\d*','step'=>'1','min'=>'1','required'=>true])->label(THelper::t('amount')) ?>
                 </div>
             </div>
 
@@ -43,8 +43,17 @@ use kartik\widgets\Select2;
                         'dataType' => 'json',
                         'data' => new JsExpression('function(params) { return {q:params.term}; }')
                     ],
+                    'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+                    'templateResult' => new JsExpression('function(city) { return city.text; }'),
+                    'templateSelection' => new JsExpression('function (city) { return city.text; }'),
                 ],
             ])->label(THelper::t('user')) ?>
+
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <?=$formCom->field($model, 'comment')->textarea()->label(THelper::t('write_you_comment'));?>
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col-md-12 text-right">

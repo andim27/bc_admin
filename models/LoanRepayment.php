@@ -31,6 +31,7 @@ class LoanRepayment extends \yii2tech\embedded\mongodb\ActiveRecord
             'user_id',
             'who_sent_transaction',
             'amount',
+            'comment',
             'date_create'
         ];
     }

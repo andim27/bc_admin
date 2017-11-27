@@ -19,7 +19,7 @@ $total = [
 </div>
 
 <div class="row form-group">
-    <div class="col-md-1 col-md-offset-11">
+    <div class="col-md-2 col-md-offset-10">
         <?= Html::a('<i class="fa fa-usd"></i> '.THelper::t('sent_loan'), ['/business/loan/sent-repayment'], ['data-toggle'=>'ajaxModal','class'=>'btn btn-block btn-success']) ?>
     </div>
 </div>

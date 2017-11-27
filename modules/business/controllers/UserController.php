@@ -908,7 +908,7 @@ class UserController extends BaseController
             $input = preg_quote($q, '~'); // don't forget to quote input string!
             $result = preg_grep('~' . $input . '~', $dataUsers);
             if(!empty($result)){
-                $out['results'] = [];
+                
                 foreach ($result as $k=>$item) {
                     $out['results'][] = [
                         'id'        =>  $k,

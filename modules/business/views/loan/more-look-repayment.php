@@ -23,6 +23,7 @@ $total = [
                 <th><?=THelper::t('user')?></th>
                 <th><?=THelper::t('loan')?></th>
                 <th><?=THelper::t('repayment_for_loan')?></th>
+                <th><?=THelper::t('settings_translation_edit_comment')?></th>
             </tr>
             </thead>
             <tbody>
@@ -38,6 +39,7 @@ $total = [
                         <td><?=$item['userSentTransaction']?></td>
                         <td><?=$item['amountLoan']?></td>
                         <td><?=$item['amountRepayment']?></td>
+                        <td><?=$item['comment']?></td>
                     </tr>
                 <?php } ?>
             <?php } ?>
