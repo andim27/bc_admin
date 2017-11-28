@@ -33,4 +33,17 @@ class Pin {
 
         return (!empty($response) ? $response : false);
     }
+
+    /**
+     * @param $pin
+     * @return bool|mixed
+     */
+    public static function getPinInfo($pin)
+    {
+        $apiClient = new ApiClient('system/pinInfo/' . $pin);
+
+        $response = $apiClient->get();
+
+        return (!empty($response) ? $response : false);
+    }
 }

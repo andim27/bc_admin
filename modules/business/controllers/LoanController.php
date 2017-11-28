@@ -30,20 +30,22 @@ class LoanController extends BaseController {
             ->all();
         if(!empty($model)){
             foreach ($model as $item) {
-                $infoPin = api\Pin::checkPin($item->pin);
+                $infoPin = api\Pin::getPinInfo($item->pin);
 
-                if(!empty($infoPin->userId)){
-                    if(empty($infoLoad[$infoPin->userId])){
-                        $infoUser = Users::findOne(['_id'=>new ObjectID($infoPin->userId)]);
+                if(!empty($infoPin->pinUsedBy)){
 
-                        $infoLoad[$infoPin->userId] = [
-                            'infoUser'  => $infoUser->username,
+                    $infoUser = Users::findOne(['username'=>$infoPin->pinUsedBy]);
+
+                    if(empty($infoLoad[(string)$infoUser->_id])){
+
+                        $infoLoad[(string)$infoUser->_id] = [
+                            'infoUser'  => $infoPin->pinUsedBy,
                             'amountLoan' => 0,
                             'amountRepayment' => 0
                         ];
                     }
 
-                    $infoLoad[$infoPin->userId]['amountLoan'] += $infoPin->price;
+                    $infoLoad[(string)$infoUser->_id]['amountLoan'] += ($infoPin->productPrice * $infoPin->count);
 
                 }
 
@@ -53,9 +55,9 @@ class LoanController extends BaseController {
         $model = LoanRepayment::find()->all();
         if(!empty($model)){
             foreach ($model as $item){
-                if(empty($infoLoad[(string)$item->user_id])){
-                    $infoUser = Users::findOne(['_id'=>$item->user_id]);
+                $infoUser = Users::findOne(['_id'=>$item->user_id]);
 
+                if(empty($infoLoad[(string)$item->user_id])){
                     $infoLoad[(string)$item->user_id] = [
                         'infoUser'  => $infoUser->username,
                         'amountLoan' => 0,
@@ -146,15 +148,15 @@ class LoanController extends BaseController {
 
         if(!empty($model)){
             foreach ($model as $item) {
-                $infoPin = api\Pin::checkPin($item->pin);
+                $infoPin = api\Pin::getPinInfo($item->pin);
 
-                if(!empty($infoPin->userId) && $id==$infoPin->userId){
-                    $dateCr = date('Y-m-d H:i:s',strtotime($infoPin->order->date_create));
+                if(!empty($infoPin->pinUsedBy) && $infoUser->username==$infoPin->pinUsedBy){
+                    $dateCr = date('Y-m-d H:i:s',strtotime($infoPin->productDateCreate));
                     $info[$dateCr] = [
                         'userSentTransaction'   => '-',
-                        'amountLoan'            => $infoPin->price,
+                        'amountLoan'            => ($infoPin->productPrice * $infoPin->count),
                         'amountRepayment'       => '0',
-                        'comment'               => ''
+                        'comment'               => 'создан pin на ' .$infoPin->productName . ' по цене ' . $infoPin->productPrice . ' eur/шт в кол ' .  $infoPin->count . ' шт.'
                     ];
 
                 }

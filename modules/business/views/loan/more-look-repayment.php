@@ -50,6 +50,7 @@ $total = [
                     <th></th>
                     <th><?=$total['loan']?></th>
                     <th><?=$total['repayment']?></th>
+                    <th></th>
                 </tr>
             </tfooter>
         </table>
