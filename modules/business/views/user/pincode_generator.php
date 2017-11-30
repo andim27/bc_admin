@@ -3,6 +3,7 @@
     use yii\helpers\Html;
     use yii\bootstrap\ActiveForm;
     use kartik\widgets\Select2;
+
 ?>
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('pincode_generate_title') ?></h3>
@@ -15,8 +16,8 @@
             </div>
 
             <div class="col-md-12">
+                <?php $model->product = (!empty($model->product) ? $model->product : $defaultProduct);?>
                 <?= $form->field($model, 'product')->widget(Select2::className(),[
-                        'value' => (!empty($model->product) ? $model->product : $defaultProduct),
                         'data' => $productList,
                         'language' => 'ru',
                         'options' => [
