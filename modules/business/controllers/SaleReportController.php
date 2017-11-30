@@ -35,7 +35,9 @@ class SaleReportController extends BaseController
         //$request['countryReport'] = (empty($request['countryReport']) ? 'all' : $request['countryReport']);
 
         if(empty($request['countryReport'])) {
-            if ((string)$infoWarehouse->_id != '5a056671dca7873e022be781') {
+
+
+            if(Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)===false){
                 $request['countryReport'] = $infoWarehouse->country;
             } else {
                 $request['countryReport'] = 'all';
@@ -46,7 +48,7 @@ class SaleReportController extends BaseController
 
         $infoSale = $infoGoods = [];
 
-        if ((string)$infoWarehouse->_id == '5a056671dca7873e022be781') {
+        if (Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)) {
             $listCountry['all'] = 'Все страны';
         }
 

@@ -2,6 +2,7 @@
     use app\components\THelper;
     use yii\helpers\Html;
     use yii\bootstrap\ActiveForm;
+    use kartik\widgets\Select2;
 ?>
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('pincode_generate_title') ?></h3>
@@ -14,15 +15,15 @@
             </div>
 
             <div class="col-md-12">
-                <?php $model->product = $defaultProduct?>
-
-                <?= $form->field($model, 'product')->dropDownList($productList, [
-                    'class' => 'form-control',
-                    'id' => 'product-list',
-                    'prompt' => THelper::t('user_purchase_add_select_product')
-                ])->label(THelper::t('product')); ?>
-
-                <br>
+                <?= $form->field($model, 'product')->widget(Select2::className(),[
+                        'value' => (!empty($model->product) ? $model->product : $defaultProduct),
+                        'data' => $productList,
+                        'language' => 'ru',
+                        'options' => [
+                            'placeholder' => '',
+                            'multiple' => false
+                        ]
+                    ])->label(THelper::t('product')) ?>
             </div>
 
             <div class="col-md-12">

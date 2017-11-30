@@ -878,7 +878,7 @@ class UserController extends BaseController
         }
 
         foreach (Product::all() as $product) {
-            $productList[$product->product] = $product->productName;
+            $productList[$product->product] = $product->productName . ' - ' . $product->price .' eur';
             $productListData[$product->product] = [
                 'price' => $product->price,
                 'bonusPoints' => $product->bonusPoints
@@ -908,7 +908,7 @@ class UserController extends BaseController
             $input = preg_quote($q, '~'); // don't forget to quote input string!
             $result = preg_grep('~' . $input . '~', $dataUsers);
             if(!empty($result)){
-                
+                $out['results'] = [];
                 foreach ($result as $k=>$item) {
                     $out['results'][] = [
                         'id'        =>  $k,
