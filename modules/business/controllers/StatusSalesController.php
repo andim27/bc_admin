@@ -1194,19 +1194,28 @@ class StatusSalesController extends BaseController {
         } else {
             $request['listWarehouse'] = 'all';
 
-            $infoWarehouse = Warehouse::find()->where(['headUser'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
+            // get warehouses, where are user is headadmin or manager
+            $infoWarehouse = Warehouse::find()
+                ->where([
+                    '$or' => [
+                        ['headUser'=>new ObjectID(\Yii::$app->view->params['user']->id)],
+                        ['idUsers'=>\Yii::$app->view->params['user']->id]
+                    ]
+                ])
+                ->all();
 
             if(!empty($infoWarehouse)){
                 foreach ($infoWarehouse as $item) {
                     if(!empty($item->idUsers)){
                         foreach ($item->idUsers as $itemId){
-                            $listAdmin[] = $itemId;
+                            if(!in_array($itemId,$listAdmin)){
+                                $listAdmin[] = $itemId;
+                            }
                         }
                     }
                 }
             }
         }
-
 
         $model = Sales::find()
             ->where([
@@ -1252,15 +1261,11 @@ class StatusSalesController extends BaseController {
                             $flUse = 1;
                         }
 
-                        if ($flUse == 1 && $dateChange >= $from && $dateChange <= $to && in_array($itemSet['status'], StatusSales::getListIssuedStatus())) {
+                        if ($flUse == 1) {
                             if (empty($infoSetGoods[$itemSet->title])) {
                                 $infoSetGoods[$itemSet->title]['books'] = 0;
                                 $infoSetGoods[$itemSet->title]['issue'] = 0;
                             }
-
-//                        if($itemSet->status == 'status_sale_issued'){
-//                            $infoSetGoods[$itemSet->title]['issue']++;
-//                        }
 
                             $infoSetGoods[$itemSet->title]['books']++;
                         }

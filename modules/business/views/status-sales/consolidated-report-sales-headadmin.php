@@ -4,9 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\Warehouse;
 use app\models\Users;
-
+use yii\helpers\ArrayHelper;
 
 $listWarehouse = Warehouse::getListHeadAdminWarehouse();
+$myInfoWarehouse = Warehouse::getInfoWarehouse();
+if(!in_array((string)$myInfoWarehouse->_id,$listWarehouse)){
+    $listWarehouse = ArrayHelper::merge($listWarehouse,[(string)$myInfoWarehouse->_id=>$myInfoWarehouse->title]);
+}
+
 $listAdmin = Users::getListHeadAdminAdmin();
 ?>
     <div class="m-b-md">
