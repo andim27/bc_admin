@@ -1,7 +1,7 @@
 <?php
 use yii\bootstrap\Html;
 use app\components\THelper;
-
+use app\models\Users;
 
 ?>
 
@@ -46,7 +46,11 @@ use app\components\THelper;
                         </td>
                         <td>
                             <?=(!empty($item['nameWarehouse']) ? $item['nameWarehouse'] . ', ': 'none') ?>
-                            <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/sale-report/change-warehouse','_id'=>$item['_id'],'k'=>$item['key']], ['data-toggle'=>'ajaxModal']) ?>
+
+                            <?= (Users::checkRule('edit','sidebar_sale_wait') === true ?
+                                Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/sale-report/change-warehouse','_id'=>$item['_id'],'k'=>$item['key']], ['data-toggle'=>'ajaxModal']) :
+                                ''); ?>
+
                         </td>
                         <td>
                             <?=(!empty($listCountry[$item['country']]) ? $listCountry[$item['country']] .', ' : '') ?>

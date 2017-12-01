@@ -27,16 +27,15 @@ class SaleReportController extends BaseController
     public function actionInfoWaitSaleByUser()
     {
 
+        $listCountry = [];
+
         $infoWarehouse = Warehouse::getInfoWarehouse();
 
         $allListCountry = Settings::getListCountry();
 
         $request =  Yii::$app->request->post();
-        //$request['countryReport'] = (empty($request['countryReport']) ? 'all' : $request['countryReport']);
 
         if(empty($request['countryReport'])) {
-
-
             if(Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)===false){
                 $request['countryReport'] = $infoWarehouse->country;
             } else {
