@@ -51,6 +51,8 @@ class SaleReportController extends BaseController
             $listCountry['all'] = 'Все страны';
         }
 
+        $listCountry[$request['countryReport']] = ($request['countryReport']=='all' ? 'Все страны' : $allListCountry[$request['countryReport']]);
+
         $model = StatusSales::find()
             ->where(['IN','setSales.status',['status_sale_new','status_sale_delivered',
                 'status_sale_repairs_under_warranty',
