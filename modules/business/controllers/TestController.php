@@ -6,6 +6,8 @@ use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api;
 use app\models\PartsAccessories;
+use app\models\PartsAccessoriesInWarehouse;
+use MongoDB\BSON\ObjectID;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -128,7 +130,7 @@ class TestController extends BaseController
             $out = ArrayHelper::index($out,'productNum');
 
             echo count($out).'<br>';
-
+            die();
 
             $model = PartsAccessories::find()->all();
             foreach ($model as $item) {
@@ -150,23 +152,23 @@ class TestController extends BaseController
 
                     echo (string)$item->_id.'<br>';
 
-                    if($curl=curl_init())
-                    {
-                        curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
-                        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-                        curl_setopt($curl,CURLOPT_POST,true);
-                        curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
-                        $xz= curl_exec($curl);
-                        curl_close($curl);
-
-                        header('Content-Type: text/html; charset=utf-8');
-                        echo "<xmp>";
-                        print_r(json_decode($xz,TRUE));
-                        echo "</xmp>";
-
-
-                        sleep(1);
-                    }
+//                    if($curl=curl_init())
+//                    {
+//                        curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
+//                        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+//                        curl_setopt($curl,CURLOPT_POST,true);
+//                        curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
+//                        $xz= curl_exec($curl);
+//                        curl_close($curl);
+//
+//                        header('Content-Type: text/html; charset=utf-8');
+//                        echo "<xmp>";
+//                        print_r(json_decode($xz,TRUE));
+//                        echo "</xmp>";
+//
+//
+//                        sleep(1);
+//                    }
                 }
             }
 
@@ -255,37 +257,43 @@ class TestController extends BaseController
 
 
 
-/*
-        $model = PartsAccessories::find()->all();
-        foreach ($model as $item) {
-            $packet = [];
-            $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
-            $packet['version']="0.1";
-            $packet['action']='saveObject';
-            $packet['params']['header']=[
-                'id'=>'catalogs.goods',
-                'code'=>(!empty($item->article) ? 'bpt-'.$item->article : ''),
-                'name'=>$item->title,
-                'isGroup'=>'0',
-                'goodType'=>'1004000000000014',
-                'parent'=>$catalogId,
-                'mainUnit'=>$arrayUnits[rtrim(THelper::t($item->unit),'.')],
-                'productNum'=>(string)$item->_id,
-            ];
 
-            if($curl=curl_init())
-            {
-                curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
-                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-                curl_setopt($curl,CURLOPT_POST,true);
-                curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
-                $out=curl_exec($curl);
-                curl_close($curl);
+//        $model = PartsAccessories::find()->all();
+//        foreach ($model as $item) {
+//            $packet = [];
+//            $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
+//            $packet['version']="0.1";
+//            $packet['action']='saveObject';
+//            $packet['params']['header']=[
+//                'id'=>'catalogs.goods',
+//                'code'=>(!empty($item->article) ? 'bpt-'.$item->article : ''),
+//                'name'=>$item->title,
+//                'isGroup'=>'0',
+//                'goodType'=>'1004000000000014',
+//                'parent'=>$catalogId,
+//                'mainUnit'=>$arrayUnits[rtrim(THelper::t($item->unit),'.')],
+//                'productNum'=>(string)$item->_id,
+//            ];
+//
+//            if($curl=curl_init())
+//            {
+//                curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
+//                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+//                curl_setopt($curl,CURLOPT_POST,true);
+//                curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
+//                $out=curl_exec($curl);
+//                curl_close($curl);
+//
+//                sleep(1);
+//            }
+//        }
+//
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo "<xmp>";
+//        print_r('ok');
+//        echo "</xmp>";
+//        die();
 
-                sleep(1);
-            }
-        }
-    */
 
     }
 
@@ -420,6 +428,33 @@ class TestController extends BaseController
         $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
         $packet['version']="0.1";
 
+
+//        $packet['action']='request';
+//        $packet['params']['from']='documents.startBalance';
+//        $packet['params']['fields']=[
+//            'id'=>'id',
+//            'presentation'=>'presentation'
+//        ];
+//        if($curl=curl_init()) {
+//            curl_setopt($curl, CURLOPT_URL, 'https://delovod.ua/api/');
+//            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+//            curl_setopt($curl, CURLOPT_POST, true);
+//            curl_setopt($curl, CURLOPT_POSTFIELDS, "packet=" . json_encode($packet));
+//            $out = curl_exec($curl);
+//            curl_close($curl);
+//
+//            $out = json_decode($out, TRUE);
+//
+//            header('Content-Type: text/html; charset=utf-8');
+//            echo "<xmp>";
+//            print_r($out);
+//            echo "</xmp>";
+//            die();
+//        }
+
+
+
+
         /**
          * get Units
          */
@@ -449,10 +484,48 @@ class TestController extends BaseController
             curl_close($curl);
 
             $out = json_decode($out,True);
+
             foreach ($out as $item) {
                 $arrayUnits[$item['id__pr']] = $item['id'];
             }
         }
+
+
+        /**
+         * get goods
+         */
+        $packet['action']='request';
+        $packet['params']['from']='catalogs.goods';
+        $packet['params']['fields']=[
+            'id'=>'id',
+            'code'=>'code',
+            'name'=>'name',
+            'isGroup'=>'isGroup',
+            'goodType'=>'goodType',
+            'parent'=>'parent',
+            'mainUnit'=>'mainUnit',
+            'productNum'=>'productNum',
+            'category'=>'category'
+        ];
+        $packet['params']['filters'][]=[
+            'alias' => 'isGroup',
+            'operator'=>'=',
+            'value' => '0'
+        ];
+
+        if($curl=curl_init()) {
+            curl_setopt($curl, CURLOPT_URL, 'https://delovod.ua/api/');
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, "packet=" . json_encode($packet));
+            $out = curl_exec($curl);
+            curl_close($curl);
+
+            $arrayProducts = json_decode($out, TRUE);
+
+            $arrayProducts = ArrayHelper::index($arrayProducts, 'productNum');
+        }
+
 
         $packet['action']='request';
         $packet['params']['from']='catalogs.goods';
@@ -486,9 +559,27 @@ class TestController extends BaseController
             $out = ArrayHelper::index($out,'productNum');
 
             $model = PartsAccessories::find()->all();
+            $packet = [];
+            $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
+            $packet['version']="0.1";
+            $packet['action']='saveObject';
+            $packet['params']['header']=[
+                'id'=>'1102500000001005'
+            ];
+
             foreach ($model as $item) {
 
                 if(!empty($out[(string)$item->_id]['id'])){
+
+                    $modelWarehouse = PartsAccessoriesInWarehouse::findOne([
+                        'parts_accessories_id'=>$item->_id,
+                        'warehouse_id'=>new ObjectID('592426f6dca7872e64095b45')
+                    ]);
+
+                    $count = 0;
+                    if(!empty($modelWarehouse->number)){
+                        $count = $modelWarehouse->number;
+                    }
 
 //                    header('Content-Type: text/html; charset=utf-8');
 //                    echo "<xmp>";
@@ -496,40 +587,36 @@ class TestController extends BaseController
 //                    echo "</xmp>";
 //                    die();
 
-                    $packet = [];
-                    $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
-                    $packet['version']="0.1";
-                    $packet['action']='saveObject';
-                    $packet['params']['header']=[
-                        'id'=>'1102500000001003'
-                    ];
+
                     $packet['params']['tableParts']['tpBalances'][]=[
-                        'good'=>'1100300000001793',
+                        'good'=>$arrayProducts[(string)$item->_id]['id'],
                         'unit' => $arrayUnits[rtrim(THelper::t($item->unit),'.')],
-                        'qty'=>5,
-                        'price'=>13,
+                        'qty'=>(int)$count,
+                        'price'=>(float)(!empty($item->last_price_eur) ? $item->last_price_eur : 0),
+                        'purchPrice'=>(float)(!empty($item->last_price_eur) ? $item->last_price_eur : 0)
                     ];
 
-                    if($curl=curl_init())
-                    {
-                        curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
-                        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-                        curl_setopt($curl,CURLOPT_POST,true);
-                        curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
-                        $xz= curl_exec($curl);
-                        curl_close($curl);
 
-                        header('Content-Type: text/html; charset=utf-8');
-                        echo "<xmp>";
-                        print_r(json_decode($xz,TRUE));
-                        echo "</xmp>";
-                        die();
-
-                    }
 
                 }
             }
 
+
+//            if($curl=curl_init())
+//            {
+//                curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
+//                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+//                curl_setopt($curl,CURLOPT_POST,true);
+//                curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
+//                $xz= curl_exec($curl);
+//                curl_close($curl);
+//            }
+//
+//            header('Content-Type: text/html; charset=utf-8');
+//            echo "<xmp>";
+//            print_r($xz);
+//            echo "</xmp>";
+//            die();
         }
     }
 

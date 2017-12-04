@@ -1029,8 +1029,6 @@ class SaleReportController extends BaseController
     }
 
     public function actionReportProjectVipcoin(){
-
-
         $infoWarehouse = Warehouse::getInfoWarehouse();
 
         $allListCountry = Settings::getListCountry();
@@ -1111,6 +1109,99 @@ class SaleReportController extends BaseController
                 'listCity' => $listCity
             ]
         );
+    }
+
+    public function actionReportProjectVipcoinExcel()
+    {
+        $infoWarehouse = Warehouse::getInfoWarehouse();
+
+        $allListCountry = Settings::getListCountry();
+
+        $request =  Yii::$app->request->post();
+
+        if(empty($request)){
+            $request['to']=date("Y-m-d");
+            $date = strtotime('-3 month', strtotime($request['to']));
+            $request['from'] = date('Y-m-d', $date);
+        }
+
+        if(Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)===false){
+            $request['countryReport'] = $infoWarehouse->country;
+        }
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime(strtotime($request['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere([
+                'productType' => [
+                    '$in' => [9,10]
+                ]
+            ])
+            ->all();
+
+        $infoExport = [];
+        if(!empty($model)){
+            foreach ($model as $item) {
+
+                $listCountry[$item->infoUser->country] = $allListCountry[$item->infoUser->country];
+
+                if(empty($request['countryReport']) || ($request['countryReport']==$item->infoUser->country)){
+                    $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
+
+                    if(empty($request['cityReport']) || in_array($city,$request['cityReport'])){
+                        $infoExport[] = [
+                            'date_create' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
+                            'country'=>$allListCountry[$item->infoUser->country],
+                            'city'=>$city,
+                            'address'=>$item->infoUser->address,
+                            'full_name'=>$item->infoUser->secondName .' ' . $item->infoUser->firstName,
+                            'phone'=>$item->infoUser->phoneNumber . ' / ' . $item->infoUser->phoneNumber2,
+                            'goods' => $item->productName,
+                            'price' => $item->price
+                        ];
+
+                    }
+                }
+
+
+            }
+        }
+
+        \moonland\phpexcel\Excel::export([
+            'models' => $infoExport,
+            'fileName' => 'export '.date('Y-m-d H:i:s'),
+            'columns' => [
+                'date_create',
+                'country',
+                'city',
+                'address',
+                'full_name',
+                'phone',
+                'goods',
+                'price'
+            ],
+            'headers' => [
+                'date_create'   =>  THelper::t('date_create'),
+                'country'       =>  THelper::t('country'),
+                'city'          =>  THelper::t('city'),
+                'address'       =>  THelper::t('address'),
+                'full_name'     =>  THelper::t('full_name'),
+                'phone'         =>  THelper::t('phone'),
+                'goods'         =>  THelper::t('goods'),
+                'price'         =>  THelper::t('price')
+            ],
+        ]);
+
+        die();
     }
 
 }

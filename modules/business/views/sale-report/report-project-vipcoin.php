@@ -14,7 +14,7 @@ use yii\bootstrap\Html;
 
     <?php $formStatus = ActiveForm::begin([
         'action' => '/' . $language . '/business/sale-report/report-project-vipcoin',
-        'options' => ['name' => 'selectCountry'],
+        'options' => ['name' => 'selectFilters'],
     ]); ?>
 
     <div class="col-md-5 m-b">
@@ -58,8 +58,12 @@ use yii\bootstrap\Html;
     </div>
 
 
-    <div class="col-md-3 m-b">
+    <div class="col-md-2 m-b">
         <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success btn-block']) ?>
+    </div>
+
+    <div class="col-md-1 m-b">
+        <?=Html::a('<i class="fa fa-file-o"></i>','#',['class'=>'btn btn-default btn-block exportExcel','title'=>'Выгрузка в excel'])?>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -123,5 +127,13 @@ use yii\bootstrap\Html;
         lengthMenu: [ 25, 50, 75, 100 ],
         "order": [[ 0, "asc" ]]
     });
+
+    $('.exportExcel').on('click',function (e) {
+        e.preventDefault();
+
+        formFilter = $('form[name="selectFilters"]');
+        formFilter.attr('action','<?=\yii\helpers\Url::to(['sale-report/report-project-vipcoin-excel'])?>').submit();
+        setTimeout(function() { formFilter.attr('action','<?=\yii\helpers\Url::to(['sale-report/report-project-vipcoin'])?>') }, 5000);
+    })
 
 </script>

@@ -21,6 +21,7 @@
                         'data' => $productList,
                         'language' => 'ru',
                         'options' => [
+                            'id'=>'product-list',
                             'placeholder' => '',
                             'multiple' => false
                         ]
@@ -36,6 +37,7 @@
                    <?php $productData = $productListData[$defaultProduct]; ?>
 
                    <?=THelper::t('price')?>: <strong><span id="price"><?=$productData['price']?></span></strong>
+                   <?=THelper::t('bonus')?>: <strong><span id="bonus-money"><?=$productData['bonusMoney']?></span></strong>
                    <?=THelper::t('points')?>: <strong><span id="bonus-points"><?=$productData['bonusPoints']?></span></strong>
                </div>
             </div>
@@ -79,6 +81,7 @@
     var $isLogin = $('#is-login');
     var $login = $('#login');
     var $price = $('#price');
+    var $bonusMoney = $('#bonus-money');
     var $bonusPoints = $('#bonus-points');
     var $copyToClipboard = $('#copy-to-clipboard');
     var $hiddenPincode = $('#hidden-pincode');
@@ -125,6 +128,7 @@
 
         $price.text(product.price);
         $bonusPoints.text(product.bonusPoints);
+        $bonusMoney.text(product.bonusMoney);
     }
 
     function clearFields(){

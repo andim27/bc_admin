@@ -881,7 +881,8 @@ class UserController extends BaseController
             $productList[$product->product] = $product->productName . ' - ' . $product->price .' eur';
             $productListData[$product->product] = [
                 'price' => $product->price,
-                'bonusPoints' => $product->bonusPoints
+                'bonusMoney' => $product->bonusMoney,
+                'bonusPoints' => $product->bonusPoints,
             ];
         }
 
