@@ -7,6 +7,7 @@ use app\controllers\BaseController;
 use app\models\api;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
+use app\models\Products;
 use MongoDB\BSON\ObjectID;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -14,6 +15,9 @@ use yii\helpers\ArrayHelper;
 
 class TestController extends BaseController
 {
+    /**
+     * тест
+     */
     public function actionTemp()
     {
         $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
@@ -297,6 +301,9 @@ class TestController extends BaseController
 
     }
 
+    /**
+     * ввод остатков
+     */
     public function actionTempCount()
     {
 
@@ -422,7 +429,9 @@ class TestController extends BaseController
         die();
     }
 
-
+    /**
+     * закупка комплектующих
+     */
     public function actionSaveCount()
     {
         $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
@@ -430,10 +439,9 @@ class TestController extends BaseController
 
 
 //        $packet['action']='request';
-//        $packet['params']['from']='documents.startBalance';
+//        $packet['params']['from']='documents.purchase';
 //        $packet['params']['fields']=[
-//            'id'=>'id',
-//            'presentation'=>'presentation'
+//            'id'=>'id'
 //        ];
 //        if($curl=curl_init()) {
 //            curl_setopt($curl, CURLOPT_URL, 'https://delovod.ua/api/');
@@ -564,7 +572,7 @@ class TestController extends BaseController
             $packet['version']="0.1";
             $packet['action']='saveObject';
             $packet['params']['header']=[
-                'id'=>'1102500000001005'
+                'id'=>'1100900000001002'
             ];
 
             foreach ($model as $item) {
@@ -587,13 +595,15 @@ class TestController extends BaseController
 //                    echo "</xmp>";
 //                    die();
 
+                    $price = (float)(!empty($item->last_price_eur) ? $item->last_price_eur : 0);
 
-                    $packet['params']['tableParts']['tpBalances'][]=[
+                    $packet['params']['tableParts']['tpGoods'][]=[
                         'good'=>$arrayProducts[(string)$item->_id]['id'],
+                        'goodType'=>'1004000000000014',
                         'unit' => $arrayUnits[rtrim(THelper::t($item->unit),'.')],
                         'qty'=>(int)$count,
-                        'price'=>(float)(!empty($item->last_price_eur) ? $item->last_price_eur : 0),
-                        'purchPrice'=>(float)(!empty($item->last_price_eur) ? $item->last_price_eur : 0)
+                        'price'=>$price,
+                        'amountCur'=>$price*$count
                     ];
 
 
@@ -601,23 +611,136 @@ class TestController extends BaseController
                 }
             }
 
-
 //            if($curl=curl_init())
 //            {
 //                curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
 //                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
 //                curl_setopt($curl,CURLOPT_POST,true);
 //                curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
-//                $xz= curl_exec($curl);
+//                $xz = curl_exec($curl);
 //                curl_close($curl);
 //            }
+
+            header('Content-Type: text/html; charset=utf-8');
+            echo "<xmp>";
+            print_r($xz);
+            echo "</xmp>";
+            die();
+        }
+    }
+
+    public function actionAddPack()
+    {
+        $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
+        $packet['version']="0.1";
+
+        /**
+         * get Units
+         */
+
+        $arrayUnits = [];
+
+        $packet['action']='request';
+        $packet['params']['from']='catalogs.units';
+        $packet['params']['fields']=[
+            'id'=>'id',
+            'code'=>'code',
+            'name'=>'name',
+            'isGroup'=>'isGroup',
+            'parent'=>'parent',
+            'mainUnit'=>'mainUnit',
+            'productNum'=>'productNum',
+            'category'=>'category'
+        ];
+
+        if($curl=curl_init())
+        {
+            curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
+            curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+            curl_setopt($curl,CURLOPT_POST,true);
+            curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
+            $out=curl_exec($curl);
+            curl_close($curl);
+
+            $out = json_decode($out,True);
+            foreach ($out as $item) {
+                $arrayUnits[$item['id__pr']] = $item['id'];
+            }
+        }
+
+        /**
+         * get catalog
+         */
+//        $packet['action']='request';
+//        $packet['params']['from']='catalogs.goods';
+//        $packet['params']['fields']=[
+//            'id'=>'id',
+//            'code'=>'code',
+//            'name'=>'name',
+//            'isGroup'=>'isGroup',
+//            'parent'=>'parent',
+//            'mainUnit'=>'mainUnit',
+//            'productNum'=>'productNum',
+//            'category'=>'category'
+//        ];
+//        $packet['params']['filters'][]=[
+//            'alias' => 'isGroup',
+//            'operator'=>'=',
+//            'value' => '1'
+//        ];
+//
+//        if($curl=curl_init())
+//        {
+//            curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
+//            curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+//            curl_setopt($curl,CURLOPT_POST,true);
+//            curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
+//            $out=curl_exec($curl);
+//            curl_close($curl);
 //
 //            header('Content-Type: text/html; charset=utf-8');
 //            echo "<xmp>";
-//            print_r($xz);
+//            print_r(json_decode($out,True));
 //            echo "</xmp>";
 //            die();
+//        }
+
+
+        $model = Products::find()->where(['statusHide'=>['$ne'=>1]])->all();
+
+        foreach ($model as $item) {
+            $packet = [];
+            $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
+            $packet['version']="0.1";
+            $packet['action']='saveObject';
+            $packet['params']['header']=[
+                'id'=>'catalogs.goods',
+                'name'=>$item->productName,
+                'isGroup'=>'0',
+                'goodType'=>'1004000000000014',
+                'parent'=>'1100300000001006',
+                'mainUnit'=>'1103600000000001',
+                'productNum'=>(string)$item->_id,
+            ];
+//
+//            if($curl=curl_init())
+//            {
+//                curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
+//                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+//                curl_setopt($curl,CURLOPT_POST,true);
+//                curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
+//                $out=curl_exec($curl);
+//                curl_close($curl);
+//
+//                sleep(1);
+//            }
         }
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('ok');
+        echo "</xmp>";
+        die();
+
     }
 
 

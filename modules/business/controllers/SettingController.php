@@ -869,6 +869,8 @@ class SettingController extends BaseController {
 
             $model->title = $request['Warehouse']['title'];
             $model->country = $request['Warehouse']['country'];
+            $model->cities = (!empty($request['Warehouse']['cities']) ? $request['Warehouse']['cities'] : []);
+
 
             if($model->save()){
 

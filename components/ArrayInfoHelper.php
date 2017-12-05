@@ -38,4 +38,16 @@ class ArrayInfoHelper
         
         return $list;
     }
+
+    public static function getArrayEqualKeyValue($array)
+    {
+        $list = [];
+        
+        foreach ($array as $item){
+            $list[$item] = $item;
+        }
+        
+        return $list;
+    }
+
 }

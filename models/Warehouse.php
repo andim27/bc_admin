@@ -27,6 +27,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             '_id',
             'title',
             'country',
+            'cities',
             'headUser',
             'idUsers',
             'stock'
