@@ -319,14 +319,33 @@ if(!empty($model)){
         answer = 1;
 
         $('.blPartsAccessories .blInterchangeable').each(function () {
-            needSendInterchangeable = 0
+            needSendInterchangeable = 0;
             $(this).find('.needSendInterchangeable').each(function () {
-                needSendInterchangeable += parseFloat($(this).val());
+                weWantSend = parseFloat($(this).val());
+                weHaveInWarehouse = parseFloat($(this).closest('.row').find('.inWarehouseInterchangeable').val());
+
+                if(weHaveInWarehouse < weWantSend){
+                    $(this).closest('.blInterchangeable').find('.infoDangerExecution').html(
+                        '<div class="alert alert-danger fade in">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                        'Не достаточно на складе' +
+                        '</div>'
+                    );
+                    answer = 0;
+                }
+
+                needSendInterchangeable += weWantSend;
             });
 
             needSend = parseFloat($(this).find('.needSend').val());
 
             if(needSend!=needSendInterchangeable){
+                $(this).closest('.blInterchangeable').find('.infoDangerExecution').html(
+                    '<div class="alert alert-danger fade in">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                    'Не достаточно выбранно' +
+                    '</div>'
+                );
                 answer = 0;
             }
         });
