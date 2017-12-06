@@ -2,6 +2,7 @@
 
 namespace app\modules\business\controllers;
 
+use app\components\ArrayInfoHelper;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api;
@@ -1045,8 +1046,14 @@ class SaleReportController extends BaseController
             $request['from'] = date('Y-m-d', $date);
         }
 
+        $listAvailableCities = [];
         if(Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)===false){
             $request['countryReport'] = $infoWarehouse->country;
+
+            if(!empty($infoWarehouse->cities) && empty($request['cityReport'])){
+                $listAvailableCities = $infoWarehouse->cities;
+                $listCity = ArrayInfoHelper::getArrayEqualKeyValue($listAvailableCities);
+            }
         }
 
         $model = Sales::find()
@@ -1074,9 +1081,15 @@ class SaleReportController extends BaseController
 
                 if(empty($request['countryReport']) || ($request['countryReport']==$item->infoUser->country)){
                     $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
-                    $listCity[$city] = $city;
 
-                    if(empty($request['cityReport']) || in_array($city,$request['cityReport'])){
+                    if(empty($listAvailableCities)){
+                        $listCity[$city] = $city;
+                    }
+
+                    if((empty($request['cityReport']) && empty($listAvailableCities))
+                        || (empty($request['cityReport']) && !empty($listAvailableCities) && in_array($city,$listAvailableCities))
+                        || (!empty($request['cityReport']) && in_array($city,$request['cityReport']))
+                        ){
                         $infoSale[] = [
                             'dateCreate' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
                             'userCountry'=>$allListCountry[$item->infoUser->country],
@@ -1127,6 +1140,11 @@ class SaleReportController extends BaseController
 
         if(Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)===false){
             $request['countryReport'] = $infoWarehouse->country;
+
+            if(!empty($infoWarehouse->cities) && empty($request['cityReport'])){
+                $listAvailableCities = $infoWarehouse->cities;
+                $listCity = ArrayInfoHelper::getArrayEqualKeyValue($listAvailableCities);
+            }
         }
 
         $model = Sales::find()
@@ -1157,7 +1175,14 @@ class SaleReportController extends BaseController
                 if(empty($request['countryReport']) || ($request['countryReport']==$item->infoUser->country)){
                     $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
 
-                    if(empty($request['cityReport']) || in_array($city,$request['cityReport'])){
+                    if(empty($listAvailableCities)){
+                        $listCity[$city] = $city;
+                    }
+
+                    if((empty($request['cityReport']) && empty($listAvailableCities))
+                        || (empty($request['cityReport']) && !empty($listAvailableCities) && in_array($city,$listAvailableCities))
+                        || (!empty($request['cityReport']) && in_array($city,$request['cityReport']))
+                    ){
                         $infoExport[] = [
                             'date_create' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
                             'country'=>$allListCountry[$item->infoUser->country],
