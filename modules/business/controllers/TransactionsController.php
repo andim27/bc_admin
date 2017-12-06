@@ -246,35 +246,5 @@ class TransactionsController extends BaseController
 
         return $this->redirect('/' . Yii::$app->language .'/business/transactions/withdrawal');
     }
-
-
-    public function actionFix()
-    {
-        $model = Transaction::find()
-            ->where([
-                'forWhat'=> [
-                    '$regex' => 'Withdrawal',
-                    '$ne' => 'Withdrawal (Rollback)'
-                ],
-                'reduced' => ['$ne'=>false],
-                'confirmed'=>['$in'=>[-1,1]],
-                'dateConfirm'=>['$exists'=>false],
-                'dateRollback'=>['$exists'=>false]
-            ])
-            ->all();
-
-        foreach ($model as $item){
-            $item->dateConfirm = $item->dateReduce;
-
-            if($item->save()){
-
-            }
-        }
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r('ok');
-        echo "</xmp>";
-        die();
-    }
+    
 }
