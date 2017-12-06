@@ -46,6 +46,7 @@ class Transaction extends \yii2tech\embedded\mongodb\ActiveRecord
             'dateCreate',
             'usernameTo',
             'dateReduce',
+            'dateConfirm',
             'confirmed',
             '__v',
             'card'

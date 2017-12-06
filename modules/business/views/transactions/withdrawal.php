@@ -19,8 +19,6 @@ $listCard = PaymentCard::getListCards();
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 </div>
 <div class="row">
-    <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
-
     <div class="col-md-offset-9 col-md-3 form-group">
         <?=Html::a('<i class="fa fa-file-o"></i>',['/business/transactions/withdrawal-excel'],['class'=>'btn btn-default btn-block','title'=>'Выгрузка в excel'])?>
     </div>
@@ -55,7 +53,7 @@ $listCard = PaymentCard::getListCards();
                         <td><?=(!empty($item->card['number']) ? $item->card['number'] : '')?></td>
                         <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:i:s')?></td>
                         <td><?=THelper::t($item->getStatus())?></td>
-                        <td><?=(!empty($item->dateReduce) ? $item->dateReduce->toDateTime()->format('Y-m-d H:i:s') : date('Y-m-d H:i:s'))?></td>
+                        <td><?=(!empty($item->dateConfirm) ? $item->dateConfirm->toDateTime()->format('Y-m-d H:i:s') : date('Y-m-d H:i:s'))?></td>
                         <td>
                             <?= ($item->confirmed == 0 ?
                                 Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/transactions/update-withdrawal','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) :

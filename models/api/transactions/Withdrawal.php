@@ -42,6 +42,13 @@ class Withdrawal {
         return $apiClient->post($data, false) == 'OK';
     }
 
+    public static function confirm($data)
+    {
+        $apiClient = new ApiClient('transactions/withdrawal');
+
+        return $apiClient->put($data, false) == 'OK';
+    }
+    
     public static function remove($data)
     {
         $apiClient = new ApiClient('transactions/withdrawal');
@@ -105,4 +112,5 @@ class Withdrawal {
 
         return $statusText;
     }
+    
 }

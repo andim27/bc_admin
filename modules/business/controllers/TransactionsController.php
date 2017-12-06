@@ -142,7 +142,7 @@ class TransactionsController extends BaseController
                     'card_number'   =>  (!empty($item->card['number']) ? $item->card['number'] : ''),
                     'date_create'   =>  $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
                     'status'        =>  THelper::t($item->getStatus()),
-                    'date_reduce'   =>  (!empty($item->dateReduce) ? $item->dateReduce->toDateTime()->format('Y-m-d H:i:s') : date('Y-m-d H:i:s')),
+                    'date_reduce'   =>  (!empty($item->dateConfirm) ? $item->dateConfirm->toDateTime()->format('Y-m-d H:i:s') : date('Y-m-d H:i:s')),
                 ];
             }
         }
@@ -206,21 +206,14 @@ class TransactionsController extends BaseController
 
         if(!empty($request['Transaction']['_id'])){
 
-            $model = Transaction::findOne(['_id'=>new ObjectID($request['Transaction']['_id']),'confirmed'=>0]);
+            $answer = Withdrawal::confirm(['id'=>$request['Transaction']['_id']]);
 
-            if(!empty($model)){
-
-                $infoUser = Users::findOne(['_id' => $model->idFrom]);
-
-                $model->confirmed = 1;
-
-                if($model->save() && $infoUser->save()){
-                    Yii::$app->session->setFlash('alert' ,[
-                            'typeAlert' => 'success',
-                            'message' => THelper::t('save_applied')
-                        ]
-                    );
-                }
+            if($answer=='OK'){
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert' => 'success',
+                        'message' => THelper::t('save_applied')
+                    ]
+                );
             }
 
         }
@@ -254,4 +247,34 @@ class TransactionsController extends BaseController
         return $this->redirect('/' . Yii::$app->language .'/business/transactions/withdrawal');
     }
 
+
+    public function actionFix()
+    {
+        $model = Transaction::find()
+            ->where([
+                'forWhat'=> [
+                    '$regex' => 'Withdrawal',
+                    '$ne' => 'Withdrawal (Rollback)'
+                ],
+                'reduced' => ['$ne'=>false],
+                'confirmed'=>['$in'=>[-1,1]],
+                'dateConfirm'=>['$exists'=>false],
+                'dateRollback'=>['$exists'=>false]
+            ])
+            ->all();
+
+        foreach ($model as $item){
+            $item->dateConfirm = $item->dateReduce;
+
+            if($item->save()){
+
+            }
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('ok');
+        echo "</xmp>";
+        die();
+    }
 }
