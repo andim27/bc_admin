@@ -15,6 +15,13 @@ $listPack = Products::getListPack();
 $listGoods = Products::getListGoods();
 $listGoodsWithKey = Products::getListGoodsWithKey();
 
+$total=[
+    'count_order'   =>  0,
+    'count_issue'   =>  0,
+    'count_stock'   =>  0,
+    'count_send'    =>  0,
+    'count_repair'  =>  0
+];
 ?>
 
 
@@ -112,6 +119,15 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
                         <?php if(!empty($infoSale)) { ?>
                             <?php foreach($infoSale as $k=>$itemGoods) { ?>
                                 <?php foreach($itemGoods as $kGoods=>$item) { ?>
+                                    <?php
+                                    $total['count_order'] += $item['all'];
+                                    $total['count_issue'] += $item['issued'];
+                                    if(!empty($request['listGoods'])) {
+                                        $total['count_stock'] += $item['in_stock'];
+                                        $total['count_send'] += $item['send'];
+                                    }
+                                    $total['count_repair'] += $item['issued'];
+                                    ?>
                                     <tr>
                                         <td><?=(!empty($listCountry[$k]) ? $listCountry[$k] : 'none') ?></td>
                                         <td><?=$kGoods?></td>
@@ -133,6 +149,21 @@ $listGoodsWithKey = Products::getListGoodsWithKey();
                             <?php } ?>
                         <?php } ?>
                     </tbody>
+
+                    <tfooter>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th><?=$total['count_order']?></th>
+                            <th><?=$total['count_issue']?></th>
+                            <?php if(!empty($request['listGoods'])) { ?>
+                            <th><?=$total['count_stock']?></th>
+                            <th><?=$total['count_send']?></th>
+                            <?php } ?>
+                            <th></th>
+                            <th><?=$total['count_repair']?></th>
+                        </tr>
+                    </tfooter>
                 </table>
             </div>
 

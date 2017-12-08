@@ -8,6 +8,7 @@ use app\models\api;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
+use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -742,6 +743,82 @@ class TestController extends BaseController
         die();
 
     }
+
+    public function actionAddWarehouse()
+    {
+        $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
+        $packet['version']="0.1";
+
+        $packet['action']='request';
+        $packet['params']['from']='catalogs.storages';
+        $packet['params']['fields']=[
+            'id'=>'id',
+            'code'=>'code',
+            'name'=>'name',
+            'sysName'=>'sysName',
+            'version'=>'version',
+            'storageType'=>'storageType'
+        ];
+
+        if($curl=curl_init())
+        {
+            curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
+            curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+            curl_setopt($curl,CURLOPT_POST,true);
+            curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
+            $out=curl_exec($curl);
+            curl_close($curl);
+
+            $out = json_decode($out,True);
+
+//            header('Content-Type: text/html; charset=utf-8');
+//            echo "<xmp>";
+//            print_r($out);
+//            echo "</xmp>";
+//            die();
+
+        }
+
+        $model = Warehouse::find()->all();
+        foreach ($model as $item) {
+            $packet = [];
+            $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
+            $packet['version']="0.1";
+            $packet['action']='saveObject';
+            $packet['params']['header']=[
+                'id'=>'catalogs.storages',
+                'name'=>$item->title,
+                'storageType'=>'1004000000000082',
+            ];
+
+            if($curl=curl_init())
+            {
+                curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
+                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+                curl_setopt($curl,CURLOPT_POST,true);
+                curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
+                $out=curl_exec($curl);
+                curl_close($curl);
+                $out = json_decode($out,True);
+                header('Content-Type: text/html; charset=utf-8');
+                echo "<xmp>";
+                print_r($out);
+                echo "</xmp>";
+                die();
+
+                sleep(1);
+            }
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('ok');
+        echo "</xmp>";
+        die();
+
+
+    }
+
 
 
 }
