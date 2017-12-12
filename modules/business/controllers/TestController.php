@@ -5,6 +5,8 @@ namespace app\modules\business\controllers;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api;
+use app\models\apiDelovod\Goods;
+use app\models\apiDelovod\UnitMeasure;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
@@ -16,6 +18,59 @@ use yii\helpers\ArrayHelper;
 
 class TestController extends BaseController
 {
+
+    public function actionSyncComponents()
+    {
+        $units = ArrayHelper::map(UnitMeasure::all(),'shortName','id');
+        $listGoods = ArrayHelper::index(Goods::getGoods(),'id');
+
+        $catalogId = '1100300000001005';
+
+        $model = PartsAccessories::find()->all();
+        foreach ($model as $item) {
+            if(empty($item->delovod_id) || empty($listGoods[$item->delovod_id])){
+
+                $data = [
+                    'code'=>(!empty($item->article) ? 'bpt-'.$item->article : ''),
+                    'name'=>$item->title,
+                    'isGroup'=>'0',
+                    'goodType'=>'1004000000000014',
+                    'parent'=>$catalogId,
+                    'mainUnit'=>$units[rtrim(THelper::t($item->unit),'.')],
+                ];
+
+                $idLine = Goods::save($data);
+
+                $item->delovod_id = $idLine;
+                if($item->save()){}
+
+                sleep(1);
+            }
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('ok');
+        echo "</xmp>";
+        die();
+    }
+
+
+
+    public function actionXz()
+    {
+
+
+        $catalogs = Goods::getCatalogs();
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r($catalogs);
+        echo "</xmp>";
+        die();
+    }
+
+
     /**
      * тест
      */
@@ -710,19 +765,19 @@ class TestController extends BaseController
         $model = Products::find()->where(['statusHide'=>['$ne'=>1]])->all();
 
         foreach ($model as $item) {
-            $packet = [];
-            $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
-            $packet['version']="0.1";
-            $packet['action']='saveObject';
-            $packet['params']['header']=[
-                'id'=>'catalogs.goods',
-                'name'=>$item->productName,
-                'isGroup'=>'0',
-                'goodType'=>'1004000000000014',
-                'parent'=>'1100300000001006',
-                'mainUnit'=>'1103600000000001',
-                'productNum'=>(string)$item->_id,
-            ];
+//            $packet = [];
+//            $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
+//            $packet['version']="0.1";
+//            $packet['action']='saveObject';
+//            $packet['params']['header']=[
+//                'id'=>'catalogs.goods',
+//                'name'=>$item->productName,
+//                'isGroup'=>'0',
+//                'goodType'=>'1004000000000014',
+//                'parent'=>'1100300000001006',
+//                'mainUnit'=>'1103600000000001',
+//                'productNum'=>(string)$item->_id,
+//            ];
 //
 //            if($curl=curl_init())
 //            {
@@ -746,6 +801,11 @@ class TestController extends BaseController
 
     public function actionAddWarehouse()
     {
+        $this->getOrders();
+
+
+
+
         $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
         $packet['version']="0.1";
 
@@ -783,7 +843,7 @@ class TestController extends BaseController
         foreach ($model as $item) {
             $packet = [];
             $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
-            $packet['version']="0.1";
+            $packet['version']="0.15";
             $packet['action']='saveObject';
             $packet['params']['header']=[
                 'id'=>'catalogs.storages',
@@ -806,7 +866,7 @@ class TestController extends BaseController
                 echo "</xmp>";
                 die();
 
-                sleep(1);
+                sleep(1); 
             }
         }
 
@@ -820,5 +880,48 @@ class TestController extends BaseController
     }
 
 
+    protected function getOrders()
+    {
+        $listOrders = $this->getOrderForMonth();
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r($listOrders);
+        echo "</xmp>";
+        die();
+
+        if(!empty($listOrders)){
+            foreach ($listOrders as $k=>$listOrder) {
+                //$
+            }
+        }
+    }
+
+    public function getOrderForMonth()
+    {
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL,"http://vipsite.biz/admin/get_order.php");
+        curl_setopt($ch, CURLOPT_POST, 0);
+        //curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query(['date_from' => $date_from,'date_to'=>$date_to]));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $server_output = curl_exec ($ch);
+
+        curl_close ($ch);
+
+        return json_decode($server_output,TRUE);
+    }
+
+    public function addKey()
+    {
+        $xz = parent::addKey();
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r($xz);
+        echo "</xmp>";
+        die();
+    }
 
 }
