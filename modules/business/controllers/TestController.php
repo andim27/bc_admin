@@ -39,8 +39,40 @@ class TestController extends BaseController
                     'mainUnit'=>$units[rtrim(THelper::t($item->unit),'.')],
                 ];
 
-                $idLine = Goods::save($data);
+//                $idLine = Goods::save($data);
+//                $item->delovod_id = $idLine;
+//                if($item->save()){}
 
+                sleep(1);
+            }
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('ok');
+        echo "</xmp>";
+        die();
+    }
+
+    public function actionSyncFinishedProducts()
+    {
+        $listGoods = ArrayHelper::index(Goods::getGoods(),'id');
+
+        $catalogId = '1100300000001006';
+
+        $model = Products::find()->where(['statusHide'=>['$ne'=>1]])->all();
+        foreach ($model as $item) {
+            if(empty($item->delovod_id) || empty($listGoods[$item->delovod_id])){
+
+                $data = [
+                    'name'=>$item->productName,
+                    'isGroup'=>'0',
+                    'goodType'=>'1004000000000014',
+                    'parent'=>$catalogId,
+                    'mainUnit'=>'1103600000000001',
+                ];
+
+                $idLine = Goods::save($data);
                 $item->delovod_id = $idLine;
                 if($item->save()){}
 
@@ -54,8 +86,6 @@ class TestController extends BaseController
         echo "</xmp>";
         die();
     }
-
-
 
     public function actionXz()
     {

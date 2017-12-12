@@ -40,7 +40,8 @@ class Products extends ActiveRecord
             'bonusStocks',
             'type',
             'pinsVouchers',
-            'statusHide'
+            'statusHide',
+            'delovod_id'
         ];
     }
 
