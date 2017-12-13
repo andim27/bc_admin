@@ -105,9 +105,9 @@ class TestController extends BaseController
                     
                 ];
 
-                $idLine = Storages::save($data);
-                $item->delovod_id = $idLine;
-                if($item->save()){}
+//                $idLine = Storages::save($data);
+//                $item->delovod_id = $idLine;
+//                if($item->save()){}
 
                 sleep(1);
             }
@@ -119,7 +119,22 @@ class TestController extends BaseController
         echo "</xmp>";
         die();
     }
-    
+        
+    public function actionFixHeadWarehouse()
+    {
+        $headWarehouseId = '1100700000000001';
+
+        $modelKh = Warehouse::findOne(['_id'=>new ObjectID('592426f6dca7872e64095b45')]);
+        $modelKh->delovod_id = $headWarehouseId;
+
+        if($modelKh->save()){}
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('ok');
+        echo "</xmp>";
+        die();
+    }
     
     public function actionXz()
     {
