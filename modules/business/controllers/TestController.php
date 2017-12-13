@@ -7,6 +7,7 @@ use app\controllers\BaseController;
 use app\models\api;
 use app\models\apiDelovod\Goods;
 use app\models\apiDelovod\UnitMeasure;
+use app\models\apiDelovod\Storages;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
@@ -72,7 +73,39 @@ class TestController extends BaseController
                     'mainUnit'=>'1103600000000001',
                 ];
 
-                $idLine = Goods::save($data);
+//                $idLine = Goods::save($data);
+//                $item->delovod_id = $idLine;
+//                if($item->save()){}
+
+                sleep(1);
+            }
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r('ok');
+        echo "</xmp>";
+        die();
+    }
+
+    public function actionSyncWarehouses()
+    {
+
+        $listWarehouse = ArrayHelper::index(Storages::all(),'id');
+
+        $model = Warehouse::find()->all();
+        foreach ($model as $item) {
+            if(empty($item->delovod_id) || empty($listWarehouse[$item->delovod_id])){
+
+                $data = [
+
+                    'id'=>'catalogs.storages',
+                    'name'=>$item->title,
+                    'storageType'=>'1004000000000082',
+                    
+                ];
+
+                $idLine = Storages::save($data);
                 $item->delovod_id = $idLine;
                 if($item->save()){}
 
@@ -86,7 +119,8 @@ class TestController extends BaseController
         echo "</xmp>";
         die();
     }
-
+    
+    
     public function actionXz()
     {
 

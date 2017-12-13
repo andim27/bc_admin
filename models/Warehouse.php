@@ -30,7 +30,8 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             'cities',
             'headUser',
             'idUsers',
-            'stock'
+            'stock',
+            'delovod_id'
         ];
     }
 
