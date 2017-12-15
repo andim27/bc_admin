@@ -5,6 +5,12 @@ namespace app\models\apiDelovod;
 use app\components\ApiDelovod;
 use app\components\ArrayInfoHelper;
 
+/**
+ * https://delovod.ua/help/ru/mdata/catalogs.goods
+ *
+ * Class Goods
+ * @package app\models\apiDelovod
+ */
 class Goods
 {
     CONST FROM = 'catalogs.goods';

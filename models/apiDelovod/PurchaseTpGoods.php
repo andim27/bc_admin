@@ -6,25 +6,37 @@ use app\components\ApiDelovod;
 use app\components\ArrayInfoHelper;
 
 /**
- * https://delovod.ua/help/ru/mdata/catalogs.storages
+ * https://delovod.ua/help/ru/mdata/documents.purchase
  *
- * Class Storages
+ * Class PurchaseTpGoods
  * @package app\models\apiDelovod
  */
-class Storages
+class PurchaseTpGoods
 {
-    CONST FROM = 'catalogs.storages';
+    CONST FROM = 'documents.purchase.tpGoods';
 
-    public $id;
-    public $code;
-    public $delMark;
-    public $isGroup;
-    public $name;
+    public $rowNum;
     public $owner;
-    public $parent;
-    public $sysName;
-    public $version;
-    public $storageType;
+    public $good;
+    public $price;
+    public $qty;
+    public $baseQty;
+    public $priceAmount;
+    public $unit;
+    public $markup;
+    public $discount;
+    public $amountCur;
+    public $discountPercent;
+    public $markupPercent;
+    public $ratio;
+    public $weight;
+    public $goodPart;
+    public $goodChar;
+    public $byOrder;
+    public $overheadKoef;
+    public $comPrice;
+    public $comAmount;
+    public $tax;
 
 
     /**
@@ -34,6 +46,8 @@ class Storages
      */
     public static function all($filters = [])
     {
+
+
         $apiDelovod = new ApiDelovod();
 
         $data['action'] = 'request';
@@ -49,13 +63,24 @@ class Storages
         return self::_getResults($response);
     }
 
+    public static function getGoodsForPurchase($purchaseId)
+    {
+        $filters[] = [
+            'alias'     =>  'owner',
+            'operator'  =>  '=',
+            'value'     =>  $purchaseId
+        ];
+
+        return self::all($filters);
+    }
+
     public static function save($dataForSave,$id = self::FROM)
     {
         $apiDelovod = new ApiDelovod();
 
         $data['action'] = 'saveObject';
 
-        $data['params']['header'] = $dataForSave;
+        $data['params'] = $dataForSave;
         $data['params']['header']['id'] = $id;
 
         $response = $apiDelovod->post($data);
@@ -71,7 +96,9 @@ class Storages
      */
     private static function getFieldsApi()
     {
-        $result = ['id','code','delMark','isGroup','name','owner','parent','sysName','version','storageType'];
+        $result = ['rowNum','owner','good','price','qty','baseQty','priceAmount','unit','markup','discount',
+        'amountCur','discountPercent','markupPercent','ratio','weight','goodPart','goodChar','byOrder',
+        'overheadKoef','comPrice','comAmount','tax'];
 
         return $result;
     }

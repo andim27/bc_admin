@@ -6,8 +6,11 @@ use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api;
 use app\models\apiDelovod\Goods;
+use app\models\apiDelovod\Purchase;
+use app\models\apiDelovod\PurchaseTpGoods;
 use app\models\apiDelovod\UnitMeasure;
 use app\models\apiDelovod\Storages;
+use app\models\apiDelovod\Users;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
@@ -19,7 +22,9 @@ use yii\helpers\ArrayHelper;
 
 class TestController extends BaseController
 {
-
+    /**
+     * заводим комплектующие и записываем ключи позиций с деловода себе
+     */
     public function actionSyncComponents()
     {
         $units = ArrayHelper::map(UnitMeasure::all(),'shortName','id');
@@ -55,6 +60,9 @@ class TestController extends BaseController
         die();
     }
 
+    /**
+     * заводим паки и записываем ключи позиций с деловода себе
+     */
     public function actionSyncFinishedProducts()
     {
         $listGoods = ArrayHelper::index(Goods::getGoods(),'id');
@@ -88,6 +96,9 @@ class TestController extends BaseController
         die();
     }
 
+    /**
+     * заводим склады
+     */
     public function actionSyncWarehouses()
     {
 
@@ -119,7 +130,10 @@ class TestController extends BaseController
         echo "</xmp>";
         die();
     }
-        
+
+    /**
+     * связываем основной склад с со складом производства
+     */
     public function actionFixHeadWarehouse()
     {
         $headWarehouseId = '1100700000000001';
@@ -135,18 +149,117 @@ class TestController extends BaseController
         echo "</xmp>";
         die();
     }
-    
-    public function actionXz()
+
+    /**
+     * вывводим остатки
+     */
+    public function actionInputRest()
     {
+        $units = ArrayHelper::map(UnitMeasure::all(),'shortName','id');
+        // Создаем приходную накладную
+        $data = [
+            'date'=>date('Y-m-d H:i:s'),
+            'firm'=>'1100400000001002',
+            'storage' => '1100700000000001',
+            'person' => '1100100000001044',
+            'operationType' => '1004000000000050',
+            'currency' => '1101200000001001',
+            'author'=>'1000200000001004',
+            'paymentForm' => '1110300000000002',
+            'department' => '1101900000000001'
+        ];
+
+        $idPurchase = Purchase::save($data);
+
+        $dataGoods = [];
+
+        // добавляем в нее закупки
+        $modelComponents = PartsAccessories::find()->all();
+        if(!empty($modelComponents)){
+            foreach ($modelComponents as $item) {
+                $modelWarehouse = PartsAccessoriesInWarehouse::findOne([
+                    'parts_accessories_id'=>$item->_id,
+                    'warehouse_id'=>new ObjectID('592426f6dca7872e64095b45')
+                ]);
+
+                $count = 0;
+                if(!empty($modelWarehouse->number)){
+                    $count = $modelWarehouse->number;
+                }
+
+                $price = (float)(!empty($item->last_price_eur) ? $item->last_price_eur : 0);
+
+                $dataGoods['tableParts']['tpGoods'][]=[
+                    'good'=>$item->delovod_id,
+                    'goodType'=>'1004000000000014',
+                    'unit' => $units[rtrim(THelper::t($item->unit),'.')],
+                    'qty'=>(int)$count,
+                    'price'=>$price,
+                    'amountCur'=>$price*$count
+                ];
+
+                if($count>0 && $price>0)
+                    break;
+            }
+
+            PurchaseTpGoods::save($dataGoods,$idPurchase);
 
 
-        $catalogs = Goods::getCatalogs();
+        }
 
         header('Content-Type: text/html; charset=utf-8');
         echo "<xmp>";
-        print_r($catalogs);
+        print_r('ok');
         echo "</xmp>";
         die();
+    }
+
+
+
+
+    public function actionXz()
+    {
+        $parens = Purchase::all();
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r($parens);
+        echo "</xmp>";
+
+
+        $xz = PurchaseTpGoods::getGoodsForPurchase('1100900000001004');
+
+        echo "<xmp>";
+        print_r($xz);
+        echo "</xmp>";
+        die();
+
+        $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
+        $packet['version']="0.15";
+
+        $packet['action']='request';
+        $packet['params']['from']='documents.purchase.tpGoods';
+        $packet['params']['fields']=[
+            'good'=>'good'
+        ];
+
+        if($curl=curl_init())
+        {
+            curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
+            curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+            curl_setopt($curl,CURLOPT_POST,true);
+            curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
+            $out=curl_exec($curl);
+            curl_close($curl);
+
+            $out = json_decode($out,True);
+
+            header('Content-Type: text/html; charset=utf-8');
+            echo "<xmp>";
+            print_r($out);
+            echo "</xmp>";
+            die();
+        }
     }
 
 
@@ -733,7 +846,7 @@ class TestController extends BaseController
                     $price = (float)(!empty($item->last_price_eur) ? $item->last_price_eur : 0);
 
                     $packet['params']['tableParts']['tpGoods'][]=[
-                        'good'=>$arrayProducts[(string)$item->_id]['id'],
+                        'good'=>'1100300000003148',
                         'goodType'=>'1004000000000014',
                         'unit' => $arrayUnits[rtrim(THelper::t($item->unit),'.')],
                         'qty'=>(int)$count,
@@ -742,6 +855,11 @@ class TestController extends BaseController
                     ];
 
 
+                    header('Content-Type: text/html; charset=utf-8');
+                    echo "<xmp>";
+                    print_r($packet);
+                    echo "</xmp>";
+                    die();
 
                 }
             }

@@ -1,19 +1,18 @@
 <?php
-
 namespace app\models\apiDelovod;
 
 use app\components\ApiDelovod;
 use app\components\ArrayInfoHelper;
 
 /**
- * https://delovod.ua/help/ru/mdata/catalogs.storages
+ * https://delovod.ua/help/ru/mdata/catalogs.users
  *
- * Class Storages
+ * Class Users
  * @package app\models\apiDelovod
  */
-class Storages
+class Users
 {
-    CONST FROM = 'catalogs.storages';
+    CONST FROM = 'catalogs.users';
 
     public $id;
     public $code;
@@ -24,15 +23,18 @@ class Storages
     public $parent;
     public $sysName;
     public $version;
-    public $storageType;
-
+    public $sendInvite;
+    public $iface;
+    public $person;
+    public $role;
+    public $disabled;
 
     /**
      * Returns all units
      *
      * @return array
      */
-    public static function all($filters = [])
+    public static function all()
     {
         $apiDelovod = new ApiDelovod();
 
@@ -40,29 +42,10 @@ class Storages
         $data['params']['from'] = self::FROM;
         $data['params']['fields'] = ArrayInfoHelper::getArrayEqualKeyValue(self::getFieldsApi());
 
-        if(!empty($filters)){
-            $data['params']['filters'] = $filters;
-        }
-
         $response = $apiDelovod->post($data);
 
         return self::_getResults($response);
     }
-
-    public static function save($dataForSave,$id = self::FROM)
-    {
-        $apiDelovod = new ApiDelovod();
-
-        $data['action'] = 'saveObject';
-
-        $data['params']['header'] = $dataForSave;
-        $data['params']['header']['id'] = $id;
-
-        $response = $apiDelovod->post($data);
-
-        return ApiDelovod::getIdAfterSave($response);
-    }
-
 
     /**
      * Get all fields for Api
@@ -71,7 +54,8 @@ class Storages
      */
     private static function getFieldsApi()
     {
-        $result = ['id','code','delMark','isGroup','name','owner','parent','sysName','version','storageType'];
+        $result = ['id','code','delMark','isGroup','name','owner','parent','sysName','version', 'sendInvite',
+            'iface', 'person', 'role', 'disabled'];
 
         return $result;
     }

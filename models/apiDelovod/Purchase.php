@@ -6,25 +6,58 @@ use app\components\ApiDelovod;
 use app\components\ArrayInfoHelper;
 
 /**
- * https://delovod.ua/help/ru/mdata/catalogs.storages
+ * https://delovod.ua/help/ru/mdata/documents.purchase
  *
- * Class Storages
+ * Class Purchase
  * @package app\models\apiDelovod
  */
-class Storages
+class Purchase
 {
-    CONST FROM = 'catalogs.storages';
+
+    CONST FROM = 'documents.purchase';
 
     public $id;
-    public $code;
+    public $date;
+    public $number;
     public $delMark;
-    public $isGroup;
-    public $name;
-    public $owner;
-    public $parent;
-    public $sysName;
+    public $presentation;
+    public $posted;
+    public $remark;
+    public $baseDoc;
     public $version;
-    public $storageType;
+    public $firm;
+    public $business;
+    public $storage;
+    public $person;
+    public $contract;
+    public $contact;
+    public $operationType;
+    public $currency;
+    public $amountCur;
+    public $rate;
+    public $acceptance;
+    public $originalDate;
+    public $originalNumber;
+    public $payBefore;
+    public $author;
+    public $manager;
+    public $taxAccount;
+    public $cashAccount;
+    public $cashItem;
+    public $paymentForm;
+    public $department;
+    public $departmentInTp;
+    public $costItemInTp;
+    public $costItem;
+    public $prodOrder;
+    public $prodOrderInTp;
+    public $weight;
+    public $state;
+    public $overheadGood;
+    public $payment;
+    public $docMode;
+    public $begDate;
+    public $endDate;
 
 
     /**
@@ -71,7 +104,11 @@ class Storages
      */
     private static function getFieldsApi()
     {
-        $result = ['id','code','delMark','isGroup','name','owner','parent','sysName','version','storageType'];
+        $result = ['id','date','number','delMark','presentation','posted','remark','baseDoc','version','firm',
+            'business','storage','person','contract','contact','operationType','currency','amountCur','rate',
+            'acceptance','originalDate','originalNumber','payBefore','author','manager','taxAccount','cashAccount',
+            'cashItem','paymentForm','department','departmentInTp','costItemInTp','costItem','prodOrder',
+            'prodOrderInTp','weight','state','overheadGood','payment','docMode','begDate','endDate'];
 
         return $result;
     }

@@ -5,6 +5,12 @@ namespace app\models\apiDelovod;
 use app\components\ApiDelovod;
 use app\components\ArrayInfoHelper;
 
+/**
+ * https://delovod.ua/help/ru/mdata/catalogs.units
+ * 
+ * Class UnitMeasure
+ * @package app\models\apiDelovod
+ */
 class UnitMeasure
 {
     CONST FROM = 'catalogs.units';
