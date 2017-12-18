@@ -169,13 +169,13 @@ class TestController extends BaseController
             'department' => '1101900000000001'
         ];
 
-        $idPurchase = Purchase::save($data);
+        //$idPurchase = Purchase::save($data);
 
         $dataGoods = [];
 
         // добавляем в нее закупки
         $modelComponents = PartsAccessories::find()->all();
-        if(!empty($modelComponents)){
+        if(!empty($modelComponents) && !empty($idPurchase)){
             foreach ($modelComponents as $item) {
                 $modelWarehouse = PartsAccessoriesInWarehouse::findOne([
                     'parts_accessories_id'=>$item->_id,
@@ -198,8 +198,7 @@ class TestController extends BaseController
                     'amountCur'=>$price*$count
                 ];
 
-                if($count>0 && $price>0)
-                    break;
+                
             }
 
             PurchaseTpGoods::save($dataGoods,$idPurchase);
