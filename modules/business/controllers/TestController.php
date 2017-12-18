@@ -34,7 +34,7 @@ class TestController extends BaseController
 
         $model = PartsAccessories::find()->all();
         foreach ($model as $item) {
-            //if(empty($item->delovod_id) || empty($listGoods[$item->delovod_id])){
+            if(empty($item->delovod_id) || empty($listGoods[$item->delovod_id])){
 
                 $data = [
                     'code'=>(!empty($item->article) ? 'bpt-'.$item->article : ''),
@@ -50,7 +50,7 @@ class TestController extends BaseController
                 if($item->save()){}
 
                 sleep(1);
-            //}
+            }
         }
 
         header('Content-Type: text/html; charset=utf-8');
