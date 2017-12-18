@@ -169,7 +169,7 @@ class TestController extends BaseController
             'department' => '1101900000000001'
         ];
 
-        //$idPurchase = Purchase::save($data);
+        $idPurchase = Purchase::save($data);
 
         $dataGoods = [];
 
