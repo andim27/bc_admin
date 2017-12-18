@@ -97,25 +97,25 @@ $countGoods = [];
         <?php } ?>
         <?php } ?>
     </tbody>
-    <thead>
-    <tr>
-        <th>
-            <?=THelper::t('total')?>
-        </th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th><?=$totalSum?></th>
-        <th></th>
-        <th>
-            <?php if(!empty($countGoods)){ ?>
-                <?php foreach($countGoods as $k=>$item){ ?>
-                    <?=$k?> - <?=$item?> <br/>
+    <tfooter>
+        <tr>
+            <th>
+                <?=THelper::t('total')?>
+            </th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th><?=$totalSum?></th>
+            <th></th>
+            <th>
+                <?php if(!empty($countGoods)){ ?>
+                    <?php foreach($countGoods as $k=>$item){ ?>
+                        <?=$k?> - <?=$item?> <br/>
+                    <?php } ?>
                 <?php } ?>
-            <?php } ?>
-        </th>
-        <th></th>
-    </tr>
-    </thead>
+            </th>
+            <th></th>
+        </tr>
+    </tfooter>
 </table>
