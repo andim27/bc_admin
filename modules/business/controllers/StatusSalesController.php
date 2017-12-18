@@ -541,6 +541,7 @@ class StatusSalesController extends BaseController {
             $request['infoTypeDate'] = 'create';
             $request['infoStatus'] = 'all';
             $request['infoTypePayment'] = 'all';
+            $request['infoProducts'] = 'all';
         } else {
             $listAdmin = [$request['infoWarehouse']];
         }

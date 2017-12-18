@@ -1,6 +1,8 @@
 <?php
 use app\components\THelper;
 use yii\helpers\Html;
+
+$countGoods = [];
 ?>
 
 <table class="table table-translations table-striped datagrid m-b-sm">
@@ -42,8 +44,10 @@ use yii\helpers\Html;
 
     <?php
     $infoSet = '';
+
     foreach ($item->statusSale->set as $itemSet) {
-        if($request['infoStatus'] == 'all' || $request['infoStatus']==$itemSet->status) {
+        if(($request['infoStatus'] == 'all' || $request['infoStatus']==$itemSet->status)
+            && ($request['infoProducts'] == 'all' || $request['infoProducts']==$itemSet->title)) {
             $infoSet .= '
                     <tr data-set="'.$itemSet->title.'">
                         <td>
@@ -58,6 +62,12 @@ use yii\helpers\Html;
                             '.$itemSet->dateChange->toDateTime()->format('Y-m-d H:i:s') .'
                         </td>
                     </tr>';
+
+            if(empty($countGoods[$itemSet->title])){
+                $countGoods[$itemSet->title] = 0;
+            }
+
+            $countGoods[$itemSet->title]++;
         }
     }
     ?>
@@ -92,15 +102,19 @@ use yii\helpers\Html;
         <th>
             <?=THelper::t('total')?>
         </th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th><?=$totalSum?></th>
+        <th></th>
         <th>
-            <?=$totalSum?>
+            <?php if(!empty($countGoods)){ ?>
+                <?php foreach($countGoods as $k=>$item){ ?>
+                    <?=$k?> - <?=$item?> <br/>
+                <?php } ?>
+            <?php } ?>
         </th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
         <th></th>
     </tr>
     </thead>
