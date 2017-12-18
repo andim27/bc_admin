@@ -45,9 +45,9 @@ class TestController extends BaseController
                     'mainUnit'=>$units[rtrim(THelper::t($item->unit),'.')],
                 ];
 
-//                $idLine = Goods::save($data);
-//                $item->delovod_id = $idLine;
-//                if($item->save()){}
+                $idLine = Goods::save($data);
+                $item->delovod_id = $idLine;
+                if($item->save()){}
 
                 sleep(1);
             }
@@ -197,8 +197,6 @@ class TestController extends BaseController
                     'price'=>$price,
                     'amountCur'=>$price*$count
                 ];
-
-                
             }
 
             PurchaseTpGoods::save($dataGoods,$idPurchase);
