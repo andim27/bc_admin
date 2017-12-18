@@ -71,7 +71,7 @@ class TestController extends BaseController
 
         $model = Products::find()->where(['statusHide'=>['$ne'=>1]])->all();
         foreach ($model as $item) {
-            if(empty($item->delovod_id) || empty($listGoods[$item->delovod_id])){
+            //if(empty($item->delovod_id) || empty($listGoods[$item->delovod_id])){
 
                 $data = [
                     'name'=>$item->productName,
@@ -81,12 +81,12 @@ class TestController extends BaseController
                     'mainUnit'=>'1103600000000001',
                 ];
 
-//                $idLine = Goods::save($data);
-//                $item->delovod_id = $idLine;
-//                if($item->save()){}
+                $idLine = Goods::save($data);
+                $item->delovod_id = $idLine;
+                if($item->save()){}
 
                 sleep(1);
-            }
+//            }
         }
 
         header('Content-Type: text/html; charset=utf-8');
