@@ -448,6 +448,8 @@ class StatusSalesController extends BaseController {
 
         $request =  Yii::$app->request->post();
 
+        $request['infoProducts'] = 'all';
+        
         if(empty($request)){
             $request['infoWarehouse'] = 'for_me';
             $request['to'] = date("Y-m-d");
@@ -455,7 +457,7 @@ class StatusSalesController extends BaseController {
             $request['infoTypeDate'] = 'create';
             $request['infoStatus'] = 'all';
             $request['infoTypePayment'] = 'all';
-            $request['infoProducts'] = 'all';
+            
         }
 
         if( $request['infoWarehouse'] == 'for_me'){

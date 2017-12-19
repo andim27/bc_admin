@@ -9,6 +9,7 @@ use app\models\apiDelovod\Goods;
 use app\models\apiDelovod\Purchase;
 use app\models\apiDelovod\PurchaseTpGoods;
 use app\models\apiDelovod\SaleOrder;
+use app\models\apiDelovod\SaleOrderTpGoods;
 use app\models\apiDelovod\UnitMeasure;
 use app\models\apiDelovod\Storages;
 use app\models\apiDelovod\Users;
@@ -217,9 +218,15 @@ class TestController extends BaseController
      */
     public function actionSetOrder()
     {
+
+
         header('Content-Type: text/html; charset=utf-8');
         echo "<xmp>";
         print_r(SaleOrder::all());
+        echo "</xmp>";
+
+        echo "<xmp>";
+        print_r(SaleOrderTpGoods::getGoodsForSaleOrder('1109100000001003'));
         echo "</xmp>";
         die();
     }
