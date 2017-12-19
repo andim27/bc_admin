@@ -455,6 +455,7 @@ class StatusSalesController extends BaseController {
             $request['infoTypeDate'] = 'create';
             $request['infoStatus'] = 'all';
             $request['infoTypePayment'] = 'all';
+            $request['infoProducts'] = 'all';
         }
 
         if( $request['infoWarehouse'] == 'for_me'){
@@ -546,49 +547,61 @@ class StatusSalesController extends BaseController {
             $listAdmin = [$request['infoWarehouse']];
         }
 
+        if($request['from'] > $request['to']){
+            $request['to'] = $request['from'];
+        }
+
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo "<xmp>";
+//        print_r($request);
+//        echo "</xmp>";
+//        die();
 
         $model = [];
-        if($request['infoTypeDate'] == 'create'){
-            $model = Sales::find()
-                ->where([
-                    'dateCreate' => [
-                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
-                        '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
-                    ]
-                ])
-                ->andWhere(['in','product',Products::productIDWithSet()])
-                ->andWhere([
-                    'type' => ['$ne' => -1]
-                ])
-                ->all();
-            
-        } else {
-
-            $modelLastChangeStatus = StatusSales::find()
-                ->where([
-                    'setSales.dateChange' => [
-                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
-                        '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
-                    ]
-                ])
-                ->all();
-
-            $listOrdderId = [];
-            if(!empty($modelLastChangeStatus)){
-                foreach ($modelLastChangeStatus as $item){
-                    $listOrdderId[] = $item->idSale;
-                }
-
-
+        if(!empty($request['infoWarehouse'])){
+            if($request['infoTypeDate'] == 'create'){
                 $model = Sales::find()
-                    ->andWhere(['in','_id',$listOrdderId])
+                    ->where([
+                        'dateCreate' => [
+                            '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                            '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                        ]
+                    ])
                     ->andWhere(['in','product',Products::productIDWithSet()])
                     ->andWhere([
                         'type' => ['$ne' => -1]
                     ])
                     ->all();
+
+            } else {
+
+                $modelLastChangeStatus = StatusSales::find()
+                    ->where([
+                        'setSales.dateChange' => [
+                            '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                            '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                        ]
+                    ])
+                    ->all();
+
+                $listOrdderId = [];
+                if(!empty($modelLastChangeStatus)){
+                    foreach ($modelLastChangeStatus as $item){
+                        $listOrdderId[] = $item->idSale;
+                    }
+
+
+                    $model = Sales::find()
+                        ->andWhere(['in','_id',$listOrdderId])
+                        ->andWhere(['in','product',Products::productIDWithSet()])
+                        ->andWhere([
+                            'type' => ['$ne' => -1]
+                        ])
+                        ->all();
+                }
             }
         }
+
 
         /** get list city */
         $listCity = [];

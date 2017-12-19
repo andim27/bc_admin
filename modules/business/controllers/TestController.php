@@ -8,6 +8,7 @@ use app\models\api;
 use app\models\apiDelovod\Goods;
 use app\models\apiDelovod\Purchase;
 use app\models\apiDelovod\PurchaseTpGoods;
+use app\models\apiDelovod\SaleOrder;
 use app\models\apiDelovod\UnitMeasure;
 use app\models\apiDelovod\Storages;
 use app\models\apiDelovod\Users;
@@ -211,7 +212,17 @@ class TestController extends BaseController
         die();
     }
 
-
+    /**
+     * отправить заказы в деловод
+     */
+    public function actionSetOrder()
+    {
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r(SaleOrder::all());
+        echo "</xmp>";
+        die();
+    }
 
 
     public function actionXz()
