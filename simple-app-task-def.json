@@ -1,55 +1,208 @@
 {
-    "family": "console-sample-app",
-    "volumes": [
+  "executionRoleArn": null,
+  "containerDefinitions": [
+    {
+      "dnsSearchDomains": [],
+      "logConfiguration": null,
+      "entryPoint": [],
+      "portMappings": [
         {
-            "name": "my-vol",
-            "host": {}
+          "hostPort": 80,
+          "protocol": "tcp",
+          "containerPort": 81
         }
-    ],
-    "containerDefinitions": [
+      ],
+      "command": [
+        "/usr/bin/supervisord",
+        "-c",
+        "/etc/supervisor/supervisord.conf"
+      ],
+      "linuxParameters": {
+        "capabilities": {
+          "add": null,
+          "drop": null
+        },
+        "devices": null,
+        "initProcessEnabled": null
+      },
+      "cpu": 100,
+      "environment": [
         {
-            "environment": [],
-            "name": "simple-app",
-            "image": "amazon/amazon-ecs-sample",
-            "cpu": 10,
-            "memory": 500,
-            "portMappings": [
-                {
-                    "containerPort": 80,
-                    "hostPort": 80
-                }
-            ],
-            "mountPoints": [
-                {
-                    "sourceVolume": "my-vol",
-                    "containerPath": "/var/www/my-vol"
-                }
-            ],
-            "entryPoint": [
-                "/usr/sbin/apache2",
-                "-D",
-                "FOREGROUND"
-            ],
-            "essential": true
+          "name": "APP_DEBUG",
+          "value": "true"
         },
         {
-            "name": "busybox",
-            "image": "busybox",
-            "cpu": 10,
-            "memory": 500,
-            "volumesFrom": [
-            {
-              "sourceContainer": "simple-app"
-            }
-            ],
-            "entryPoint": [
-                "sh",
-                "-c"
-            ],
-            "command": [
-                "/bin/sh -c \"while true; do /bin/date > /var/www/my-vol/date; sleep 1; done\""
-            ],
-            "essential": false
+          "name": "APP_ENV",
+          "value": "local"
+        },
+        {
+          "name": "APP_KEY",
+          "value": "base64:dPGtyZ5jHUJSl3Zp0ATEw8h4QROiY7wnz9ZJZK7oKGw="
+        },
+        {
+          "name": "APP_LOG_LEVEL",
+          "value": "debug"
+        },
+        {
+          "name": "APP_URL",
+          "value": "http://localhost"
+        },
+        {
+          "name": "BROADCAST_DRIVER",
+          "value": "log"
+        },
+        {
+          "name": "CACHE_DRIVER",
+          "value": "file"
+        },
+        {
+          "name": "DB_CONNECTION",
+          "value": "mongodb"
+        },
+        {
+          "name": "DB_DATABASE",
+          "value": "gnc"
+        },
+        {
+          "name": "DB_HOST",
+          "value": "mongo-host"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "b41uHcdR"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "27017"
+        },
+        {
+          "name": "DB_USERNAME",
+          "value": "gnc"
+        },
+        {
+          "name": "MAIL_DRIVER",
+          "value": "smtp"
+        },
+        {
+          "name": "MAIL_ENCRYPTION",
+          "value": "null"
+        },
+        {
+          "name": "MAIL_HOST",
+          "value": "smtp.mailtrap.io"
+        },
+        {
+          "name": "MAIL_PASSWORD",
+          "value": "null"
+        },
+        {
+          "name": "MAIL_PORT",
+          "value": "2525"
+        },
+        {
+          "name": "MAIL_USERNAME",
+          "value": "null"
+        },
+        {
+          "name": "PUSHER_APP_ID",
+          "value": ""
+        },
+        {
+          "name": "PUSHER_APP_KEY",
+          "value": ""
+        },
+        {
+          "name": "PUSHER_APP_SECRET",
+          "value": ""
+        },
+        {
+          "name": "QUEUE_DRIVER",
+          "value": "redis"
+        },
+        {
+          "name": "REDIS_HOST",
+          "value": "bpt.3lpwdw.ng.0001.euc1.cache.amazonaws.com:6379"
+        },
+        {
+          "name": "REDIS_PASSWORD",
+          "value": "null"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "6379"
+        },
+        {
+          "name": "SESSION_DRIVER",
+          "value": "file"
         }
-    ]
+      ],
+      "ulimits": [],
+      "dnsServers": [],
+      "mountPoints": [
+        {
+          "readOnly": false,
+          "containerPath": "/var/log/nginx/",
+          "sourceVolume": "volume-0"
+        }
+      ],
+      "workingDirectory": null,
+      "dockerSecurityOptions": [],
+      "memory": 512,
+      "memoryReservation": null,
+      "volumesFrom": [],
+      "image": "893041221537.dkr.ecr.eu-central-1.amazonaws.com/bpt-api:latest",
+      "disableNetworking": null,
+      "essential": true,
+      "links": [],
+      "hostname": null,
+      "extraHosts": [],
+      "user": null,
+      "readonlyRootFilesystem": false,
+      "dockerLabels": {},
+      "privileged": false,
+      "name": "phpl",
+      "expanded": true
+    }
+  ],
+  "placementConstraints": [],
+  "memory": null,
+  "taskRoleArn": null,
+  "compatibilities": [
+    "EC2"
+  ],
+  "taskDefinitionArn": "arn:aws:ecs:eu-central-1:893041221537:task-definition/api:10",
+  "family": "api",
+  "requiresAttributes": [
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.17"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    }
+  ],
+  "requiresCompatibilities": null,
+  "networkMode": null,
+  "cpu": null,
+  "revision": 10,
+  "status": "ACTIVE",
+  "volumes": [
+    {
+      "name": "volume-0",
+      "host": {
+        "sourcePath": "/mnt/efs/logs/bpt/"
+      }
+    }
+  ]
 }
