@@ -6,61 +6,48 @@ use app\components\ApiDelovod;
 use app\components\ArrayInfoHelper;
 
 /**
- * https://delovod.ua/help/ru/mdata/documents.saleOrder
+ * https://delovod.ua/help/ru/mdata/documents.cashIn
  *
- * Class SaleOrder
+ * Class CashIn
  * @package app\models\apiDelovod
  */
-class SaleOrder
+class CashIn
 {
-    CONST FROM = 'documents.saleOrder';
+    CONST FROM = 'documents.cashIn';
 
     public $id;
     public $date;
     public $number;
-    public $presentation;
     public $delMark;
+    public $presentation;
     public $posted;
     public $remark;
     public $baseDoc;
     public $version;
     public $firm;
-    public $business;
-    public $storage;
-    public $person;
-    public $manager;
-    public $department;
-    public $contract;
-    public $contact;
-    public $currency;
-    public $amountCur;
-    public $rate;
-    public $paymentForm;
-    public $deliveryMethod;
-    public $author;
-    public $deliveryRemark;
-    public $webShop;
-    public $priceType;
-    public $markupPercent;
-    public $discountPercent;
-    public $state;
-    public $apartment_forDelete;
-    public $deliveryAddress;
-    public $deliveryAddressLink_forDelete;
-    public $weight;
-    public $allowAnyStorage;
-    public $supplyDate;
-    public $reserveDate;
-    public $payment;
     public $cashAccount;
+    public $person;
+    public $currency;
+    public $refund;
+    public $content;
+    public $contract;
     public $cashItem;
-    public $payBefore;
-    public $placed;
+    public $amountCur;
+    public $operationType;
+    public $department;
+    public $rate;
+    public $tax;
+    public $orderNumber;
+    public $loan;
     public $taxAccount;
-    public $tradeChanel;
-    public $userPresentation;
-    public $discountCard;
-    public $details;
+    public $author;
+    public $paymentID;
+    public $business;
+    public $currencyExchange;
+    public $amountExchange;
+    public $amountCommission;
+    public $exchangeRate;
+
 
     /**
      * Returns all units
@@ -99,28 +86,6 @@ class SaleOrder
         return ApiDelovod::getIdAfterSave($response);
     }
 
-    /**
-     * Check order to exist
-     *
-     * @param $orderId
-     * @return bool
-     */
-    public static function check($orderId)
-    {
-        $filters[] = [
-            'alias'     =>  'number',
-            'operator'  =>  '=',
-            'value'     =>  $orderId
-        ];
-
-        $orderInfo = self::all($filters);
-
-        if(count($orderInfo) > 0){
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     /**
      * Get all fields for Api
@@ -129,12 +94,10 @@ class SaleOrder
      */
     private static function getFieldsApi()
     {
-        $result = ['id','date','number','presentation','delMark','posted','remark','baseDoc','version','firm',
-        'business','storage','person','manager','department','contract','contact','currency','amountCur',
-        'rate','paymentForm','deliveryMethod','author','deliveryRemark','webShop','priceType','markupPercent',
-        'discountPercent','state','apartment_forDelete','deliveryAddress','deliveryAddressLink_forDelete',
-        'weight','allowAnyStorage','supplyDate','reserveDate','payment','cashAccount','cashItem','payBefore',
-        'placed','taxAccount','tradeChanel','userPresentation','discountCard','details'];
+        $result = ['id','date','number','delMark','presentation','posted','remark','baseDoc','version','firm',
+            'cashAccount','person','currency','refund','content','contract','cashItem','amountCur','operationType',
+            'department','rate','tax','orderNumber','loan','taxAccount','author','paymentID','business',
+            'currencyExchange','amountExchange','amountCommission','exchangeRate'];
 
         return $result;
     }
@@ -165,8 +128,4 @@ class SaleOrder
 
         return $result;
     }
-
-
-
-    
 }

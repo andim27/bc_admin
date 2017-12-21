@@ -79,13 +79,14 @@ class SaleOrderTpGoods
         return self::all($filters);
     }
 
-    public static function save($dataForSave,$id = self::FROM)
+    public static function save($dataForSave,$saveType = 0,$id = self::FROM)
     {
         $apiDelovod = new ApiDelovod();
 
         $data['action'] = 'saveObject';
 
         $data['params'] = $dataForSave;
+        $data['params']['saveType'] = $saveType;
         $data['params']['header']['id'] = $id;
 
         $response = $apiDelovod->post($data);

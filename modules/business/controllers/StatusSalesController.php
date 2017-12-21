@@ -1074,6 +1074,7 @@ class StatusSalesController extends BaseController {
                         if(empty($infoSetGoods[$itemSet->title])){
                             $infoSetGoods[$itemSet->title]['books'] = 0;
                             $infoSetGoods[$itemSet->title]['issue'] = 0;
+                            $infoSetGoods[$itemSet['title']]['current_balance'] = 0;
                         }
 
 //                        if($itemSet->status == 'status_sale_issued'){
@@ -1106,7 +1107,7 @@ class StatusSalesController extends BaseController {
                         $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
                         $flUse = 0;
                         if (!empty($listWarehouse) && $listWarehouse != 'all') {
-                            if (in_array((string)$itemSet['idUserChange'], $listAdmin)) {
+                            if (in_array((string)$itemSet['idUserChange'], $listAdminCheck)) {
                                 $flUse = 1;
                             }
                         } else if (!empty($listAdminCheck) && $listAdminCheck != 'placeh') {
@@ -1121,12 +1122,45 @@ class StatusSalesController extends BaseController {
                             if (empty($infoSetGoods[$itemSet['title']])) {
                                 $infoSetGoods[$itemSet['title']]['books'] = 0;
                                 $infoSetGoods[$itemSet['title']]['issue'] = 0;
+                                $infoSetGoods[$itemSet['title']]['current_balance'] = 0;
                             }
 
                             $infoSetGoods[$itemSet['title']]['issue']++;
                         }
                     }
                 }
+            }
+        }
+
+        $listIdGoods = $filterIdGoods = [];
+        $allListGoods = PartsAccessories::getListPartsAccessories();
+        foreach($infoSetGoods as $k=>$item){
+            $id = array_search($k,$allListGoods);
+            if(!empty($id)){
+                $listIdGoods[$id] = $k;
+                $filterIdGoods[] = new ObjectID($id);
+            }
+            $infoSetGoods[$k]['current_balance'] = '0';
+            $infoSetGoods[$k]['in_way'] = '0';
+        }
+
+        if(!empty($listAdmin) && $listAdmin != 'placeh'){
+            $warehouseId = Warehouse::getIdMyWarehouse($listAdmin);
+            $filterWarehouse = ['warehouse_id'=>new ObjectID($warehouseId)];
+        }
+        else if(!empty($listWarehouse) && $listWarehouse != 'all'){
+            $filterWarehouse = ['warehouse_id'=>new ObjectID($listWarehouse)];
+        } else {
+            $filterWarehouse = $filterWhereSent = [];
+        }
+        //get info current balance warehouse
+        $modelCurrentBalanceWarehouse = PartsAccessoriesInWarehouse::find()
+            ->where(['IN','parts_accessories_id',$filterIdGoods])
+            ->andFilterWhere($filterWarehouse)
+            ->all();
+        if(!empty($modelCurrentBalanceWarehouse)){
+            foreach ($modelCurrentBalanceWarehouse as $item) {
+                $infoSetGoods[$listIdGoods[(string)$item->parts_accessories_id]]['current_balance'] += $item->number;
             }
         }
 
@@ -1149,7 +1183,8 @@ class StatusSalesController extends BaseController {
                 $infoExportGoods[] = [
                     'goods'             => $k,
                     'number_booked'     => $item['books'],
-                    'number_issue'      => $item['issue']
+                    'number_issue'      => $item['issue'],
+                    'current_balance'   => $item['current_balance']
                 ];
             }
         }
@@ -1163,13 +1198,14 @@ class StatusSalesController extends BaseController {
                 'Pack' => $infoExportPack,
             ],
             'columns'   => [
-                'Goods' => ['goods','number_booked','number_issue'],
+                'Goods' => ['goods','number_booked','number_issue','current_balance'],
                 'Pack' => ['id','business_product','number_booked'], ],
             'headers' => [
                 'Goods' => [
                     'goods'             => THelper::t('goods'),
                     'number_booked'     => THelper::t('number_booked'),
                     'number_issue'      => THelper::t('number_issue'),
+                    'current_balance'   => THelper::t('current_balance'),
                 ],
                 'Pack' => [
                     'id'                => '№',

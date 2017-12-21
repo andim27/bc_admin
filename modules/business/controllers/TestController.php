@@ -5,6 +5,8 @@ namespace app\modules\business\controllers;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api;
+use app\models\apiDelovod\CashAccounts;
+use app\models\apiDelovod\CashIn;
 use app\models\apiDelovod\Goods;
 use app\models\apiDelovod\Purchase;
 use app\models\apiDelovod\PurchaseTpGoods;
@@ -219,15 +221,93 @@ class TestController extends BaseController
     public function actionSetOrder()
     {
 
+//        $data = [
+//            'posted' => true
+//        ];
+//
+//        $xz = SaleOrder::save($data,'1109100000001239');
+//
+//        $listOrderDelovod = SaleOrder::all();
+//        if(!empty($listOrderDelovod)){
+//            foreach ($listOrderDelovod as $item){
+//
+//                $infoGoodsForOrder = SaleOrderTpGoods::getGoodsForSaleOrder($item->id);
+//
+//                echo "<xmp>";
+//                print_r($item);
+//                print_r($infoGoodsForOrder);
+//                echo "</xmp>";
+//            }
+//        }
+//        die();
 
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r(SaleOrder::all());
-        echo "</xmp>";
 
-        echo "<xmp>";
-        print_r(SaleOrderTpGoods::getGoodsForSaleOrder('1109100000001003'));
-        echo "</xmp>";
+
+
+        $listOrderForMonth = $this->getOrderForMonth();
+
+        if(!empty($listOrderForMonth)){
+            foreach ($listOrderForMonth as $item) {
+
+
+                if(SaleOrder::check($item['order_id']) === false){
+                    $data = [
+                        'date'=>$item['date'],
+                        'number'=>$item['order_id'],
+                        'rate' => '1',
+                        'firm' => '1100400000001004',
+                        'person' => '1100100000000001',
+                        'currency' => '1101200000001001',
+
+                        'state' => '1111500000000005',
+
+                        'storage' => '1100700000001050',
+                        'author'=>'1000200000001004',
+                    ];
+
+                    $idSaleOrder = SaleOrder::save($data);
+
+                    if(!empty($item['info'])){
+                        foreach ($item['info']  as $itemOrder) {
+                            $modelWarehouse = Products::findOne([
+                                'idInMarket'=>(int)$itemOrder['product_id']
+                            ]);
+
+                            if(!empty($modelWarehouse->delovod_id)){
+                                $dataGoods['tableParts']['tpGoods'][]=[
+                                    'good'=>$modelWarehouse->delovod_id,
+                                    'goodType'=>'1004000000000014',
+                                    'unit' => '1103600000000001',
+                                    'qty'=>(int)$itemOrder['quantity'],
+                                    'price'=>$itemOrder['price'],
+                                    'amountCur'=>($itemOrder['quantity']*$itemOrder['price'])
+                                ];
+
+                                SaleOrderTpGoods::save($dataGoods,1,$idSaleOrder);
+
+                            }
+                        }
+                    }
+
+//                    SaleOrder::save($data,$idSaleOrder);
+//
+//                    header('Content-Type: text/html; charset=utf-8');
+//                    echo "<xmp>";
+//                    print_r($xz);
+//                    echo "</xmp>";
+
+
+
+                    //finish one
+                    die();
+                }
+            }
+        }
+
+
+
+
+
         die();
     }
 
@@ -1092,22 +1172,6 @@ class TestController extends BaseController
     }
 
 
-    protected function getOrders()
-    {
-        $listOrders = $this->getOrderForMonth();
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r($listOrders);
-        echo "</xmp>";
-        die();
-
-        if(!empty($listOrders)){
-            foreach ($listOrders as $k=>$listOrder) {
-                //$
-            }
-        }
-    }
 
     public function getOrderForMonth()
     {
@@ -1115,7 +1179,6 @@ class TestController extends BaseController
 
         curl_setopt($ch, CURLOPT_URL,"http://vipsite.biz/admin/get_order.php");
         curl_setopt($ch, CURLOPT_POST, 0);
-        //curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query(['date_from' => $date_from,'date_to'=>$date_to]));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $server_output = curl_exec ($ch);
@@ -1125,15 +1188,28 @@ class TestController extends BaseController
         return json_decode($server_output,TRUE);
     }
 
-    public function addKey()
+
+    public function actionTest()
     {
-        $xz = parent::addKey();
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<xmp>";
+        print_r(CashIn::all());
+        echo "</xmp>";
+        die();
+
 
         header('Content-Type: text/html; charset=utf-8');
         echo "<xmp>";
-        print_r($xz);
+        print_r(CashAccounts::all());
         echo "</xmp>";
         die();
+
+//        $model = PartsAccessories::find()->orderBy(['delovod_id'=>SORT_DESC])->all();
+//
+//        foreach ($model as $item) {
+//            echo $item->title . ' --- ' . $item->delovod_id;
+//            echo '<br>';
+//        }
     }
 
 }
