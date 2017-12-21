@@ -1,0 +1,6 @@
+ composer:
+    image: tomsowerby/laravel-composer
+    container_name: composer
+    volumes:
+      - ./app/api/:/data
+    working_dir: /data

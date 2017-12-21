@@ -1,0 +1,10 @@
+Options +FollowSymLinks
+AddDefaultCharset UTF-8
+IndexIgnore */*
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.php
+ErrorDocument 404 /web/404.html
+php_value post_max_size 20M
+php_value upload_max_filesize 20M

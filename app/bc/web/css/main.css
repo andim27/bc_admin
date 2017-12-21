@@ -1,0 +1,186 @@
+.logo_authorization
+{
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form_auth
+{
+    padding: 0 30px 30px 30px;
+    overflow: hidden;
+    padding-top: 10px;
+}
+
+.sect
+{
+    width: 70%;
+    margin: 0 auto;
+}
+
+.logo_logo
+{
+    text-align: center;
+}
+
+.cl1
+{
+    margin: 4px 20px 0 0;
+}
+
+.languag
+{
+    text-transform: uppercase;
+}
+
+.err
+{
+    display: none;
+    color: #A94442;
+}
+
+.err1
+{
+    display: none;
+    color: #A94442;
+}
+
+.errmail
+{
+    display: none;
+    color: #A94442;
+}
+
+.errname
+{
+    display: none;
+    color: #A94442;
+}
+
+.cl2
+{
+    padding-left: 0;
+}
+
+.cl3
+{
+    padding-right: 0;
+}
+
+.cl4
+{
+    padding-left: 0;
+    margin-top: -38px;
+}
+
+.cl5
+{
+    padding-right: 0;
+    margin-top: -38px;
+}
+
+.cl6
+{
+    position: relative;
+    z-index: 1;
+    right: -40%;
+    width: 50%;
+}
+
+.cl7
+{
+    margin: 0 8%;
+}
+
+.cl8
+{
+    margin: 0 22%;
+}
+
+.p1
+{
+    text-align: center;
+}
+
+.log_inp
+{
+    width: 39%;
+}
+.check_me
+{
+    color: black;
+}
+.i1, .spa1
+{
+    font-size: 17px;
+    font-family: Cambria;
+    color: black;
+}
+
+.dateday
+{
+    float:left;
+    margin: 5px 69px 0 0;
+}
+
+.remme
+{
+    margin-top: 7px !important;
+}
+
+.remmelable
+{
+    float:left;
+    margin: 4px 5px 0 0;
+}
+
+.timelable
+{
+    float: right;
+    margin: 8px 0 0 3px;
+}
+
+.themenews
+{
+    float:left;
+    margin: 8px 22px 0 0;
+}
+
+.act
+{
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .3), -23px 0 20px -23px rgba(0, 0, 0, .8), 23px 0 20px -23px rgba(0, 0, 0, .8), 0 0 40px rgba(0, 0, 0, .1) inset;
+}
+
+.clos
+{
+    margin-top: -29px !important;
+}
+
+#copy-link, #copy-link2
+{
+    color: #0000CC;
+    cursor: hand;
+}
+
+.soc:hover
+{
+    background-color: #a0a6ad;
+}
+
+.update_user_link
+{
+    cursor: pointer;
+}
+
+
+@media screen and (max-width: 780px) {
+    .line_after
+    {
+        margin-top: 55px;
+    }
+}
+
+.ofv {
+    overflow: visible !important;
+}
+
+
