@@ -8,7 +8,7 @@ phases:
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION)
       - REPOSITORY_URI=893041221537.dkr.ecr.eu-central-1.amazonaws.com/bpt-api
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - 
+      - sh pre-api.sh
   build:
     commands:
       - echo Build started on `date`
@@ -23,5 +23,6 @@ phases:
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
       - printf '[{"name":"phpl","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - sh post-api.sh
 artifacts:
     files: imagedefinitions.json
