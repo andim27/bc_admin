@@ -1,6 +1,5 @@
 FROM m2sh/php7
 
-#EXPOSE 9000
 EXPOSE 81
 #VOLUME /var/www/html/
 WORKDIR /var/www/html/
@@ -18,6 +17,5 @@ RUN chown -hR www-data:www-data /var/www/html/
 RUN chmod -R 777 /var/log/supervisor/
 RUN chmod -R 777 /var/www/html/storage/logs/
 RUN usermod -u 1000 www-data
-#USER www-data
 
 CMD ["/usr/bin/supervisord"]
