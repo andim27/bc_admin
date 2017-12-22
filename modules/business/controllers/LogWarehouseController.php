@@ -10,6 +10,7 @@ use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
 use app\models\Sales;
 use app\models\StatusSales;
+use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
@@ -403,7 +404,6 @@ class LogWarehouseController extends BaseController {
         //5978ac393d073f3d0b411fd5
     }
 
-
     public function actionShowCancellation()
     {
         $model = Sales::find()->where(['type'=>-1])->all();
@@ -426,4 +426,116 @@ class LogWarehouseController extends BaseController {
         die();
 
     }
+
+    public function actionTemp()
+    {
+        $table = '<table>';
+        $table .= '
+            <tr>
+                <td>Дата
+                <td>Склад
+                <td>Expert
+                <td>Balance
+                <td>Profi';
+
+        $from = '2017-09-01';
+        $to = '2017-12-31';
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($from) * 1000),
+                    '$lte' => new UTCDatetime(strtotime($to) *1000)
+                ]
+            ])
+            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->andWhere([
+                'type' => ['$ne' => -1]
+            ])
+            ->all();
+        $infoSetGoods = [];
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $date = $item->dateCreate->toDateTime()->format('Y-m');
+
+                foreach($item->statusSale->set as $itemSet){
+                    $user = (!empty($itemSet->idUserChange) ? (string)$itemSet->idUserChange : 'none');
+
+                    if($user != 'none'){
+                        $warehouseAdmin = Warehouse::getInfoWarehouse($user);
+
+                        if (empty($infoSetGoods[$warehouseAdmin->title][$date][$itemSet->title])) {
+                            $infoSetGoods[$warehouseAdmin->title][$date][$itemSet->title]['books'] = 0;
+                            $infoSetGoods[$warehouseAdmin->title][$date][$itemSet->title]['issue'] = 0;
+                        }
+
+                        $infoSetGoods[$warehouseAdmin->title][$date][$itemSet->title]['books']++;
+
+                    }
+
+                }
+            }
+        }
+
+        $modelLastChangeStatus = StatusSales::find()
+            ->where([
+                'setSales.dateChange' => [
+                    '$gte' => new UTCDateTime(strtotime($from) * 1000),
+                    '$lt' => new UTCDateTime(strtotime($to . '23:59:59') * 1000)
+                ],
+                'setSales.status' => 'status_sale_issued',
+            ])
+            ->all();
+        if(!empty($modelLastChangeStatus)) {
+
+            $from = strtotime($from);
+            $to = strtotime($to);
+
+            foreach ($modelLastChangeStatus as $item){
+                if($item->sales->type != -1) {
+                    foreach ($item->setSales as $itemSet) {
+
+                        $date = $itemSet['dateChange']->toDateTime()->format('Y-m');
+
+                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
+                        if (!empty($itemSet['idUserChange']) && $dateChange>=$from && $dateChange<=$to && in_array($itemSet['status'],StatusSales::getListIssuedStatus())) {
+
+                            $warehouseAdmin = Warehouse::getInfoWarehouse((string)$itemSet['idUserChange']);
+                            if (empty($infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']])) {
+                                $infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']]['books'] = 0;
+                                $infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']]['issue'] = 0;
+                            }
+
+                            $infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']]['issue']++;
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        foreach ($infoSetGoods as $kWarehouse=>$itemWarehouse){
+            foreach ($itemWarehouse as $kDate => $itemDate) {
+                $e = !empty($itemDate['Комплект для продажи Life Expert']) ? $itemDate['Комплект для продажи Life Expert'] : ['books'=>0,'issue'=>0];
+                $b = !empty($itemDate['Комплект для продажи Life Balance']) ? $itemDate['Комплект для продажи Life Balance'] : ['books'=>0,'issue'=>0];
+                $p = !empty($itemDate['Комплект для продажи Life Expert PROFI']) ? $itemDate['Комплект для продажи Life Expert PROFI'] : ['books'=>0,'issue'=>0];
+
+                $table .= '
+                <tr>
+                    <td>'.$kDate.'
+                    <td>'.$kWarehouse.'
+                    <td>'.$e['books'].' / '.$e['issue'].'
+                    <td>'.$b['books'].' / '.$b['issue'].'
+                    <td>'.$p['books'].' / '.$p['issue'];
+            }
+
+        }
+
+        $table .= '</table>';
+
+
+        echo $table;die();
+    }
+
 }

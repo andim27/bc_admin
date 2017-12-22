@@ -221,29 +221,6 @@ class TestController extends BaseController
     public function actionSetOrder()
     {
 
-//        $data = [
-//            'posted' => true
-//        ];
-//
-//        $xz = SaleOrder::save($data,'1109100000001239');
-//
-//        $listOrderDelovod = SaleOrder::all();
-//        if(!empty($listOrderDelovod)){
-//            foreach ($listOrderDelovod as $item){
-//
-//                $infoGoodsForOrder = SaleOrderTpGoods::getGoodsForSaleOrder($item->id);
-//
-//                echo "<xmp>";
-//                print_r($item);
-//                print_r($infoGoodsForOrder);
-//                echo "</xmp>";
-//            }
-//        }
-//        die();
-
-
-
-
         $listOrderForMonth = $this->getOrderForMonth();
 
         if(!empty($listOrderForMonth)){
@@ -289,15 +266,25 @@ class TestController extends BaseController
                         }
                     }
 
-//                    SaleOrder::save($data,$idSaleOrder);
-//
-//                    header('Content-Type: text/html; charset=utf-8');
-//                    echo "<xmp>";
-//                    print_r($xz);
-//                    echo "</xmp>";
+                    CashAccounts::getIdForPaymentCode($item['payment_code']);
 
+                    $dataCash = [
+                        'date'=>$item['date'],
 
+                        //'number'=>'',
 
+                        'rate' => '1',
+                        'firm' => '1100400000001004',
+                        'person' => '1100100000000001',
+                        'currency' => '1101200000001001',
+
+                        'state' => '1111500000000005',
+
+                        'storage' => '1100700000001050',
+                        'author'=>'1000200000001004',
+                    ];
+
+                    CashIn::save($dataCash,1);
                     //finish one
                     die();
                 }
@@ -356,7 +343,6 @@ class TestController extends BaseController
             die();
         }
     }
-
 
     /**
      * тест
