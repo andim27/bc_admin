@@ -1181,6 +1181,10 @@ class TestController extends BaseController
         echo "<xmp>";
         print_r(CashIn::all());
         echo "</xmp>";
+
+        echo "<xmp>";
+        print_r(SaleOrder::all());
+        echo "</xmp>";
         die();
 
 

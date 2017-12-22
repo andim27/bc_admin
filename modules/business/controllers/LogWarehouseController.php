@@ -429,7 +429,7 @@ class LogWarehouseController extends BaseController {
 
     public function actionTemp()
     {
-        $table = '<table>';
+        $table = '<table border="1">';
         $table .= '
             <tr>
                 <td>Дата
@@ -529,6 +529,28 @@ class LogWarehouseController extends BaseController {
                     <td>'.$b['books'].' / '.$b['issue'].'
                     <td>'.$p['books'].' / '.$p['issue'];
             }
+
+            $counWarehouse = [
+                '59620f49dca78761ae2d01c1'  =>  0, //e
+                '59620f57dca78747631d3c62'  =>  0, //b
+                '5975afe2dca78748ce5e7e02'  =>  0 //p
+            ];
+            $warehouseId = Warehouse::findOne(['title'=>$kWarehouse])->_id;
+            $countList = PartsAccessoriesInWarehouse::find()->where(['warehouse_id'=>$warehouseId])->all();
+            if(!empty($countList)){
+                foreach ($countList as $k=>$item){
+                    $counWarehouse[(string)$item['parts_accessories_id']] = $item['number'];
+                }
+            }
+
+
+            $table .= '
+                <tr style="background-color: grey">
+                    <td>На складе
+                    <td>
+                    <td> '.$counWarehouse['59620f49dca78761ae2d01c1'].'
+                    <td> '.$counWarehouse['59620f57dca78747631d3c62'].'
+                    <td>'.$counWarehouse['5975afe2dca78748ce5e7e02'];
 
         }
 
