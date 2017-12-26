@@ -514,7 +514,11 @@ class LogWarehouseController extends BaseController {
 
         }
 
-
+        $all = [
+            'e' => ['books'=>0,'issue'=>0],
+            'b' => ['books'=>0,'issue'=>0],
+            'p' => ['books'=>0,'issue'=>0]
+        ];
         foreach ($infoSetGoods as $kWarehouse=>$itemWarehouse){
             foreach ($itemWarehouse as $kDate => $itemDate) {
                 $e = !empty($itemDate['Комплект для продажи Life Expert']) ? $itemDate['Комплект для продажи Life Expert'] : ['books'=>0,'issue'=>0];
@@ -528,6 +532,13 @@ class LogWarehouseController extends BaseController {
                     <td>'.$e['books'].' / '.$e['issue'].'
                     <td>'.$b['books'].' / '.$b['issue'].'
                     <td>'.$p['books'].' / '.$p['issue'];
+
+                $all['e']['books'] += $e['books'];
+                $all['e']['issue'] += $e['issue'];
+                $all['b']['books'] += $b['books'];
+                $all['b']['issue'] += $b['issue'];
+                $all['p']['books'] += $p['books'];
+                $all['p']['issue'] += $p['issue'];
             }
 
             $counWarehouse = [
@@ -553,6 +564,23 @@ class LogWarehouseController extends BaseController {
                     <td>'.$counWarehouse['5975afe2dca78748ce5e7e02'];
 
         }
+
+        $table .= '
+                <tr style="background-color: #2aabd2">
+                    <td colspan="5"><center>Итого</center>
+                <tr>
+                    <td> 
+                    <td> 
+                    <td> '.$all['e']['books'].'/'.$all['e']['issue'].'
+                    <td> '.$all['b']['books'].'/'.$all['b']['issue'].'
+                    <td> '.$all['p']['books'].'/'.$all['p']['issue'].'
+                <tr>
+                    <td>
+                    <td>
+                    <td>
+                    <td>
+                    <td>    
+                    ';
 
         $table .= '</table>';
 

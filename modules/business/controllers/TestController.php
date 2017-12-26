@@ -226,7 +226,7 @@ class TestController extends BaseController
         if(!empty($listOrderForMonth)){
             foreach ($listOrderForMonth as $item) {
 
-
+                // создаем документ заказа
                 if(SaleOrder::check($item['order_id']) === false){
                     $data = [
                         'date'=>$item['date'],
@@ -244,6 +244,8 @@ class TestController extends BaseController
 
                     $idSaleOrder = SaleOrder::save($data);
 
+                    // заполняем заказ
+                    $totalAmountCur = 0;
                     if(!empty($item['info'])){
                         foreach ($item['info']  as $itemOrder) {
                             $modelWarehouse = Products::findOne([
@@ -251,37 +253,45 @@ class TestController extends BaseController
                             ]);
 
                             if(!empty($modelWarehouse->delovod_id)){
+                                $amountCur = ($itemOrder['quantity']*$itemOrder['price']);
+                                $totalAmountCur += $amountCur;
+
                                 $dataGoods['tableParts']['tpGoods'][]=[
                                     'good'=>$modelWarehouse->delovod_id,
                                     'goodType'=>'1004000000000014',
                                     'unit' => '1103600000000001',
                                     'qty'=>(int)$itemOrder['quantity'],
                                     'price'=>$itemOrder['price'],
-                                    'amountCur'=>($itemOrder['quantity']*$itemOrder['price'])
+                                    'amountCur'=>$amountCur
                                 ];
-
-                                SaleOrderTpGoods::save($dataGoods,1,$idSaleOrder);
 
                             }
                         }
+
+                        SaleOrderTpGoods::save($dataGoods,1,$idSaleOrder);
                     }
 
-                    CashAccounts::getIdForPaymentCode($item['payment_code']);
-
+                    // создаем платеж
                     $dataCash = [
                         'date'=>$item['date'],
 
                         //'number'=>'',
 
-                        'rate' => '1',
+                        'baseDoc' => $idSaleOrder,
+
                         'firm' => '1100400000001004',
+                        'cashAccount' => CashAccounts::getIdForPaymentCode($item['payment_code']),
                         'person' => '1100100000000001',
                         'currency' => '1101200000001001',
-
-                        'state' => '1111500000000005',
-
-                        'storage' => '1100700000001050',
-                        'author'=>'1000200000001004',
+                        'content' => 'Поступления от реализации товаров',
+                        'contract' => $idSaleOrder,
+                        'cashItem' => '1104300000001001',
+                        'amountCur' => $totalAmountCur,
+                        'operationType' => '1004000000000018',
+//                        'department' => '1101900000000001'
+                        'rate' => '1.0000',
+                        'author' => '1000200000001004',
+                        'business' => '1115000000000001'
                     ];
 
                     CashIn::save($dataCash,1);
