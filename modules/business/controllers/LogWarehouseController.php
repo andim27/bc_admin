@@ -9,6 +9,7 @@ use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
 use app\models\Sales;
+use app\models\Settings;
 use app\models\StatusSales;
 use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
@@ -429,6 +430,9 @@ class LogWarehouseController extends BaseController {
 
     public function actionTemp()
     {
+
+        $countListTitle = Settings::getListCountry();
+
         $table = '<table border="1">';
         $table .= '
             <tr>
@@ -453,7 +457,7 @@ class LogWarehouseController extends BaseController {
                 'type' => ['$ne' => -1]
             ])
             ->all();
-        $infoSetGoods = [];
+        $infoSetGoods = $infoCountry = [];
         if(!empty($model)){
             foreach ($model as $item) {
                 $date = $item->dateCreate->toDateTime()->format('Y-m');
@@ -470,6 +474,14 @@ class LogWarehouseController extends BaseController {
                         }
 
                         $infoSetGoods[$warehouseAdmin->title][$date][$itemSet->title]['books']++;
+
+
+                        if (empty($infoCountry[$warehouseAdmin->country][$date][$itemSet->title])) {
+                            $infoCountry[$warehouseAdmin->country][$date][$itemSet->title]['books'] = 0;
+                            $infoCountry[$warehouseAdmin->country][$date][$itemSet->title]['issue'] = 0;
+                        }
+
+                        $infoCountry[$warehouseAdmin->country][$date][$itemSet->title]['books']++;
 
                     }
 
@@ -501,18 +513,28 @@ class LogWarehouseController extends BaseController {
                         if (!empty($itemSet['idUserChange']) && $dateChange>=$from && $dateChange<=$to && in_array($itemSet['status'],StatusSales::getListIssuedStatus())) {
 
                             $warehouseAdmin = Warehouse::getInfoWarehouse((string)$itemSet['idUserChange']);
+
                             if (empty($infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']])) {
                                 $infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']]['books'] = 0;
                                 $infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']]['issue'] = 0;
                             }
 
                             $infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']]['issue']++;
+
+                            if (empty($infoCountry[$warehouseAdmin->country][$date][$itemSet['title']])) {
+                                $infoCountry[$warehouseAdmin->country][$date][$itemSet['title']]['books'] = 0;
+                                $infoCountry[$warehouseAdmin->country][$date][$itemSet['title']]['issue'] = 0;
+                            }
+
+                            $infoCountry[$warehouseAdmin->country][$date][$itemSet['title']]['issue']++;
+
                         }
                     }
                 }
             }
 
         }
+
 
         $all = [
             'e' => ['books'=>0,'issue'=>0],
@@ -582,6 +604,28 @@ class LogWarehouseController extends BaseController {
                     <td>    
                     ';
 
+        $table .= '</table>';
+        $table .= '<h1>По странам</h1>';
+        $table .= '<table border="1">';
+        if(!empty($infoCountry)){
+            foreach ($infoCountry as $kCountry => $itemCountry) {
+                foreach ($itemCountry as $kDate=>$itemDate) {
+                    $e = !empty($itemDate['Комплект для продажи Life Expert']) ? $itemDate['Комплект для продажи Life Expert'] : ['books'=>0,'issue'=>0];
+                    $b = !empty($itemDate['Комплект для продажи Life Balance']) ? $itemDate['Комплект для продажи Life Balance'] : ['books'=>0,'issue'=>0];
+                    $p = !empty($itemDate['Комплект для продажи Life Expert PROFI']) ? $itemDate['Комплект для продажи Life Expert PROFI'] : ['books'=>0,'issue'=>0];
+
+                    $table .= '
+                    <tr>
+                        <td>'.$kDate.'
+                        <td>'.(!empty($countListTitle[$kCountry]) ? $countListTitle[$kCountry] : $kCountry).'
+                        <td>'.$e['books'].' / '.$e['issue'].'
+                        <td>'.$b['books'].' / '.$b['issue'].'
+                        <td>'.$p['books'].' / '.$p['issue'];
+
+
+                }
+            }
+        }
         $table .= '</table>';
 
 

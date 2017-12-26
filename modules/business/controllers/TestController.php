@@ -294,6 +294,11 @@ class TestController extends BaseController
                         'business' => '1115000000000001'
                     ];
 
+                    header('Content-Type: text/html; charset=utf-8');
+                    echo "<xmp>";
+                    print_r($dataCash);
+                    echo "</xmp>";
+
                     CashIn::save($dataCash,1);
                     //finish one
                     die();

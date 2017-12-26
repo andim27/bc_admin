@@ -241,7 +241,6 @@ class SaleReportController extends BaseController
 
         $dateTo = date("Y-m-d");
         $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));
-        $dateFrom = '2017-09-01';
 
         $model = Sales::find()
             ->where([
