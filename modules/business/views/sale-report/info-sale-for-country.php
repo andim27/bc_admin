@@ -126,7 +126,7 @@ $total=[
                                         $total['count_stock'] += $item['in_stock'];
                                         $total['count_send'] += $item['send'];
                                     }
-                                    $total['count_repair'] += $item['issued'];
+                                    $total['count_repair'] += $item['repair'];
                                     ?>
                                     <tr>
                                         <td><?=(!empty($listCountry[$k]) ? $listCountry[$k] : 'none') ?></td>

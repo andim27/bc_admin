@@ -240,7 +240,8 @@ class SaleReportController extends BaseController
         $infoSale = [];
 
         $dateTo = date("Y-m-d");
-        $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));;
+        $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));
+        $dateFrom = '2017-09-01';
 
         $model = Sales::find()
             ->where([
