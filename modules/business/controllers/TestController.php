@@ -288,7 +288,10 @@ class TestController extends BaseController
                         'cashItem' => '1104300000001001',
                         'amountCur' => $totalAmountCur,
                         'operationType' => '1004000000000018',
-//                        'department' => '1101900000000001'
+
+                        'department' => '1101900000000001',
+                        'orderNumber'=>$item['order_id'],
+
                         'rate' => '1.0000',
                         'author' => '1000200000001004',
                         'business' => '1115000000000001'
@@ -296,6 +299,7 @@ class TestController extends BaseController
 
                     header('Content-Type: text/html; charset=utf-8');
                     echo "<xmp>";
+                    print_r($item['payment_code']);
                     print_r($dataCash);
                     echo "</xmp>";
 
