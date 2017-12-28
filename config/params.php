@@ -3,7 +3,7 @@
 return [
     'adminEmail' => 'admin@example.com',
     'apiAddress' => 'http://api.businessprocess.biz/api/',
-//    'apiAddress' => 'http://192.168.3.11:3000/api/',
+//    'apiAddress' => 'gnc_api/api/',
     'defaultCountry' => 'RU',
     'useCache' => false,
     'certificate' => [

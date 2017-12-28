@@ -10,8 +10,10 @@ use app\models\apiDelovod\CashIn;
 use app\models\apiDelovod\Goods;
 use app\models\apiDelovod\Purchase;
 use app\models\apiDelovod\PurchaseTpGoods;
+use app\models\apiDelovod\Sale;
 use app\models\apiDelovod\SaleOrder;
 use app\models\apiDelovod\SaleOrderTpGoods;
+use app\models\apiDelovod\SaleTpGoods;
 use app\models\apiDelovod\UnitMeasure;
 use app\models\apiDelovod\Storages;
 use app\models\apiDelovod\Users;
@@ -220,29 +222,35 @@ class TestController extends BaseController
      */
     public function actionSetOrder()
     {
-
         $listOrderForMonth = $this->getOrderForMonth();
 
         if(!empty($listOrderForMonth)){
             foreach ($listOrderForMonth as $item) {
 
+                $warehouse = '1100700000000001';
+                if(!empty($item['warehouse'])){
+                    $warehouseInfo = Warehouse::getInfoWarehouse($item['warehouse']);
+                    if(!empty($warehouseInfo->delovod_id)){
+                        $warehouse = (string)$warehouseInfo->delovod_id;
+                    }
+                }
+
                 // создаем документ заказа
                 if(SaleOrder::check($item['order_id']) === false){
-                    $data = [
-                        'date'=>$item['date'],
-                        'number'=>$item['order_id'],
-                        'rate' => '1',
-                        'firm' => '1100400000001004',
-                        'person' => '1100100000000001',
-                        'currency' => '1101200000001001',
-
-                        'state' => '1111500000000005',
-
-                        'storage' => '1100700000001050',
-                        'author'=>'1000200000001004',
+                    $dataSaleOrder = [
+                        'date'      =>  $item['date'],
+                        'number'    =>  $item['order_id'],
+                        'rate'      =>  '1',
+                        'firm'      =>  '1100400000001004',
+                        'person'    =>  '1100100000000001',
+                        'currency'  =>  '1101200000001001',
+                        'state'     =>  '1111500000000005',
+                        'storage'   =>  $warehouse,
+                        'author'    =>  '1000200000001004',
                     ];
 
-                    $idSaleOrder = SaleOrder::save($data);
+
+                    $idSaleOrder = SaleOrder::save($dataSaleOrder);
 
                     // заполняем заказ
                     $totalAmountCur = 0;
@@ -256,7 +264,7 @@ class TestController extends BaseController
                                 $amountCur = ($itemOrder['quantity']*$itemOrder['price']);
                                 $totalAmountCur += $amountCur;
 
-                                $dataGoods['tableParts']['tpGoods'][]=[
+                                $dataSaleOrderGoods['tableParts']['tpGoods'][]=[
                                     'good'=>$modelWarehouse->delovod_id,
                                     'goodType'=>'1004000000000014',
                                     'unit' => '1103600000000001',
@@ -265,45 +273,96 @@ class TestController extends BaseController
                                     'amountCur'=>$amountCur
                                 ];
 
+                                $dataSaleGoods['tableParts']['tpGoods'][]=[
+                                    'good'=>$modelWarehouse->delovod_id,
+                                    'goodType'=>'1004000000000014',
+                                    'unit' => '1103600000000001',
+                                    'qty'=>(int)$itemOrder['quantity'],
+                                    'baseQty'=>(int)$itemOrder['quantity'],
+                                    'price'=>$itemOrder['price'],
+                                    'amountCur'=>$amountCur,
+                                    'priceAmount'=>$amountCur
+                                ];
                             }
                         }
 
-                        SaleOrderTpGoods::save($dataGoods,1,$idSaleOrder);
+                        SaleOrderTpGoods::save($dataSaleOrderGoods,1,$idSaleOrder);
                     }
 
-                    // создаем платеж
-                    $dataCash = [
-                        'date'=>$item['date'],
+                    // создаем расходная накладную
+                    $dataSale = [
+                        'date'          =>  $item['date'],
+                        'number'        =>  $item['order_id'],
+                        'baseDoc'       =>  $idSaleOrder,
+                        'firm'          =>  '1100400000001004',
+                        'business'      =>  '1115000000000001',
+                        'storage'       =>  $warehouse,
+                        'person'        =>  '1100100000000001',
+                        'contract'      =>  $idSaleOrder,
+                        'operationType' =>  '1004000000000018',
+                        'currency'      =>  '1101200000001001',
+                        'amountCur'     =>  $totalAmountCur,
+                        'rate'          =>  '1.0000',
+                        'department'    =>  '1101900000000001',
+                        'author'        =>  '1000200000001004',
+                        'costItem'      =>  '1106100000000003',
+                        'incomeItem'    =>  '1106500000000002',
+                        'priceType'     =>  '1101300000001001',
+                        'state'         =>  '1111500000000005',
 
-                        //'number'=>'',
+                        'operMode'      =>  1,
+                        'docMode'      =>  0
 
-                        'baseDoc' => $idSaleOrder,
-
-                        'firm' => '1100400000001004',
-                        'cashAccount' => CashAccounts::getIdForPaymentCode($item['payment_code']),
-                        'person' => '1100100000000001',
-                        'currency' => '1101200000001001',
-                        'content' => 'Поступления от реализации товаров',
-                        'contract' => $idSaleOrder,
-                        'cashItem' => '1104300000001001',
-                        'amountCur' => $totalAmountCur,
-                        'operationType' => '1004000000000018',
-
-                        'department' => '1101900000000001',
-                        'orderNumber'=>$item['order_id'],
-
-                        'rate' => '1.0000',
-                        'author' => '1000200000001004',
-                        'business' => '1115000000000001'
                     ];
 
-                    header('Content-Type: text/html; charset=utf-8');
-                    echo "<xmp>";
-                    print_r($item['payment_code']);
-                    print_r($dataCash);
-                    echo "</xmp>";
 
-                    CashIn::save($dataCash,1);
+                    $idSale = Sale::save($dataSale);
+
+
+                    SaleTpGoods::save($dataSaleGoods,1,$idSale);
+
+
+
+                    // создаем платеж
+//                    $dataCash = [
+//                        'date'=>$item['date'],
+//
+//                        'number'=>$item['order_id'],
+//
+//                        'baseDoc' => $idSaleOrder,
+//
+//                        'firm' => '1100400000001004',
+//                        'cashAccount' => CashAccounts::getIdForPaymentCode($item['payment_code']),
+//                        'person' => '1100100000000001',
+//                        'currency' => '1101200000001001',
+//                        'content' => 'Поступления от реализации товаров',
+//                        'contract' => $idSaleOrder,
+//                        'cashItem' => '1104300000001001',
+//                        'amountCur' => $totalAmountCur,
+//                        'operationType' => '1004000000000018',
+//
+//                        'department' => '1101900000000001',
+//                        'orderNumber'=>$item['order_id'],
+//
+//                        'rate' => '1.0000',
+//                        'author' => '1000200000001004',
+//                        'business' => '1115000000000001'
+//                    ];
+//                    header('Content-Type: text/html; charset=utf-8');
+//                    echo "<xmp>";
+//                    print_r($item['payment_code']);
+//                    print_r($dataCash);
+//                    echo "</xmp>";
+//                    CashIn::save($dataCash,1);
+
+
+
+
+
+
+
+
+
                     //finish one
                     die();
                 }
@@ -320,47 +379,18 @@ class TestController extends BaseController
 
     public function actionXz()
     {
-        $parens = Purchase::all();
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r($parens);
-        echo "</xmp>";
+        //заказ 1109100000001010
+        //расходная накладная 1106800000001012
 
 
-        $xz = PurchaseTpGoods::getGoodsForPurchase('1100900000001004');
+        $infogoods = SaleTpGoods::getGoodsForSale('1106800000001012');
 
-        echo "<xmp>";
-        print_r($xz);
-        echo "</xmp>";
+        echo '<xmp>';
+        print_r($infogoods);
+        echo '</xmp>';
+
+
         die();
-
-        $packet['key']="G297bQn3o0PLwZaPW3kDEOvBjvJMFZ";
-        $packet['version']="0.15";
-
-        $packet['action']='request';
-        $packet['params']['from']='documents.purchase.tpGoods';
-        $packet['params']['fields']=[
-            'good'=>'good'
-        ];
-
-        if($curl=curl_init())
-        {
-            curl_setopt($curl,CURLOPT_URL,'https://delovod.ua/api/');
-            curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-            curl_setopt($curl,CURLOPT_POST,true);
-            curl_setopt($curl,CURLOPT_POSTFIELDS,"packet=".json_encode($packet));
-            $out=curl_exec($curl);
-            curl_close($curl);
-
-            $out = json_decode($out,True);
-
-            header('Content-Type: text/html; charset=utf-8');
-            echo "<xmp>";
-            print_r($out);
-            echo "</xmp>";
-            die();
-        }
     }
 
     /**
@@ -1175,8 +1205,6 @@ class TestController extends BaseController
 
 
     }
-
-
 
     public function getOrderForMonth()
     {

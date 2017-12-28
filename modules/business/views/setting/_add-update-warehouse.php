@@ -58,7 +58,7 @@ use app\components\ArrayInfoHelper;
                         'options' => ['placeholder' => 'Добавьте город ...', 'multiple' => true],
                         'pluginOptions' => [
                             'tags' => true,
-                            'maximumInputLength' => 10
+                            'maximumInputLength' => 100
                         ],
                     ]);?>
                 </div>

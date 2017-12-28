@@ -8,59 +8,36 @@ use app\components\ArrayInfoHelper;
 /**
  * https://delovod.ua/help/ru/mdata/documents.sale
  *
- * Class Sale
+ * Class SaleTpGoods
  * @package app\models\apiDelovod
  */
-class Sale
+class SaleTpGoods
 {
-    CONST FROM = 'documents.sale';
+    CONST FROM = 'documents.sale.tpGoods';
 
-    public $id;
-    public $date;
-    public $number;
-    public $presentation;
-    public $delMark;
-    public $posted;
-    public $remark;
-    public $baseDoc;
-    public $version;
-    public $firm;
-    public $business;
-    public $storage;
-    public $person;
-    public $contract;
-    public $contact;
-    public $operationType;
-    public $currency;
+    public $rowNum;
+    public $owner;
+    public $good;
+    public $goodType;
+    public $price;
+    public $qty;
+    public $baseQty;
+    public $priceAmount;
+    public $unit;
+    public $markup;
+    public $discount;
     public $amountCur;
-    public $rate;
-    public $acceptance;
-    public $payBefore;
-    public $manager;
-    public $department;
-    public $costItem;
-    public $incomeItem;
-    public $deliveryMethod;
-    public $deliveryRemark;
-    public $deliveryAddress;
-    public $cashAccount;
-    public $author;
-    public $taxAccount;
-    public $cashItem;
-    public $webShop;
-    public $priceType;
-    public $markupPercent;
     public $discountPercent;
-    public $deliveryAddressLink_forDelete;
-    public $apartment;
+    public $markupPercent;
+    public $ratio;
     public $weight;
-    public $state;
-    public $payment;
-    public $remarkForPerson;
-    public $trackNum;
-    public $operMode;
-    public $docMode;
-    public $discountCard;
+    public $goodPart;
+    public $goodChar;
+    public $comPrice;
+    public $comAmount;
+    public $promotion;
+    public $tax;
+
 
     /**
      * Returns all units
@@ -69,6 +46,8 @@ class Sale
      */
     public static function all($filters = [])
     {
+
+
         $apiDelovod = new ApiDelovod();
 
         $data['action'] = 'request';
@@ -84,16 +63,26 @@ class Sale
         return self::_getResults($response);
     }
 
+    public static function getGoodsForSale($purchaseId)
+    {
+        $filters[] = [
+            'alias'     =>  'owner',
+            'operator'  =>  '=',
+            'value'     =>  $purchaseId
+        ];
+
+        return self::all($filters);
+    }
+
     public static function save($dataForSave,$saveType = 0,$id = self::FROM)
     {
         $apiDelovod = new ApiDelovod();
 
         $data['action'] = 'saveObject';
 
-        $data['params']['header'] = $dataForSave;
+        $data['params'] = $dataForSave;
         $data['params']['saveType'] = $saveType;
         $data['params']['header']['id'] = $id;
-
 
         echo '<xmp>';
         print_r($data);
@@ -112,12 +101,9 @@ class Sale
      */
     private static function getFieldsApi()
     {
-        $result = ['id','date','number','presentation','delMark','posted','remark','baseDoc','version','firm',
-            'business','storage','person','contract','contact','operationType','currency','amountCur','rate',
-            'acceptance','payBefore','manager','department','costItem','incomeItem','deliveryMethod','deliveryRemark',
-            'deliveryAddress','cashAccount','author','taxAccount','cashItem','webShop','priceType','markupPercent',
-            'discountPercent','deliveryAddressLink_forDelete','apartment','weight','state','payment','remarkForPerson',
-            'trackNum','operMode','docMode','discountCard'];
+        $result = ['rowNum','owner','good','price','qty','baseQty','priceAmount','unit','markup','discount',
+        'amountCur','discountPercent','markupPercent','ratio','weight','goodPart','goodChar','comPrice','comAmount',
+        'promotion','tax'];
 
         return $result;
     }
@@ -133,6 +119,12 @@ class Sale
         $result = [];
 
         if(!empty($data->error)){
+            header('Content-Type: text/html; charset=utf-8');
+            echo '<xmp>';
+            print_r($data);
+            echo '</xmp>';
+            die();
+
             ApiDelovod::_getError($data);
         } else {
             foreach ($data as $item) {
@@ -148,8 +140,4 @@ class Sale
 
         return $result;
     }
-
-
-
-    
 }
