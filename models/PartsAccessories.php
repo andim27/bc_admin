@@ -51,7 +51,8 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
             'delivery_from_chine',
             'last_price_eur',
             'repair_fund',
-            'exchange_fund'
+            'exchange_fund',
+            'delovod_id'
         ];
     }
 

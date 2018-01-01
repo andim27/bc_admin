@@ -22,6 +22,7 @@
                 </thead>
                 <tbody>
                 <?php foreach ($promos as $i => $u) { ?>
+                    <?php if (! in_array(strval($u->userId), $completedUsers)) { ?>
                     <tr>
                         <td>
                             <?= ++$i ?>
@@ -60,6 +61,7 @@
                             <?= isset($u->dateCompleted) ? $u->dateCompleted->toDateTime()->format('d.m.Y') : '' ?>
                         </td>
                     </tr>
+                    <?php } ?>
                 <?php } ?>
                 </tbody>
             </table>

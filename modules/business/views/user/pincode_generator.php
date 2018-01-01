@@ -2,6 +2,8 @@
     use app\components\THelper;
     use yii\helpers\Html;
     use yii\bootstrap\ActiveForm;
+    use kartik\widgets\Select2;
+
 ?>
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('pincode_generate_title') ?></h3>
@@ -14,15 +16,20 @@
             </div>
 
             <div class="col-md-12">
-                <?php $model->product = $defaultProduct?>
+                <?php $model->product = (!empty($model->product) ? $model->product : $defaultProduct);?>
+                <?= $form->field($model, 'product')->widget(Select2::className(),[
+                        'data' => $productList,
+                        'language' => 'ru',
+                        'options' => [
+                            'id'=>'product-list',
+                            'placeholder' => '',
+                            'multiple' => false
+                        ]
+                    ])->label(THelper::t('product')) ?>
+            </div>
 
-                <?= $form->field($model, 'product')->dropDownList($productList, [
-                    'class' => 'form-control',
-                    'id' => 'product-list',
-                    'prompt' => THelper::t('user_purchase_add_select_product')
-                ])->label(THelper::t('product')); ?>
-
-                <br>
+            <div class="col-md-12">
+                <?= $form->field($model, 'loan')->checkbox([],[false])->label(THelper::t('loan')) ?>
             </div>
 
             <div class="col-md-12" style="margin-bottom: 15px;">
@@ -30,6 +37,7 @@
                    <?php $productData = $productListData[$defaultProduct]; ?>
 
                    <?=THelper::t('price')?>: <strong><span id="price"><?=$productData['price']?></span></strong>
+                   <?=THelper::t('bonus')?>: <strong><span id="bonus-money"><?=$productData['bonusMoney']?></span></strong>
                    <?=THelper::t('points')?>: <strong><span id="bonus-points"><?=$productData['bonusPoints']?></span></strong>
                </div>
             </div>
@@ -73,6 +81,7 @@
     var $isLogin = $('#is-login');
     var $login = $('#login');
     var $price = $('#price');
+    var $bonusMoney = $('#bonus-money');
     var $bonusPoints = $('#bonus-points');
     var $copyToClipboard = $('#copy-to-clipboard');
     var $hiddenPincode = $('#hidden-pincode');
@@ -119,6 +128,7 @@
 
         $price.text(product.price);
         $bonusPoints.text(product.bonusPoints);
+        $bonusMoney.text(product.bonusMoney);
     }
 
     function clearFields(){

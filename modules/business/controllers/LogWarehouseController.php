@@ -9,7 +9,9 @@ use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
 use app\models\Sales;
+use app\models\Settings;
 use app\models\StatusSales;
+use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
@@ -403,7 +405,6 @@ class LogWarehouseController extends BaseController {
         //5978ac393d073f3d0b411fd5
     }
 
-
     public function actionShowCancellation()
     {
         $model = Sales::find()->where(['type'=>-1])->all();
@@ -426,4 +427,209 @@ class LogWarehouseController extends BaseController {
         die();
 
     }
+
+    public function actionTemp()
+    {
+
+        $countListTitle = Settings::getListCountry();
+
+        $table = '<table border="1">';
+        $table .= '
+            <tr>
+                <td>Дата
+                <td>Склад
+                <td>Expert
+                <td>Balance
+                <td>Profi';
+
+        $from = '2017-09-01';
+        $to = '2017-12-31';
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($from) * 1000),
+                    '$lte' => new UTCDatetime(strtotime($to) *1000)
+                ]
+            ])
+            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->andWhere([
+                'type' => ['$ne' => -1]
+            ])
+            ->all();
+        $infoSetGoods = $infoCountry = [];
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $date = $item->dateCreate->toDateTime()->format('Y-m');
+
+                foreach($item->statusSale->set as $itemSet){
+                    $user = (!empty($itemSet->idUserChange) ? (string)$itemSet->idUserChange : 'none');
+
+                    if($user != 'none'){
+                        $warehouseAdmin = Warehouse::getInfoWarehouse($user);
+
+                        if (empty($infoSetGoods[$warehouseAdmin->title][$date][$itemSet->title])) {
+                            $infoSetGoods[$warehouseAdmin->title][$date][$itemSet->title]['books'] = 0;
+                            $infoSetGoods[$warehouseAdmin->title][$date][$itemSet->title]['issue'] = 0;
+                        }
+
+                        $infoSetGoods[$warehouseAdmin->title][$date][$itemSet->title]['books']++;
+
+
+                        if (empty($infoCountry[$warehouseAdmin->country][$date][$itemSet->title])) {
+                            $infoCountry[$warehouseAdmin->country][$date][$itemSet->title]['books'] = 0;
+                            $infoCountry[$warehouseAdmin->country][$date][$itemSet->title]['issue'] = 0;
+                        }
+
+                        $infoCountry[$warehouseAdmin->country][$date][$itemSet->title]['books']++;
+
+                    }
+
+                }
+            }
+        }
+
+        $modelLastChangeStatus = StatusSales::find()
+            ->where([
+                'setSales.dateChange' => [
+                    '$gte' => new UTCDateTime(strtotime($from) * 1000),
+                    '$lt' => new UTCDateTime(strtotime($to . '23:59:59') * 1000)
+                ],
+                'setSales.status' => 'status_sale_issued',
+            ])
+            ->all();
+        if(!empty($modelLastChangeStatus)) {
+
+            $from = strtotime($from);
+            $to = strtotime($to);
+
+            foreach ($modelLastChangeStatus as $item){
+                if($item->sales->type != -1) {
+                    foreach ($item->setSales as $itemSet) {
+
+                        $date = $itemSet['dateChange']->toDateTime()->format('Y-m');
+
+                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
+                        if (!empty($itemSet['idUserChange']) && $dateChange>=$from && $dateChange<=$to && in_array($itemSet['status'],StatusSales::getListIssuedStatus())) {
+
+                            $warehouseAdmin = Warehouse::getInfoWarehouse((string)$itemSet['idUserChange']);
+
+                            if (empty($infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']])) {
+                                $infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']]['books'] = 0;
+                                $infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']]['issue'] = 0;
+                            }
+
+                            $infoSetGoods[$warehouseAdmin->title][$date][$itemSet['title']]['issue']++;
+
+                            if (empty($infoCountry[$warehouseAdmin->country][$date][$itemSet['title']])) {
+                                $infoCountry[$warehouseAdmin->country][$date][$itemSet['title']]['books'] = 0;
+                                $infoCountry[$warehouseAdmin->country][$date][$itemSet['title']]['issue'] = 0;
+                            }
+
+                            $infoCountry[$warehouseAdmin->country][$date][$itemSet['title']]['issue']++;
+
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        $all = [
+            'e' => ['books'=>0,'issue'=>0],
+            'b' => ['books'=>0,'issue'=>0],
+            'p' => ['books'=>0,'issue'=>0]
+        ];
+        foreach ($infoSetGoods as $kWarehouse=>$itemWarehouse){
+            foreach ($itemWarehouse as $kDate => $itemDate) {
+                $e = !empty($itemDate['Комплект для продажи Life Expert']) ? $itemDate['Комплект для продажи Life Expert'] : ['books'=>0,'issue'=>0];
+                $b = !empty($itemDate['Комплект для продажи Life Balance']) ? $itemDate['Комплект для продажи Life Balance'] : ['books'=>0,'issue'=>0];
+                $p = !empty($itemDate['Комплект для продажи Life Expert PROFI']) ? $itemDate['Комплект для продажи Life Expert PROFI'] : ['books'=>0,'issue'=>0];
+
+                $table .= '
+                <tr>
+                    <td>'.$kDate.'
+                    <td>'.$kWarehouse.'
+                    <td>'.$e['books'].' / '.$e['issue'].'
+                    <td>'.$b['books'].' / '.$b['issue'].'
+                    <td>'.$p['books'].' / '.$p['issue'];
+
+                $all['e']['books'] += $e['books'];
+                $all['e']['issue'] += $e['issue'];
+                $all['b']['books'] += $b['books'];
+                $all['b']['issue'] += $b['issue'];
+                $all['p']['books'] += $p['books'];
+                $all['p']['issue'] += $p['issue'];
+            }
+
+            $counWarehouse = [
+                '59620f49dca78761ae2d01c1'  =>  0, //e
+                '59620f57dca78747631d3c62'  =>  0, //b
+                '5975afe2dca78748ce5e7e02'  =>  0 //p
+            ];
+            $warehouseId = Warehouse::findOne(['title'=>$kWarehouse])->_id;
+            $countList = PartsAccessoriesInWarehouse::find()->where(['warehouse_id'=>$warehouseId])->all();
+            if(!empty($countList)){
+                foreach ($countList as $k=>$item){
+                    $counWarehouse[(string)$item['parts_accessories_id']] = $item['number'];
+                }
+            }
+
+
+            $table .= '
+                <tr style="background-color: grey">
+                    <td>На складе
+                    <td>
+                    <td> '.$counWarehouse['59620f49dca78761ae2d01c1'].'
+                    <td> '.$counWarehouse['59620f57dca78747631d3c62'].'
+                    <td>'.$counWarehouse['5975afe2dca78748ce5e7e02'];
+
+        }
+
+        $table .= '
+                <tr style="background-color: #2aabd2">
+                    <td colspan="5"><center>Итого</center>
+                <tr>
+                    <td> 
+                    <td> 
+                    <td> '.$all['e']['books'].'/'.$all['e']['issue'].'
+                    <td> '.$all['b']['books'].'/'.$all['b']['issue'].'
+                    <td> '.$all['p']['books'].'/'.$all['p']['issue'].'
+                <tr>
+                    <td>
+                    <td>
+                    <td>
+                    <td>
+                    <td>    
+                    ';
+
+        $table .= '</table>';
+        $table .= '<h1>По странам</h1>';
+        $table .= '<table border="1">';
+        if(!empty($infoCountry)){
+            foreach ($infoCountry as $kCountry => $itemCountry) {
+                foreach ($itemCountry as $kDate=>$itemDate) {
+                    $e = !empty($itemDate['Комплект для продажи Life Expert']) ? $itemDate['Комплект для продажи Life Expert'] : ['books'=>0,'issue'=>0];
+                    $b = !empty($itemDate['Комплект для продажи Life Balance']) ? $itemDate['Комплект для продажи Life Balance'] : ['books'=>0,'issue'=>0];
+                    $p = !empty($itemDate['Комплект для продажи Life Expert PROFI']) ? $itemDate['Комплект для продажи Life Expert PROFI'] : ['books'=>0,'issue'=>0];
+
+                    $table .= '
+                    <tr>
+                        <td>'.$kDate.'
+                        <td>'.(!empty($countListTitle[$kCountry]) ? $countListTitle[$kCountry] : $kCountry).'
+                        <td>'.$e['books'].' / '.$e['issue'].'
+                        <td>'.$b['books'].' / '.$b['issue'].'
+                        <td>'.$p['books'].' / '.$p['issue'];
+
+
+                }
+            }
+        }
+        $table .= '</table>';
+
+
+        echo $table;die();
+    }
+
 }

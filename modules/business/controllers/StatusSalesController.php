@@ -455,8 +455,11 @@ class StatusSalesController extends BaseController {
             $request['infoTypeDate'] = 'create';
             $request['infoStatus'] = 'all';
             $request['infoTypePayment'] = 'all';
+            
         }
 
+        $request['infoProducts'] = 'all';
+        
         if( $request['infoWarehouse'] == 'for_me'){
             $listAdmin = [$this->user->id];
         } else {
@@ -541,53 +544,66 @@ class StatusSalesController extends BaseController {
             $request['infoTypeDate'] = 'create';
             $request['infoStatus'] = 'all';
             $request['infoTypePayment'] = 'all';
+            $request['infoProducts'] = 'all';
         } else {
             $listAdmin = [$request['infoWarehouse']];
         }
 
+        if($request['from'] > $request['to']){
+            $request['to'] = $request['from'];
+        }
+
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo "<xmp>";
+//        print_r($request);
+//        echo "</xmp>";
+//        die();
 
         $model = [];
-        if($request['infoTypeDate'] == 'create'){
-            $model = Sales::find()
-                ->where([
-                    'dateCreate' => [
-                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
-                        '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
-                    ]
-                ])
-                ->andWhere(['in','product',Products::productIDWithSet()])
-                ->andWhere([
-                    'type' => ['$ne' => -1]
-                ])
-                ->all();
-            
-        } else {
-
-            $modelLastChangeStatus = StatusSales::find()
-                ->where([
-                    'setSales.dateChange' => [
-                        '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
-                        '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
-                    ]
-                ])
-                ->all();
-
-            $listOrdderId = [];
-            if(!empty($modelLastChangeStatus)){
-                foreach ($modelLastChangeStatus as $item){
-                    $listOrdderId[] = $item->idSale;
-                }
-
-
+        if(!empty($request['infoWarehouse'])){
+            if($request['infoTypeDate'] == 'create'){
                 $model = Sales::find()
-                    ->andWhere(['in','_id',$listOrdderId])
+                    ->where([
+                        'dateCreate' => [
+                            '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                            '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                        ]
+                    ])
                     ->andWhere(['in','product',Products::productIDWithSet()])
                     ->andWhere([
                         'type' => ['$ne' => -1]
                     ])
                     ->all();
+
+            } else {
+
+                $modelLastChangeStatus = StatusSales::find()
+                    ->where([
+                        'setSales.dateChange' => [
+                            '$gte' => new UTCDateTime(strtotime($request['from']) * 1000),
+                            '$lt' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                        ]
+                    ])
+                    ->all();
+
+                $listOrdderId = [];
+                if(!empty($modelLastChangeStatus)){
+                    foreach ($modelLastChangeStatus as $item){
+                        $listOrdderId[] = $item->idSale;
+                    }
+
+
+                    $model = Sales::find()
+                        ->andWhere(['in','_id',$listOrdderId])
+                        ->andWhere(['in','product',Products::productIDWithSet()])
+                        ->andWhere([
+                            'type' => ['$ne' => -1]
+                        ])
+                        ->all();
+                }
             }
         }
+
 
         /** get list city */
         $listCity = [];
@@ -1058,6 +1074,7 @@ class StatusSalesController extends BaseController {
                         if(empty($infoSetGoods[$itemSet->title])){
                             $infoSetGoods[$itemSet->title]['books'] = 0;
                             $infoSetGoods[$itemSet->title]['issue'] = 0;
+                            $infoSetGoods[$itemSet['title']]['current_balance'] = 0;
                         }
 
 //                        if($itemSet->status == 'status_sale_issued'){
@@ -1090,7 +1107,7 @@ class StatusSalesController extends BaseController {
                         $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
                         $flUse = 0;
                         if (!empty($listWarehouse) && $listWarehouse != 'all') {
-                            if (in_array((string)$itemSet['idUserChange'], $listAdmin)) {
+                            if (in_array((string)$itemSet['idUserChange'], $listAdminCheck)) {
                                 $flUse = 1;
                             }
                         } else if (!empty($listAdminCheck) && $listAdminCheck != 'placeh') {
@@ -1105,12 +1122,45 @@ class StatusSalesController extends BaseController {
                             if (empty($infoSetGoods[$itemSet['title']])) {
                                 $infoSetGoods[$itemSet['title']]['books'] = 0;
                                 $infoSetGoods[$itemSet['title']]['issue'] = 0;
+                                $infoSetGoods[$itemSet['title']]['current_balance'] = 0;
                             }
 
                             $infoSetGoods[$itemSet['title']]['issue']++;
                         }
                     }
                 }
+            }
+        }
+
+        $listIdGoods = $filterIdGoods = [];
+        $allListGoods = PartsAccessories::getListPartsAccessories();
+        foreach($infoSetGoods as $k=>$item){
+            $id = array_search($k,$allListGoods);
+            if(!empty($id)){
+                $listIdGoods[$id] = $k;
+                $filterIdGoods[] = new ObjectID($id);
+            }
+            $infoSetGoods[$k]['current_balance'] = '0';
+            $infoSetGoods[$k]['in_way'] = '0';
+        }
+
+        if(!empty($listAdmin) && $listAdmin != 'placeh'){
+            $warehouseId = Warehouse::getIdMyWarehouse($listAdmin);
+            $filterWarehouse = ['warehouse_id'=>new ObjectID($warehouseId)];
+        }
+        else if(!empty($listWarehouse) && $listWarehouse != 'all'){
+            $filterWarehouse = ['warehouse_id'=>new ObjectID($listWarehouse)];
+        } else {
+            $filterWarehouse = $filterWhereSent = [];
+        }
+        //get info current balance warehouse
+        $modelCurrentBalanceWarehouse = PartsAccessoriesInWarehouse::find()
+            ->where(['IN','parts_accessories_id',$filterIdGoods])
+            ->andFilterWhere($filterWarehouse)
+            ->all();
+        if(!empty($modelCurrentBalanceWarehouse)){
+            foreach ($modelCurrentBalanceWarehouse as $item) {
+                $infoSetGoods[$listIdGoods[(string)$item->parts_accessories_id]]['current_balance'] += $item->number;
             }
         }
 
@@ -1133,7 +1183,8 @@ class StatusSalesController extends BaseController {
                 $infoExportGoods[] = [
                     'goods'             => $k,
                     'number_booked'     => $item['books'],
-                    'number_issue'      => $item['issue']
+                    'number_issue'      => $item['issue'],
+                    'current_balance'   => $item['current_balance']
                 ];
             }
         }
@@ -1147,13 +1198,14 @@ class StatusSalesController extends BaseController {
                 'Pack' => $infoExportPack,
             ],
             'columns'   => [
-                'Goods' => ['goods','number_booked','number_issue'],
+                'Goods' => ['goods','number_booked','number_issue','current_balance'],
                 'Pack' => ['id','business_product','number_booked'], ],
             'headers' => [
                 'Goods' => [
                     'goods'             => THelper::t('goods'),
                     'number_booked'     => THelper::t('number_booked'),
                     'number_issue'      => THelper::t('number_issue'),
+                    'current_balance'   => THelper::t('current_balance'),
                 ],
                 'Pack' => [
                     'id'                => '№',
@@ -1194,19 +1246,28 @@ class StatusSalesController extends BaseController {
         } else {
             $request['listWarehouse'] = 'all';
 
-            $infoWarehouse = Warehouse::find()->where(['headUser'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
+            // get warehouses, where are user is headadmin or manager
+            $infoWarehouse = Warehouse::find()
+                ->where([
+                    '$or' => [
+                        ['headUser'=>new ObjectID(\Yii::$app->view->params['user']->id)],
+                        ['idUsers'=>\Yii::$app->view->params['user']->id]
+                    ]
+                ])
+                ->all();
 
             if(!empty($infoWarehouse)){
                 foreach ($infoWarehouse as $item) {
                     if(!empty($item->idUsers)){
                         foreach ($item->idUsers as $itemId){
-                            $listAdmin[] = $itemId;
+                            if(!in_array($itemId,$listAdmin)){
+                                $listAdmin[] = $itemId;
+                            }
                         }
                     }
                 }
             }
         }
-
 
         $model = Sales::find()
             ->where([
@@ -1252,15 +1313,11 @@ class StatusSalesController extends BaseController {
                             $flUse = 1;
                         }
 
-                        if ($flUse == 1 && $dateChange >= $from && $dateChange <= $to && in_array($itemSet['status'], StatusSales::getListIssuedStatus())) {
+                        if ($flUse == 1) {
                             if (empty($infoSetGoods[$itemSet->title])) {
                                 $infoSetGoods[$itemSet->title]['books'] = 0;
                                 $infoSetGoods[$itemSet->title]['issue'] = 0;
                             }
-
-//                        if($itemSet->status == 'status_sale_issued'){
-//                            $infoSetGoods[$itemSet->title]['issue']++;
-//                        }
 
                             $infoSetGoods[$itemSet->title]['books']++;
                         }

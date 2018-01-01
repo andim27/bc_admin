@@ -28,9 +28,9 @@ $userArray = Users::getListAdmin();
         <table class="table table-translations table-striped datagrid m-b-sm">
             <thead>
             <tr>
-                <th>
-                    <?=THelper::t('sidebar_settings_warehouse')?>
-                </th>
+                <th><?=THelper::t('sidebar_settings_warehouse')?></th>
+                <th><?=THelper::t('country')?></th>
+                <th><?=THelper::t('city')?></th>
                 <th>
                     <?=THelper::t('user')?>
                 </th>
@@ -48,10 +48,10 @@ $userArray = Users::getListAdmin();
 
                         <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/setting/add-update-warehouse','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
 
-                        <?=((!empty($item->country) && !empty($listCountry[$item->country])) ? $listCountry[$item->country] : 'none')?>,
-
                         <?=$item->title?>
                     </td>
+                    <td><?=((!empty($item->country) && !empty($listCountry[$item->country])) ? $listCountry[$item->country] : 'none')?></td>
+                    <td><?=((!empty($item->cities)) ? implode(", ",$item->cities) : '')?></td>
                     <td class="text-center infoWarehouse">
 
                         <?=Html::input('hidden','id',$item->_id->__toString())?>

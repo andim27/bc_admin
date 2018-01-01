@@ -2,9 +2,9 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use app\components\THelper;
-use app\models\PartsAccessories;
 use app\models\Settings;
-
+use kartik\widgets\Select2;
+use app\components\ArrayInfoHelper;
 ?>
 
 <div class="modal-dialog">
@@ -28,7 +28,7 @@ use app\models\Settings;
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-md-12">
                     <label><?=THelper::t('country')?></label>
                     <?=Html::dropDownList('Warehouse[country]',(!empty($model->country) ? $model->country : ''),Settings::getListCountry(),[
@@ -38,6 +38,29 @@ use app\models\Settings;
                         'options' => [
                         ]
                     ])?>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <label for="">Города</label>
+                    <?=Select2::widget([
+                        'name' => 'Warehouse[cities][]',
+                        'value' => (!empty($model->cities) ? $model->cities : ''),
+                        'data' => (!empty($model->cities) ? ArrayInfoHelper::getArrayEqualKeyValue($model->cities) : []),
+                        'maintainOrder' => true,
+                        'toggleAllSettings' => [
+                            'selectLabel' => '<i class="glyphicon glyphicon-ok-circle"></i> Выбрать все',
+                            'unselectLabel' => '<i class="glyphicon glyphicon-remove-circle"></i> Удалить все',
+                            'selectOptions' => ['class' => 'text-success'],
+                            'unselectOptions' => ['class' => 'text-danger'],
+                        ],
+                        'options' => ['placeholder' => 'Добавьте город ...', 'multiple' => true],
+                        'pluginOptions' => [
+                            'tags' => true,
+                            'maximumInputLength' => 100
+                        ],
+                    ]);?>
                 </div>
             </div>
 

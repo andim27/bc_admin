@@ -589,12 +589,12 @@ class DefaultController extends BaseController
 
         }
 
-
+        // выдача комиссионных
         $model = (new \yii\mongodb\Query())
-            ->select(['amount','dateCreate'])
+            ->select(['amount','dateConfirm'])
             ->from('transactions')
             ->where([
-                'dateCreate' => [
+                'dateConfirm' => [
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
@@ -607,12 +607,12 @@ class DefaultController extends BaseController
             ->all();
         if(!empty($model)) {
             foreach ($model as $item) {
-                $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
+                $dateConfirm = $item['dateConfirm']->toDateTime()->format('Y-m');
 
-                if (empty($statisticInfo['issuedCommissionMonth'][$dateCreate])) {
-                    $statisticInfo['issuedCommissionMonth'][$dateCreate] = 0;
+                if (empty($statisticInfo['issuedCommissionMonth'][$dateConfirm])) {
+                    $statisticInfo['issuedCommissionMonth'][$dateConfirm] = 0;
                 }
-                $statisticInfo['issuedCommissionMonth'][$dateCreate] += $item['amount'];
+                $statisticInfo['issuedCommissionMonth'][$dateConfirm] += $item['amount'];
                 $statisticInfo['issuedCommission'] += $item['amount'];
             }
         }
@@ -840,7 +840,7 @@ class DefaultController extends BaseController
     protected function getProductBuyForMoney($date_from,$date_to)
     {
         $ch = curl_init();
-        
+
         curl_setopt($ch, CURLOPT_URL,"http://vipsite.biz/admin/statistic.php");
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query(['date_from' => $date_from,'date_to'=>$date_to]));

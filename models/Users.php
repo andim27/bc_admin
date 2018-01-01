@@ -193,6 +193,20 @@ class Users extends ActiveRecord
     }
 
 
+    public static function getAllUsers()
+    {
+        $list = [];
+
+        $model = self::find()->select(['_id','username'])->all();
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $list[(string)$item->_id] = $item->username;
+            }
+        }
+
+        return $list;
+    }
+
 }
 
 class RulesAdmin extends Model

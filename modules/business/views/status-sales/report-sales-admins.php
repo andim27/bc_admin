@@ -1,7 +1,10 @@
 <?php
-    use app\components\THelper;
-    use yii\helpers\Html;
-    use yii\widgets\ActiveForm;
+use app\components\THelper;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use app\models\Products;
+
+$listGoods = Products::getListGoods();
 
 ?>
 <div class="m-b-md">
@@ -14,7 +17,7 @@
 ]); ?>
     <div class="form-group row">
 
-        <div class="col-md-3 m-b">
+        <div class="col-md-1 m-b">
             <?=Html::dropDownList('infoTypeDate', $request['infoTypeDate'],
                 ['create'=>THelper::t('date_create'),'update'=>THelper::t('date_update')],[
                     'class'=>'form-control infoTypeDate',
@@ -35,6 +38,13 @@
                 'class'=>'form-control infoCity',
                 'id'=>'infoCity',
             ])?>
+        </div>
+
+        <div class="col-md-2 m-b">
+            <?=Html::dropDownList('infoProducts', (!empty($request['infoProducts']) ? $request['infoProducts'] : 'all'),
+                $listGoods,[
+                    'class'=>'form-control',
+                ])?>
         </div>
 
         <div class="col-md-2 m-b">

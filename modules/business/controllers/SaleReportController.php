@@ -2,6 +2,7 @@
 
 namespace app\modules\business\controllers;
 
+use app\components\ArrayInfoHelper;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api;
@@ -27,15 +28,16 @@ class SaleReportController extends BaseController
     public function actionInfoWaitSaleByUser()
     {
 
+        $listCountry = [];
+
         $infoWarehouse = Warehouse::getInfoWarehouse();
 
         $allListCountry = Settings::getListCountry();
 
         $request =  Yii::$app->request->post();
-        //$request['countryReport'] = (empty($request['countryReport']) ? 'all' : $request['countryReport']);
 
         if(empty($request['countryReport'])) {
-            if ((string)$infoWarehouse->_id != '5a056671dca7873e022be781') {
+            if(Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)===false){
                 $request['countryReport'] = $infoWarehouse->country;
             } else {
                 $request['countryReport'] = 'all';
@@ -46,9 +48,11 @@ class SaleReportController extends BaseController
 
         $infoSale = $infoGoods = [];
 
-        if ((string)$infoWarehouse->_id == '5a056671dca7873e022be781') {
+        if (Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)) {
             $listCountry['all'] = 'Все страны';
         }
+
+        $listCountry[$request['countryReport']] = ($request['countryReport']=='all' ? 'Все страны' : $allListCountry[$request['countryReport']]);
 
         $model = StatusSales::find()
             ->where(['IN','setSales.status',['status_sale_new','status_sale_delivered',
@@ -236,7 +240,7 @@ class SaleReportController extends BaseController
         $infoSale = [];
 
         $dateTo = date("Y-m-d");
-        $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));;
+        $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));
 
         $model = Sales::find()
             ->where([
@@ -1026,8 +1030,6 @@ class SaleReportController extends BaseController
     }
 
     public function actionReportProjectVipcoin(){
-
-
         $infoWarehouse = Warehouse::getInfoWarehouse();
 
         $allListCountry = Settings::getListCountry();
@@ -1044,8 +1046,14 @@ class SaleReportController extends BaseController
             $request['from'] = date('Y-m-d', $date);
         }
 
+        $listAvailableCities = [];
         if(Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)===false){
             $request['countryReport'] = $infoWarehouse->country;
+
+            if(!empty($infoWarehouse->cities) && empty($request['cityReport'])){
+                $listAvailableCities = $infoWarehouse->cities;
+                $listCity = ArrayInfoHelper::getArrayEqualKeyValue($listAvailableCities);
+            }
         }
 
         $model = Sales::find()
@@ -1073,9 +1081,15 @@ class SaleReportController extends BaseController
 
                 if(empty($request['countryReport']) || ($request['countryReport']==$item->infoUser->country)){
                     $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
-                    $listCity[$city] = $city;
 
-                    if(empty($request['cityReport']) || in_array($city,$request['cityReport'])){
+                    if(empty($listAvailableCities)){
+                        $listCity[$city] = $city;
+                    }
+
+                    if((empty($request['cityReport']) && empty($listAvailableCities))
+                        || (empty($request['cityReport']) && !empty($listAvailableCities) && in_array($city,$listAvailableCities))
+                        || (!empty($request['cityReport']) && in_array($city,$request['cityReport']))
+                        ){
                         $infoSale[] = [
                             'dateCreate' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
                             'userCountry'=>$allListCountry[$item->infoUser->country],
@@ -1108,6 +1122,111 @@ class SaleReportController extends BaseController
                 'listCity' => $listCity
             ]
         );
+    }
+
+    public function actionReportProjectVipcoinExcel()
+    {
+        $infoWarehouse = Warehouse::getInfoWarehouse();
+
+        $allListCountry = Settings::getListCountry();
+
+        $request =  Yii::$app->request->post();
+
+        if(empty($request)){
+            $request['to']=date("Y-m-d");
+            $date = strtotime('-3 month', strtotime($request['to']));
+            $request['from'] = date('Y-m-d', $date);
+        }
+
+        if(Warehouse::checkWarehouseKharkov((string)$infoWarehouse->_id)===false){
+            $request['countryReport'] = $infoWarehouse->country;
+
+            if(!empty($infoWarehouse->cities) && empty($request['cityReport'])){
+                $listAvailableCities = $infoWarehouse->cities;
+                $listCity = ArrayInfoHelper::getArrayEqualKeyValue($listAvailableCities);
+            }
+        }
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime(strtotime($request['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere([
+                'productType' => [
+                    '$in' => [9,10]
+                ]
+            ])
+            ->all();
+
+        $infoExport = [];
+        if(!empty($model)){
+            foreach ($model as $item) {
+
+                $listCountry[$item->infoUser->country] = $allListCountry[$item->infoUser->country];
+
+                if(empty($request['countryReport']) || ($request['countryReport']==$item->infoUser->country)){
+                    $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
+
+                    if(empty($listAvailableCities)){
+                        $listCity[$city] = $city;
+                    }
+
+                    if((empty($request['cityReport']) && empty($listAvailableCities))
+                        || (empty($request['cityReport']) && !empty($listAvailableCities) && in_array($city,$listAvailableCities))
+                        || (!empty($request['cityReport']) && in_array($city,$request['cityReport']))
+                    ){
+                        $infoExport[] = [
+                            'date_create' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
+                            'country'=>$allListCountry[$item->infoUser->country],
+                            'city'=>$city,
+                            'address'=>$item->infoUser->address,
+                            'full_name'=>$item->infoUser->secondName .' ' . $item->infoUser->firstName,
+                            'phone'=>$item->infoUser->phoneNumber . ' / ' . $item->infoUser->phoneNumber2,
+                            'goods' => $item->productName,
+                            'price' => $item->price
+                        ];
+
+                    }
+                }
+
+
+            }
+        }
+
+        \moonland\phpexcel\Excel::export([
+            'models' => $infoExport,
+            'fileName' => 'export '.date('Y-m-d H:i:s'),
+            'columns' => [
+                'date_create',
+                'country',
+                'city',
+                'address',
+                'full_name',
+                'phone',
+                'goods',
+                'price'
+            ],
+            'headers' => [
+                'date_create'   =>  THelper::t('date_create'),
+                'country'       =>  THelper::t('country'),
+                'city'          =>  THelper::t('city'),
+                'address'       =>  THelper::t('address'),
+                'full_name'     =>  THelper::t('full_name'),
+                'phone'         =>  THelper::t('phone'),
+                'goods'         =>  THelper::t('goods'),
+                'price'         =>  THelper::t('price')
+            ],
+        ]);
+
+        die();
     }
 
 }

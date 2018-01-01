@@ -47,6 +47,7 @@ class Transaction extends ActiveRecord
             'dateCreate',
             'usernameTo',
             'dateReduce',
+            'dateConfirm',
             'confirmed',
             '__v',
             'card'

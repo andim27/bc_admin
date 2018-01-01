@@ -24,8 +24,16 @@ class PromotionController extends BaseController
 
     public function actionCurrent()
     {
+        $completed = Promos::find()->where(['completed' => true, 'type' => null])->select(['userId'])->all();
+
+        $completedUsers = [];
+        foreach ($completed as $complete) {
+            $completedUsers[] = strval($complete->userId);
+        }
+
         return $this->render('current', [
-            'promos' => Promos::find()->where(['type' => 'TYPE_SHL_200917'])->orderBy(['steps' => SORT_DESC, 'salesSum' => SORT_DESC])->all()
+            'promos' => Promos::find()->where(['type' => 'TYPE_SHL_200917'])->orderBy(['steps' => SORT_DESC, 'salesSum' => SORT_DESC])->all(),
+            'completedUsers' => $completedUsers
         ]);
     }
 }

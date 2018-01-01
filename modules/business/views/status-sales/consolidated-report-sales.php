@@ -8,6 +8,12 @@ use kartik\widgets\Select2;
 
 $listWarehouse = Warehouse::getArrayWarehouse();
 $listAdmin = Users::getListAdmin();
+
+$amountPack = [
+    'count'     =>  0,
+    'amount'    =>  0,
+];
+
 ?>
     <div class="m-b-md">
         <h3 class="m-b-none"><?= THelper::t('consolidated_report_for_sales') ?></h3>
@@ -184,6 +190,10 @@ $listAdmin = Users::getListAdmin();
                                         <tbody>
                                         <?php if(!empty($infoGoods)) {?>
                                             <?php foreach($infoGoods as $k=>$item) {?>
+                                            <?php
+                                                $amountPack['count'] += $item['count'];
+                                                $amountPack['amount'] += $item['amount'];
+                                            ?>
                                             <tr>
                                                 <td><?=$k?></td>
                                                 <td><?=$item['title']?></td>
@@ -195,6 +205,14 @@ $listAdmin = Users::getListAdmin();
                                             <?php } ?>
                                         <?php } ?>
                                         </tbody>
+                                        <tfooter>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th><?=$amountPack['count']?></th>
+                                                <th><?=$amountPack['amount']?></th>
+                                            </tr>
+                                        </tfooter>
                                     </table>
                                 </div>
                             </section>
