@@ -2,6 +2,7 @@
 
 namespace app\models;
 use MongoDB\BSON\ObjectID;
+use yii\mongodb\ActiveRecord;
 
 /**
  * @inheritdoc
@@ -12,7 +13,7 @@ use MongoDB\BSON\ObjectID;
  *
  * @package app\models
  */
-class Transaction extends \yii2tech\embedded\mongodb\ActiveRecord
+class Transaction extends ActiveRecord
 {
     const TYPE_MONEY = 1;
 

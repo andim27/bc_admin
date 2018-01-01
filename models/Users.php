@@ -30,6 +30,7 @@ class Users extends ActiveRecord
             '_id',
             'username',
             'accountId',
+            'deviceId',
             'created',
             'email',
             'phoneNumber',
