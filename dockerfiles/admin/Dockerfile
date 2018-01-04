@@ -13,10 +13,8 @@ RUN apt-get update -y
 RUN apt-get install -y apache2
 RUN mkdir -p /var/lock/apache2 /var/run/apache2
 
-# installing mysql-client
-RUN apt-get install -y mysql-client
 # installing php
-RUN apt-get install -y php5 php5-mysql php5-dev php5-gd php5-memcache php5-pspell php5-snmp snmp php5-xmlrpc libapache2-mod-php5 php5-cli imagemagick php5-curl
+RUN apt-get install -y php5 php5-dev php5-gd php5-memcache php5-pspell php5-snmp snmp php5-xmlrpc libapache2-mod-php5 php5-cli imagemagick php5-curl
 RUN a2enmod rewrite
 COPY run-lamp.sh /usr/sbin/
 RUN chmod +x /usr/sbin/run-lamp.sh
