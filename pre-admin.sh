@@ -1,3 +1,3 @@
-cp ./dockerfiles/admin/Dockerfile .
-cp -r ./dockerfiles/admin/config/ .
-cp ./dockerfiles/admin/run-lamp.sh .
+cp ./dockerfiles/Dockerfile .
+cp -r ./dockerfiles/config/ .
+cp ./dockerfiles/run-lamp.sh .

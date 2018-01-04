@@ -1,0 +1,10 @@
+<?php
+
+return [
+    'class' => @class_connection@,
+    'dsn' => @dsn@
+    'username' => @username@
+    'password' => @password@,
+    'charset' => @encoding@,
+    'tablePrefix'=>@table_prefix@
+];
