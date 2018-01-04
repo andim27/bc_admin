@@ -1,9 +1,0 @@
-/vendor
-
-composer.lock
-*.swp
-.idea
-behat.yml
-.env.behat
-grumphp.yml
-.php_cs.cache
