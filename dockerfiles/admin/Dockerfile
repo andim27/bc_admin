@@ -2,7 +2,7 @@ FROM ubuntu:14.04
 MAINTAINER Juriy Kostianitsa <bulich@do4you.ru>
 
 WORKDIR /var/www/code/
-COPY code/ /var/www/code/
+COPY ./app/admin/ /var/www/code/
 COPY config/php.ini /usr/local/etc/php/
 copy config/vhost.conf /etc/apache2/sites-enabled/
 
