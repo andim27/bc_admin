@@ -317,46 +317,44 @@ class TestController extends BaseController
 
 
                     $idSale = Sale::save($dataSale);
-
-
                     SaleTpGoods::save($dataSaleGoods,1,$idSale);
 
 
 
                     // создаем платеж
-//                    $dataCash = [
-//                        'date'=>$item['date'],
-//
-//                        'number'=>$item['order_id'],
-//
-//                        'baseDoc' => $idSaleOrder,
-//
-//                        'firm' => '1100400000001004',
-//                        'cashAccount' => CashAccounts::getIdForPaymentCode($item['payment_code']),
-//                        'person' => '1100100000000001',
-//                        'currency' => '1101200000001001',
-//                        'content' => 'Поступления от реализации товаров',
-//                        'contract' => $idSaleOrder,
-//                        'cashItem' => '1104300000001001',
-//                        'amountCur' => $totalAmountCur,
-//                        'operationType' => '1004000000000018',
-//
-//                        'department' => '1101900000000001',
-//                        'orderNumber'=>$item['order_id'],
-//
-//                        'rate' => '1.0000',
-//                        'author' => '1000200000001004',
-//                        'business' => '1115000000000001'
-//                    ];
-//                    header('Content-Type: text/html; charset=utf-8');
-//                    echo "<xmp>";
-//                    print_r($item['payment_code']);
-//                    print_r($dataCash);
-//                    echo "</xmp>";
-//                    CashIn::save($dataCash,1);
+                    $dataCash = [
+                        'date'=>$item['date'],
+
+                        'number'=>$item['order_id'],
+
+                        'baseDoc' => $idSaleOrder,
+
+                        'firm' => '1100400000001004',
+                        'cashAccount' => CashAccounts::getIdForPaymentCode($item['payment_code']),
+                        'person' => '1100100000000001',
+                        'currency' => '1101200000001001',
+                        'content' => 'Поступления от реализации товаров',
+                        'contract' => $idSaleOrder,
+                        'cashItem' => '1104300000001001',
+                        'amountCur' => $totalAmountCur,
+                        'operationType' => '1004000000000018',
+
+                        'department' => '1101900000000001',
+                        'orderNumber'=>$item['order_id'],
+
+                        'rate' => '1.0000',
+                        'author' => '1000200000001004',
+                        'business' => '1115000000000001'
+                    ];
+
+                    CashIn::save($dataCash,1);
 
 
-
+                    header('Content-Type: text/html; charset=utf-8');
+                    echo '<xmp>';
+                    print_r('ok');
+                    echo '</xmp>';
+                    die();
 
 
 

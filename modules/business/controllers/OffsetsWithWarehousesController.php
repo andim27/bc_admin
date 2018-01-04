@@ -180,7 +180,7 @@ class OffsetsWithWarehousesController extends BaseController {
                 $listRepresentativeForWarehouse[(string)$item->_id] = (!empty($item->headUser) ? (string)$item->headUser : '');
             }
 
-            if(in_array($userID,$listRepresentativeForWarehouse)){
+            if(in_array($userID,$listRepresentativeForWarehouse) && $userID!='573a0d76965dd0fb16f60bfe'){
                 $tempArray=[];
                 foreach ($listRepresentativeForWarehouse as $key=>$item) {
                     if($item==$userID){
@@ -194,7 +194,7 @@ class OffsetsWithWarehousesController extends BaseController {
         }
 
         $warehouseUserId = Warehouse::getIdMyWarehouse();
-        if($hideFilter == '0' && $warehouseUserId != '5a056671dca7873e022be781'){
+        if($hideFilter == '0' && Warehouse::checkWarehouseKharkov()===false){
             return $this->redirect(['repayment','object'=>'warehouse','id'=>$warehouseUserId]);
         }
 
@@ -263,6 +263,9 @@ class OffsetsWithWarehousesController extends BaseController {
                 ]
             ])
             ->all();
+
+
+
         if(!empty($model)){
             foreach ($model as $item) {
                 if(!empty($item->setSales)  && $item->sales->type != -1){
@@ -323,7 +326,7 @@ class OffsetsWithWarehousesController extends BaseController {
             'language'          => Yii::$app->language,
             'request'           => $request,
             'info'              => $info,
-            'hideFilter'              => $hideFilter,
+            'hideFilter'        => $hideFilter,
         ]);
     }
 
