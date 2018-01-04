@@ -19,5 +19,5 @@ RUN a2enmod rewrite
 COPY run-lamp.sh /usr/sbin/
 RUN chmod +x /usr/sbin/run-lamp.sh
 RUN chown -hR www-data:www-data /var/www/code/
-EXPOSE 80
+EXPOSE 82
 CMD ["/usr/sbin/run-lamp.sh"]
