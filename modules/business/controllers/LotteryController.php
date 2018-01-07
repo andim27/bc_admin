@@ -2,51 +2,62 @@
 
 namespace app\modules\business\controllers;
 use app\controllers\BaseController;
+use app\models\LotteryBannedUser;
+use app\models\LotteryTicket;
+use app\models\LotteryWinnerTicket;
+use app\models\Users;
+use MongoDB\BSON\ObjectID;
 use Yii;
 use app\models\api;
-use app\components\THelper;
+use yii\web\Response;
 
 class LotteryController extends BaseController
 {
     public function actionIndex()
     {
-        $usersWithTokens = api\lottery\UserWithTokens::get();
+        $banned = api\lottery\User::bannedList();
+
+        $bannedIds = [];
+        foreach ($banned as $bannedUser) {
+            $bannedIds[] = new ObjectID($bannedUser->userId);
+        }
+
+        $lotteryTickets = LotteryTicket::find()->where([
+            'userId' => ['$nin' => $bannedIds]
+        ])->all();
 
         $allUsers = [];
-        $keyAll = 0;
-        foreach ($usersWithTokens as $userWithTokens) {
-            $keyAll++;
-            $allUsers[$keyAll] = ['id' => $userWithTokens->id, 'username' => $userWithTokens->username];
+        foreach ($lotteryTickets as $lotteryTickets) {
+            $allUsers[] = ['id' => strval($lotteryTickets->userId), 'ticket' => $lotteryTickets->ticket];
         }
 
         return $this->render('index', [
             'users' => json_encode($allUsers),
-            'countAll' => $keyAll,
-            'winners' => api\lottery\User::winnerList()
+            'winners' => LotteryWinnerTicket::find()->all()
         ]);
     }
 
     public function actionRules()
     {
-        $usersWithTokens = api\lottery\UserWithTokens::get();
-        $winners = api\lottery\User::winnerList();
-        $banned = api\lottery\User::bannedList();
-
-        $ids = [];
-
-        foreach ($winners as $w) {
-            $ids[] = $w->userId;
-        }
-
-        foreach ($banned as $b) {
-            $ids[] = $b->userId;
-        }
+        $lotteryTickets = LotteryTicket::find()->all();
+        $winners = LotteryWinnerTicket::find()->all();
+        $banned = LotteryBannedUser::find()->all();
 
         $users = [];
-
-        foreach ($usersWithTokens as $userWithTokens) {
-            if (! in_array($userWithTokens->id, $ids)) {
-                $users[] = $userWithTokens;
+        foreach ($lotteryTickets as $lotteryTicket) {
+            $lotteryTicketUser = $lotteryTicket->user();
+            $userId = strval($lotteryTicketUser->_id);
+            if (!isset($users[$userId])) {
+                $users[$userId] = [
+                    'username' => $lotteryTicketUser->username,
+                    'firstName' => $lotteryTicketUser->firstName,
+                    'secondName' => $lotteryTicketUser->secondName,
+                    'countryName' => $lotteryTicketUser->getCountry(),
+                    'city' => $lotteryTicketUser->city,
+                    'tickets' => [$lotteryTicket->ticket]
+                ];
+            } else {
+                $users[$userId]['tickets'][] = $lotteryTicket->ticket;
             }
         }
 
@@ -59,120 +70,131 @@ class LotteryController extends BaseController
 
     public function actionRemoveWinner()
     {
-        $request = Yii::$app->request;
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $userId = $request->get('id');
+        $id = Yii::$app->request->post('id');
 
-        $result = api\lottery\User::winnerRemove($userId);
+        LotteryWinnerTicket::deleteAll(['_id' => new ObjectID($id)]);
 
-        if ($result) {
-            Yii::$app->session->setFlash('success', THelper::t('lottery_rules_remove_winner_success'));
-        } else {
-            Yii::$app->session->setFlash('danger', THelper::t('lottery_rules_remove_winner_error'));
-        }
+        $result = ['success' => true];
 
-        $this->redirect('/' . Yii::$app->language . '/business/lottery/rules');
+        return $result;
     }
 
     public function actionRemoveBanned()
     {
-        $request = Yii::$app->request;
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $userId = $request->get('id');
+        $userId = Yii::$app->request->post('user-id');
 
-        $result = api\lottery\User::bannedRemove($userId);
+        LotteryBannedUser::deleteAll(['userId' => new ObjectID($userId)]);
 
-        if ($result) {
-            Yii::$app->session->setFlash('success', THelper::t('lottery_rules_remove_banned_success'));
-        } else {
-            Yii::$app->session->setFlash('danger', THelper::t('lottery_rules_remove_banned_error'));
-        }
+        $result = ['success' => true];
 
-        $this->redirect('/' . Yii::$app->language . '/business/lottery/rules');
+        return $result;
     }
 
     public function actionClearWinners()
     {
-        $result = api\lottery\User::winnerClear();
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if ($result) {
-            Yii::$app->session->setFlash('success', THelper::t('lottery_rules_winner_clear_banned_success'));
-        } else {
-            Yii::$app->session->setFlash('danger', THelper::t('lottery_rules_winner_clear_banned_error'));
-        }
+        LotteryWinnerTicket::deleteAll();
 
-        $this->redirect('/' . Yii::$app->language . '/business/lottery/rules');
+        $result = ['success' => true];
+
+        return $result;
     }
 
     public function actionClearBanned()
     {
-        $result = api\lottery\User::bannedClear();
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if ($result) {
-            Yii::$app->session->setFlash('success', THelper::t('lottery_rules_banned_clear_banned_success'));
-        } else {
-            Yii::$app->session->setFlash('danger', THelper::t('lottery_rules_banned_clear_banned_error'));
-        }
+        LotteryBannedUser::deleteAll();
 
-        $this->redirect('/' . Yii::$app->language . '/business/lottery/rules');
+        $result = ['success' => true];
+
+        return $result;
     }
 
     public function actionAddBanned()
     {
-        $request = Yii::$app->request;
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $userId = $request->get('id');
+        $userLogin = Yii::$app->request->post('user-login');
 
-        $result = api\lottery\User::bannedAdd($userId);
+        $user = Users::find()->where(['username' => $userLogin])->select(['_id'])->one();
 
-        if ($result) {
-            Yii::$app->session->setFlash('success', THelper::t('lottery_rules_add_banned_success'));
+        if ($user) {
+            if (LotteryBannedUser::find()->where(['userId' => $user->_id])->one()) {
+                $result = ['success' => false, 'error' => 'User already banned'];
+            } else {
+                $lbu = new LotteryBannedUser();
+                $lbu->userId = $user->_id;
+                if ($lbu->save()) {
+                    $result = ['success' => true];
+                } else {
+                    $result = ['success' => false, 'error' => 'Error'];
+                }
+            }
         } else {
-            Yii::$app->session->setFlash('danger', THelper::t('lottery_rules_add_banned_error'));
+            $result = ['success' => false, 'error' => 'User not found'];
         }
 
-        $this->redirect('/' . Yii::$app->language . '/business/lottery/rules');
+        return $result;
+    }
+
+    public function actionGetBanned()
+    {
+        return $this->renderAjax('_banned', [
+            'banned'  => LotteryBannedUser::find()->all()
+        ]);
+    }
+
+    public function actionGetWinners()
+    {
+        $forAdmin = Yii::$app->request->post('for-admin', false);
+
+        $viewName = $forAdmin ? '_winners_admin' : '_winners';
+
+        return $this->renderAjax($viewName, [
+            'winners'  => LotteryWinnerTicket::find()->all()
+        ]);
+    }
+
+    public function actionGetTickets()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $tickets = LotteryTicket::find()->select(['ticket'])->limit(500)->all();
+
+        shuffle($tickets);
+
+        $result = [];
+        foreach ($tickets as $ticket) {
+            $result[] = ['id' => strval($ticket->_id), 'ticket' => strval($ticket->ticket)];
+        }
+
+        return $result;
     }
 
     public function actionAddWinner()
     {
-        $request = Yii::$app->request;
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $userId = $request->post('id');
+        $ticketId = Yii::$app->request->post('id');
 
-        api\lottery\User::winnerAdd($userId);
-
-        echo $this->renderAjax('_winners', [
-            'winners' => api\lottery\User::winnerList()
-        ]);
-    }
-
-    public function actionGetWinnable()
-    {
-        $usersWithTokens = api\lottery\UserWithTokens::get();
-        $winners = api\lottery\User::winnerList();
-        $banned = api\lottery\User::bannedList();
-
-        $ids = [];
-        foreach ($winners as $w) {
-            $ids[] = $w->userId;
-        }
-
-        foreach ($banned as $b) {
-            $ids[] = $b->userId;
-        }
-
-        $users = [];
-        $key = 0;
-        foreach ($usersWithTokens as $userWithTokens) {
-            if (! in_array($userWithTokens->id, $ids)) {
-                $key++;
-                $users[$key] = ['id' => $userWithTokens->id, 'username' => $userWithTokens->username];
+        if (LotteryTicket::find()->where(['_id' => $ticketId])->one()) {
+            $lwt = new LotteryWinnerTicket();
+            $lwt->ticketId = new ObjectID($ticketId);
+            if ($lwt->save()) {
+                $result = ['success' => true];
+            } else {
+                $result = ['success' => false, 'error' => 'Error'];
             }
+        } else {
+            $result = ['success' => false, 'error' => 'Lottery ticket not found'];
         }
 
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        return ['count' => $key, 'winnableUsers' => $users];
+        return $result;
     }
 }
