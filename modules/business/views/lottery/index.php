@@ -49,13 +49,6 @@
         });
     }
 
-    function clear() {
-        winner = undefined;
-        $('#display').html('');
-        $('#save-btn').attr('disabled', 'disabled');
-        $('#clear-btn').attr('disabled', 'disabled');
-    }
-
     $('#start-btn').click(function() {
         $.ajax({
             url: '/' + LANG + '/ru/business/lottery/get-tickets',
@@ -64,7 +57,6 @@
             success: run
         });
         function run(data) {
-            console.log(data.length);
             if (data.length > 0) {
                 tickets = data;
                 var currentTicket;
@@ -94,6 +86,7 @@
     });
 
     $('#save-btn').click(function() {
+        $('#start-btn').attr('disabled', 'disabled');
         $('#save-btn').attr('disabled', 'disabled');
         $('#clear-btn').attr('disabled', 'disabled');
         $.ajax({
@@ -104,13 +97,22 @@
                 if (data.success) {
                     reloadWinners();
                     clear();
+                    getTickets();
                 } else {
                     alert(data.error);
                 }
             }
         });
     });
+
     $('#clear-btn').click(function() {
         clear();
     });
+
+    function clear() {
+        winner = undefined;
+        $('#display').html('');
+        $('#save-btn').attr('disabled', 'disabled');
+        $('#clear-btn').attr('disabled', 'disabled');
+    }
 </script>
