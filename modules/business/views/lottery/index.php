@@ -35,36 +35,65 @@
             }
         });
     }
+
     getTickets();
 
-    $('#start-btn').click(function() {
-        var currentTicket;
+    function reloadWinners() {
+        $.ajax({
+            url: '/' + LANG + '/ru/business/lottery/get-winners',
+            method: 'get',
+            data: {},
+            success: function(data) {
+                $('#winner-users').html(data);
+            }
+        });
+    }
 
-        $('#start-btn').attr('disabled', 'disabled');
+    function clear() {
+        winner = undefined;
+        $('#display').html('');
         $('#save-btn').attr('disabled', 'disabled');
         $('#clear-btn').attr('disabled', 'disabled');
+    }
 
-        var timerId = setInterval(function () {
-            if (tickets.length > 0) {
-                currentTicket = tickets.pop();
-                $('#display').html(currentTicket.ticket);
-            } else {
-                stop(currentTicket);
+    $('#start-btn').click(function() {
+        $.ajax({
+            url: '/' + LANG + '/ru/business/lottery/get-tickets',
+            method: 'post',
+            data: {},
+            success: run
+        });
+        function run(data) {
+            console.log(data.length);
+            if (data.length > 0) {
+                tickets = data;
+                var currentTicket;
+
+                $('#start-btn').attr('disabled', 'disabled');
+                $('#save-btn').attr('disabled', 'disabled');
+                $('#clear-btn').attr('disabled', 'disabled');
+
+                var timerId = setInterval(function () {
+                    if (tickets.length > 0) {
+                        currentTicket = tickets.pop();
+                        $('#display').html(currentTicket.ticket);
+                    } else {
+                        stop(currentTicket);
+                    }
+                }, 25);
+
+                function stop(ticket) {
+                    clearInterval(timerId);
+                    winner = ticket;
+                    $('#save-btn').removeAttr('disabled');
+                    $('#clear-btn').removeAttr('disabled');
+                    $('#start-btn').removeAttr('disabled');
+                }
             }
-        }, 25);
-
-        function stop(ticket) {
-            clearInterval(timerId);
-            winner = ticket;
-            $('#save-btn').removeAttr('disabled');
-            $('#clear-btn').removeAttr('disabled');
-            $('#start-btn').removeAttr('disabled');
-            getTickets();
         }
     });
 
     $('#save-btn').click(function() {
-        getTickets();
         $('#save-btn').attr('disabled', 'disabled');
         $('#clear-btn').attr('disabled', 'disabled');
         $.ajax({
@@ -81,26 +110,7 @@
             }
         });
     });
-
-    function reloadWinners() {
-        $.ajax({
-            url: '/' + LANG + '/ru/business/lottery/get-winners',
-            method: 'get',
-            data: {},
-            success: function(data) {
-                $('#winner-users').html(data);
-            }
-        });
-    }
-
     $('#clear-btn').click(function() {
         clear();
     });
-
-    function clear() {
-        winner = undefined;
-        $('#display').html('');
-        $('#save-btn').attr('disabled', 'disabled');
-        $('#clear-btn').attr('disabled', 'disabled');
-    }
 </script>

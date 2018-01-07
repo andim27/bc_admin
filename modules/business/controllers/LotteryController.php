@@ -8,31 +8,13 @@ use app\models\LotteryWinnerTicket;
 use app\models\Users;
 use MongoDB\BSON\ObjectID;
 use Yii;
-use app\models\api;
 use yii\web\Response;
 
 class LotteryController extends BaseController
 {
     public function actionIndex()
     {
-        $banned = api\lottery\User::bannedList();
-
-        $bannedIds = [];
-        foreach ($banned as $bannedUser) {
-            $bannedIds[] = new ObjectID($bannedUser->userId);
-        }
-
-        $lotteryTickets = LotteryTicket::find()->where([
-            'userId' => ['$nin' => $bannedIds]
-        ])->all();
-
-        $allUsers = [];
-        foreach ($lotteryTickets as $lotteryTickets) {
-            $allUsers[] = ['id' => strval($lotteryTickets->userId), 'ticket' => $lotteryTickets->ticket];
-        }
-
         return $this->render('index', [
-            'users' => json_encode($allUsers),
             'winners' => LotteryWinnerTicket::find()->all()
         ]);
     }
@@ -165,7 +147,24 @@ class LotteryController extends BaseController
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $tickets = LotteryTicket::find()->select(['ticket'])->limit(500)->all();
+        $winners = LotteryWinnerTicket::find()->all();
+
+        $winnerIds = [];
+        foreach ($winners as $winner) {
+            $winnerIds[] = new ObjectID(strval($winner->ticketId));
+        }
+
+        $bannedUsers = LotteryBannedUser::find()->all();
+
+        $bannedUserIds = [];
+        foreach($bannedUsers as $bannedUser) {
+            $bannedUserIds[] = new ObjectId(strval($bannedUser->userId));
+        }
+
+        $tickets = LotteryTicket::find()->where([
+            'userId' => ['$nin' => $bannedUserIds],
+            '_id' => ['$nin' => $winnerIds]
+        ])->select(['ticket'])->limit(500)->all();
 
         shuffle($tickets);
 
