@@ -2,6 +2,7 @@
 
 namespace app\modules\business\controllers;
 
+use app\components\ApiDelovod;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api;
@@ -1222,22 +1223,6 @@ class TestController extends BaseController
 
     public function actionTest()
     {
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r(CashIn::all());
-        echo "</xmp>";
-
-        echo "<xmp>";
-        print_r(SaleOrder::all());
-        echo "</xmp>";
-        die();
-
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r(CashAccounts::all());
-        echo "</xmp>";
-        die();
 
 //        $model = PartsAccessories::find()->orderBy(['delovod_id'=>SORT_DESC])->all();
 //

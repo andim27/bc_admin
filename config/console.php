@@ -1,13 +1,14 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
-//$db = require __DIR__ . '/db.php';
+$params = require(__DIR__ . '/bootstrap.php');
 
 $config = [
     'id' => 'basic-console',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'app\console\controllers',
+
     'components' => [
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -20,16 +21,15 @@ $config = [
                 ],
             ],
         ],
-        //'db' => $db,
-    ],
-    'params' => $params,
-    /*
-    'controllerMap' => [
-        'fixture' => [ // Fixture generation command line.
-            'class' => 'yii\faker\FixtureController',
+        // for mongodb
+        'mongodb' => [
+            'class' => '\yii\mongodb\Connection',
+//            'dsn' => 'mongodb://localhost/gnc',
+            'dsn' => 'mongodb://mongo/gnc',
         ],
     ],
-    */
+    'params' => $params,
+
 ];
 
 if (YII_ENV_DEV) {
