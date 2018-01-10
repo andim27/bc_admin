@@ -3,8 +3,8 @@ MAINTAINER Juriy Kostianitsa <bulich@do4you.ru>
 
 WORKDIR /var/www/code/
 COPY . /var/www/code/
-COPY config/php.ini /usr/local/etc/php/
-copy config/vhost.conf /etc/apache2/sites-enabled/
+COPY cfg/php.ini /usr/local/etc/php/
+copy cfg/vhost.conf /etc/apache2/sites-enabled/
 
 # preparing env
 ENV DEBIAN_FRONTEND noninteractive

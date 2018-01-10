@@ -1,5 +1,5 @@
 cp ./dockerfiles/Dockerfile .
-cp -r ./dockerfiles/config/ .
+cp -r ./dockerfiles/config/ ./cfg/
 cp ./dockerfiles/run-lamp.sh .
 cp ./dockerfiles/build.sh .
 cp ./dockerfiles/composer-admin.yml .
