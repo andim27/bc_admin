@@ -141,7 +141,10 @@ class LogWarehouseController extends BaseController {
         $infoProduct = $infoProductAmount = $actionDontKnow = [];
         $infoAction = [
             'issued'        =>  ['status_sale_issued',],
-            'posting'       =>  ['posting_parcel','write_off_parcel_and_add_warehouse','return_in_warehouse'],
+            'posting'       =>  [
+                'posting_parcel','write_off_parcel_and_add_warehouse','return_in_warehouse',
+                'posting_ordering','add_execution_posting'
+            ],
             'send'          =>  ['send_parcel'],
             'cancellation'  =>  ['cancellation'],
 
