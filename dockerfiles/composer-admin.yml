@@ -2,7 +2,7 @@ admin:
   image: 893041221537.dkr.ecr.eu-central-1.amazonaws.com/bpt-admin:latest
 #  build: .
   ports:
-    - "82:82"
+    - "82:80"
   cpu_shares: 100
   mem_limit: 131072000
 
