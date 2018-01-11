@@ -2,7 +2,7 @@
 
 return [
     'adminEmail' => 'admin@example.com',
-    'apiAddress' => 'http://api.bc-test.ooo.ua/api/',
+    'apiAddress' => 'http://api-bpt.ooo.ua/api/',
 //    'apiAddress' => 'gnc_api/api/',
     'defaultCountry' => 'RU',
     'useCache' => false,
