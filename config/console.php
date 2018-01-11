@@ -25,7 +25,7 @@ $config = [
         'mongodb' => [
             'class' => '\yii\mongodb\Connection',
 //            'dsn' => 'mongodb://localhost/gnc',
-            'dsn' => 'mongodb://mongo/gnc',
+            'dsn' => 'mongodb://gnc:b41uHcdR@bpt-shard-00-00-ezdfa.mongodb.net:27017/gnc?ssl=true&replicaSet=BPT-shard-0&authSource=admin',
         ],
     ],
     'params' => $params,
