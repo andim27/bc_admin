@@ -508,7 +508,10 @@ class LogWarehouseController extends BaseController {
 
             foreach ($modelLastChangeStatus as $item){
                 if($item->sales->type != -1) {
+
+                    $warehouseAdmin='';
                     foreach ($item->setSales as $itemSet) {
+
 
                         $date = $itemSet['dateChange']->toDateTime()->format('Y-m');
 
@@ -533,11 +536,19 @@ class LogWarehouseController extends BaseController {
 
                         }
                     }
+
+                    if(empty($priceGoods[$warehouseAdmin->country])){
+                        $priceGoods[$warehouseAdmin->country] = 0;
+                    }
+
+                    $priceGoods[$warehouseAdmin->country] += $item->sales->price;
                 }
+
+
+
             }
 
         }
-
 
         $all = [
             'e' => ['books'=>0,'issue'=>0],
@@ -608,7 +619,9 @@ class LogWarehouseController extends BaseController {
         $all = [
             'e' => ['books'=>0,'issue'=>0],
             'b' => ['books'=>0,'issue'=>0],
-            'p' => ['books'=>0,'issue'=>0]
+            'p' => ['books'=>0,'issue'=>0],
+
+            'priceGoods' => 0
         ];
 
         $table .= '<h1>По странам</h1>';
@@ -620,6 +633,7 @@ class LogWarehouseController extends BaseController {
                 <td>Expert
                 <td>Balance
                 <td>Profi
+                <td rowspan="2">Товарооборт
             <tr>
                 <td>  (заказано/выданно)  
                 <td>    (заказано/выданно)
@@ -638,7 +652,8 @@ class LogWarehouseController extends BaseController {
                         <td>'.(!empty($countListTitle[$kCountry]) ? $countListTitle[$kCountry] : $kCountry).'
                         <td>'.$e['books'].' / '.$e['issue'].'
                         <td>'.$b['books'].' / '.$b['issue'].'
-                        <td>'.$p['books'].' / '.$p['issue'].'';
+                        <td>'.$p['books'].' / '.$p['issue'].'
+                        <td>'.$priceGoods[$kCountry].'';
 
                     $all['e']['books'] += $e['books'];
                     $all['e']['issue'] += $e['issue'];
@@ -646,6 +661,8 @@ class LogWarehouseController extends BaseController {
                     $all['b']['issue'] += $b['issue'];
                     $all['p']['books'] += $p['books'];
                     $all['p']['issue'] += $p['issue'];
+
+                    $all['priceGoods'] += $priceGoods[$kCountry];
 
                 }
             }
@@ -659,6 +676,7 @@ class LogWarehouseController extends BaseController {
                     <td> '.$all['e']['books'].' / '.$all['e']['issue'].'
                     <td> '.$all['b']['books'].' / '.$all['b']['issue'].'
                     <td> '.$all['p']['books'].' / '.$all['p']['issue'].'
+                    <td> '.$all['priceGoods'].'
                 ';
         $table .= '</table>';
 
