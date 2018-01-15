@@ -2,8 +2,8 @@
 
 return [
     'adminEmail' => 'admin@example.com',
-//    'apiAddress' => 'http://api.businessprocess.biz/api/',
-    'apiAddress' => 'gnc_api/api/',
+    'apiAddress' => 'http://api.businessprocess.biz/api/',
+//    'apiAddress' => 'gnc_api/api/',
     'defaultCountry' => 'RU',
     'useCache' => false,
     'certificate' => [
