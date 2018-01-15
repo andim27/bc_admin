@@ -448,6 +448,33 @@ class LogWarehouseController extends BaseController {
         $from = '2017-12-01';
         $to = '2017-12-31';
 
+        $modelVipCoin = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime(strtotime($from) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($to . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere([
+                'productType' => [
+                    '$in' => [9,10]
+                ]
+            ])
+            ->all();
+        if(!empty($modelVipCoin)){
+            foreach ($modelVipCoin as $item) {
+                if(empty($listVipcoin[$item->infoUser->country]['price'])){
+                    $listVipcoin[$item->infoUser->country]['price'] = 0;
+                }
+                $listVipcoin[$item->infoUser->country]['price'] += $item->price;
+            }
+        }
+
         $model = Sales::find()
             ->where([
                 'dateCreate' => [
@@ -597,7 +624,7 @@ class LogWarehouseController extends BaseController {
                     <td>
                     <td> '.$counWarehouse['59620f49dca78761ae2d01c1'].'
                     <td> '.$counWarehouse['59620f57dca78747631d3c62'].'
-                    <td>'.$counWarehouse['5975afe2dca78748ce5e7e02'];
+                    <td> '.$counWarehouse['5975afe2dca78748ce5e7e02'];
 
         }
 
@@ -621,6 +648,8 @@ class LogWarehouseController extends BaseController {
             'b' => ['books'=>0,'issue'=>0,'priceGoods'=>0],
             'p' => ['books'=>0,'issue'=>0,'priceGoods'=>0],
 
+            'vipCoin' => 0,
+
             'priceGoods' => 0
         ];
 
@@ -633,7 +662,8 @@ class LogWarehouseController extends BaseController {
                 <td>Expert
                 <td>Balance
                 <td>Profi
-                <td rowspan="2">Товарооборт по заказам
+                <td rowspan="2">VipCoin
+                <td rowspan="2">Товарооборт<br>по заказам
             <tr>
                 <td>  (заказано/выдано)  
                 <td>  (заказано/выдано)
@@ -653,6 +683,7 @@ class LogWarehouseController extends BaseController {
                         <td>'.$e['books'].' / '.$e['issue'].' шт ( '. 315 * $e['issue'] .' euro)
                         <td>'.$b['books'].' / '.$b['issue'].' шт ( '. 505 * $b['issue'] .' euro)
                         <td>'.$p['books'].' / '.$p['issue'].' шт ( '. 515 * $p['issue'].' euro)
+                        <td>'. (!empty($listVipcoin[$kCountry]['price']) ? $listVipcoin[$kCountry]['price'] : 0) .' euro
                         <td>'.$priceGoods[$kCountry].'';
 
                     $all['e']['books'] += $e['books'];
@@ -666,6 +697,8 @@ class LogWarehouseController extends BaseController {
                     $all['b']['priceGoods'] += 505 * $b['books'];
                     $all['p']['priceGoods'] += 515 * $p['books'];
 
+                    $all['vipCoin'] += $priceGoods[$kCountry];
+
                     $all['priceGoods'] += $priceGoods[$kCountry];
 
                 }
@@ -673,13 +706,14 @@ class LogWarehouseController extends BaseController {
         }
         $table .= '
                 <tr style="background-color: #2aabd2">
-                    <td colspan="6"><center>Итого</center>
+                    <td colspan="7"><center>Итого</center>
                 <tr>
                     <td> 
                     <td> 
                     <td> '.$all['e']['books'].' / '.$all['e']['issue'].' шт ( '. $all['e']['priceGoods'] .' euro)
                     <td> '.$all['b']['books'].' / '.$all['b']['issue'].' шт ( '. $all['b']['priceGoods'] .' euro)
                     <td> '.$all['p']['books'].' / '.$all['p']['issue'].' шт ( '. $all['p']['priceGoods'] .' euro)
+                    <td> '. $all['vipCoin'] .' euro
                     <td> '.$all['priceGoods'].'
                 ';
         $table .= '</table>';
