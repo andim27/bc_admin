@@ -29,10 +29,24 @@ class DelovodController extends Controller{
 
     public function actionSetOrder()
     {
+        $CounterNumber = 0;
+        $stopNumber = 3;
+
+        $checkLog = ApiDelovod::getLog();
+
+        if(!empty($checkLog)){
+            die();
+        }
+
         $listOrderForMonth = $this->getOrderForMonth();
 
         if(!empty($listOrderForMonth)){
+
             foreach ($listOrderForMonth as $k=>$item) {
+
+                if ($CounterNumber >= $stopNumber){
+                    break;
+                }
 
                 $warehouse = '1100700000000001';
                 if(!empty($item['warehouse'])){
@@ -45,7 +59,8 @@ class DelovodController extends Controller{
                 $cashAccount = CashAccounts::getIdForPaymentCode($item['payment_code']);
 
                 // создаем документ заказа
-                if(SaleOrder::check($item['order_id']) === false && !empty($cashAccount) && $k<1){
+                if(SaleOrder::check($item['order_id']) === false && !empty($cashAccount)){
+
                     $dataSaleOrder = [
                         'date'      =>  $item['date'],
                         'number'    =>  $item['order_id'],
@@ -58,11 +73,11 @@ class DelovodController extends Controller{
                         'author'    =>  '1000200000001004',
                     ];
 
-
                     $idSaleOrder = SaleOrder::save($dataSaleOrder);
 
                     // заполняем заказ
                     $totalAmountCur = 0;
+                    $dataSaleOrderGoods = $dataSaleGoods = [];
                     if(!empty($item['info'])){
                         foreach ($item['info']  as $itemOrder) {
                             $modelWarehouse = Products::findOne([
@@ -154,11 +169,17 @@ class DelovodController extends Controller{
                         'business' => '1115000000000001'
                     ];
 
+                    //print_r($dataCash);
+
                     CashIn::save($dataCash,1);
 
+                    $CounterNumber++;
+
                 } else if(empty($cashAccount)) {
-                    ApiDelovod::setLog('Not payment "'.$item['payment_code'].'" for order №' . $item['order_id']);
+                    ApiDelovod::setLog('Not payment - '.$item['payment_code'].' for order - ' . $item['order_id']);
                 }
+
+
             }
         }
 

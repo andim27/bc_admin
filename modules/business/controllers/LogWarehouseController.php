@@ -445,7 +445,7 @@ class LogWarehouseController extends BaseController {
                 <td>Balance
                 <td>Profi';
 
-        $from = '2017-09-01';
+        $from = '2017-12-01';
         $to = '2017-12-31';
 
         $model = Sales::find()
@@ -599,15 +599,18 @@ class LogWarehouseController extends BaseController {
                     <td> '.$all['e']['books'].'/'.$all['e']['issue'].'
                     <td> '.$all['b']['books'].'/'.$all['b']['issue'].'
                     <td> '.$all['p']['books'].'/'.$all['p']['issue'].'
-                <tr>
-                    <td>
-                    <td>
-                    <td>
-                    <td>
-                    <td>    
-                    ';
+                ';
 
         $table .= '</table>';
+
+        $table = '';
+
+        $all = [
+            'e' => ['books'=>0,'issue'=>0],
+            'b' => ['books'=>0,'issue'=>0],
+            'p' => ['books'=>0,'issue'=>0]
+        ];
+
         $table .= '<h1>По странам</h1>';
         $table .= '<table border="1">';
         if(!empty($infoCountry)){
@@ -621,16 +624,33 @@ class LogWarehouseController extends BaseController {
                     <tr>
                         <td>'.$kDate.'
                         <td>'.(!empty($countListTitle[$kCountry]) ? $countListTitle[$kCountry] : $kCountry).'
-                        <td>'.$e['books'].' / '.$e['issue'].'
-                        <td>'.$b['books'].' / '.$b['issue'].'
-                        <td>'.$p['books'].' / '.$p['issue'];
+                        <td>'.$e['books'].'<!-- / '.$e['issue'].'-->
+                        <td>'.$b['books'].'<!-- / '.$b['issue'].'-->
+                        <td>'.$p['books'].'<!-- / '.$p['issue'].'-->';
 
+                    $all['e']['books'] += $e['books'];
+                    $all['e']['issue'] += $e['issue'];
+                    $all['b']['books'] += $b['books'];
+                    $all['b']['issue'] += $b['issue'];
+                    $all['p']['books'] += $p['books'];
+                    $all['p']['issue'] += $p['issue'];
 
                 }
             }
         }
+        $table .= '
+                <tr style="background-color: #2aabd2">
+                    <td colspan="5"><center>Итого</center>
+                <tr>
+                    <td> 
+                    <td> 
+                    <td> '.$all['e']['books'].'<!--/'.$all['e']['issue'].'-->
+                    <td> '.$all['b']['books'].'<!--/'.$all['b']['issue'].'-->
+                    <td> '.$all['p']['books'].'<!--/'.$all['p']['issue'].'-->
+                ';
         $table .= '</table>';
 
+        header('Content-Type: text/html; charset=utf-8');
 
         echo $table;die();
     }

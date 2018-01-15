@@ -18,7 +18,6 @@ use app\models\apiDelovod\SaleTpGoods;
 use app\models\apiDelovod\UnitMeasure;
 use app\models\apiDelovod\Storages;
 use app\models\apiDelovod\Users;
-use app\models\LotteryTicket;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
@@ -1224,6 +1223,11 @@ class TestController extends BaseController
 
     public function actionTest()
     {
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r($listOrderForMonth = $this->getOrderForMonth());
+        echo '</xmp>';
+        die();
 
 //        $model = PartsAccessories::find()->orderBy(['delovod_id'=>SORT_DESC])->all();
 //
@@ -1234,25 +1238,5 @@ class TestController extends BaseController
     }
 
 
-    public function actionGetLotteryTicket()
-    {
-        $lotteryTickets = LotteryTicket::find()->all();
-
-        $array = [];
-        foreach ($lotteryTickets as $item) {
-            $array[] = $item['ticket'];
-        }
-
-        arsort($array);
-
-        $conten = '<table>';
-        foreach ($array as $item) {
-            $conten .= '<tr><td>'.$item;
-        }
-        $conten .= '</table>';
-
-        print_r($conten);
-        die();
-    }
 
 }
