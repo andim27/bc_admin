@@ -613,6 +613,18 @@ class LogWarehouseController extends BaseController {
 
         $table .= '<h1>По странам</h1>';
         $table .= '<table border="1">';
+        $table .= '
+            <tr>
+                <td rowspan="2">Дата
+                <td rowspan="2">Страна
+                <td>Expert
+                <td>Balance
+                <td>Profi
+            <tr>
+                <td>  (заказано/выданно)  
+                <td>    (заказано/выданно)
+                <td>    (заказано/выданно)
+                ';
         if(!empty($infoCountry)){
             foreach ($infoCountry as $kCountry => $itemCountry) {
                 foreach ($itemCountry as $kDate=>$itemDate) {
@@ -624,9 +636,9 @@ class LogWarehouseController extends BaseController {
                     <tr>
                         <td>'.$kDate.'
                         <td>'.(!empty($countListTitle[$kCountry]) ? $countListTitle[$kCountry] : $kCountry).'
-                        <td>'.$e['books'].'<!-- / '.$e['issue'].'-->
-                        <td>'.$b['books'].'<!-- / '.$b['issue'].'-->
-                        <td>'.$p['books'].'<!-- / '.$p['issue'].'-->';
+                        <td>'.$e['books'].' / '.$e['issue'].'
+                        <td>'.$b['books'].' / '.$b['issue'].'
+                        <td>'.$p['books'].' / '.$p['issue'].'';
 
                     $all['e']['books'] += $e['books'];
                     $all['e']['issue'] += $e['issue'];
@@ -644,9 +656,9 @@ class LogWarehouseController extends BaseController {
                 <tr>
                     <td> 
                     <td> 
-                    <td> '.$all['e']['books'].'<!--/'.$all['e']['issue'].'-->
-                    <td> '.$all['b']['books'].'<!--/'.$all['b']['issue'].'-->
-                    <td> '.$all['p']['books'].'<!--/'.$all['p']['issue'].'-->
+                    <td> '.$all['e']['books'].' / '.$all['e']['issue'].'
+                    <td> '.$all['b']['books'].' / '.$all['b']['issue'].'
+                    <td> '.$all['p']['books'].' / '.$all['p']['issue'].'
                 ';
         $table .= '</table>';
 
