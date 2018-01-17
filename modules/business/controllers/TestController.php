@@ -1237,6 +1237,28 @@ class TestController extends BaseController
 //        }
     }
 
+    public function actionFix()
+    {
+        //5a5db45bdca78759c02b3552    ----> 59243668dca78731c6788832
+        //5a5db4a5dca787500a116e12    ----> 5975afe2dca78748ce5e7e02
+
+
+        $modelComplectCopy = PartsAccessories::findOne(['_id'=>new ObjectID('59243668dca78731c6788832')]);
+        $modelComplect = PartsAccessories::findOne(['_id'=>new ObjectID('5a5db45bdca78759c02b3552')]);
+        $modelComplect->composite = $modelComplectCopy->composite;
+        if($modelComplect->save()){}
+
+        $modelComplectCopy = PartsAccessories::findOne(['_id'=>new ObjectID('5975afe2dca78748ce5e7e02')]);
+        $modelComplect = PartsAccessories::findOne(['_id'=>new ObjectID('5a5db4a5dca787500a116e12')]);
+        $modelComplect->composite = $modelComplectCopy->composite;
+        if($modelComplect->save()){}
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r('ok');
+        echo '</xmp>';
+        die();
+    }
 
 
 }

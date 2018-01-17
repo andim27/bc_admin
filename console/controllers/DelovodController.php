@@ -17,13 +17,13 @@ class DelovodController extends Controller{
 
     public function actionTest()
     {
-//        $modelWarehouse = Products::find()->all();
-//
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo '<xmp>';
-//        print_r($modelWarehouse['0']);
-//        echo '</xmp>';
-//        die();
+        $modelWarehouse = Products::find()->all();
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r($modelWarehouse['0']);
+        echo '</xmp>';
+        die();
     }
 
 
