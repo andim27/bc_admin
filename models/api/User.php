@@ -73,6 +73,10 @@ class User
 
         $response = $apiClient->get();
 
+        if (isset($response->error)) {
+            return false;
+        }
+
         $result = self::_getResults($response);
 
         return $result ? current($result) : false;

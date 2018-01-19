@@ -337,14 +337,13 @@ class UserController extends BaseController
             $totalPurchases = 0;
             $selfPoints = 0;
             $user = api\User::get($request->get('u'));
+
             if ($user) {
                 $sales = api\Sale::get($user->username);
                 foreach ($sales as $sale) {
                     $totalPurchases += $sale->bonusPoints;
                     $selfPoints += $sale->price;
                 }
-
-                $product = api\Product::get($user->statistics->pack);
                 $registrationsStatisticsPerMoths = api\graph\RegistrationsStatistics::get($user->accountId);
                 $autoBonusArray = explode(' ', THelper::t('auto_bonus'));
                 $autoBonus = array_shift($autoBonusArray) . '<br />' . implode(' ', $autoBonusArray);
@@ -356,7 +355,6 @@ class UserController extends BaseController
             }
             return $this->renderAjax('_info', [
                 'user' => isset($user) && $user ? $user : '',
-                'product' => isset($product) ? $product : false,
                 'registrationsStatisticsPerMoths' => isset($registrationsStatisticsPerMoths) ? $registrationsStatisticsPerMoths : '',
                 'autoBonus' => isset($autoBonus) && $autoBonus ? $autoBonus : 0,
                 'propertyBonus' => isset($propertyBonus) && $propertyBonus ? $propertyBonus : 0,

@@ -98,9 +98,6 @@
                             <?php } else { ?>
                                 <?= THelper::t('personal_award_in_the_personal_account')?>: <span class="text-color-green"><?= THelper::t('charge') ?></span><br/>
                             <?php } ?>
-                            <?php if ($product) { ?>
-                                <?= Thelper::t('business_product'); ?>: <span><?= $product->productName ?></span>
-                            <?php } ?>
                         </div>
                     </article>
                 </section>
