@@ -448,6 +448,8 @@ class User
 
                 if (isset($object->warehouseName)) {
                     $user->warehouseName = $object->warehouseName;
+                } else {
+                    $user->warehouseName = [];
                 }
 
                 if (isset($object->cards)) {
