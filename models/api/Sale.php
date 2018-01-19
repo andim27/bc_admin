@@ -78,7 +78,10 @@ class Sale {
                 $sale->dateCreate = strtotime($object->dateCreate);
                 $sale->productName = $object->productName;
                 $sale->username = $object->username;
-                $sale->type = $object->type;
+
+                if (isset($object->type)) {
+                    $sale->type = $object->type;
+                }
 
                 $result[] = $sale;
             }

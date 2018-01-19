@@ -329,12 +329,8 @@ class User
                 if (isset($object->settings->charityPercent)) {
                     $user->charityPercent = $object->settings->charityPercent;
                 }
-                if (isset($object->firstPurchase)) {
-                    $user->firstPurchase = strtotime($object->firstPurchase);
-                }
-                if (isset($object->created)) {
-                    $user->created = strtotime($object->created);
-                }
+                $user->firstPurchase      = (isset($object->firstPurchase) && $object->firstPurchase && !is_object($object->firstPurchase)) ? strtotime($object->firstPurchase) : '';
+                $user->created            = (isset($object->created) && $object->created && !is_object($object->created)) ? strtotime($object->created) : '';
                 if (isset($object->phoneNumber)) {
                     $user->phoneNumber = $object->phoneNumber;
                 }
@@ -350,9 +346,7 @@ class User
                 if (isset($object->status)) {
                     $user->status = $object->status;
                 }
-                if (isset($object->expirationDateBS)) {
-                    $user->expirationDateBS = strtotime($object->expirationDateBS);
-                }
+                $user->expirationDateBS   = (isset($object->expirationDateBS) && $object->expirationDateBS && !is_object($object->expirationDateBS)) ? strtotime($object->expirationDateBS) : '';
                 if (isset($object->bs)) {
                     $user->bs = boolval($object->bs);
                 }
@@ -417,7 +411,7 @@ class User
                     $user->zipCode = $object->zipCode;
                 }
                 if (isset($object->birthday)) {
-                    $user->birthday = strtotime($object->birthday);
+                    $user->birthday = (isset($object->birthday) && $object->birthday && !is_object($object->birthday)) ? strtotime($object->birthday) : '';
                 }
                 if (isset($object->sponsor)) {
                     $user->sponsor = $object->sponsor;
