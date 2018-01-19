@@ -17,7 +17,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 <div class="row">
 
     <?php $formStatus = ActiveForm::begin([
-        'action' => '/' . $language . '/business/manufacturing-suppliers/log-suppliers-performers?id='.$id,
+        'action' => '/' . $language . '/business/manufacturing-suppliers/log-parts-accessories?id='.$id,
         'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
     ]); ?>
 
