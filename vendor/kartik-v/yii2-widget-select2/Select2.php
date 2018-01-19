@@ -4,7 +4,7 @@
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2017
  * @package yii2-widgets
  * @subpackage yii2-widget-select2
- * @version 2.0.9
+ * @version 2.1.1
  */
 
 namespace kartik\select2;
@@ -216,7 +216,7 @@ class Select2 extends InputWidget
                     $key = isset($this->value) ? $this->value : '';
                 }
                 $val = isset($this->initValueText) ? $this->initValueText : $key;
-                $this->data = $multiple ? array_combine($key, $val) : [$key => $val];
+                $this->data = $multiple ? array_combine((array)$key, (array)$val) : [$key => $val];
             }
         }
         Html::addCssClass($this->options, 'form-control');
@@ -232,8 +232,7 @@ class Select2 extends InputWidget
     protected function renderToggleAll()
     {
         // disable select all toggle feature for a single select, or when the showToggleALl is false, or
-        // when one is generating an ajax based search for rendering the select2 options
-        if (!$this->options['multiple'] || !$this->showToggleAll || !empty($this->pluginOptions['ajax'])) {
+        if (!$this->options['multiple'] || !$this->showToggleAll ) {
             return;
         }
         $settings = array_replace_recursive([

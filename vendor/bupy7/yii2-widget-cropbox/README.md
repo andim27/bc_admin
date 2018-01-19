@@ -1,41 +1,76 @@
 yii2-widget-cropbox
-============
+===================
 
-This is widget wrapper and fork of Cropbox https://github.com/hongkhanh/cropbox . This widget allows crop image before upload to server and send informations about crop in JSON format.
+[![Latest Stable Version](https://poser.pugx.org/bupy7/yii2-widget-cropbox/v/stable)](https://packagist.org/packages/bupy7/yii2-widget-cropbox) 
+[![Total Downloads](https://poser.pugx.org/bupy7/yii2-widget-cropbox/downloads)](https://packagist.org/packages/bupy7/yii2-widget-cropbox) 
+[![License](https://poser.pugx.org/bupy7/yii2-widget-cropbox/license)](https://packagist.org/packages/bupy7/yii2-widget-cropbox)
+[![Build Status](https://travis-ci.org/bupy7/yii2-widget-cropbox.svg?branch=master)](https://travis-ci.org/bupy7/yii2-widget-cropbox)
+[![Coverage Status](https://coveralls.io/repos/github/bupy7/yii2-widget-cropbox/badge.svg?branch=master)](https://coveralls.io/github/bupy7/yii2-widget-cropbox?branch=master)
 
-![Screenshot](screenshot.png)
+This is Yii2 widget wrapper for [js-cropbox](https://github.com/bupy7/js-cropbox).
 
-##Functional
+Demo and documentation of plugin
+--------------------------------
 
-- Simple! =)
-- Cropping image before upload to server.
-- Cropping more **once** option.
-- Labels for settings of crop.
-- You can use custom view.
+[js-cropbox Demo](http://bupy7.github.io/js-cropbox/)
 
+[js-cropbox README](https://github.com/bupy7/js-cropbox/blob/master/README.md)
 
-##Installation
+Installation
+------------
+
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
 Either run
 ```
-$ php composer.phar require bupy7/yii2-widget-cropbox "2.*"
+$ php composer.phar require --prefer-dist bupy7/yii2-widget-cropbox "*"
 ```
 
 or add
 ```
-"bupy7/yii2-widget-cropbox": "2.*"
+"bupy7/yii2-widget-cropbox": "*"
 ```
 
 to the **require** section of your **composer.json** file.
 
+If you use v4.1.2 then go to [v4.1.2](https://github.com/bupy7/yii2-widget-cropbox/tree/v4.1.2).
+
+If you use v3.0.1 then go to [v3.0.1](https://github.com/bupy7/yii2-widget-cropbox/tree/v3.0.1).
+
+If you use v2.2 then go to [v2.2](https://github.com/bupy7/yii2-widget-cropbox/tree/v2.2).
+
 If you use v1.0 then go to [v1.0](https://github.com/bupy7/yii2-widget-cropbox/tree/v1.0).
 
-##How use
+Options
+-------
 
-For example I will be use **Imagine extensions for Yii2** https://github.com/yiisoft/yii2-imagine . You can use something other.
+#### `$pluginOptions`
 
-Add to action of controller
+Contain configuration of js-cropbox wrapper.
+
+##### (array) `$variants`: Variants of cropping image.
+More info: https://github.com/bupy7/js-cropbox#object-variants
+
+##### (array) `[$selectors]`: CSS selectors for attach events of cropbox.
+
+- (string) fileInput
+- (string) btnCrop
+- (string) btnReset
+- (string) btnScaleIn
+- (string) btnScaleOut
+- (string) croppedContainer
+- (string) croppedDataInput
+- (string) messageContainer
+
+##### (array) `[$messages]`: Alert messages for each a variant.
+
+Usage
+-----
+
+For example, I will use **Imagine extensions for Yii2** https://github.com/yiisoft/yii2-imagine . You can use something other.
+
+**Add in action to your controller:**
+
 ```php
 ...
 
@@ -52,9 +87,10 @@ if ($model->load(Yii::$app->request->post()))
 ...
 ```
 
-Add to view
+**Add to your view:**
+
 ```php
-use bupy7\cropbox\Cropbox;
+use bupy7\cropbox\CropboxWidget;
 
 $form = ActiveForm::begin([
     'options' => ['enctype'=>'multipart/form-data'],
@@ -62,14 +98,15 @@ $form = ActiveForm::begin([
 
 ...
 
-echo $form->field($model, 'image')->widget(Cropbox::className(), [
-    'attributeCropInfo' => 'crop_info',
+echo $form->field($model, 'image')->widget(CropboxWidget::className(), [
+    'croppedDataAttribute' => 'crop_info',
 ]);
 
 ...
 ```
 
-Add to model:
+**Add to your model:**
+
 ```php
 ...
 
@@ -92,7 +129,7 @@ public function rules()
     
     [
         'image', 
-        'file', 
+        'image', 
         'extensions' => ['jpg', 'jpeg', 'png', 'gif'],
         'mimeTypes' => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif'],
     ],
@@ -103,131 +140,96 @@ public function rules()
 
 ...
 
-public function afterSave()
+public function afterSave($insert, $changedAttributes)
 {
     ...
-    
+
     // open image
     $image = Image::getImagine()->open($this->image->tempName);
-    
+
     // rendering information about crop of ONE option 
     $cropInfo = Json::decode($this->crop_info)[0];
-    $cropInfo['dw'] = (int)$cropInfo['dw']; //new width image
-    $cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
-    $cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
-    $cropInfo['y'] = abs($cropInfo['y']); //begin position of frame crop by Y
-    //$cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio']; //ratio image. We don't use in this example
-    
+    $cropInfo['dWidth'] = (int)$cropInfo['dWidth']; //new width image
+    $cropInfo['dHeight'] = (int)$cropInfo['dHeight']; //new height image
+    $cropInfo['x'] = $cropInfo['x']; //begin position of frame crop by X
+    $cropInfo['y'] = $cropInfo['y']; //begin position of frame crop by Y
+    // Properties bolow we don't use in this example
+    //$cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio']; //ratio image. 
+    //$cropInfo['width'] = (int)$cropInfo['width']; //width of cropped image
+    //$cropInfo['height'] = (int)$cropInfo['height']; //height of cropped image
+    //$cropInfo['sWidth'] = (int)$cropInfo['sWidth']; //width of source image
+    //$cropInfo['sHeight'] = (int)$cropInfo['sHeight']; //height of source image
+
     //delete old images
     $oldImages = FileHelper::findFiles(Yii::getAlias('@path/to/save/image'), [
         'only' => [
             $this->id . '.*',
-            'thumb_' . $id . '.*',
+            'thumb_' . $this->id . '.*',
         ], 
     ]);
     for ($i = 0; $i != count($oldImages); $i++) {
         @unlink($oldImages[$i]);
     }
-    
+
     //saving thumbnail
-    $newSizeThumb = new Box($cropInfo['dw'], $cropInfo['dh']);
+    $newSizeThumb = new Box($cropInfo['dWidth'], $cropInfo['dHeight']);
     $cropSizeThumb = new Box(200, 200); //frame size of crop
     $cropPointThumb = new Point($cropInfo['x'], $cropInfo['y']);
-    $pathThumbImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $this->image->getExtension();  
-    
+    $pathThumbImage = Yii::getAlias('@path/to/save/image') 
+        . '/thumb_' 
+        . $this->id 
+        . '.' 
+        . $this->image->getExtension();  
+
     $image->resize($newSizeThumb)
         ->crop($cropPointThumb, $cropSizeThumb)
         ->save($pathThumbImage, ['quality' => 100]);
-        
+
     //saving original
-    $this->image->saveAs(Yii::getAlias('@path/to/save/image') . $this->id . '.' . $this->image->getExtension());
+    $this->image->saveAs(
+        Yii::getAlias('@path/to/save/image') 
+        . '/' 
+        . $this->id 
+        . '.' 
+        . $this->image->getExtension()
+    );
 }
 
 ...
 ```
 
-##Configuration
+Configuration
+-------------
 
-####Thumbnail box
+### Preview exist image of item
 
-By default thumbnail box has dimensions 200x200px. You can change their:
-
-```php
-echo $form->field($model, 'image')->widget(Cropbox::className(), [
-    'attributeCropInfo' => 'crop_info',
-    'optionsCropbox' => [
-        'boxWidth' => 400,
-        'boxHeight' => 300,
-        'cropSettings' => [
-            [
-                'width' => 350,
-                'height' => 200,
-            ],
-        ],
-    ],
-]);
-```
-
-####Frame cropping
-
-By default frame cropping centrally located. You can change it:
+If you want to show uploaded and cropped image, you must add following code:
 
 ```php
-echo $form->field($model, 'image')->widget(Cropbox::className(), [
-    'attributeCropInfo' => 'crop_info',
-    'optionsCropbox' => [
-        'boxWidth' => 400,
-        'boxHeight' => 300,
-        'cropSettings' => [
-            [
-                'width' => 350,
-                'height' => 200,
-                'marginLeft' => 10,
-                'marginTop' => 20,  
-            ],
-        ],
-    ],
-]);
-```
+echo $form->field($model, 'image')->widget(CropboxWidget::className(), [
 
-####Preview exist image of item
+    ...
 
-If you want showing uploaded and cropped image, you must add following code:
-
-```php
-echo $form->field($model, 'image')->widget(Cropbox::className(), [
-    'attributeCropInfo' => 'crop_info',
-    'optionsCropbox' => [
-        'boxWidth' => 400,
-        'boxHeight' => 300,
-        'cropSettings' => [
-            [
-                'width' => 350,
-                'height' => 200,
-                'marginLeft' => 10,
-                'marginTop' => 20,  
-            ],
-        ],
-    ],
-    'previewUrl' => [
+    'croppedImagesUrl' => [
         'url/to/small/image'
     ],
-    'originalUrl' => 'url/to/original/image', 
+    'originalImageUrl' => 'url/to/original/image',
 ]);
 ```
 
-If you click to preview image then you see original image.
+If you will click on preview image you see original image.
 
-####Crop with save real size of image
+### Crop with save real size of image
 
-The difference from previous methods in that we do not resize of image before crop it. Here we crop of image as we see it in editor box with saving real size.
+Difference from previous methods in that we don't resize image before crop it.
+We cropped image as we see it in editor box with saving real size.
 
-For this we will use of property `ratio` from `$cropInfo`.
+For this we will use property `ratio` from `$cropInfo`.
 
 ```php
 $cropInfo = Json::decode($this->crop_info)[0];
-$cropInfo['dw'] = (int)$cropInfo['dw'];
-$cropInfo['dh'] = (int)$cropInfo['dh'];
+$cropInfo['dWidth'] = (int)$cropInfo['dWidth'];
+$cropInfo['dHeight'] = (int)$cropInfo['dHeight'];
 $cropInfo['x'] = abs($cropInfo['x']);
 $cropInfo['y'] = abs($cropInfo['y']);
 $cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio'];
@@ -242,47 +244,23 @@ $image->crop($cropPointLarge, $cropSizeLarge)
     ->save($pathLargeImage, ['quality' => $module->qualityLarge]);
 ```
 
-####Cropping more once option
+### Cropping more once option
 
-View: 
+If you will set few veriants crop on plugin you need make following:
 
-```php
-echo $form->field($model, 'image')->widget(Cropbox::className(), [
-    'attributeCropInfo' => 'crop_info',
-    'optionsCropbox' => [
-        'boxWidth' => 400,
-        'boxHeight' => 300,
-        'cropSettings' => [
-            [
-                'width' => 150,
-                'height' => 150,
-            ],
-            [
-                'width' => 350,
-                'height' => 200,
-            ]
-        ],
-        'messages' => [
-            'Thumbnail image',
-            'Small image',
-        ],
-    ],
-]);
-```
-
-Model:
+**In model:**
 
 ```php
 ...
 
-public function afterSave()
+public function afterSave($insert, $changedAttributes)
 {
     ...
     
     // open image
     $image = Image::getImagine()->open($this->image->tempName);
     
-    $cropSettings = [
+    $variants = [
         [
             'width' => 150,
             'height' => 150,
@@ -294,8 +272,8 @@ public function afterSave()
     ];
     for($i = 0; $i != count(Json::decode($this->crop_info)); $i++) {
         $cropInfo = Json::decode($this->crop_info)[$i];
-        $cropInfo['dw'] = (int)$cropInfo['dw']; //new width image
-        $cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
+        $cropInfo['dWidth'] = (int)$cropInfo['dWidth']; //new width image
+        $cropInfo['dHeight'] = (int)$cropInfo['dHeight']; //new height image
         $cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
         $cropInfo['y'] = abs($cropInfo['y']); //begin position of frame crop by Y
         //$cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio']; //ratio image. We don't use in this example
@@ -312,8 +290,8 @@ public function afterSave()
         }
 
         //saving thumbnail
-        $newSizeThumb = new Box($cropInfo['dw'], $cropInfo['dh']);
-        $cropSizeThumb = new Box($cropSettings[$i]['width'], $cropSettings[$i]['height']); //frame size of crop
+        $newSizeThumb = new Box($cropInfo['dWidth'], $cropInfo['dHeight']);
+        $cropSizeThumb = new Box($variants[$i]['width'], $variants[$i]['height']); //frame size of crop
         $cropPointThumb = new Point($cropInfo['x'], $cropInfo['y']);
         $pathThumbImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $i . '.' . $this->image->getExtension();  
 
@@ -331,7 +309,53 @@ public function afterSave()
 
 ```
 
-##License
+### Use resizing
+
+If you want use resizing you need pointer min and max size of image in `variants` of `pluginOptions`.
+
+**In model:**
+
+```php
+// open image
+$image = Image::getImagine()->open($this->image->tempName);
+
+// rendering information about crop of ONE option 
+$cropInfo = Json::decode($this->crop_info)[0];
+$cropInfo['dWidth'] = (int)$cropInfo['dWidth']; //new width image
+$cropInfo['dHeight'] = (int)$cropInfo['dHeight']; //new height image
+$cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
+$cropInfo['y'] = abs($cropInfo['y']); //begin position of frame crop by Y
+$cropInfo['width'] = (int)$cropInfo['width']; //width of cropped image
+$cropInfo['height'] = (int)$cropInfo['height']; //height of cropped image
+// Properties bolow we don't use in this example
+//$cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio']; //ratio image. 
+
+//delete old images
+$oldImages = FileHelper::findFiles(Yii::getAlias('@path/to/save/image'), [
+    'only' => [
+        $this->id . '.*',
+        'thumb_' . $this->id . '.*',
+    ], 
+]);
+for ($i = 0; $i != count($oldImages); $i++) {
+    @unlink($oldImages[$i]);
+}
+
+//saving thumbnail
+$newSizeThumb = new Box($cropInfo['dWidth'], $cropInfo['dHeight']);
+$cropSizeThumb = new Box($cropInfo['width'], $cropInfo['height']); //frame size of crop
+$cropPointThumb = new Point($cropInfo['x'], $cropInfo['y']);
+$pathThumbImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $this->image->getExtension();  
+
+$image->resize($newSizeThumb)
+    ->crop($cropPointThumb, $cropSizeThumb)
+    ->save($pathThumbImage, ['quality' => 100]);
+    
+//saving original
+$this->image->saveAs(Yii::getAlias('@path/to/save/image') . $this->id . '.' . $this->image->getExtension());
+```
+
+## License
 
 yii2-widget-cropbox is released under the BSD 3-Clause License.
 

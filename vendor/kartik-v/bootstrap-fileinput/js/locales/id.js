@@ -25,7 +25,9 @@
         msgNo: 'Tidak',
         msgNoFilesSelected: '',
         msgCancelled: 'Dibatalkan',
+        msgPlaceholder: 'Select {files}...',
         msgZoomModalHeading: 'Pratinjau terperinci',
+        msgFileRequired: 'You must select a file to upload.',
         msgSizeTooSmall: 'File "{name}" (<b>{size} KB</b>) is too small and must be larger than <b>{minSize} KB</b>.',
         msgSizeTooLarge: 'Berkas "{name}" (<b>{size} KB</b>) melebihi ukuran upload maksimal yaitu <b>{maxSize} KB</b>.',
         msgFilesTooLess: 'Anda harus memilih setidaknya <b>{n}</b> {files} untuk diunggah.',
@@ -50,7 +52,10 @@
         },
         msgUploadAborted: 'Pengunggahan berkas dibatalkan',
         msgUploadThreshold: 'Processing...',
+        msgUploadBegin: 'Initializing...',
+        msgUploadEnd: 'Done',
         msgUploadEmpty: 'No valid data available for upload.',
+        msgUploadError: 'Error',
         msgValidationError: 'Kesalahan validasi',
         msgLoading: 'Memuat {index} dari {files} berkas &hellip;',
         msgProgress: 'Memuat {index} dari {files} berkas - {name} - {percent}% selesai.',
@@ -66,7 +71,7 @@
         msgAjaxProgressError: '{operation} failed',
         ajaxOperations: {
             deleteThumb: 'file delete',
-            uploadThumb: 'single file upload',
+            uploadThumb: 'file upload',
             uploadBatch: 'batch file upload',
             uploadExtra: 'form data upload'
         },
@@ -75,6 +80,8 @@
         fileActionSettings: {
             removeTitle: 'Hapus berkas',
             uploadTitle: 'Unggah berkas',
+            uploadRetryTitle: 'Retry upload',
+            downloadTitle: 'Download file',
             zoomTitle: 'Tampilkan Rincian',
             dragTitle: 'Move / Rearrange',
             indicatorNewTitle: 'Belum diunggah',
