@@ -108,12 +108,12 @@ trait ContainerTrait
      * Checks if a property value is null.
      * This method overrides the parent implementation by checking if the embedded object is null or not.
      * @param string $name the property name or the event name
-     * @return boolean whether the property value is null
+     * @return bool whether the property value is null
      */
     public function __isset($name)
     {
         if (isset($this->_embedded[$name])) {
-            return ($this->_embedded[$name]->getValue($this) === null);
+            return ($this->_embedded[$name]->getValue($this) !== null);
         }
         return parent::__isset($name);
     }
@@ -179,7 +179,7 @@ trait ContainerTrait
     /**
      * Checks if asked embedded declaration exists.
      * @param string $name embedded name
-     * @return boolean whether embedded declaration exists.
+     * @return bool whether embedded declaration exists.
      */
     public function hasEmbedded($name)
     {

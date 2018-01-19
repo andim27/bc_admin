@@ -25,7 +25,9 @@
         msgNo: 'لا',
         msgNoFilesSelected: '',
         msgCancelled: 'ألغيت',
+        msgPlaceholder: 'Select {files}...',
         msgZoomModalHeading: 'معاينة تفصيلية',
+        msgFileRequired: 'You must select a file to upload.',
         msgSizeTooSmall: 'File "{name}" (<b>{size} KB</b>) is too small and must be larger than <b>{minSize} KB</b>.',
         msgSizeTooLarge: 'الملف "{name}" (<b>{size} ك.ب</b>) تعدى الحد الأقصى المسموح للرفع <b>{maxSize} ك.ب</b>.',
         msgFilesTooLess: 'يجب عليك اختيار <b>{n}</b> {files} على الأقل للرفع.',
@@ -50,7 +52,10 @@
         },
         msgUploadAborted: 'تم إلغاء رفع الملف',
         msgUploadThreshold: 'Processing...',
+        msgUploadBegin: 'Initializing...',
+        msgUploadEnd: 'Done',
         msgUploadEmpty: 'No valid data available for upload.',
+        msgUploadError: 'Error',
         msgValidationError: 'خطأ التحقق من صحة',
         msgLoading: 'تحميل ملف {index} من {files} &hellip;',
         msgProgress: 'تحميل ملف {index} من {files} - {name} - {percent}% منتهي.',
@@ -66,7 +71,7 @@
         msgAjaxProgressError: '{operation} failed',
         ajaxOperations: {
             deleteThumb: 'file delete',
-            uploadThumb: 'single file upload',
+            uploadThumb: 'file upload',
             uploadBatch: 'batch file upload',
             uploadExtra: 'form data upload'
         },
@@ -75,6 +80,8 @@
         fileActionSettings: {
             removeTitle: 'إزالة الملف',
             uploadTitle: 'رفع الملف',
+            uploadRetryTitle: 'Retry upload',
+            downloadTitle: 'Download file',
             zoomTitle: 'مشاهدة التفاصيل',
             dragTitle: 'Move / Rearrange',
             indicatorNewTitle: 'لم يتم الرفع بعد',

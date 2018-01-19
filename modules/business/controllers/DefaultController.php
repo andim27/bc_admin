@@ -159,7 +159,7 @@ class DefaultController extends BaseController
 
         $queryDateFrom = strtotime($statisticInfo['request']['from'].'-01 00:00:00') * 1000;
         $queryDateTo = strtotime($statisticInfo['request']['to'].'-'.$countDay.' 23:59:59') * 1000;
-        
+
         // зарегистрировалось за выбранный период
         $model = (new \yii\mongodb\Query())
             ->select(['created'])
@@ -211,7 +211,7 @@ class DefaultController extends BaseController
         unset($model);
 
 
-/*        $statisticInfo['removeUsers'] = (new \yii\mongodb\Query())
+        $statisticInfo['removeUsers'] = (new \yii\mongodb\Query())
              ->select(['deletedUsers.number'])
              ->from('statistics')
              ->where([
@@ -220,9 +220,8 @@ class DefaultController extends BaseController
                      '$lte' => new UTCDateTime($queryDateTo)
                  ]
              ])
-             ->sum('deletedUsers.number');*/
+             ->sum('deletedUsers.number');
 
-        $statisticInfo['removeUsers'] = 0;
 
         $model = (new \yii\mongodb\Query())
             ->select(['dateCreate','price','product','username','project'])
@@ -323,7 +322,7 @@ class DefaultController extends BaseController
 
         // приходы по pin
         foreach ($arrayQuery as $k=>$item){
-/*            $statisticInfo['receiptVoucher_'.$k] = Transaction::find()
+            $statisticInfo['receiptVoucher_'.$k] = Transaction::find()
                 ->select(['amount'])
                 ->where([
                     'dateCreate' => [
@@ -332,9 +331,7 @@ class DefaultController extends BaseController
                     ]
                 ])
                 ->andWhere(['IN','forWhat',$item])
-                ->sum('amount');*/
-
-            $statisticInfo['receiptVoucher_'.$k] = 0;
+                ->sum('amount');
 
             $statisticInfo['receiptVoucher'] += $statisticInfo['receiptVoucher_'.$k];
         }
@@ -445,15 +442,13 @@ class DefaultController extends BaseController
 //        echo "</xmp>";
 //        die();
 
-/*        $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
+        $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['firstPurchase'])
             ->from('users')
             ->where(['username' => ['$ne'=>'main']])
-            ->sum('moneys');*/
+            ->sum('moneys');
 
-        $statisticInfo['onPersonalAccounts'] = 0;
-
-/*        $statisticInfo['orderedForWithdrawal'] = (new \yii\mongodb\Query())
+        $statisticInfo['orderedForWithdrawal'] = (new \yii\mongodb\Query())
             ->select(['amount'])
             ->from('transactions')
             ->where([
@@ -467,9 +462,7 @@ class DefaultController extends BaseController
                 'reduced' => ['$ne'=>false],
                 'confirmed' => 0
             ])
-            ->sum('amount');*/
-
-        $statisticInfo['orderedForWithdrawal'] = 0;
+            ->sum('amount');
 
         $model = (new \yii\mongodb\Query())
             ->select(['amount','dateCreate', 'forWhat', 'idTo'])
@@ -628,7 +621,7 @@ class DefaultController extends BaseController
         // infoBonus
         $listBonus = ['worldBonus','autoBonus','propertyBonus'];
         foreach ($listBonus as $itemBonus) {
-/*            $statisticInfo['bonus'][$itemBonus] = (new \yii\mongodb\Query())
+            $statisticInfo['bonus'][$itemBonus] = (new \yii\mongodb\Query())
                 ->select(['statistics.'.$itemBonus])
                 ->from('users')
                 ->where([
@@ -636,12 +629,10 @@ class DefaultController extends BaseController
                         '$nin' => ['main','datest1','danilchenkoalex']
                     ]
                 ])
-                ->sum('statistics.'.$itemBonus);*/
-
-            $statisticInfo['bonus'][$itemBonus] = 0;
+                ->sum('statistics.'.$itemBonus);
         }
 
-/*        $statisticInfo['bonus']['executiveBonus'] = Transaction::find()
+        $statisticInfo['bonus']['executiveBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
                 'forWhat' => [
@@ -652,11 +643,9 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1,
             ])
-            ->sum('amount');*/
+            ->sum('amount');
 
-        $statisticInfo['bonus']['executiveBonus'] = 0;
-
-/*        $statisticInfo['bonus']['careerBonus'] = Transaction::find()
+        $statisticInfo['bonus']['careerBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
                 'forWhat' => [
@@ -667,11 +656,9 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1,
             ])
-            ->sum('amount');*/
+            ->sum('amount');
 
-        $statisticInfo['bonus']['careerBonus'] = 0;
-
-        /*$statisticInfo['bonus']['mentorBonus'] = Transaction::find()
+        $statisticInfo['bonus']['mentorBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
                 'forWhat' => [
@@ -682,11 +669,10 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1,
             ])
-            ->sum('amount');*/
+            ->sum('amount');
 
-        $statisticInfo['bonus']['mentorBonus'] = 0;
 
-/*        $statisticInfo['bonus']['equityBonus'] = Transaction::find()
+        $statisticInfo['bonus']['equityBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
                 'forWhat' => [
@@ -697,11 +683,9 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1,
             ])
-            ->sum('amount');*/
+            ->sum('amount');
 
-        $statisticInfo['bonus']['equityBonus'] = 0;
-
-/*        $statisticInfo['bonus']['teamBonus'] = Transaction::find()
+        $statisticInfo['bonus']['teamBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
                 'forWhat' => [
@@ -712,11 +696,9 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1,
             ])
-            ->sum('amount');*/
+            ->sum('amount');
 
-        $statisticInfo['bonus']['teamBonus'] = 0;
-
-/*        $connectingBonusAdd = Transaction::find()
+        $connectingBonusAdd = Transaction::find()
             ->select(['amount'])
             ->where([
                 'forWhat' => [
@@ -727,11 +709,9 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1,
             ])
-            ->sum('amount');*/
+            ->sum('amount');
 
-        $connectingBonusAdd = 0;
-
-/*        $connectingBonusCancellation = Transaction::find()
+        $connectingBonusCancellation = Transaction::find()
             ->select(['amount'])
             ->where([
                 'forWhat' => [
@@ -742,8 +722,7 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1,
             ])
-            ->sum('amount');*/
-        $connectingBonusCancellation = 0;
+            ->sum('amount');
 
         $statisticInfo['bonus']['connectingBonus'] = $connectingBonusAdd - $connectingBonusCancellation;
 
@@ -769,7 +748,7 @@ class DefaultController extends BaseController
 //        echo $xz;
 //        die();
 
-/*        $entering_money = Transaction::find()
+        $entering_money = Transaction::find()
             ->select(['amount'])
             ->where([
                 'dateCreate' => [
@@ -784,11 +763,10 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1,
             ])
-            ->sum('amount');*/
+            ->sum('amount');
 
-        $entering_money = 0;
 
-/*        $entering_money_caneletion = Transaction::find()
+        $entering_money_caneletion = Transaction::find()
             ->select(['amount'])
             ->where([
                 'dateCreate' => [
@@ -803,9 +781,7 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1
             ])
-            ->sum('amount');*/
-
-        $entering_money_caneletion = 0;
+            ->sum('amount');
 
         $statisticInfo['refill'] = $entering_money - $entering_money_caneletion;
 

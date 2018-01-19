@@ -78,7 +78,7 @@ class MigrateController extends BaseMigrateController
      */
     public $migrationCollection = 'migration';
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public $templateFile = '@yii/mongodb/views/migration.php';
     /**
@@ -89,7 +89,7 @@ class MigrateController extends BaseMigrateController
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function options($actionID)
     {
@@ -118,9 +118,8 @@ class MigrateController extends BaseMigrateController
                 }
             }
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -130,17 +129,23 @@ class MigrateController extends BaseMigrateController
      */
     protected function createMigration($class)
     {
-        $class = trim($class, '\\');
-        if (strpos($class, '\\') === false) {
-            $file = $this->migrationPath . DIRECTORY_SEPARATOR . $class . '.php';
-            require_once($file);
+        // since Yii 2.0.12 includeMigrationFile() exists, which replaced the code below
+        // remove this construct when composer requirement raises above 2.0.12
+        if (method_exists($this, 'includeMigrationFile')) {
+            $this->includeMigrationFile($class);
+        } else {
+            $class = trim($class, '\\');
+            if (strpos($class, '\\') === false) {
+                $file = $this->migrationPath . DIRECTORY_SEPARATOR . $class . '.php';
+                require_once($file);
+            }
         }
 
-        return new $class(['db' => $this->db]);
+        return new $class(['db' => $this->db, 'compact' => isset($this->compact) ? $this->compact : false]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getMigrationHistory($limit)
     {
@@ -215,7 +220,7 @@ class MigrateController extends BaseMigrateController
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function addMigrationHistory($version)
     {
@@ -226,12 +231,41 @@ class MigrateController extends BaseMigrateController
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function removeMigrationHistory($version)
     {
         $this->db->getCollection($this->migrationCollection)->remove([
             'version' => $version,
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @since 2.1.5
+     */
+    protected function truncateDatabase()
+    {
+        $collections = $this->db->getDatabase()->createCommand()->listCollections();
+
+        foreach ($collections as $collection) {
+            if (in_array($collection['name'], ['system.roles', 'system.users', 'system.indexes'])) {
+                // prevent deleting database auth data
+                // access to 'system.indexes' is more likely to be restricted, thus indexes will be dropped manually per collection
+                $this->stdout("System collection {$collection['name']} skipped.\n");
+                continue;
+            }
+
+            if (in_array($collection['name'], ['system.profile', 'system.js'])) {
+                // dropping of system collection is unlikely to be permitted, attempt to clear them out instead
+                $this->db->getDatabase()->createCommand()->delete($collection['name'], []);
+                $this->stdout("System collection {$collection['name']} truncated.\n");
+                continue;
+            }
+
+            $this->db->getDatabase()->createCommand()->dropIndexes($collection['name'], '*');
+            $this->db->getDatabase()->dropCollection($collection['name']);
+            $this->stdout("Collection {$collection['name']} dropped.\n");
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace yii\mongodb\file;
 use MongoDB\BSON\ObjectID;
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\helpers\FileHelper;
 use yii\helpers\StringHelper;
 
@@ -43,7 +43,7 @@ use yii\helpers\StringHelper;
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 2.1
  */
-class Download extends Object
+class Download extends BaseObject
 {
     /**
      * @var Collection file collection to be used.
@@ -106,10 +106,7 @@ class Download extends Object
     public function getSize()
     {
         $document = $this->getDocument();
-        if (isset($document['length'])) {
-            return $document['length'];
-        }
-        return 0;
+        return isset($document['length']) ? $document['length'] : 0;
     }
 
     /**
@@ -119,10 +116,7 @@ class Download extends Object
     public function getFilename()
     {
         $document = $this->getDocument();
-        if (isset($document['filename'])) {
-            return $document['filename'];
-        }
-        return null;
+        return isset($document['filename']) ? $document['filename'] : null;
     }
 
     /**

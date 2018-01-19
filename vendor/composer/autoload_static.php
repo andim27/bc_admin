@@ -45,6 +45,7 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
             'kartik\\range\\' => 13,
             'kartik\\plugins\\fileinput\\' => 25,
             'kartik\\plugins\\depdrop\\' => 23,
+            'kartik\\helpers\\' => 15,
             'kartik\\growl\\' => 13,
             'kartik\\form\\' => 12,
             'kartik\\file\\' => 12,
@@ -63,11 +64,16 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
         ),
         'b' => 
         array (
+            'bupy7\\cropbox\\tests\\' => 20,
             'bupy7\\cropbox\\' => 14,
         ),
         'F' => 
         array (
             'Faker\\' => 6,
+        ),
+        'E' => 
+        array (
+            'Egulias\\EmailValidator\\' => 23,
         ),
     );
 
@@ -172,6 +178,10 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
         array (
             0 => __DIR__ . '/..' . '/kartik-v/dependent-dropdown',
         ),
+        'kartik\\helpers\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-helpers',
+        ),
         'kartik\\growl\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-growl',
@@ -220,13 +230,21 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
         array (
             0 => __DIR__ . '/..' . '/cebe/markdown',
         ),
+        'bupy7\\cropbox\\tests\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/bupy7/yii2-widget-cropbox/tests',
+        ),
         'bupy7\\cropbox\\' => 
         array (
-            0 => __DIR__ . '/..' . '/bupy7/yii2-widget-cropbox',
+            0 => __DIR__ . '/..' . '/bupy7/yii2-widget-cropbox/src',
         ),
         'Faker\\' => 
         array (
             0 => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker',
+        ),
+        'Egulias\\EmailValidator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator',
         ),
     );
 
@@ -254,6 +272,10 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
         ),
         'D' => 
         array (
+            'Doctrine\\Common\\Lexer\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/lexer/lib',
+            ),
             'Diff' => 
             array (
                 0 => __DIR__ . '/..' . '/phpspec/php-diff/lib',
