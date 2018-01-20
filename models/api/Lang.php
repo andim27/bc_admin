@@ -146,4 +146,28 @@ class Lang
         return preg_match('/^[\w\d\s.,-]*$/', $string) && !preg_match('/\s/', $string);
     }
 
+    /**
+     * @param $language
+     * @param bool $keyValue
+     * @return array|bool|mixed
+     */
+    public static function all($language, $keyValue = false)
+    {
+        $apiClient = new ApiClient('langs/' . $language);
+
+        $response = $apiClient->get();
+
+        $result = self::_getResults($response, true);
+
+        if ($keyValue) {
+            $keyValueResult = [];
+            foreach ($result as $r) {
+                $keyValueResult[$r->stringId] = $r->stringValue;
+            }
+            $result = $keyValueResult;
+        }
+
+        return $result;
+    }
+
 }

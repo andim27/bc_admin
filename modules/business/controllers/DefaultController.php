@@ -159,7 +159,7 @@ class DefaultController extends BaseController
 
         $queryDateFrom = strtotime($statisticInfo['request']['from'].'-01 00:00:00') * 1000;
         $queryDateTo = strtotime($statisticInfo['request']['to'].'-'.$countDay.' 23:59:59') * 1000;
-        
+
         // зарегистрировалось за выбранный период
         $model = (new \yii\mongodb\Query())
             ->select(['created'])
@@ -221,6 +221,7 @@ class DefaultController extends BaseController
                  ]
              ])
              ->sum('deletedUsers.number');
+
 
         $model = (new \yii\mongodb\Query())
             ->select(['dateCreate','price','product','username','project'])
@@ -463,8 +464,6 @@ class DefaultController extends BaseController
             ])
             ->sum('amount');
 
-
-
         $model = (new \yii\mongodb\Query())
             ->select(['amount','dateCreate', 'forWhat', 'idTo'])
             ->from('transactions')
@@ -672,6 +671,7 @@ class DefaultController extends BaseController
             ])
             ->sum('amount');
 
+
         $statisticInfo['bonus']['equityBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
@@ -723,6 +723,7 @@ class DefaultController extends BaseController
                 'type'=>1,
             ])
             ->sum('amount');
+
         $statisticInfo['bonus']['connectingBonus'] = $connectingBonusAdd - $connectingBonusCancellation;
 
 
@@ -764,6 +765,7 @@ class DefaultController extends BaseController
             ])
             ->sum('amount');
 
+
         $entering_money_caneletion = Transaction::find()
             ->select(['amount'])
             ->where([
@@ -782,8 +784,6 @@ class DefaultController extends BaseController
             ->sum('amount');
 
         $statisticInfo['refill'] = $entering_money - $entering_money_caneletion;
-
-
 
         $i = 0;
         for ($iDate=$statisticInfo['request']['from'];$iDate<=$statisticInfo['request']['to'];$iDate=date('Y-m',strtotime('+1 month', strtotime($iDate)))) {

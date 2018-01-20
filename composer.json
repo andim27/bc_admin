@@ -25,7 +25,7 @@
         "bupy7/yii2-widget-cropbox": "*",
         "yiisoft/yii2-imagine": "^2.0",
         "moonlandsoft/yii2-phpexcel": "*",
-        "yiisoft/yii2-mongodb": "*",
+        "yiisoft/yii2-mongodb": "dev-master",
         "yii2tech/embedded": "^1.0",
         "kartik-v/yii2-widgets": "*"
     },

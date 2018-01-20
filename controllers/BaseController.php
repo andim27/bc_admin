@@ -18,7 +18,7 @@ class BaseController extends Controller
         $userFromSession = Yii::$app->session->get('user');
 
         if ($userFromSession) {
-            $this->user = $this->user = api\User::get($userFromSession->accountId);
+            $this->user = api\User::get($userFromSession->accountId);
             if (! $this->user) {
                 return $this->goHome();
             }

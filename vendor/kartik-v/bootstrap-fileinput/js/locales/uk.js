@@ -25,7 +25,9 @@
         msgNo: 'Немає',
         msgNoFilesSelected: '',
         msgCancelled: 'Cкасовано',
+        msgPlaceholder: 'Select {files}...',
         msgZoomModalHeading: 'Детальний превью',
+        msgFileRequired: 'You must select a file to upload.',
         msgSizeTooSmall: 'File "{name}" (<b>{size} KB</b>) is too small and must be larger than <b>{minSize} KB</b>.',
         msgSizeTooLarge: 'Файл "{name}" (<b>{size} KB</b>) перевищує максимальний розмір <b>{maxSize} KB</b>.',
         msgFilesTooLess: 'Ви повинні вибрати як мінімум <b>{n}</b> {files} для загрузки.',
@@ -50,7 +52,10 @@
         },
         msgUploadAborted: 'Вивантаження файлу перервана',
         msgUploadThreshold: 'Processing...',
+        msgUploadBegin: 'Initializing...',
+        msgUploadEnd: 'Done',
         msgUploadEmpty: 'No valid data available for upload.',
+        msgUploadError: 'Error',
         msgValidationError: 'Помилка перевірки',
         msgLoading: 'Загрузка файла {index} із {files} &hellip;',
         msgProgress: 'Загрузка файла {index} із {files} - {name} - {percent}% завершено.',
@@ -66,7 +71,7 @@
         msgAjaxProgressError: '{operation} failed',
         ajaxOperations: {
             deleteThumb: 'file delete',
-            uploadThumb: 'single file upload',
+            uploadThumb: 'file upload',
             uploadBatch: 'batch file upload',
             uploadExtra: 'form data upload'
         },
@@ -75,6 +80,8 @@
         fileActionSettings: {
             removeTitle: 'Видалити файл',
             uploadTitle: 'Загрузити файл',
+            uploadRetryTitle: 'Retry upload',
+            downloadTitle: 'Download file',
             zoomTitle: 'Подивитися деталі',
             dragTitle: 'Move / Rearrange',
             indicatorNewTitle: 'Ще не загружено',

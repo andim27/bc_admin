@@ -12,7 +12,7 @@ use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\Regex;
 use MongoDB\Driver\Exception\InvalidArgumentException;
 use yii\base\InvalidParamException;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -54,7 +54,7 @@ use yii\helpers\ArrayHelper;
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 2.1
  */
-class QueryBuilder extends Object
+class QueryBuilder extends BaseObject
 {
     /**
      * @var Connection the MongoDB connection.
@@ -544,9 +544,8 @@ class QueryBuilder extends Object
         $matchKey = strtoupper($key);
         if (array_key_exists($matchKey, $map)) {
             return $map[$matchKey];
-        } else {
-            return $key;
         }
+        return $key;
     }
 
     /**
@@ -617,10 +616,9 @@ class QueryBuilder extends Object
             }
             array_shift($condition);
             return $this->$method($operator, $condition);
-        } else {
-            // hash format: 'column1' => 'value1', 'column2' => 'value2', ...
-            return $this->buildHashCondition($condition);
         }
+        // hash format: 'column1' => 'value1', 'column2' => 'value2', ...
+        return $this->buildHashCondition($condition);
     }
 
     /**
@@ -733,6 +731,7 @@ class QueryBuilder extends Object
             throw new InvalidParamException("Operator '$operator' requires three operands.");
         }
         list($column, $value1, $value2) = $operands;
+
         if (strncmp('NOT', $operator, 3) === 0) {
             return [
                 $column => [
@@ -740,14 +739,13 @@ class QueryBuilder extends Object
                     '$gt' => $value2,
                 ]
             ];
-        } else {
-            return [
-                $column => [
-                    '$gte' => $value1,
-                    '$lte' => $value2,
-                ]
-            ];
         }
+        return [
+            $column => [
+                '$gte' => $value1,
+                '$lte' => $value2,
+            ]
+        ];
     }
 
     /**

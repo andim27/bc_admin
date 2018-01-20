@@ -107,6 +107,7 @@ class SaleOrder
      */
     public static function check($orderId)
     {
+
         $filters[] = [
             'alias'     =>  'number',
             'operator'  =>  '=',

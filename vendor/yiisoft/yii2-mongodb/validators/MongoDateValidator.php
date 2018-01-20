@@ -47,7 +47,7 @@ class MongoDateValidator extends DateValidator
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function validateAttribute($model, $attribute)
     {
@@ -73,13 +73,12 @@ class MongoDateValidator extends DateValidator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function parseDateValue($value)
     {
-        if ($value instanceof UTCDateTime) {
-            return (int)$value->__toString();
-        }
-        return parent::parseDateValue($value);
+        return $value instanceof UTCDateTime
+            ? $value->toDateTime()->getTimestamp()
+            : parent::parseDateValue($value);
     }
 }

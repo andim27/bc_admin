@@ -57,11 +57,57 @@ class ApiDelovod {
 
     public static function _getError($responce)
     {
+        self::setLog($responce);
+
         header('Content-Type: text/html; charset=utf-8');
         echo "<xmp>";
         print_r($responce);
         echo "</xmp>";
         die();
+    }
+
+    public static function setLog($responce)
+    {
+
+        $pathFile = Yii::getAlias('@apiDelovod');
+
+        if (!file_exists($pathFile)) {
+            mkdir($pathFile, 0775, true);
+        }
+
+        $pathFile .= '/api-delovod-'.date('Y-m').'.txt';
+        if (!file_exists($pathFile)) {
+            $fp = fopen($pathFile, "w");
+            fclose($fp);
+        }
+
+        $content =  json_encode(['date'=>date('Y-m-d H:i:s'),'error'=>$responce]);
+
+        file_put_contents($pathFile,$content.','."\n",FILE_APPEND);
+
+        return true;
+    }
+
+    public static function getLog(){
+        $pathFile = Yii::getAlias('@apiDelovod');
+
+        if (!file_exists($pathFile)) {
+            mkdir($pathFile, 0775, true);
+        }
+
+        $pathFile .= '/api-delovod-'.date('Y-m').'.txt';
+        if (!file_exists($pathFile)) {
+            $fp = fopen($pathFile, "w");
+            fclose($fp);
+        }
+
+        $content = file_get_contents($pathFile);
+
+//        if(!empty($content)){
+//            $content = json_decode($content,TRUE);
+//        }
+
+        return $content;
     }
 
     /**

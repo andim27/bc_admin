@@ -47,16 +47,16 @@
                         <?= gmdate('d.m.Y', $doc->dateCreate) ?>
                     </td>
                     <td>
-                        <?= $doc->user->username ?>
+                        <?= isset($doc->user->username) ? $doc->user->username : '' ?>
                     </td>
                     <td>
-                        <?= $doc->user->email ?>
+                        <?= isset($doc->user->email) ? $doc->user->email : '' ?>
                     </td>
                     <td>
-                        <?= $doc->user->firstName ?> <?= $doc->user->secondName ?>
+                        <?= isset($doc->user->firstName) ? $doc->user->firstName : '' ?> <?= isset($doc->user->secondName) ? $doc->user->secondName : '' ?>
                     </td>
                     <td>
-                        <a href="https://bc.businessprocess.biz/uploads/<?= $doc->user->id ?>/<?= $doc->fileName ?>"><?= $doc->fileName ?></a>
+                        <a href="https://bc.businessprocess.biz/<?= $doc->body ?>"><?= $doc->title ?></a>
                     </td>
                 </tr>
             <?php } ?>

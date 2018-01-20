@@ -24,7 +24,9 @@
         msgNo: 'ไม่',
         msgNoFilesSelected: '',
         msgCancelled: 'ยกเลิก',
+        msgPlaceholder: 'Select {files}...',
         msgZoomModalHeading: 'ตัวอย่างละเอียด',
+        msgFileRequired: 'You must select a file to upload.',
         msgSizeTooSmall: 'File "{name}" (<b>{size} KB</b>) is too small and must be larger than <b>{minSize} KB</b>.',
         msgSizeTooLarge: 'ไฟล์ "{name}" (<b>{size} KB</b>) มีขนาดเกินที่ระบบอนุญาตที่ <b>{maxSize} KB</b>, กรุณาลองใหม่อีกครั้ง!',
         msgFilesTooLess: 'คุณต้องเลือกไฟล์จำนวนอย่างน้อย <b>{n}</b> {files} เพื่ออัพโหลด, กรุณาลองใหม่อีกครั้ง!',
@@ -49,7 +51,10 @@
         },
         msgUploadAborted: 'อัปโหลดไฟล์ถูกยกเลิก',
         msgUploadThreshold: 'Processing...',
+        msgUploadBegin: 'Initializing...',
+        msgUploadEnd: 'Done',
         msgUploadEmpty: 'No valid data available for upload.',
+        msgUploadError: 'Error',
         msgValidationError: 'ข้อผิดพลาดในการตรวจสอบ',
         msgLoading: 'กำลังโหลดไฟล์ {index} จาก {files} &hellip;',
         msgProgress: 'กำลังโหลดไฟล์ {index} จาก {files} - {name} - {percent}%',
@@ -65,7 +70,7 @@
         msgAjaxProgressError: '{operation} failed',
         ajaxOperations: {
             deleteThumb: 'file delete',
-            uploadThumb: 'single file upload',
+            uploadThumb: 'file upload',
             uploadBatch: 'batch file upload',
             uploadExtra: 'form data upload'
         },
@@ -74,6 +79,8 @@
         fileActionSettings: {
             removeTitle: 'ลบไฟล์',
             uploadTitle: 'อัปโหลดไฟล์',
+            uploadRetryTitle: 'Retry upload',
+            downloadTitle: 'Download file',
             zoomTitle: 'ดูรายละเอียด',
             dragTitle: 'Move / Rearrange',
             indicatorNewTitle: 'ยังไม่ได้อัปโหลด',

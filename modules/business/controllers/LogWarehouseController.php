@@ -141,7 +141,10 @@ class LogWarehouseController extends BaseController {
         $infoProduct = $infoProductAmount = $actionDontKnow = [];
         $infoAction = [
             'issued'        =>  ['status_sale_issued',],
-            'posting'       =>  ['posting_parcel','write_off_parcel_and_add_warehouse','return_in_warehouse'],
+            'posting'       =>  [
+                'posting_parcel','write_off_parcel_and_add_warehouse','return_in_warehouse',
+                'posting_ordering','add_execution_posting'
+            ],
             'send'          =>  ['send_parcel'],
             'cancellation'  =>  ['cancellation'],
 
@@ -442,8 +445,35 @@ class LogWarehouseController extends BaseController {
                 <td>Balance
                 <td>Profi';
 
-        $from = '2017-09-01';
+        $from = '2017-12-01';
         $to = '2017-12-31';
+
+        $modelVipCoin = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime(strtotime($from) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($to . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere([
+                'productType' => [
+                    '$in' => [9,10]
+                ]
+            ])
+            ->all();
+        if(!empty($modelVipCoin)){
+            foreach ($modelVipCoin as $item) {
+                if(empty($listVipcoin[$item->infoUser->country]['price'])){
+                    $listVipcoin[$item->infoUser->country]['price'] = 0;
+                }
+                $listVipcoin[$item->infoUser->country]['price'] += $item->price;
+            }
+        }
 
         $model = Sales::find()
             ->where([
@@ -505,7 +535,10 @@ class LogWarehouseController extends BaseController {
 
             foreach ($modelLastChangeStatus as $item){
                 if($item->sales->type != -1) {
+
+                    $warehouseAdmin='';
                     foreach ($item->setSales as $itemSet) {
+
 
                         $date = $itemSet['dateChange']->toDateTime()->format('Y-m');
 
@@ -530,11 +563,19 @@ class LogWarehouseController extends BaseController {
 
                         }
                     }
+
+                    if(empty($priceGoods[$warehouseAdmin->country])){
+                        $priceGoods[$warehouseAdmin->country] = 0;
+                    }
+
+                    $priceGoods[$warehouseAdmin->country] += $item->sales->price;
                 }
+
+
+
             }
 
         }
-
 
         $all = [
             'e' => ['books'=>0,'issue'=>0],
@@ -583,7 +624,7 @@ class LogWarehouseController extends BaseController {
                     <td>
                     <td> '.$counWarehouse['59620f49dca78761ae2d01c1'].'
                     <td> '.$counWarehouse['59620f57dca78747631d3c62'].'
-                    <td>'.$counWarehouse['5975afe2dca78748ce5e7e02'];
+                    <td> '.$counWarehouse['5975afe2dca78748ce5e7e02'];
 
         }
 
@@ -596,17 +637,38 @@ class LogWarehouseController extends BaseController {
                     <td> '.$all['e']['books'].'/'.$all['e']['issue'].'
                     <td> '.$all['b']['books'].'/'.$all['b']['issue'].'
                     <td> '.$all['p']['books'].'/'.$all['p']['issue'].'
-                <tr>
-                    <td>
-                    <td>
-                    <td>
-                    <td>
-                    <td>    
-                    ';
+                ';
 
         $table .= '</table>';
+
+        $table = '';
+
+        $all = [
+            'e' => ['books'=>0,'issue'=>0,'priceGoods'=>0],
+            'b' => ['books'=>0,'issue'=>0,'priceGoods'=>0],
+            'p' => ['books'=>0,'issue'=>0,'priceGoods'=>0],
+
+            'vipCoin' => 0,
+
+            'priceGoods' => 0
+        ];
+
         $table .= '<h1>По странам</h1>';
         $table .= '<table border="1">';
+        $table .= '
+            <tr>
+                <td rowspan="2">Дата
+                <td rowspan="2">Страна
+                <td>Expert
+                <td>Balance
+                <td>Profi
+                <td rowspan="2">VipCoin
+                <td rowspan="2">Товарооборт<br>по заказам
+            <tr>
+                <td>  (заказано/выдано)  
+                <td>  (заказано/выдано)
+                <td>  (заказано/выдано)
+                ';
         if(!empty($infoCountry)){
             foreach ($infoCountry as $kCountry => $itemCountry) {
                 foreach ($itemCountry as $kDate=>$itemDate) {
@@ -618,16 +680,45 @@ class LogWarehouseController extends BaseController {
                     <tr>
                         <td>'.$kDate.'
                         <td>'.(!empty($countListTitle[$kCountry]) ? $countListTitle[$kCountry] : $kCountry).'
-                        <td>'.$e['books'].' / '.$e['issue'].'
-                        <td>'.$b['books'].' / '.$b['issue'].'
-                        <td>'.$p['books'].' / '.$p['issue'];
+                        <td>'.$e['books'].' / '.$e['issue'].' шт ( '. 315 * $e['issue'] .' euro)
+                        <td>'.$b['books'].' / '.$b['issue'].' шт ( '. 505 * $b['issue'] .' euro)
+                        <td>'.$p['books'].' / '.$p['issue'].' шт ( '. 515 * $p['issue'].' euro)
+                        <td>'. (!empty($listVipcoin[$kCountry]['price']) ? $listVipcoin[$kCountry]['price'] : 0) .' euro
+                        <td>'.$priceGoods[$kCountry].'';
 
+                    $all['e']['books'] += $e['books'];
+                    $all['e']['issue'] += $e['issue'];
+                    $all['b']['books'] += $b['books'];
+                    $all['b']['issue'] += $b['issue'];
+                    $all['p']['books'] += $p['books'];
+                    $all['p']['issue'] += $p['issue'];
+
+                    $all['e']['priceGoods'] += 315 * $e['issue'];
+                    $all['b']['priceGoods'] += 505 * $b['books'];
+                    $all['p']['priceGoods'] += 515 * $p['books'];
+
+                    $all['vipCoin'] += $priceGoods[$kCountry];
+
+                    $all['priceGoods'] += $priceGoods[$kCountry];
 
                 }
             }
         }
+        $table .= '
+                <tr style="background-color: #2aabd2">
+                    <td colspan="7"><center>Итого</center>
+                <tr>
+                    <td> 
+                    <td> 
+                    <td> '.$all['e']['books'].' / '.$all['e']['issue'].' шт ( '. $all['e']['priceGoods'] .' euro)
+                    <td> '.$all['b']['books'].' / '.$all['b']['issue'].' шт ( '. $all['b']['priceGoods'] .' euro)
+                    <td> '.$all['p']['books'].' / '.$all['p']['issue'].' шт ( '. $all['p']['priceGoods'] .' euro)
+                    <td> '. $all['vipCoin'] .' euro
+                    <td> '.$all['priceGoods'].'
+                ';
         $table .= '</table>';
 
+        header('Content-Type: text/html; charset=utf-8');
 
         echo $table;die();
     }

@@ -25,6 +25,7 @@
         msgNo: 'жоқ',
         msgNoFilesSelected: 'Файл таңдалмады',
         msgCancelled: 'Күші жойылған',
+        msgPlaceholder: 'Select {files}...',
         msgZoomModalHeading: 'Алдын ала толық көру',
         msgSizeTooLarge: 'Файл "{name}" (<b>{size} KB</b>) ең үлкен <b>{maxSize} KB</b> өлшемінен асады.',
         msgFilesTooLess: 'Жүктеу үшіy кемінде <b>{n}</b> {files} таңдау керек.',
@@ -38,7 +39,10 @@
         msgInvalidFileExtension: '"{name}" тыйым салынған файл кеңейтімі. Тек "{extensions}" рұқсат.',
         msgUploadAborted: 'Файлды жүктеу доғарылды',
         msgUploadThreshold: 'Өңдеу...',
+        msgUploadBegin: 'Initializing...',
+        msgUploadEnd: 'Done',
         msgUploadEmpty: 'No valid data available for upload.',
+        msgUploadError: 'Error',
         msgValidationError: 'Тексеру қатесі',
         msgLoading: '{index} файлды {files} &hellip; жүктеу',
         msgProgress: '{index} файлды {files} - {name} - {percent}% жүктеу аяқталды.',
@@ -54,7 +58,7 @@
         msgAjaxProgressError: '{operation} failed',
         ajaxOperations: {
             deleteThumb: 'file delete',
-            uploadThumb: 'single file upload',
+            uploadThumb: 'file upload',
             uploadBatch: 'batch file upload',
             uploadExtra: 'form data upload'
         },
@@ -63,6 +67,8 @@
         fileActionSettings: {
             removeTitle: 'Файлды өшіру',
             uploadTitle: 'Файлды жүктеу',
+            uploadRetryTitle: 'Retry upload',
+            downloadTitle: 'Download file',
             zoomTitle: 'мәліметтерді көру',
             dragTitle: 'Орнын ауыстыру',
             indicatorNewTitle: 'Жүктелген жоқ',
