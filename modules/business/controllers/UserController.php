@@ -149,7 +149,7 @@ class UserController extends BaseController
 
                         $nestedData[$columns[0]] = $user->accountId;
                         $nestedData[$columns[1]] = $user->username;
-                        $nestedData[$columns[2]] = gmdate('d.m.Y', $user->created);
+                        $nestedData[$columns[2]] = $user->created ? gmdate('d.m.Y', $user->created) : '';
                         $nestedData[$columns[3]] = $user->isDelete ? THelper::t('deleted') : THelper::t('in_structure');
                         $nestedData[$columns[4]] = $user->firstName . ' ' . $user->secondName;
                         $nestedData[$columns[5]] = $user->getCountryCityAsString();
