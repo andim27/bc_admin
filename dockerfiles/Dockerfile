@@ -1,27 +1,42 @@
-FROM pitchanon/docker-apache-php:5.5
-#FROM ubuntu:14.04
-MAINTAINER Juriy Kostianitsa <bulich@do4you.ru>
+FROM pitchanon/docker-apache-php:php-7.0
+# Install base packages
+RUN export DEBIAN_FRONTEND="noninteractive" && \
+    apt-get update && \
+    apt-get -yq --force-yes upgrade && \
+    apt-get -yq --force-yes install --no-install-recommends \
+        apache2 \
+        libapache2-mod-php7.0 \
+        php7.0-dev \
+	pkg-config \
+	build-essential \
+	libssl-dev \
+	libsslcommon2-dev \
+        php-pear && \
+    apt-get -y clean && \
+    rm -rf /var/lib/apt/lists/*
 
-WORKDIR /var/www/code/
-COPY . /var/www/code/
-COPY cfg/php.ini /usr/local/etc/php/
-copy cfg/vhost.conf /etc/apache2/sites-enabled/
+RUN sed -i "s/variables_order.*/variables_order = \"EGPCS\"/g" /etc/php/7.0/apache2/php.ini
 
-# preparing env
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update -y
-# installing apache
-RUN apt-get install -y apache2
-RUN mkdir -p /var/lock/apache2 /var/run/apache2
+# Enable apache modules
+RUN a2dismod mpm_event && \
+    a2enmod mpm_prefork rewrite vhost_alias headers ssl php7.0
 
-# installing php
-RUN apt-get update && apt-get -y install php5-dev php-pear libcurl3-openssl-dev openssl libcurl4-openssl-dev pkg-config libssl-dev libsslcommon2-dev autoconf g++ make libssl-dev libcurl4-openssl-dev pkg-config libsasl2-dev libpcre3 libpcre3-dev
+RUN rm -f /etc/apache2/sites-enabled/000-default.conf
+
+ADD run.sh /run.sh
+
+VOLUME ["/var/log/apache2"]
+
+EXPOSE 80 443
+
 RUN pecl install mongodb
-RUN echo "extension=mongodb.so" >> /etc/php5/apache2/php.ini && echo "extension=mongodb.so" >> /etc/php5/cli/php.ini
+RUN echo "extension=mongodb.so" >> /etc/php/7.0/apache2/php.ini && echo "extension=mongodb.so" >> /etc/php/7.0/cli/php.ini
 
-RUN a2enmod rewrite
-COPY run-lamp.sh /usr/sbin/
-RUN chmod +x /usr/sbin/run-lamp.sh
+ADD cfg/vhost.conf /etc/apache2/sites-enabled/
+COPY . /var/www/code/
 RUN chown -hR www-data:www-data /var/www/code/
-EXPOSE 80
-CMD ["/usr/sbin/run-lamp.sh"]
+
+CMD ["/run.sh"]
+
+# grr, ENTRYPOINT resets CMD now
+ENTRYPOINT ["/bin/bash"]
