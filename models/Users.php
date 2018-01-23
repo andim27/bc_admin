@@ -75,7 +75,7 @@ class Users extends ActiveRecord
             ->where(['_id'=>new ObjectID(\Yii::$app->view->params['user']->id)])
             ->one();
         
-        return $model->rules;
+        return (!empty($model->rules) ? $model->rules : '');
     }
     
     public static function checkRule($rule,$key)
