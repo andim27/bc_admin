@@ -35,10 +35,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($moneyTransfers as $moneyTransfer) { ?>
+                <?php foreach ($moneyTransfers as $moneyTransfer) {
+                    $userFrom = $moneyTransfer->getUserFrom()->one();
+                    $userTo = $moneyTransfer->getUserTo()->one(); ?>
                     <tr>
-                        <td><?= $moneyTransfer->getUserFrom()->one()->username ?></td>
-                        <td><?= $moneyTransfer->getUserTo()->one()->username ?></td>
+                        <td><?= $userFrom ? $userFrom->username : '' ?></td>
+                        <td><?= $userTo ? $userTo->username : '' ?></td>
                         <td><?= $moneyTransfer->balanceFrom ?></td>
                         <td><?= $moneyTransfer->balanceTo ?></td>
                         <td><?= $moneyTransfer->amount ?></td>

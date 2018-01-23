@@ -89,7 +89,10 @@ class Doc {
                 $doc->isDelete   = $object->isDelete;
                 $info            = pathinfo($object->body);
                 $doc->fileName   = $info['basename'];
-                $doc->user       = api\User::get($object->idUser);
+                /**
+                 * @todo Переделать, слишком много запросов к апи
+                 */
+//                $doc->user       = api\User::get($object->idUser);
                 $result[] = $doc;
             }
         }
