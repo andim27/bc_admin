@@ -1,5 +1,5 @@
 git checkout admin-dev
-git pull origin admini-dev
+git pull origin admin-dev
 git checkout admin
 mv dockerfiles/ /tmp/
 mv config/params.php /tmp
