@@ -1,3 +1,6 @@
+git checkout admin-dev
+git pull origin admini-dev
+git checkout admin
 mv dockerfiles/ /tmp/
 mv config/params.php /tmp
 mv config/console.php /tmp
