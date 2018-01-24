@@ -385,7 +385,10 @@ class DefaultController extends BaseController
             ]
         ])->all();
 
-        if(!empty($model)){
+        /**
+         * @todo Очень много запросов к апи, нужно переделать
+         */
+/*        if(!empty($model)){
             foreach ($model as $item) {
                 $infoPin = api\Pin::checkPin($item->pin);
 
@@ -395,7 +398,7 @@ class DefaultController extends BaseController
                 }
 
             }
-        }
+        }*/
 
         // проверка что б приход деньгами не был отрицательным,
         // возникает это при условии что пин коды
