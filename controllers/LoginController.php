@@ -46,8 +46,8 @@ class LoginController extends \yii\web\Controller
                         'value' => $authCookie,
                         'expire' => time() + 24 * 3600
                     ]));
-                    $user = api\User::get($login);
                 }
+                $user = api\User::get($login);
             }
 
             curl_close($ch);
