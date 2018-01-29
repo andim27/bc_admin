@@ -30,7 +30,6 @@ class Users extends ActiveRecord
             '_id',
             'username',
             'accountId',
-            'deviceId',
             'created',
             'email',
             'phoneNumber',
@@ -74,10 +73,10 @@ class Users extends ActiveRecord
         $model = self::find()
             ->where(['_id'=>new ObjectID(\Yii::$app->view->params['user']->id)])
             ->one();
-        
-        return $model->rules;
+
+        return $model ? $model->rules : [];
     }
-    
+
     public static function checkRule($rule,$key)
     {
         $fl = false;
@@ -87,9 +86,9 @@ class Users extends ActiveRecord
         } elseif (\Yii::$app->view->params['user']->username == 'main'){
             $fl = true;
         }
-            
+
         return $fl;
-            
+
     }
 
     public static function getAllAdmin(){
