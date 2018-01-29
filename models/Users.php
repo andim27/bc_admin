@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\models\api\dictionary\Country;
 use MongoDB\BSON\ObjectID;
 use yii\helpers\ArrayHelper;
 use yii2tech\embedded\mongodb\ActiveRecord;
@@ -204,6 +205,14 @@ class Users extends ActiveRecord
         }
 
         return $list;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountry()
+    {
+        return $this->country ? Country::get($this->country)->name : '';
     }
 
 }

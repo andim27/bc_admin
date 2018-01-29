@@ -2,6 +2,7 @@
 
 namespace app\modules\business\controllers;
 
+use app\components\ApiDelovod;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api;
@@ -317,46 +318,44 @@ class TestController extends BaseController
 
 
                     $idSale = Sale::save($dataSale);
-
-
                     SaleTpGoods::save($dataSaleGoods,1,$idSale);
 
 
 
                     // создаем платеж
-//                    $dataCash = [
-//                        'date'=>$item['date'],
-//
-//                        'number'=>$item['order_id'],
-//
-//                        'baseDoc' => $idSaleOrder,
-//
-//                        'firm' => '1100400000001004',
-//                        'cashAccount' => CashAccounts::getIdForPaymentCode($item['payment_code']),
-//                        'person' => '1100100000000001',
-//                        'currency' => '1101200000001001',
-//                        'content' => 'Поступления от реализации товаров',
-//                        'contract' => $idSaleOrder,
-//                        'cashItem' => '1104300000001001',
-//                        'amountCur' => $totalAmountCur,
-//                        'operationType' => '1004000000000018',
-//
-//                        'department' => '1101900000000001',
-//                        'orderNumber'=>$item['order_id'],
-//
-//                        'rate' => '1.0000',
-//                        'author' => '1000200000001004',
-//                        'business' => '1115000000000001'
-//                    ];
-//                    header('Content-Type: text/html; charset=utf-8');
-//                    echo "<xmp>";
-//                    print_r($item['payment_code']);
-//                    print_r($dataCash);
-//                    echo "</xmp>";
-//                    CashIn::save($dataCash,1);
+                    $dataCash = [
+                        'date'=>$item['date'],
+
+                        'number'=>$item['order_id'],
+
+                        'baseDoc' => $idSaleOrder,
+
+                        'firm' => '1100400000001004',
+                        'cashAccount' => CashAccounts::getIdForPaymentCode($item['payment_code']),
+                        'person' => '1100100000000001',
+                        'currency' => '1101200000001001',
+                        'content' => 'Поступления от реализации товаров',
+                        'contract' => $idSaleOrder,
+                        'cashItem' => '1104300000001001',
+                        'amountCur' => $totalAmountCur,
+                        'operationType' => '1004000000000018',
+
+                        'department' => '1101900000000001',
+                        'orderNumber'=>$item['order_id'],
+
+                        'rate' => '1.0000',
+                        'author' => '1000200000001004',
+                        'business' => '1115000000000001'
+                    ];
+
+                    CashIn::save($dataCash,1);
 
 
-
+                    header('Content-Type: text/html; charset=utf-8');
+                    echo '<xmp>';
+                    print_r('ok');
+                    echo '</xmp>';
+                    die();
 
 
 
@@ -1225,20 +1224,9 @@ class TestController extends BaseController
     public function actionTest()
     {
         header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r(CashIn::all());
-        echo "</xmp>";
-
-        echo "<xmp>";
-        print_r(SaleOrder::all());
-        echo "</xmp>";
-        die();
-
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<xmp>";
-        print_r(CashAccounts::all());
-        echo "</xmp>";
+        echo '<xmp>';
+        print_r($listOrderForMonth = $this->getOrderForMonth());
+        echo '</xmp>';
         die();
 
 //        $model = PartsAccessories::find()->orderBy(['delovod_id'=>SORT_DESC])->all();
@@ -1248,5 +1236,29 @@ class TestController extends BaseController
 //            echo '<br>';
 //        }
     }
+
+    public function actionFix()
+    {
+        //5a5db45bdca78759c02b3552    ----> 59243668dca78731c6788832
+        //5a5db4a5dca787500a116e12    ----> 5975afe2dca78748ce5e7e02
+
+
+        $modelComplectCopy = PartsAccessories::findOne(['_id'=>new ObjectID('59243668dca78731c6788832')]);
+        $modelComplect = PartsAccessories::findOne(['_id'=>new ObjectID('5a5db45bdca78759c02b3552')]);
+        $modelComplect->composite = $modelComplectCopy->composite;
+        if($modelComplect->save()){}
+
+        $modelComplectCopy = PartsAccessories::findOne(['_id'=>new ObjectID('5975afe2dca78748ce5e7e02')]);
+        $modelComplect = PartsAccessories::findOne(['_id'=>new ObjectID('5a5db4a5dca787500a116e12')]);
+        $modelComplect->composite = $modelComplectCopy->composite;
+        if($modelComplect->save()){}
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r('ok');
+        echo '</xmp>';
+        die();
+    }
+
 
 }

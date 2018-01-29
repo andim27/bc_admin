@@ -84,10 +84,6 @@ class SaleTpGoods
         $data['params']['saveType'] = $saveType;
         $data['params']['header']['id'] = $id;
 
-        echo '<xmp>';
-        print_r($data);
-        echo '</xmp>';
-
         $response = $apiDelovod->post($data);
 
         return ApiDelovod::getIdAfterSave($response);

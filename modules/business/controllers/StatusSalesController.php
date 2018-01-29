@@ -3,6 +3,7 @@
 namespace app\modules\business\controllers;
 
 
+use app\components\GoodException;
 use app\components\SendMessageHelper;
 use app\components\THelper;
 use app\models\LogWarehouse;
@@ -22,6 +23,7 @@ use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
 use app\controllers\BaseController;
+use yii\base\ErrorException;
 use yii\helpers\ArrayHelper;
 
 class StatusSalesController extends BaseController {
@@ -986,8 +988,12 @@ class StatusSalesController extends BaseController {
         }
 
 
+
         if(!empty($request['listAdmin']) && $request['listAdmin'] != 'placeh'){
             $warehouseId = Warehouse::getIdMyWarehouse($request['listAdmin']);
+            if(empty($warehouseId)){
+                throw new GoodException('Ошибочка!!!', 'Данный пользователь не закреплен ни за одним складом!');
+            }
             $filterWarehouse = ['warehouse_id'=>new ObjectID($warehouseId)];
             $filterWhereSent = ['where_sent'=>$warehouseId];
         }

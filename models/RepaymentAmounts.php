@@ -83,6 +83,9 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
         }
 
         $infoSet = Products::getListGoodsWithKey($setId);
+
+
+
         if(!empty($infoSet)){
 
             $dateComparison = $dateComparison->__toString()/1000;
@@ -129,13 +132,29 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
 
             $dateComparison = $dateComparison->__toString()/1000;
 
-            if(!empty($model->{'prices'.$pricePr})){
-                $arrayPrice = $model->{'prices'.$pricePr};
+            $arrayPrice = $model->{'prices'.$pricePr};
+            if(!empty($arrayPrice)){
+
                 foreach ($arrayPrice as $kPrice=>$itemPrice) {
-                    $fromDate = $itemPrice['from_date']->__toString()/1000;
+                    if($kPrice==0){
+                        $fromDate = strtotime('2017-01-01');
+                    } else {
+                        $fromDate = $itemPrice['from_date']->__toString()/1000;
+                    }
+
+
                     $toDate = (!empty($arrayPrice[$kPrice+1]['from_date']) ? $arrayPrice[$kPrice+1]['from_date']->__toString()/1000 : time());
 
                     if($fromDate<=$dateComparison && $dateComparison<$toDate){
+
+//                        if($warehouse_id == '5a3a2f4ddca7877bdb50a012'){
+//                            header('Content-Type: text/html; charset=utf-8');
+//                            echo '<xmp>';
+//                            print_r($fromDate.'<='.$dateComparison.' && '.$dateComparison.'<'.$toDate);
+//                            echo '</xmp>';
+//                            die();
+//                        }
+
                         $amount = $itemPrice['price'];
                         break;
                     }
