@@ -16,9 +16,9 @@ class Pin {
     {
         $apiClient = new ApiClient('system/pin/' . $idInMarket . '&' . $qty);
 
-        $response = $apiClient->get();
+        $response = $apiClient->get(false);
 
-        return (isset($response->pin) && $response->pin) ? $response->pin : '';
+        return $response;
     }
 
     /**
