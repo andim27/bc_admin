@@ -895,7 +895,6 @@ class UserController extends BaseController
         ]);
     }
 
-
     public function actionSearchListUsers($q = null, $id = null)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
