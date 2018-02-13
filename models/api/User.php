@@ -417,8 +417,9 @@ class User
                 if (isset($object->birthday)) {
                     $user->birthday = (isset($object->birthday) && $object->birthday && !is_object($object->birthday)) ? strtotime($object->birthday) : '';
                 }
-                if (isset($object->sponsor)) {
-                    $user->sponsor = $object->sponsor;
+                if (isset($object->sponsorId)) {
+                    $user->sponsorId = $object->sponsorId;
+                    $user->sponsor = self::get($object->sponsorId);
                 }
                 if (isset($object->statistics)) {
                     $user->statistics = $object->statistics;

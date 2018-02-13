@@ -515,7 +515,7 @@ class UserController extends BaseController
             if ($sale) {
                 $user = api\User::get($sale->getAttribute('idUser'));
                 if ($user) {
-                    $sponsor = api\User::get($user->sponsor->_id);
+                    $sponsor = api\User::get($user->sponsor->id);
                     if ($sponsor) {
                         if ($sponsor->moneys - $sale->getAttribute('bonusMoney') >= 0) {
                             $result = api\Sale::cancel($id);
