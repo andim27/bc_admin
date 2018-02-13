@@ -56,6 +56,12 @@ Class Menu
                         'url' => ['/business/career-history'],
                         'action' => 'index',
                     ],
+                    [
+                        'key'   =>  'sidebar_wellness_club_members',
+                        'label' => THelper::t('sidebar_wellness_club_members'),
+                        'url' => ['/business/wellness-club-members'],
+                        'action' => 'index',
+                    ],
 
                 ]
             ],

@@ -8,7 +8,7 @@
 namespace yii\mongodb;
 
 use MongoDB\BSON\ObjectID;
-use yii\base\Object;
+use yii\base\BaseObject;
 use Yii;
 
 /**
@@ -34,7 +34,7 @@ use Yii;
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 2.0
  */
-class Collection extends Object
+class Collection extends BaseObject
 {
     /**
      * @var Database MongoDB database instance.
@@ -350,9 +350,11 @@ class Collection extends Object
 
     /**
      * Performs aggregation using Mongo Aggregation Framework.
+     * In case 'cursor' option is specified [[\MongoDB\Driver\Cursor]] instance is returned,
+     * otherwise - an array of aggregation results.
      * @param array $pipelines list of pipeline operators.
      * @param array $options optional parameters.
-     * @return array the result of the aggregation.
+     * @return array|\MongoDB\Driver\Cursor the result of the aggregation.
      * @throws Exception on failure.
      */
     public function aggregate($pipelines, $options = [])

@@ -2,8 +2,10 @@
 
 return [
     'adminEmail' => 'admin@example.com',
-    'apiAddress' => 'http://api.businessprocess.biz/api/',
-//    'apiAddress' => 'http://172.17.0.27:3000/api/',
+ //   'apiAddress' => 'http://api.businessprocess.biz/api/',
+    //'apiAddress' => 'http://192.168.0.103:10000/api/', // Poltava
+    //'apiAddress' => 'http://192.168.1.121:10000/api/', // Kharkiv home
+    'apiAddress' => 'http://192.168.2.57:10000/api/', // Work
     'defaultCountry' => 'RU',
     'useCache' => false,
     'certificate' => [

@@ -8,4 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     '2cffec82183ee1cea088009cef9a6fc3' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
     '2c102faa651ef8ea5874edb585946bce' => $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
+    'a7cee959d5f14eb7484e7f8e7182e03d' => $vendorDir . '/geoip/geoip/src/geoip.inc',
+    '8cf74b4cf02ad0591c257dcfb7edbc8d' => $vendorDir . '/geoip/geoip/src/geoipcity.inc',
+    'd114bd5194e69687495c9150ff6be780' => $vendorDir . '/geoip/geoip/src/timezone.php',
 );

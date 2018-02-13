@@ -1,11 +1,12 @@
 <?php
 
 $params = require(__DIR__ . '/params.php');
-
+//date_default_timezone_set('Europe/Moscow');
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'timeZone' => 'Europe/Moscow',
     'modules' => [
         'settings' => [
             'class' => 'app\modules\settings\settings',

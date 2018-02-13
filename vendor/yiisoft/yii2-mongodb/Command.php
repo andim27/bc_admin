@@ -16,7 +16,7 @@ use MongoDB\Driver\WriteConcern;
 use MongoDB\Driver\WriteResult;
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\base\Object;
+use yii\base\BaseObject;
 
 /**
  * Command represents MongoDB statement such as command or query.
@@ -58,7 +58,7 @@ use yii\base\Object;
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 2.1
  */
-class Command extends Object
+class Command extends BaseObject
 {
     /**
      * @var Connection the MongoDB connection that this command is associated with.
@@ -182,9 +182,8 @@ class Command extends Object
             $this->beginProfile($token, __METHOD__);
 
             $this->db->open();
-            $server = $this->db->manager->selectServer($this->getReadPreference());
             $mongoCommand = new \MongoDB\Driver\Command($this->document);
-            $cursor = $server->executeCommand($databaseName, $mongoCommand);
+            $cursor = $this->db->manager->executeCommand($databaseName, $mongoCommand, $this->getReadPreference());
             $cursor->setTypeMap($this->db->typeMap);
 
             $this->endProfile($token, __METHOD__);
@@ -237,8 +236,7 @@ class Command extends Object
             }
 
             $this->db->open();
-            $server = $this->db->manager->selectServer($this->getReadPreference());
-            $writeResult = $server->executeBulkWrite($databaseName . '.' . $collectionName, $batch, $this->getWriteConcern());
+            $writeResult = $this->db->manager->executeBulkWrite($databaseName . '.' . $collectionName, $batch, $this->getWriteConcern());
 
             $this->endProfile($token, __METHOD__);
         } catch (RuntimeException $e) {
@@ -285,8 +283,7 @@ class Command extends Object
 
             $query = new \MongoDB\Driver\Query($this->document, $options);
             $this->db->open();
-            $server = $this->db->manager->selectServer($this->getReadPreference());
-            $cursor = $server->executeQuery($databaseName . '.' . $collectionName, $query);
+            $cursor = $this->db->manager->executeQuery($databaseName . '.' . $collectionName, $query, $this->getReadPreference());
             $cursor->setTypeMap($this->db->typeMap);
 
             $this->endProfile($token, __METHOD__);
@@ -600,14 +597,14 @@ class Command extends Object
         }
 
         if (array_key_exists('limit', $options)) {
-            if ($options['limit'] === null) {
+            if ($options['limit'] === null || !ctype_digit((string) $options['limit'])) {
                 unset($options['limit']);
             } else {
                 $options['limit'] = (int)$options['limit'];
             }
         }
         if (array_key_exists('skip', $options)) {
-            if ($options['skip'] === null) {
+            if ($options['skip'] === null || !ctype_digit((string) $options['skip'])) {
                 unset($options['skip']);
             } else {
                 $options['skip'] = (int)$options['skip'];
@@ -721,16 +718,21 @@ class Command extends Object
 
     /**
      * Performs aggregation using MongoDB Aggregation Framework.
+     * In case 'cursor' option is specified [[\MongoDB\Driver\Cursor]] instance is returned,
+     * otherwise - an array of aggregation results.
      * @param string $collectionName collection name
      * @param array $pipelines list of pipeline operators.
      * @param array $options optional parameters.
-     * @return array aggregation result.
+     * @return array|\MongoDB\Driver\Cursor aggregation result.
      */
     public function aggregate($collectionName, $pipelines, $options = [])
     {
         $this->document = $this->db->getQueryBuilder()->aggregate($collectionName, $pipelines, $options);
         $cursor = $this->execute();
 
+        if (!empty($options['cursor'])) {
+            return $cursor;
+        }
         $result = current($cursor->toArray());
 
         return $result['result'];

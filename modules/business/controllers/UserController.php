@@ -92,12 +92,12 @@ class UserController extends BaseController
                 ]);
             } else {
                 $columns = [
-                    'accountId', 'username', 'created', 'structure_status', 'full_name',
+                    'email', 'username', 'created', 'phoneNumber', 'full_name',
                     'country_city', 'sponsor_username', 'sponsor_full_name', 'rank', 'action'
                 ];
 
                 $filterColumns = [
-                    'accountId', 'username', 'created', 'structure_status', 'firstName',
+                    'email', 'username', 'created', 'phoneNumber', 'firstName',
                     'city', 'sponsor', 'sponsor', 'rank', 'action'
                 ];
 
@@ -116,11 +116,12 @@ class UserController extends BaseController
 
                     // @todo filter
                     $users->andFilterWhere(['or',
-                        ['=', 'accountId', (int)$search],
+                        ['=', 'email', $search],
                         ['like', 'username', $search],
                         ['like', 'firstName', explode(' ', $search)[0]],
                         ['like', 'secondName', $search],
                         ['like', 'created', $search],
+                        ['like', 'phoneNumber', $search],
                         ['=', 'rank', getRank($search)],
                         ['like', 'country', $search],
                         ['like', 'city', $search],
@@ -147,10 +148,10 @@ class UserController extends BaseController
                     foreach (api\User::convert($users->all()) as $key => $user){
                         $nestedData = [];
 
-                        $nestedData[$columns[0]] = $user->accountId;
+                        $nestedData[$columns[0]] = $user->email;
                         $nestedData[$columns[1]] = $user->username;
                         $nestedData[$columns[2]] = gmdate('d.m.Y', $user->created);
-                        $nestedData[$columns[3]] = $user->isDelete ? THelper::t('deleted') : THelper::t('in_structure');
+                        $nestedData[$columns[3]] = $user->phoneNumber;
                         $nestedData[$columns[4]] = $user->firstName . ' ' . $user->secondName;
                         $nestedData[$columns[5]] = $user->getCountryCityAsString();
                         $nestedData[$columns[6]] = !empty($user->sponsor['username']) ? $user->sponsor['username'] : '';

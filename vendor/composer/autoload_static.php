@@ -9,6 +9,9 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
     public static $files = array (
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
+        'a7cee959d5f14eb7484e7f8e7182e03d' => __DIR__ . '/..' . '/geoip/geoip/src/geoip.inc',
+        '8cf74b4cf02ad0591c257dcfb7edbc8d' => __DIR__ . '/..' . '/geoip/geoip/src/geoipcity.inc',
+        'd114bd5194e69687495c9150ff6be780' => __DIR__ . '/..' . '/geoip/geoip/src/timezone.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -45,6 +48,7 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
             'kartik\\range\\' => 13,
             'kartik\\plugins\\fileinput\\' => 25,
             'kartik\\plugins\\depdrop\\' => 23,
+            'kartik\\helpers\\' => 15,
             'kartik\\growl\\' => 13,
             'kartik\\form\\' => 12,
             'kartik\\file\\' => 12,
@@ -63,11 +67,20 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
         ),
         'b' => 
         array (
+            'bupy7\\cropbox\\tests\\' => 20,
             'bupy7\\cropbox\\' => 14,
+        ),
+        'G' => 
+        array (
+            'Gomoob\\' => 7,
         ),
         'F' => 
         array (
             'Faker\\' => 6,
+        ),
+        'E' => 
+        array (
+            'Egulias\\EmailValidator\\' => 23,
         ),
     );
 
@@ -172,6 +185,10 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
         array (
             0 => __DIR__ . '/..' . '/kartik-v/dependent-dropdown',
         ),
+        'kartik\\helpers\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-helpers',
+        ),
         'kartik\\growl\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-growl',
@@ -220,13 +237,25 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
         array (
             0 => __DIR__ . '/..' . '/cebe/markdown',
         ),
+        'bupy7\\cropbox\\tests\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/bupy7/yii2-widget-cropbox/tests',
+        ),
         'bupy7\\cropbox\\' => 
         array (
-            0 => __DIR__ . '/..' . '/bupy7/yii2-widget-cropbox',
+            0 => __DIR__ . '/..' . '/bupy7/yii2-widget-cropbox/src',
+        ),
+        'Gomoob\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gomoob/php-pushwoosh/src/main/php/Gomoob',
         ),
         'Faker\\' => 
         array (
             0 => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker',
+        ),
+        'Egulias\\EmailValidator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator',
         ),
     );
 
@@ -254,6 +283,10 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
         ),
         'D' => 
         array (
+            'Doctrine\\Common\\Lexer\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/lexer/lib',
+            ),
             'Diff' => 
             array (
                 0 => __DIR__ . '/..' . '/phpspec/php-diff/lib',

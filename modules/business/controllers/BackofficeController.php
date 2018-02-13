@@ -173,6 +173,31 @@ class BackofficeController extends BaseController
         }
     }
 
+    public function actionPromotionRemove()
+    {
+        $request = Yii::$app->request;
+        $requestLanguage = $request->get('l');
+        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
+
+        if ($id = Yii::$app->request->get('id')) {
+            $promotions = api\Promotion::get($id);
+
+            if ($promotions) {
+                $result = api\Promotion::remove([
+                    'id' => $promotions->id
+                ]);
+
+                if ($result) {
+                    Yii::$app->session->setFlash('success', 'backoffice_promotions_remove_success');
+                } else {
+                    Yii::$app->session->setFlash('danger', 'backoffice_promotions_remove_error');
+                }
+            }
+        }
+
+        $this->redirect('/' . Yii::$app->language . '/business/backoffice/promotion/?l=' . $language);
+    }
+
     public function actionConference()
     {
         $request = Yii::$app->request;

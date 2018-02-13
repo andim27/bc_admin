@@ -25,7 +25,9 @@
         msgNo: 'Nu',
         msgNoFilesSelected: '',
         msgCancelled: 'Anulat',
+        msgPlaceholder: 'Select {files}...',
         msgZoomModalHeading: 'Previzualizare detaliată',
+        msgFileRequired: 'You must select a file to upload.',
         msgSizeTooSmall: 'File "{name}" (<b>{size} KB</b>) is too small and must be larger than <b>{minSize} KB</b>.',
         msgSizeTooLarge: 'Fișierul "{name}" (<b>{size} KB</b>) depășește limita maximă de încărcare de <b>{maxSize} KB</b>.',
         msgFilesTooLess: 'Trebuie să selectezi cel puțin <b>{n}</b> {files} pentru a încărca.',
@@ -50,7 +52,10 @@
         },
         msgUploadAborted: 'Fișierul Încărcarea a fost întrerupt',
         msgUploadThreshold: 'Processing...',
+        msgUploadBegin: 'Initializing...',
+        msgUploadEnd: 'Done',
         msgUploadEmpty: 'No valid data available for upload.',
+        msgUploadError: 'Error',
         msgValidationError: 'Eroare de validare',
         msgLoading: 'Se încarcă fișierul {index} din {files} &hellip;',
         msgProgress: 'Se încarcă fișierul {index} din {files} - {name} - {percent}% încărcat.',
@@ -66,7 +71,7 @@
         msgAjaxProgressError: '{operation} failed',
         ajaxOperations: {
             deleteThumb: 'file delete',
-            uploadThumb: 'single file upload',
+            uploadThumb: 'file upload',
             uploadBatch: 'batch file upload',
             uploadExtra: 'form data upload'
         },
@@ -75,6 +80,8 @@
         fileActionSettings: {
             removeTitle: 'Scoateți fișier',
             uploadTitle: 'Incarca fisier',
+            uploadRetryTitle: 'Retry upload',
+            downloadTitle: 'Download file',
             zoomTitle: 'Vezi detalii',
             dragTitle: 'Move / Rearrange',
             indicatorNewTitle: 'Nu a încărcat încă',

@@ -31,6 +31,7 @@ return array(
     'kartik\\range\\' => array($vendorDir . '/kartik-v/yii2-widget-rangeinput'),
     'kartik\\plugins\\fileinput\\' => array($vendorDir . '/kartik-v/bootstrap-fileinput'),
     'kartik\\plugins\\depdrop\\' => array($vendorDir . '/kartik-v/dependent-dropdown'),
+    'kartik\\helpers\\' => array($vendorDir . '/kartik-v/yii2-helpers'),
     'kartik\\growl\\' => array($vendorDir . '/kartik-v/yii2-widget-growl'),
     'kartik\\form\\' => array($vendorDir . '/kartik-v/yii2-widget-activeform'),
     'kartik\\file\\' => array($vendorDir . '/kartik-v/yii2-widget-fileinput'),
@@ -43,6 +44,9 @@ return array(
     'kartik\\alert\\' => array($vendorDir . '/kartik-v/yii2-widget-alert'),
     'kartik\\affix\\' => array($vendorDir . '/kartik-v/yii2-widget-affix'),
     'cebe\\markdown\\' => array($vendorDir . '/cebe/markdown'),
-    'bupy7\\cropbox\\' => array($vendorDir . '/bupy7/yii2-widget-cropbox'),
+    'bupy7\\cropbox\\tests\\' => array($vendorDir . '/bupy7/yii2-widget-cropbox/tests'),
+    'bupy7\\cropbox\\' => array($vendorDir . '/bupy7/yii2-widget-cropbox/src'),
+    'Gomoob\\' => array($vendorDir . '/gomoob/php-pushwoosh/src/main/php/Gomoob'),
     'Faker\\' => array($vendorDir . '/fzaninotto/faker/src/Faker'),
+    'Egulias\\EmailValidator\\' => array($vendorDir . '/egulias/email-validator/EmailValidator'),
 );

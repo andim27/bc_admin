@@ -27,7 +27,9 @@
         "moonlandsoft/yii2-phpexcel": "*",
         "yiisoft/yii2-mongodb": "*",
         "yii2tech/embedded": "^1.0",
-        "kartik-v/yii2-widgets": "*"
+        "gomoob/php-pushwoosh": "~1.0",
+        "kartik-v/yii2-widgets": "*",
+        "geoip/geoip": "~1.16"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
