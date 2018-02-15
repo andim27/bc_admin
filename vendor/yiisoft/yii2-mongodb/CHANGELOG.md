@@ -1,10 +1,17 @@
 Yii Framework 2 mongodb extension Change Log
 ============================================
 
-2.1.6 under development
+2.1.7 under development
+-----------------------
+
+- no changes in this release.
+
+
+2.1.6 February 13, 2018
 -----------------------
 
 - Bug #241: Fixed `yii\mongodb\Command::aggregate()` without 'cursor' option produces error on MongoDB Server 3.6 (Lisio, klimov-paul)
+- Bug #247: Fixed `yii\mongodb\Collection::dropIndex()` unable to drop index specified with sort via index plugin (klimov-paul)
 
 
 2.1.5 November 03, 2017
