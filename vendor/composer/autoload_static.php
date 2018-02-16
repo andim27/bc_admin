@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
+class ComposerStaticInit8b755de8a53e041990219f84b1104893
 {
     public static $files = array (
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
@@ -66,6 +66,10 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
         array (
             'bupy7\\cropbox\\tests\\' => 20,
             'bupy7\\cropbox\\' => 14,
+        ),
+        'G' => 
+        array (
+            'Gomoob\\' => 7,
         ),
         'F' => 
         array (
@@ -238,6 +242,10 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
         array (
             0 => __DIR__ . '/..' . '/bupy7/yii2-widget-cropbox/src',
         ),
+        'Gomoob\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gomoob/php-pushwoosh/src/main/php/Gomoob',
+        ),
         'Faker\\' => 
         array (
             0 => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker',
@@ -286,9 +294,9 @@ class ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit0c74ba3f25302d533d05d704ab0f1dcb::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit8b755de8a53e041990219f84b1104893::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit8b755de8a53e041990219f84b1104893::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit8b755de8a53e041990219f84b1104893::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

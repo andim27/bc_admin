@@ -4,6 +4,7 @@ return [
     'adminEmail' => 'admin@example.com',
     'apiAddress' => 'http://api:81/api/',
 //    'apiAddress' => 'gnc_api/api/',
+
     'defaultCountry' => 'RU',
     'useCache' => false,
     'certificate' => [
@@ -26,5 +27,8 @@ return [
             'font_size' => 50
         ]
     ],
+    'pushwooshApp' => 'C25BD-C01C6',
+    'pushwooshAuth' => 'fP9UuXnitFpKzyNC0wra8ijQ1q0CpASMAGT4uwQYOqTqQWUANzT0CeARhZnPs5JYJEMtJizHXP1eWMNi6SiB',
+
     'recommenderSearchUrl' => '//www.google.com/search?q=%D0%BF%D0%B0%D1%80%D1%82%D0%BD%D0%B5%D1%80+Business+Process+Technologies&oq=%D0%BF%D0%B0%D1%80%D1%82%D0%BD%D0%B5%D1%80+Business+Process+Technologies&sourceid=chrome&ie=UTF-8'
 ];

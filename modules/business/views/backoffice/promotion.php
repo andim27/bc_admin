@@ -54,10 +54,10 @@ use yii\helpers\Html;
                         <?= $p->author ?>
                     </td>
                     <td>
-                        <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/backoffice/promotion/edit'], ['style' => 'display:none;', 'class' => 'pencil', 'data-toggle'=>'ajaxModal']) ?>
+                        <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/backoffice/promotion-edit', 'id' => $p->id, 'l' => $p->lang], ['style' => 'display:none;', 'class' => 'pencil', 'data-toggle'=>'ajaxModal']) ?>
                     </td>
                     <td>
-                        <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/backoffice/promotion/remove'], ['style' => 'display:none;', 'class' => 'pencil', 'data-toggle'=>'ajaxModal']) ?>
+                        <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/backoffice/promotion-remove', 'id' => $p->id, 'l' => $p->lang], ['style' => 'display:none;', 'class' => 'pencil', 'data-toggle'=>'ajaxModal']) ?>
                     </td>
                 </tr>
             <?php } ?>

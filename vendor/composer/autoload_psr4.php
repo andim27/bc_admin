@@ -46,6 +46,7 @@ return array(
     'cebe\\markdown\\' => array($vendorDir . '/cebe/markdown'),
     'bupy7\\cropbox\\tests\\' => array($vendorDir . '/bupy7/yii2-widget-cropbox/tests'),
     'bupy7\\cropbox\\' => array($vendorDir . '/bupy7/yii2-widget-cropbox/src'),
+    'Gomoob\\' => array($vendorDir . '/gomoob/php-pushwoosh/src/main/php/Gomoob'),
     'Faker\\' => array($vendorDir . '/fzaninotto/faker/src/Faker'),
     'Egulias\\EmailValidator\\' => array($vendorDir . '/egulias/email-validator/EmailValidator'),
 );

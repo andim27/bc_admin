@@ -11,7 +11,7 @@
             <thead>
                 <tr>
                     <th>
-                        <?=THelper::t('user_account_id')?>
+                        <?=THelper::t('user_email')?>
                     </th>
                     <th>
                         <?=THelper::t('user_login')?>
@@ -20,7 +20,7 @@
                         <?=THelper::t('user_created')?>
                     </th>
                     <th>
-                        <?=THelper::t('user_deleted')?>
+                        <?=THelper::t('user_phone')?>
                     </th>
                     <th>
                         <?=THelper::t('user_fname_sname')?>
@@ -61,10 +61,11 @@
             "url": '/' + LANG + '/business/user'
         },
         "columns": [
-            {"data": "accountId"},
+
+            {"data": "email"},
             {"data": "username"},
             {"data": "created"},
-            {"data": "structure_status"},
+            {"data": "phoneNumber"},
             {"data": "full_name"},
             {"data": "country_city"},
             {"data": "sponsor_username"},

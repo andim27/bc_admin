@@ -98,6 +98,11 @@
                             <?php } else { ?>
                                 <?= THelper::t('personal_award_in_the_personal_account')?>: <span class="text-color-green"><?= THelper::t('charge') ?></span><br/>
                             <?php } ?>
+
+                            <?php if ($product) { ?>
+                                <?= Thelper::t('business_product'); ?>: <span><?= $product->productName ?></span>
+                            <?php } ?>
+
                         </div>
                     </article>
                 </section>
@@ -152,31 +157,37 @@
             <ul class="list-group no-radius">
                 <li class="list-group-item">
                     <span class="pull-right"><?= isset($user->statistics->personalIncome) ? $user->statistics->personalIncome : 0 ?></span>
+
                     <span class="label bg-primary">1</span>
                     <?=THelper::t('personal_award')?>
                 </li>
                 <li class="list-group-item">
                     <span class="pull-right"><?= isset($user->statistics->structIncome) ? $user->statistics->structIncome : 0 ?></span>
+
                     <span class="label bg-dark">2</span>
                     <?=THelper::t('team_award')?>
                 </li>
                 <li class="list-group-item">
                     <span class="pull-right"><?= isset($user->statistics->mentorBonus) ? $user->statistics->mentorBonus : 0 ?></span>
+
                     <span class="label bg-77382E">3</span>
                     <?=THelper::t('mentor_bonus')?>
                 </li>
                 <li class="list-group-item">
                     <span class="pull-right"><?= isset($user->statistics->careerBonus) ? $user->statistics->careerBonus : 0 ?></span>
+
                     <span class="label bg-009A8C">4</span>
                     <?=THelper::t('career_bonus')?>
                 </li>
                 <li class="list-group-item">
                     <span class="pull-right"><?= isset($user->statistics->executiveBonus) ? $user->statistics->executiveBonus : 0 ?></span>
+
                     <span class="label bg-AAA100">5</span>
                     <?=THelper::t('executive_bonus')?>
                 </li>
                 <li class="list-group-item">
                     <span class="pull-right"><?= isset($user->statistics->worldBonus) ? $user->statistics->worldBonus : 0 ?></span>
+
                     <span class="label bg-AA0900">6</span>
                     <?=THelper::t('world_bonus')?>
                 </li>
@@ -186,11 +197,13 @@
             <li class="list-group-item">
                 <i class="fa fa-bookmark m-r-xs" aria-hidden="true"></i>
                 <span class="label label-danger label-pill pull-right"><?= isset($user->statistics->stocks) ? $user->statistics->stocks : 0 ?></span>
+
                 <?= THelper::t('shares_vipvip') ?>
             </li>
             <li class="list-group-item">
                 <i class="fa fa-bookmark m-r-xs" aria-hidden="true"></i>
                 <span class="label label-success label-pill pull-right"><?= isset($user->statistics->dividendsVIPVIP) ? $user->statistics->dividendsVIPVIP : 0 ?></span>
+
                 <?= THelper::t('dividends_vipvip') ?>
             </li>
         </ul>
@@ -223,12 +236,14 @@
                         <div class="col-xs-6 bg-664CC1">
                             <div class="padder-v">
                                 <span class="m-b-xs h3 block text-white"><?= isset($user->statistics->autoBonus) ? $user->statistics->autoBonus : 0 ?></span>
+
                                 <small class="text-white"><?= strip_tags($autoBonus) ?></small>
                             </div>
                         </div>
                         <div class="col-xs-6 bg-593FB5">
                             <div class="padder-v">
                                 <span class="m-b-xs h3 block text-white"><?= isset($user->statistics->propertyBonus) ? $user->statistics->propertyBonus : 0 ?></span>
+
                                 <small class="text-white"><?= strip_tags($propertyBonus) ?></small>
                             </div>
                         </div>

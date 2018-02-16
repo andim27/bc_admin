@@ -6,6 +6,7 @@ $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'timeZone' => 'Europe/Moscow',
     'modules' => [
         'settings' => [
             'class' => 'app\modules\settings\settings',
@@ -83,7 +84,6 @@ $config = [
         'mongodb' => [
             'class' => '\yii\mongodb\Connection',
             'dsn' => 'mongodb://mongo/gnc',
-//            'dsn' => 'mongodb://mongo/gnc',
         ],
 
         'urlManager' => [

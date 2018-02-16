@@ -8,7 +8,6 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'app\console\controllers',
-
     'components' => [
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -41,3 +40,4 @@ if (YII_ENV_DEV) {
 }
 
 return $config;
+

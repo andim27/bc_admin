@@ -19,6 +19,7 @@ class BaseController extends Controller
 
         if ($userFromSession) {
             $this->user = api\User::get($userFromSession->accountId);
+
             if (! $this->user) {
                 return $this->goHome();
             }

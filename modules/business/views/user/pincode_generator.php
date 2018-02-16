@@ -1,4 +1,5 @@
 <?php
+
 use app\components\THelper;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
@@ -11,6 +12,7 @@ use kartik\widgets\Select2;
 <div class="row">
     <section class="panel panel-default">
         <?php $form = ActiveForm::begin(['id' => $model->formName(), 'enableAjaxValidation' => true]); ?>
+
         <div class="col-md-12">
             <?= $form->field($model, 'pin')->label(THelper::t('pin')) ?>
         </div>
@@ -69,6 +71,7 @@ use kartik\widgets\Select2;
         <div class="col-md-12 text-center">
             <?= Html::submitButton(THelper::t('apply'), array('class' => 'btn btn-s-md btn-success', 'style' => 'margin-bottom:15px')); ?>
         </div>
+
 
 
         <?php ActiveForm::end(); ?>
