@@ -26,3 +26,7 @@ phases:
       - sh post-admin.sh
 artifacts:
     files: imagedefinitions.json
+
+cache:
+  paths:
+    - 'vendor/**/*'
