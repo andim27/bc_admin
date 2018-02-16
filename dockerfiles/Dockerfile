@@ -2,7 +2,7 @@ FROM pitchanon/docker-apache-php:php-7.0
 # Install base packages
 RUN export DEBIAN_FRONTEND="noninteractive" && \
     apt-get update && \
-    apt-get -yq --force-yes upgrade && \
+#    apt-get -yq --force-yes upgrade && \
     apt-get -yq --force-yes install --no-install-recommends \
         apache2 \
         libapache2-mod-php7.0 \
