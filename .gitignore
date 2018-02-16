@@ -35,4 +35,4 @@ phpunit.phar
 /.vagrant
 
 config/params.php
-
+config/web.php
