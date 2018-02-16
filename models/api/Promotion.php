@@ -19,6 +19,23 @@ class Promotion {
     public $title;
 
     /**
+     * Returns news by ID
+     *
+     * @param $id
+     * @return News
+     */
+    public static function get($id)
+    {
+        $apiClient = new ApiClient('promotion/' . $id);
+
+        $response = $apiClient->get();
+
+        $result = self::_getResults($response);
+
+        return $result ? current($result) : false;
+    }
+
+    /**
      * Returns all promotions
      *
      * @param string $language
@@ -67,6 +84,23 @@ class Promotion {
         $result = self::_getResults($response);
 
         return current($result);
+    }
+
+    /**
+     * Remove promotions
+     *
+     * @param $data
+     * @return mixed
+     */
+    public static function remove($data)
+    {
+        //@todo API method
+
+        $apiClient = new ApiClient('promotions');
+
+        $response = $apiClient->delete($data, false);
+
+        return $response == 'OK';
     }
 
     /**
@@ -131,7 +165,7 @@ class Promotion {
      */
     public static function getForAdmin($language)
     {
-        $apiClient = new ApiClient('informationMaterials/promotions/admin/' . $language);
+        $apiClient = new ApiClient('promotions/admin/' . urlencode($language));
 
         $response = $apiClient->get();
 

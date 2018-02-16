@@ -62,10 +62,10 @@ class User
     public $isDelete;
 
     /**
-     * Return user
+     * Return User
      *
      * @param $param
-     * @return User
+     * @return bool|mixed
      */
     public static function get($param)
     {
@@ -333,8 +333,10 @@ class User
                 if (isset($object->settings->charityPercent)) {
                     $user->charityPercent = $object->settings->charityPercent;
                 }
+
                 $user->firstPurchase      = (isset($object->firstPurchase) && $object->firstPurchase && !is_object($object->firstPurchase)) ? strtotime($object->firstPurchase) : '';
                 $user->created            = (isset($object->created) && $object->created && !is_object($object->created)) ? strtotime($object->created) : '';
+
                 if (isset($object->phoneNumber)) {
                     $user->phoneNumber = $object->phoneNumber;
                 }
@@ -350,7 +352,9 @@ class User
                 if (isset($object->status)) {
                     $user->status = $object->status;
                 }
+
                 $user->expirationDateBS   = (isset($object->expirationDateBS) && $object->expirationDateBS && !is_object($object->expirationDateBS)) ? strtotime($object->expirationDateBS) : '';
+
                 if (isset($object->bs)) {
                     $user->bs = boolval($object->bs);
                 }
@@ -451,6 +455,7 @@ class User
                     $user->warehouseName = $object->warehouseName;
                 } else {
                     $user->warehouseName = [];
+
                 }
 
                 if (isset($object->cards)) {

@@ -34,6 +34,7 @@ class Image {
             $result = ($response && !isset($response->error)) ? self::_getResults($response) : false;
         } else {
             $result = ($response && !isset($response->error)) ? ($response->url ? $response->url : ($response->img ? $response->img : '')) : false;
+
         }
 
         return $result;

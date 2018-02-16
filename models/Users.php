@@ -78,6 +78,7 @@ class Users extends ActiveRecord
         return (!empty($model->rules) ? $model->rules : '');
     }
     
+
     public static function checkRule($rule,$key)
     {
         $fl = false;
@@ -89,7 +90,6 @@ class Users extends ActiveRecord
         }
             
         return $fl;
-            
     }
 
     public static function getAllAdmin(){

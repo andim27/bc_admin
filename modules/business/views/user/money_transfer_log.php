@@ -35,6 +35,7 @@
                 </tr>
                 </thead>
                 <tbody>
+
                 <?php foreach ($moneyTransfers as $moneyTransfer) {
                     $userFrom = $moneyTransfer->getUserFrom()->one();
                     $userTo = $moneyTransfer->getUserTo()->one(); ?>

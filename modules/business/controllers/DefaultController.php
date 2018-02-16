@@ -385,10 +385,12 @@ class DefaultController extends BaseController
             ]
         ])->all();
 
+
         /**
          * @todo Очень много запросов к апи, нужно переделать
          */
 /*        if(!empty($model)){
+
             foreach ($model as $item) {
                 $infoPin = api\Pin::checkPin($item->pin);
 
@@ -398,7 +400,9 @@ class DefaultController extends BaseController
                 }
 
             }
-        }*/
+
+       }*/
+
 
         // проверка что б приход деньгами не был отрицательным,
         // возникает это при условии что пин коды
@@ -466,6 +470,7 @@ class DefaultController extends BaseController
                 'confirmed' => 0
             ])
             ->sum('amount');
+
 
         $model = (new \yii\mongodb\Query())
             ->select(['amount','dateCreate', 'forWhat', 'idTo'])
@@ -787,6 +792,7 @@ class DefaultController extends BaseController
             ->sum('amount');
 
         $statisticInfo['refill'] = $entering_money - $entering_money_caneletion;
+
 
         $i = 0;
         for ($iDate=$statisticInfo['request']['from'];$iDate<=$statisticInfo['request']['to'];$iDate=date('Y-m',strtotime('+1 month', strtotime($iDate)))) {

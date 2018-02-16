@@ -19,7 +19,9 @@ use app\models\api;
  */
 class THelper
 {
-    const CACHE_TIME = 1200;
+
+    const CACHE_TIME = 3600;
+
 
     /**
      * @param $key
@@ -30,27 +32,49 @@ class THelper
     {
         $language = $language ?: Yii::$app->language;
 
-        $stringValue = Yii::$app->cache->get(md5($language . '_' . $key));
 
-        if (!$stringValue) {
-            $all = api\Lang::all($language, true);
+        if (Yii::$app->params['useCache']) {
+            $stringValue = self::getCachedStringValue($language, $key);
+        } else {
+            $stringValue = api\Lang::get($language, $key);
+        }
 
-            foreach ($all as $k => $value) {
-                $cacheKey = md5($language . '_' . $k);
-                Yii::$app->cache->set($cacheKey, $value, self::CACHE_TIME);
-                if ($k == $key) {
-                    $stringValue = $value;
-                }
-            }
+        if (empty($stringValue)) {
+            $stringValue = api\Lang::add($language, $key, $key, '', '');
 
-            if (!$stringValue) {
-                $stringValue = api\Lang::add($language, $key, $key, '', '');
-
-                $stringValue = $stringValue ? $stringValue->stringValue : $key;
-            }
+            $stringValue = $stringValue ? $stringValue->stringValue : $key;
         }
 
         return $stringValue ? $stringValue : $key;
+    }
+
+    /**
+     * @param $language
+     * @param $key
+     */
+    public static function clearCache($language, $key)
+    {
+        $cacheKey = md5($language . '_' . $key);
+
+        Yii::$app->cache->delete($cacheKey);
+    }
+
+    /**
+     * @param $language
+     * @param $key
+     * @return mixed|string
+     */
+    private static function getCachedStringValue($language, $key)
+    {
+        $cacheKey = md5($language . '_' . $key);
+        $stringValue = Yii::$app->cache->get($cacheKey);
+
+        if (! $stringValue) {
+            $stringValue = api\Lang::get($language, $key);
+            Yii::$app->cache->set($cacheKey, $stringValue, 3 * self::CACHE_TIME);
+        }
+
+        return $stringValue;
     }
 
     /**

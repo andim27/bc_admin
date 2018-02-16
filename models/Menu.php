@@ -56,7 +56,12 @@ Class Menu
                         'url' => ['/business/career-history'],
                         'action' => 'index',
                     ],
-
+                    [
+                        'key'   =>  'sidebar_wellness_club_members',
+                        'label' => THelper::t('sidebar_wellness_club_members'),
+                        'url' => ['/business/wellness-club-members'],
+                        'action' => 'index',
+                    ],
                 ]
             ],
             [
@@ -324,6 +329,12 @@ Class Menu
                 'url' => '#',
                 'controller' => 'status-sales',
                 'items' => [
+                    [
+                        'key'   =>  'vipcoin_certificates',
+                        'label' => THelper::t('sidebar_vipcoin_certificates'),
+                        'url' => ['status-sales/vipcoin-certificates'],
+                        'action' => 'vipcoin-certificates',
+                    ],
                     [
                         'key'   =>  'sidebar_order',
                         'label' => THelper::t('sidebar_order'),
