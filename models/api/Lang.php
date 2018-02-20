@@ -127,9 +127,7 @@ class Lang
                 $lang->countryId           = $object->countryId;
                 $lang->stringId            = $object->stringId;
                 $lang->comment             = $object->comment;
-
                 $lang->page                = isset($object->page) ? $object->page : '';
-
                 $lang->stringValue         = $object->stringValue;
                 $lang->originalStringValue = $object->originalStringValue;
 
@@ -147,7 +145,6 @@ class Lang
     public static function validateLatin($string) {
         return preg_match('/^[\w\d\s.,-]*$/', $string) && !preg_match('/\s/', $string);
     }
-
 
     /**
      * @param $language

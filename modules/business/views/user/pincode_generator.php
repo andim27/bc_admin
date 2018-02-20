@@ -73,7 +73,6 @@ use kartik\widgets\Select2;
         </div>
 
 
-
         <?php ActiveForm::end(); ?>
 
     </section>

@@ -94,8 +94,6 @@ class Doc {
                  * @todo Переделать, слишком много запросов к апи
                  */
 //                $doc->user       = api\User::get($object->idUser);
-
-
                 $result[] = $doc;
             }
         }

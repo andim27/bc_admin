@@ -19,23 +19,6 @@ class Promotion {
     public $title;
 
     /**
-     * Returns news by ID
-     *
-     * @param $id
-     * @return News
-     */
-    public static function get($id)
-    {
-        $apiClient = new ApiClient('promotion/' . $id);
-
-        $response = $apiClient->get();
-
-        $result = self::_getResults($response);
-
-        return $result ? current($result) : false;
-    }
-
-    /**
      * Returns all promotions
      *
      * @param string $language
