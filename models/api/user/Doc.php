@@ -89,6 +89,7 @@ class Doc {
                 $doc->isDelete   = $object->isDelete;
                 $info            = pathinfo($object->body);
                 $doc->fileName   = $info['basename'];
+
                 /**
                  * @todo Переделать, слишком много запросов к апи
                  */

@@ -70,6 +70,23 @@ class Promotion {
     }
 
     /**
+     * Remove promotions
+     *
+     * @param $data
+     * @return mixed
+     */
+    public static function remove($data)
+    {
+        //@todo API method
+
+        $apiClient = new ApiClient('promotions');
+
+        $response = $apiClient->delete($data, false);
+
+        return $response == 'OK';
+    }
+
+    /**
      * Convert response from API
      *
      * @param $data
@@ -131,7 +148,7 @@ class Promotion {
      */
     public static function getForAdmin($language)
     {
-        $apiClient = new ApiClient('informationMaterials/promotions/admin/' . $language);
+        $apiClient = new ApiClient('promotions/admin/' . urlencode($language));
 
         $response = $apiClient->get();
 

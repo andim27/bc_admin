@@ -93,7 +93,7 @@ class Sale {
     /**
      * Returns product
      *
-     * @return Product
+     * @return array
      */
     public function getProduct()
     {

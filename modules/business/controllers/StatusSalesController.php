@@ -18,6 +18,8 @@ use app\models\SendingWaitingParcel;
 use app\models\StatusSales;
 use app\models\Users;
 use app\models\Warehouse;
+
+use app\modules\business\models\VipCoinCertificate;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
@@ -26,6 +28,34 @@ use yii\base\ErrorException;
 use yii\helpers\ArrayHelper;
 
 class StatusSalesController extends BaseController {
+
+    /**
+     * @return string
+     */
+    public function actionVipcoinCertificates()
+    {
+        $certificates = VipCoinCertificate::find()->all();
+
+        return $this->render('vipcoin-sales',[
+            'certificates' => $certificates,
+        ]);
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function actionMarkCertificateSent()
+    {
+        $request = Yii::$app->request->post();
+
+        $vcCertificate = VipCoinCertificate::find()->where(['_id' => new ObjectID($request['id'])])->one();
+
+        $vcCertificate->mark_sent = $request['is_sent'] === 'true';
+        $vcCertificate->sent_date = $vcCertificate->mark_sent ? date('d/m/Y h:m:i') : '';
+
+        return $vcCertificate->save();
+    }
 
     /**
      * looking sales on query

@@ -54,6 +54,17 @@ class THelper
     }
 
     /**
+     * @param $language
+     * @param $key
+     */
+    public static function clearCache($language, $key)
+    {
+        $cacheKey = md5($language . '_' . $key);
+
+        Yii::$app->cache->delete($cacheKey);
+    }
+
+    /**
      * @param $value
      * @return string
      */
