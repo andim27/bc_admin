@@ -38,9 +38,19 @@ class Lang {
     {
         $apiClient = new ApiClient('settings/supportedLangs');
 
-        $response = $apiClient->get();
+        $supportedLanguagesFromCache = \Yii::$app->cache->get('settings/supportedLangs');
 
-        return self::_getResults($response);
+        if (! $supportedLanguagesFromCache) {
+            $response = $apiClient->get();
+            $supportedLanguages = self::_getResults($response);
+            if ($supportedLanguages) {
+                \Yii::$app->cache->set('settings/supportedLangs', $supportedLanguages);
+            }
+        } else {
+            $supportedLanguages = $supportedLanguagesFromCache;
+        }
+
+        return $supportedLanguages;
     }
 
     /**

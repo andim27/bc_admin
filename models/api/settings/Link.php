@@ -24,21 +24,29 @@ class Link {
     {
         $apiClient = new ApiClient('settings/links');
 
-        $response = $apiClient->get();
+        if ($supportedLanguagesFromCache = \Yii::$app->cache->get('settings/links')) {
+            $link = $supportedLanguagesFromCache;
+        } else {
+            $response = $apiClient->get();
 
-        if ($response) {
-            $link = new self;
+            if ($response) {
+                $link = new self;
 
-            $link->vk        = $response->vk;
-            $link->fb        = $response->fb;
-            $link->youtube   = $response->youtube;
-            $link->support   = $response->support;
-            $link->market    = $response->market;
-            $link->site      = $response->site;
-            $link->video     = $response->regVideo;
-            $link->instagram = $response->instagram;
+                $link->vk        = $response->vk;
+                $link->fb        = $response->fb;
+                $link->youtube   = $response->youtube;
+                $link->support   = $response->support;
+                $link->market    = $response->market;
+                $link->site      = $response->site;
+                $link->video     = $response->regVideo;
+                $link->instagram = $response->instagram;
+
+                \Yii::$app->cache->set('settings/links', $link);
+            } else {
+                $link = false;
+            }
         }
 
-        return isset($link) ? $link : false;
+        return $link;
     }
 }
