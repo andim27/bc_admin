@@ -26,17 +26,24 @@ class Image {
      */
     public static function get($key, $lang, $allData = false)
     {
-        $apiClient = new ApiClient('image/' . $key . '&' . $lang);
+        $url = 'image/' . $key . '&' . $lang;
 
-        $response = $apiClient->get();
+        $allDataFlag = $allData ? 'all' : '';
 
-        if ($allData) {
-            $result = ($response && !isset($response->error)) ? self::_getResults($response) : false;
-        } else {
-            $result = ($response && !isset($response->error)) ? ($response->url ? $response->url : ($response->img ? $response->img : '')) : false;
+        $urlWithFlag = $url . $allDataFlag;
+
+        if (!$image = \Yii::$app->cache->get($urlWithFlag)) {
+            $apiClient = new ApiClient($url);
+            $response = $apiClient->get();
+            if ($allData) {
+                $image = ($response && !isset($response->error)) ? self::_getResults($response) : false;
+            } else {
+                $image = ($response && !isset($response->error)) ? ($response->url ? $response->url : ($response->img ? $response->img : '')) : false;
+            }
+            \Yii::$app->cache->set($urlWithFlag, $image);
         }
 
-        return $result;
+        return $image;
     }
 
     /**

@@ -22,11 +22,19 @@ class Link {
      */
     public static function get($userId, $withUserData = false)
     {
+        $url = 'user/linkedAccounts/' . $userId;
+
         $apiClient = new ApiClient('user/linkedAccounts/' . $userId);
 
-        $response = $apiClient->get();
+        if (\Yii::$app->session->has($url)) {
+            $linkedAccounts = \Yii::$app->session->get($url);
+        } else {
+            $response = $apiClient->get();
+            $linkedAccounts = self::_getResults($response, $withUserData);
+            \Yii::$app->session->set($url, $linkedAccounts, 1200);
+        }
 
-        return self::_getResults($response, $withUserData);
+        return $linkedAccounts;
     }
 
     /**
