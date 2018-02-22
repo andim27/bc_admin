@@ -11,7 +11,6 @@ class Promotion {
     public $dateStart;
     public $dateFinish;
     public $lang;
-    public $v;
     public $isDelete;
     public $dateUpdate;
     public $dateCreate;
@@ -108,7 +107,6 @@ class Promotion {
                 $promotion->dateStart  = strtotime($object->dateStart);
                 $promotion->dateFinish = strtotime($object->dateFinish);
                 $promotion->lang       = $object->lang;
-                $promotion->v          = $object->__v;
                 $promotion->isDelete   = $object->isDelete;
                 $promotion->dateUpdate = strtotime($object->dateUpdate);
                 $promotion->dateCreate = strtotime($object->dateCreate);

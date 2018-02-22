@@ -8,7 +8,6 @@ class News {
 
     public $id;
     public $author;
-    public $v;
     public $isDelete;
     public $dateOfPublication;
     public $dateUpdate;
@@ -149,7 +148,6 @@ class News {
 
                 $news->id                = $object->_id;
                 $news->author            = $object->author;
-                $news->v                 = $object->__v;
                 $news->isDelete          = $object->isDelete;
                 $news->dateOfPublication = strtotime($object->dateOfPublication);
                 $news->dateUpdate        = strtotime($object->dateUpdate);
