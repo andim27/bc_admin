@@ -152,6 +152,7 @@ class UserController extends BaseController
                         $nestedData[$columns[0]] = $user->email;
                         $nestedData[$columns[1]] = $user->username;
                         $nestedData[$columns[2]] = $user->created ? gmdate('d.m.Y', $user->created) : '';
+                        $nestedData[$columns[3]] = $user->phoneNumber;
                         $nestedData[$columns[4]] = $user->firstName . ' ' . $user->secondName;
                         $nestedData[$columns[5]] = $user->getCountryCityAsString();
                         $nestedData[$columns[6]] = '';
