@@ -60,6 +60,7 @@ class User
     public $warehouseName;
     public $cards;
     public $isDelete;
+    public $sponsorId;
 
     /**
      * Return User

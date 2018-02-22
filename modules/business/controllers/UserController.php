@@ -146,16 +146,16 @@ class UserController extends BaseController
 
                     $count = $users->count();
 
-                    foreach (api\User::convert($users->all()) as $key => $user){
+                    foreach (api\User::convert($users->all()) as $key => $user) {
                         $nestedData = [];
 
                         $nestedData[$columns[0]] = $user->email;
                         $nestedData[$columns[1]] = $user->username;
-                        $nestedData[$columns[2]] = gmdate('d.m.Y', $user->created);
+                        $nestedData[$columns[2]] = $user->created ? gmdate('d.m.Y', $user->created) : '';
                         $nestedData[$columns[4]] = $user->firstName . ' ' . $user->secondName;
                         $nestedData[$columns[5]] = $user->getCountryCityAsString();
-                        $nestedData[$columns[6]] = !empty($user->sponsor['username']) ? $user->sponsor['username'] : '';
-                        $nestedData[$columns[7]] = (!empty($user->sponsor['firstName']) ? $user->sponsor['firstName'] : '') . ' ' . (!empty($user->sponsor['secondName']) ? $user->sponsor['secondName'] : '');
+                        $nestedData[$columns[6]] = '';
+                        $nestedData[$columns[7]] = '';
                         $nestedData[$columns[8]] = $user->rankString ? $user->rankString : '';
                         $nestedData[$columns[9]] = Html::a('<i class="fa fa-pencil"></i>', ['/business/user', 'u' => $user->username]);
 
@@ -520,7 +520,7 @@ class UserController extends BaseController
                 $user = api\User::get($sale->getAttribute('idUser'));
                 if ($user) {
 
-                    $sponsor = api\User::get($user->sponsor->_id);
+                    $sponsor = api\User::get($user->sponsorId);
 
                     if ($sponsor) {
                         if ($sponsor->moneys - $sale->getAttribute('bonusMoney') >= 0) {
