@@ -27,7 +27,6 @@ class WellnessClubMembersController extends BaseController
                 ['=', 'email', $search],
                 ['like', 'surname', $search],
                 ['like', 'name', explode(' ', $search)[0]],
-                ['like', 'middleName', $search],
                 ['like', 'countryId', $search],
                 ['like', 'country', $search],
                 ['like', 'city', $search],
@@ -40,12 +39,12 @@ class WellnessClubMembersController extends BaseController
         $pages = new Pagination(['totalCount' => $wellnessClubMembers->count()]);
 
         $columns = [
-            'surname', 'name', 'middleName', 'countryId',
+            'surname', 'name', 'countryId',
             'city', 'address', 'mobile', 'email', 'skype', 'created', 'action'
         ];
 
         $filterColumns = [
-            'surname', 'name', 'middleName', 'countryId',
+            'surname', 'name', 'countryId',
             'city', 'address', 'mobile', 'email', 'skype'
         ];
 
@@ -69,15 +68,14 @@ class WellnessClubMembersController extends BaseController
 
                 $nestedData[$columns[0]] = $user->surname;
                 $nestedData[$columns[1]] = $user->name;
-                $nestedData[$columns[2]] = $user->middleName;
-                $nestedData[$columns[3]] = !empty(Country::get($user->country)->name) ? Country::get($user->country)->name : '';
-                $nestedData[$columns[4]] = $user->city;
-                $nestedData[$columns[5]] = $user->street . ' ' . $user->apartment;
-                $nestedData[$columns[6]] = $user->mobile;
-                $nestedData[$columns[7]] = $user->email;
-                $nestedData[$columns[8]] = $user->skype;
-                $nestedData[$columns[9]] = $user->wellness_club_partner_date_end;
-                $nestedData[$columns[10]] = '<button class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply'). '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ).' data-email="'. $user->email.'">' . THelper::t('apply') . '</button>';
+                $nestedData[$columns[2]] = !empty(Country::get($user->country)->name) ? Country::get($user->country)->name : '';
+                $nestedData[$columns[3]] = $user->city;
+                $nestedData[$columns[4]] = $user->street . ' ' . $user->apartment;
+                $nestedData[$columns[5]] = $user->mobile;
+                $nestedData[$columns[6]] = $user->email;
+                $nestedData[$columns[7]] = $user->skype;
+                $nestedData[$columns[8]] = $user->wellness_club_partner_date_end;
+                $nestedData[$columns[9]] = '<button class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply'). '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ).' data-email="'. $user->email.'">' . THelper::t('apply') . '</button>';
 
                 $data[] = $nestedData;
             }

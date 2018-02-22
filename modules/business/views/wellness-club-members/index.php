@@ -17,9 +17,6 @@
                         <?=THelper::t('name')?>
                     </th>
                     <th>
-                        <?=THelper::t('middleName')?>
-                    </th>
-                    <th>
                         <?=THelper::t('country')?>
                     </th>
                     <th>
@@ -66,7 +63,6 @@
         "columns": [
             {"data": "surname"},
             {"data": "name"},
-            {"data": "middleName"},
             {"data": "countryId"},
             {"data": "city"},
             {"data": "address"},
