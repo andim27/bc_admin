@@ -20,9 +20,6 @@
                         <?=THelper::t('country')?>
                     </th>
                     <th>
-                        <?=THelper::t('city')?>
-                    </th>
-                    <th>
                         <?=THelper::t('address')?>
                     </th>
                     <th>
@@ -64,7 +61,6 @@
             {"data": "surname"},
             {"data": "name"},
             {"data": "countryId"},
-            {"data": "city"},
             {"data": "address"},
             {"data": "mobile"},
             {"data": "email"},
