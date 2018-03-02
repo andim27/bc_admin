@@ -111,17 +111,14 @@ class BackofficeController extends BaseController
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
 
         if ($id = Yii::$app->request->get('id')) {
-            $news = api\News::get($id);
-            if ($news) {
-                $result = api\News::remove([
-                    'id' => $news->id
-                ]);
+            $result = api\News::remove([
+                'id' => $id
+            ]);
 
-                if ($result) {
-                    Yii::$app->session->setFlash('success', 'backoffice_news_remove_success');
-                } else {
-                    Yii::$app->session->setFlash('danger', 'backoffice_news_remove_error');
-                }
+            if ($result) {
+                Yii::$app->session->setFlash('success', 'backoffice_news_remove_success');
+            } else {
+                Yii::$app->session->setFlash('danger', 'backoffice_news_remove_error');
             }
         }
 
@@ -181,18 +178,14 @@ class BackofficeController extends BaseController
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
 
         if ($id = Yii::$app->request->get('id')) {
-            $promotions = api\Promotion::get($id);
+            $result = api\Promotion::remove([
+                'id' => $id
+            ]);
 
-            if ($promotions) {
-                $result = api\Promotion::remove([
-                    'id' => $promotions->id
-                ]);
-
-                if ($result) {
-                    Yii::$app->session->setFlash('success', 'backoffice_promotions_remove_success');
-                } else {
-                    Yii::$app->session->setFlash('danger', 'backoffice_promotions_remove_error');
-                }
+            if ($result) {
+                Yii::$app->session->setFlash('success', 'backoffice_promotions_remove_success');
+            } else {
+                Yii::$app->session->setFlash('danger', 'backoffice_promotions_remove_error');
             }
         }
 

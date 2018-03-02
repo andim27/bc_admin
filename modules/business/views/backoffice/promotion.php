@@ -57,7 +57,7 @@ use yii\helpers\Html;
                         <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/backoffice/promotion-edit', 'id' => $p->id, 'l' => $p->lang], ['style' => 'display:none;', 'class' => 'pencil', 'data-toggle'=>'ajaxModal']) ?>
                     </td>
                     <td>
-                        <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/backoffice/promotion-remove', 'id' => $p->id, 'l' => $p->lang], ['style' => 'display:none;', 'class' => 'pencil', 'data-toggle'=>'ajaxModal']) ?>
+                        <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/backoffice/promotion-remove', 'id' => $p->id, 'l' => $p->lang], ['style' => 'display:none;', 'class' => 'pencil', 'onclick' => 'return confirmRemoving();']) ?>
                     </td>
                 </tr>
             <?php } ?>
@@ -77,4 +77,11 @@ use yii\helpers\Html;
     $('#languages-list').change(function() {
         window.location.replace('/' + LANG + '/business/backoffice/promotion?l=' + $(this).val());
     });
+    function confirmRemoving() {
+        if (confirm("<?= THelper::t('backoffice_news_confirm_removing') ?>")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 </script>
