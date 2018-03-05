@@ -157,8 +157,8 @@ class UserController extends BaseController
                         $nestedData[$columns[3]] = $user->phoneNumber;
                         $nestedData[$columns[4]] = $user->firstName . ' ' . $user->secondName;
                         $nestedData[$columns[5]] = $user->getCountryCityAsString();
-                        $nestedData[$columns[6]] = '';
-                        $nestedData[$columns[7]] = '';
+                        $nestedData[$columns[6]] = $user->sponsor ? $user->username : '';
+                        $nestedData[$columns[7]] = $user->sponsor ? ($user->secondName . ' ' . $user->firstName) : '';
                         $nestedData[$columns[8]] = $user->rankString ? $user->rankString : '';
                         $nestedData[$columns[9]] = Html::a('<i class="fa fa-pencil"></i>', ['/business/user', 'u' => $user->username]);
                         $nestedData[$columns[9]] .= '&nbsp;&nbsp;' . Html::a('<i class="fa fa-shopping-cart"></i>', ['/business/user/pincode', 'u' => $user->username], ['data-toggle' => 'ajaxModal']);

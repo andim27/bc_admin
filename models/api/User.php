@@ -321,7 +321,7 @@ class User
                 if (isset($object->settings->layout)) {
                     $user->layout = $object->settings->layout;
                 }
-                $user->avatar             = isset($object->avatar) ? $object->avatar : '';
+                $user->avatar = isset($object->avatar) ? $object->avatar : '';
                 if (isset($object->firstName)) {
                     $user->firstName = $object->firstName;
                 }
@@ -334,10 +334,24 @@ class User
                 if (isset($object->settings->charityPercent)) {
                     $user->charityPercent = $object->settings->charityPercent;
                 }
-
-                $user->firstPurchase      = (isset($object->firstPurchase) && $object->firstPurchase && !is_object($object->firstPurchase)) ? strtotime($object->firstPurchase) : '';
-                $user->created            = (isset($object->created) && $object->created && !is_object($object->created)) ? strtotime($object->created) : '';
-
+                if (isset($object->firstPurchase) && $object->firstPurchase) {
+                    if (is_object($object->firstPurchase)) {
+                        $user->firstPurchase = $object->firstPurchase->toDateTime()->getTimestamp();
+                    } else {
+                        $user->firstPurchase = strtotime($object->firstPurchase);
+                    }
+                } else {
+                    $user->firstPurchase = '';
+                }
+                if (isset($object->created) && $object->created) {
+                    if (is_object($object->created)) {
+                        $user->created = $object->created->toDateTime()->getTimestamp();
+                    } else {
+                        $user->created = strtotime($object->created);
+                    }
+                } else {
+                    $user->created = '';
+                }
                 if (isset($object->phoneNumber)) {
                     $user->phoneNumber = $object->phoneNumber;
                 }
@@ -353,9 +367,15 @@ class User
                 if (isset($object->status)) {
                     $user->status = $object->status;
                 }
-
-                $user->expirationDateBS   = (isset($object->expirationDateBS) && $object->expirationDateBS && !is_object($object->expirationDateBS)) ? strtotime($object->expirationDateBS) : '';
-
+                if (isset($object->expirationDateBS) && $object->expirationDateBS) {
+                    if (is_object($object->expirationDateBS)) {
+                        $user->expirationDateBS = $object->expirationDateBS->toDateTime()->getTimestamp();
+                    } else {
+                        $user->expirationDateBS = strtotime($object->expirationDateBS);
+                    }
+                } else {
+                    $user->expirationDateBS = '';
+                }
                 if (isset($object->bs)) {
                     $user->bs = boolval($object->bs);
                 }
@@ -419,12 +439,26 @@ class User
                 if (isset($object->zipCode)) {
                     $user->zipCode = $object->zipCode;
                 }
-                if (isset($object->birthday)) {
-                    $user->birthday = (isset($object->birthday) && $object->birthday && !is_object($object->birthday)) ? strtotime($object->birthday) : '';
+                if (isset($object->birthday) && $object->birthday) {
+                    if (is_object($object->birthday)) {
+                        $user->birthday = $object->birthday->toDateTime()->getTimestamp();
+                    } else {
+                        $user->birthday = strtotime($object->birthday);
+                    }
+                } else {
+                    $user->birthday = '';
                 }
-                if (isset($object->sponsorId)) {
-                    $user->sponsorId = $object->sponsorId;
-                    $user->sponsor = self::get($object->sponsorId);
+                if (isset($object->sponsor)) {
+                    $user->sponsor = $object->sponsor;
+                } else {
+                    if (isset($object->sponsorId)) {
+                        $user->sponsorId = $object->sponsorId;
+                        $user->sponsor = self::get($object->sponsorId);
+                    }
+                    if (isset($object->sponsor['_id'])) {
+                        $user->sponsorId = $object->sponsor['_id'];
+                        $user->sponsor = self::get($object->sponsor['_id']);
+                    }
                 }
                 if (isset($object->statistics)) {
                     $user->statistics = $object->statistics;
@@ -451,21 +485,17 @@ class User
                 if (isset($object->promotions)) {
                     $user->promotions = $object->promotions;
                 }
-
                 if (isset($object->warehouseName)) {
                     $user->warehouseName = $object->warehouseName;
                 } else {
                     $user->warehouseName = [];
                 }
-
                 if (isset($object->cards)) {
                     $user->cards = $object->cards;
                 }
-
                 if (isset($object->isDelete)) {
                     $user->isDelete = $object->isDelete;
                 }
-
                 $result[] = $user;
             }
         }
