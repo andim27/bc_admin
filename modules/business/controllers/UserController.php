@@ -3,6 +3,7 @@
 namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
+use app\models\api\Pin;
 use app\models\api\Product;
 use app\models\api\Sale;
 use app\models\api\User;
@@ -14,6 +15,7 @@ use app\models\Sales;
 use app\models\Transaction;
 use app\models\Users;
 use app\modules\business\models\PincodeCancelForm;
+use app\modules\business\models\PincodeForm;
 use app\modules\business\models\PincodeGenerateForm;
 use app\modules\business\models\ProfileForm;
 use app\modules\business\models\PurchaseForm;
@@ -155,10 +157,11 @@ class UserController extends BaseController
                         $nestedData[$columns[3]] = $user->phoneNumber;
                         $nestedData[$columns[4]] = $user->firstName . ' ' . $user->secondName;
                         $nestedData[$columns[5]] = $user->getCountryCityAsString();
-                        $nestedData[$columns[6]] = '';
-                        $nestedData[$columns[7]] = '';
+                        $nestedData[$columns[6]] = $user->sponsor ? $user->username : '';
+                        $nestedData[$columns[7]] = $user->sponsor ? ($user->secondName . ' ' . $user->firstName) : '';
                         $nestedData[$columns[8]] = $user->rankString ? $user->rankString : '';
                         $nestedData[$columns[9]] = Html::a('<i class="fa fa-pencil"></i>', ['/business/user', 'u' => $user->username]);
+                        $nestedData[$columns[9]] .= '&nbsp;&nbsp;' . Html::a('<i class="fa fa-shopping-cart"></i>', ['/business/user/pincode', 'u' => $user->username], ['data-toggle' => 'ajaxModal']);
 
                         $data[] = $nestedData;
                     }
@@ -240,6 +243,130 @@ class UserController extends BaseController
         }
 
         $this->redirect('/' . Yii::$app->language . '/business/user?u=' . $user->username);
+    }
+
+    public function actionPincode()
+    {
+
+        $pinForm = new PincodeForm();
+        $request = Yii::$app->request;
+
+        if ($request->isPost) {
+            $pinForm->load($request->post());
+
+            if ($request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($pinForm);
+            } else {
+                $user = api\User::get($pinForm->user);
+
+                $pin = Pin::checkPin($pinForm->pin);
+
+                if ($pin) {
+                    $pinHasErrors = $this->pinCheck($pin);
+
+                    if ($pinHasErrors) {
+                        return  $this->redirect('/' . Yii::$app->language . '/business/user');
+                    }
+
+                    $sponsor = $user->sponsor ? $user->sponsor->id : null;
+                    $response = $this->checkSponsorActivity($sponsor);
+
+                    if ($response) {
+                        return  $this->redirect('/' . Yii::$app->language . '/business/user');
+                    }
+                }
+
+                $response = Sale::buy([
+                    'iduser' => $user->id,
+                    'pin' => $pinForm->pin,
+                    'warehouse' => !empty($pinForm->warehouse) ? $pinForm->warehouse : null
+                ]);
+
+                if ($response === 'OK') {
+                    Yii::$app->session->setFlash('success', THelper::t('successful_operation'));
+
+                    return  $this->redirect('/' . Yii::$app->language . '/business/user');
+                }
+            }
+        }
+
+        if ($request->isAjax) {
+            $pinForm->user = $request->get('u');
+
+            return $this->renderAjax('_pincode', [
+                'model' => $pinForm,
+                'warehouses' => $this->getWarehouseList(),
+                'language' => Yii::$app->language
+            ]);
+        }
+
+        return $this->render('_pincode', [
+            'model' => $this->user
+        ]);
+    }
+
+    /**
+     * @param $pin
+     * @return null|string
+     */
+    public function pinCheck($pin)
+    {
+        if (!empty($pin->error)) {
+            Yii::$app->session->setFlash('danger', $pin->error);
+
+            return true;
+        }
+
+        if ($pin && $pin->activated && !empty($pin->userId) && $pin->userId === $this->user->id) {
+            Yii::$app->session->setFlash('warning', THelper::t('this_pin_is_applied_to_you_automatically'));
+
+            return true;
+        } elseif ($pin && $pin->activated && (empty($pin->userId) || $pin->userId !== $this->user->id)) {
+            Yii::$app->session->setFlash('warning', THelper::t('this_pin_is_used_before'));
+
+            return true;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $sponsor
+     * @param string $formId
+     * @return bool|string
+     */
+    public function checkSponsorActivity($sponsor, $formId = 'pincode')
+    {
+        $sponsor = api\User::get($sponsor);
+        $accepted = Yii::$app->request->post('accepted');
+
+        if (!empty($sponsor) && empty($sponsor->bs) && empty($accepted)) {
+            Yii::$app->session->setFlash('warning', THelper::t('sponsor_activity_is_not_paid'));
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWarehouseList()
+    {
+        $infoAdmins = api\User::admins();
+
+        $listWarehouse = [];
+        $lang = Yii::$app->language;
+
+        foreach($infoAdmins as $item){
+            if(!empty($item->warehouseName->{$lang})){
+                $listWarehouse[$item->id] = $item->warehouseName->{$lang};
+            }
+        }
+
+        asort($listWarehouse);
+
+        return $listWarehouse;
     }
 
     public function actionQualification()
@@ -370,11 +497,15 @@ class UserController extends BaseController
                 'selfPoints' => $selfPoints
             ]);
         }
+
+        return false;
     }
 
     /**
-     * all order
+     * All order
+     *
      * @return array|string
+     * @throws \yii\mongodb\Exception
      */
     public function actionPurchase()
     {

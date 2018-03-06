@@ -12,7 +12,7 @@
         </div>
         <div class="modal-body">
             <div class="raw">
-                <div clas="col-md-6">
+                <div class="col-md-6">
                     <?= $form->field($model, 'product')->dropDownList($productsSelect, ['prompt' => THelper::t('user_purchase_add_select_product')])->label(false); ?>
                 </div>
                 <div class="col-md-6">
