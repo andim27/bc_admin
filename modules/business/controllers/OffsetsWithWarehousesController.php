@@ -2,8 +2,12 @@
 
 namespace app\modules\business\controllers;
 
+use app\models\api\Product;
+use app\models\api\transactions\Charity;
 use app\models\PartsAccessories;
+use app\models\PercentForRepaymentAmounts;
 use app\models\Products;
+use app\models\RecoveryForRepaymentAmounts;
 use app\models\Repayment;
 use app\models\RepaymentAmounts;
 use app\models\Sales;
@@ -17,755 +21,58 @@ use Yii;
 use app\controllers\BaseController;
 use yii\helpers\ArrayHelper;
 
-class OffsetsWithWarehousesController extends BaseController {
+class OffsetsWithWarehousesController extends BaseController
+{
 
     /**
-     * list Repayment Amounts
+     * all info about percent and their border
+     *
+     * @param $object
      * @return string
      */
-    public function actionRepaymentAmounts()
+    public function actionPercentForRepayment($object)
     {
-        $model = RepaymentAmounts::find()->all();
+        $model = PercentForRepaymentAmounts::find()
+            ->where([
+                $object.'_id'=>[
+                    '$nin' => [null]
+                ]
+            ])
+            ->all();
 
-        return $this->render('repayment-amounts',[
+        return $this->render('percent-for-repayment',[
             'model' => $model,
+            'object'=>$object,
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
 
     /**
-     * popup for add or edit Repayment Amounts
+     * popup for add or update percent and border
      * @param string $id
      * @return string
      */
-    public function actionAddUpdateRepaymentAmounts($id='')
+    public function actionAddUpdatePercentForRepayment($id='',$object)
     {
-        $infoProduct = [];
-
-        $useWarehouse = [];
-        $model = RepaymentAmounts::find()->all();
-        if(!empty($model)){
-            foreach ($model as $item) {
-                $useWarehouse[] = (string)$item->warehouse_id;
-            }
-        }
+        $model = new PercentForRepaymentAmounts();
 
         if(!empty($id)){
-            $model = RepaymentAmounts::find()->where(['warehouse_id'=>new ObjectID($id)])->all();
-
-            foreach ($model as $item) {
-                $infoPriceWarehouse = 0;
-                if(!empty($item->prices_warehouse)){
-                    $infoPriceWarehouse = (array)$item->prices_warehouse;
-                    $infoPriceWarehouse = end($infoPriceWarehouse);
-                    $infoPriceWarehouse = $infoPriceWarehouse['price'];
-                }
-                $infoProduct[(string)$item->product_id]['price_warehouse'] = $infoPriceWarehouse;
-
-                $infoPriceRepresentative = 0;
-                if(!empty($item->prices_representative)) {
-                    $infoPriceRepresentative = (array)$item->prices_representative;
-                    $infoPriceRepresentative = end($infoPriceRepresentative);
-                    $infoPriceRepresentative = $infoPriceRepresentative['price'];
-                }
-                $infoProduct[(string)$item->product_id]['price_representative'] = $infoPriceRepresentative;
-            }
+            $model = $model::findOne(['_id'=> new ObjectID($id)]);
         }
 
-        return $this->renderAjax('_add-update-repayment-amounts', [
+        return $this->renderAjax('_add-update-percent-for-repayment', [
             'language' => Yii::$app->language,
-            'infoProduct' => $infoProduct,
-            'id' => $id,
-            'useWarehouse' => $useWarehouse,
+            'model' => $model,
+            'object' => $object,
+            'id' => $id
         ]);
     }
 
     /**
-     * save change for Repayment Amounts
+     * save change for turnover boundary
      * @return \yii\web\Response
      */
-    public function actionSaveRepaymentAmounts()
-    {
-        Yii::$app->session->setFlash('alert' ,[
-                'typeAlert' => 'danger',
-                'message' => 'Сохранения не применились, что то пошло не так!!!'
-            ]
-        );
-
-        $request = Yii::$app->request->post();
-
-        if(!empty($request['warehouse_id'])){
-
-            foreach ($request['product_id'] as $k=>$v){
-                $model = RepaymentAmounts::findOne(['warehouse_id'=>new ObjectID($request['warehouse_id']),'product_id'=>new ObjectID($v)]);
-                if(empty($model)){
-                    $model = new RepaymentAmounts();
-                    $model->warehouse_id = new ObjectID($request['warehouse_id']);
-                    $model->product_id = new ObjectID($v);
-                }
-
-                $infoPricesWarehouse = [];
-                if(!empty($model->prices_warehouse)){
-                    $infoPricesWarehouse = (array)$model->prices_warehouse;
-                    $lastInfoPricesWarehouse = end($infoPricesWarehouse);
-                }
-                if(!empty($request['price'][$k]) && (empty($lastInfoPricesWarehouse) || $lastInfoPricesWarehouse['price']!=$request['price'][$k])){
-                    $infoPricesWarehouse[] = [
-                        'from_date' =>  new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000),
-                        'price'     =>  (float)$request['price'][$k]
-                    ];
-                }
-                $model->prices_warehouse = $infoPricesWarehouse;
-
-                $infoPricesRepresentative = [];
-                if(!empty($model->prices_representative)){
-                    $infoPricesRepresentative = (array)$model->prices_representative;
-                    $lastInfoPricesRepresentative = end($infoPricesRepresentative);
-                }
-                if(!empty($request['price_representative'][$k]) && (empty($lastInfoPricesRepresentative) || $lastInfoPricesRepresentative['price']!=$request['price_representative'][$k])) {
-                    $infoPricesRepresentative[] = [
-                        'from_date' => new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000),
-                        'price' => (float)$request['price_representative'][$k]
-                    ];
-                }
-                $model->prices_representative = $infoPricesRepresentative;
-
-                if($model->save()){}
-
-            }
-
-            Yii::$app->session->setFlash('alert' ,[
-                    'typeAlert'=>'success',
-                    'message'=>'Сохранения применились.'
-                ]
-            );
-        }
-
-        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment-amounts');
-    }
-
-    /**
-     * remove Repayment Amounts
-     * @param $id
-     * @return \yii\web\Response
-     */
-    public function actionRemoveRepaymentAmounts($id)
-    {
-        if(RepaymentAmounts::deleteAll(['warehouse_id'=>new ObjectID($id)])){
-            Yii::$app->session->setFlash('alert' ,[
-                    'typeAlert'=>'success',
-                    'message'=>'Удаление прошло успешно.'
-                ]
-            );
-        }
-
-        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment-amounts');
-    }
-
-    /**
-     * offsets company with representative and conversely
-     * @return string
-     */
-    public function actionOffsetsWithRepresentative()
-    {
-        $hideFilter = 0;
-        $infoUserWarehouseCountry = Warehouse::getArrayAdminWithWarehouseCountry();
-        $infoGoodsInProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
-        $listRepresentativeForWarehouse = [];
-
-        $userID = $this->user->id;
-        $infoWarehouse = Warehouse::find()->all();
-        if(!empty($infoWarehouse)){
-            foreach ($infoWarehouse as $item){
-                $listRepresentativeForWarehouse[(string)$item->_id] = (!empty($item->headUser) ? (string)$item->headUser : '');
-            }
-
-            if(in_array($userID,$listRepresentativeForWarehouse) && $userID!='573a0d76965dd0fb16f60bfe'){
-                $tempArray=[];
-                foreach ($listRepresentativeForWarehouse as $key=>$item) {
-                    if($item==$userID){
-                        $tempArray[$key] = $item;
-                    }
-                }
-                
-                $hideFilter = 1;
-                $listRepresentativeForWarehouse = $tempArray;
-            }
-        }
-
-        $warehouseUserId = Warehouse::getIdMyWarehouse();
-        if($hideFilter == '0' && Warehouse::checkWarehouseKharkov()===false){
-            return $this->redirect(['repayment','object'=>'warehouse','id'=>$warehouseUserId]);
-        }
-
-        $request =  Yii::$app->request->post();
-
-        if(empty($request)){
-            $request['to'] = date("Y-m-d");
-            $request['from'] = date("Y-01-01");
-            $request['listRepresentative']='';
-        }
-
-        $from = strtotime($request['from']);
-        $to = strtotime($request['to'] . ' 23:59:59');
-
-        $info = [];
-
-        /** buy for money */
-        $model = StatusSales::find()->where(['buy_for_money'=>1])->all();
-        if(!empty($model)){
-            foreach ($model as $item) {
-                $dateCreate = strtotime($item->sales->dateCreate->toDateTime()->format('Y-m-d'));
-                $productSetId = (!empty($item->sales->product) ? $item->sales->product : '???');
-
-                $warehouseId = (!empty($infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id'] : 'none');
-                $representativeId = (!empty($listRepresentativeForWarehouse[$warehouseId]) ? $listRepresentativeForWarehouse[$warehouseId] : '');
-
-                if ($dateCreate >= $from && $dateCreate <= $to && $item->sales->type != -1
-                    && !empty($representativeId) && (empty($request['listRepresentative']) || $request['listRepresentative']==$representativeId)) {
-
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet('representative',$warehouseId,$productSetId,$item->sales->dateCreate);
-
-                    if(empty($info[$representativeId])){
-                        $repaymentCompanyWarehouse = Repayment::getRepayment('representative',$representativeId,'company_representative',$request['from'],$request['to']);
-                        $repaymentWarehouseCompany = Repayment::getRepayment('representative',$representativeId,'representative_company',$request['from'],$request['to']);
-
-                        $info[$representativeId] = [
-                            'number_buy_cash'                   => 0,
-                            'number_buy_prepayment'             => 0,
-                            'amount_for_the_device'             => 0,
-                            'amount_repayment_for_company'      => 0,
-                            'amount_repayment_for_warehouse'    => 0,
-                            'repayment'                         => ($repaymentCompanyWarehouse-$repaymentWarehouseCompany),
-                            'repayment_company'                 => $repaymentWarehouseCompany,
-                            'repayment_warehouse'               => $repaymentCompanyWarehouse,
-                        ];
-                    }
-
-                    $info[$representativeId]['number_buy_cash']++;
-                    $info[$representativeId]['amount_for_the_device'] += $item->sales->price;
-                    $info[$representativeId]['amount_repayment_for_company'] += $amountRepayment;
-                }
-            }
-        }
-
-        /** buy for prepayment */
-        $model = StatusSales::find()
-            ->where([
-                'buy_for_money'=>[
-                    '$ne' => 1
-                ]
-            ])
-            ->andWhere([
-                'setSales.dateChange' => [
-                    '$gte' => new UTCDateTime($from * 1000),
-                    '$lt' => new UTCDateTime($to * 1000)
-                ]
-            ])
-            ->all();
-
-
-
-        if(!empty($model)){
-            foreach ($model as $item) {
-                if(!empty($item->setSales)  && $item->sales->type != -1){
-                    $countTemp = [];
-
-                    foreach ($item->setSales as $itemSet) {
-                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
-
-                        $warehouseId    = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id'] : 'none');
-                        $representativeId = (!empty($listRepresentativeForWarehouse[$warehouseId]) ? $listRepresentativeForWarehouse[$warehouseId] : '');
-
-                        if ($dateChange >= $from && $dateChange <= $to && $itemSet['status'] == 'status_sale_issued'
-                            && !empty($representativeId)
-                            && (empty($request['listRepresentative']) || $request['listRepresentative']==$representativeId)) {
-
-                            $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
-
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods('representative',$warehouseId,$productId,$itemSet['dateChange']);
-
-                            if(empty($info[$representativeId])){
-                                $repaymentCompanyWarehouse = Repayment::getRepayment('representative',$representativeId,'company_representative',$request['from'],$request['to']);
-                                $repaymentWarehouseCompany = Repayment::getRepayment('representative',$representativeId,'representative_company',$request['from'],$request['to']);
-
-                                $info[$representativeId] = [
-                                    'number_buy_cash'                   => 0,
-                                    'number_buy_prepayment'             => 0,
-                                    'amount_for_the_device'             => 0,
-                                    'amount_repayment_for_company'      => 0,
-                                    'amount_repayment_for_warehouse'    => 0,
-                                    'repayment'                         => ($repaymentCompanyWarehouse-$repaymentWarehouseCompany),
-                                    'repayment_company'                 => $repaymentWarehouseCompany,
-                                    'repayment_warehouse'               => $repaymentCompanyWarehouse,
-                                ];
-                            }
-
-                            $countTemp[(string)$item->idSale] = [
-                                'representative' => $representativeId
-                            ];
-
-                            $info[$representativeId]['amount_for_the_device'] += $item->sales->price;
-                            $info[$representativeId]['amount_repayment_for_warehouse'] += $amountRepayment;
-
-                        }
-                    }
-
-                    if(!empty($countTemp)){
-                        foreach ($countTemp as $itemTemp){
-                            $info[$itemTemp['representative']]['number_buy_prepayment']++;
-                        }
-                    }
-
-                }
-
-            }
-        }
-
-        return $this->render('offsets-with-representative',[
-            'language'          => Yii::$app->language,
-            'request'           => $request,
-            'info'              => $info,
-            'hideFilter'        => $hideFilter,
-        ]);
-    }
-
-    /**
-     * offsets representative with warehouse and conversely
-     * @return string
-     */
-    public function actionOffsetsWithWarehouses($representativeId='')
-    {
-        $listWarehouse = [];
-
-        $listAllCountry = Settings::getListCountry();
-        $infoGoodsInProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
-        $infoUserWarehouseCountry = Warehouse::getArrayAdminWithWarehouseCountry();
-        $myWarehouseId = Warehouse::getIdMyWarehouse();
-
-        $request =  Yii::$app->request->post();
-
-        if(empty($request)){
-            $request['flWarehouse'] = '1';
-            $request['to'] = date("Y-m-d");
-            $request['from'] = date("Y-01-01");
-            $request['listCountry']='';
-            $request['listWarehouse'] = '';
-        }
-
-        if($myWarehouseId != '5a056671dca7873e022be781'){
-            $request['listWarehouse'] = $myWarehouseId;
-        }
-
-        if(!empty($request['listWarehouse'])){
-            $listWarehouse[] = $request['listWarehouse'];
-        }
-
-        if(!empty($representativeId)){
-            $listWarehouse = Warehouse::getListHeadAdminWarehouseId($representativeId);
-        }
-
-        $from = strtotime($request['from']);
-        $to = strtotime($request['to'] . ' 23:59:59');
-
-        $listCountry = [];
-        $info = [];
-
-        /** buy for money */
-        $model = StatusSales::find()->where(['buy_for_money'=>1])->all();
-        if(!empty($model)){
-            
-            foreach ($model as $item) {
-                $dateCreate = strtotime($item->sales->dateCreate->toDateTime()->format('Y-m-d'));
-                $productSetId = (!empty($item->sales->product) ? $item->sales->product : '???');
-                $countryCode = (!empty($infoUserWarehouseCountry[(string)$item->sales->warehouseId]['country']) ? $infoUserWarehouseCountry[(string)$item->sales->warehouseId]['country'] : 'none');
-                $warehouseId = (!empty($infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id'] : 'none');
-
-                $listCountry[$countryCode] = (!empty($listAllCountry[$countryCode]) ? $listAllCountry[$countryCode]: $countryCode );
-
-                if ($dateCreate >= $from && $dateCreate <= $to && $item->sales->type != -1
-                    && (empty($listWarehouse) || in_array($warehouseId,$listWarehouse))
-                    && (empty($request['listCountry']) || $request['listCountry']==$countryCode)) {
-
-
-
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet('warehouse',$warehouseId,$productSetId,$item->sales->dateCreate);
-
-                    if(empty($info[$countryCode][$warehouseId])){
-                        $repaymentCompanyWarehouse = Repayment::getRepayment('warehouse',$warehouseId,'representative_warehouse',$request['from'],$request['to']);
-                        $repaymentWarehouseCompany = Repayment::getRepayment('warehouse',$warehouseId,'warehouse_representative',$request['from'],$request['to']);
-
-                        $info[$countryCode][$warehouseId] = [
-                            'number_buy_cash'                   => 0,
-                            'number_buy_prepayment'             => 0,
-                            'amount_for_the_device'             => 0,
-                            'amount_repayment_for_company'      => 0,
-                            'amount_repayment_for_warehouse'    => 0,
-                            'repayment'                         => ($repaymentCompanyWarehouse-$repaymentWarehouseCompany),
-                            'repayment_company'                 => $repaymentWarehouseCompany,
-                            'repayment_warehouse'               => $repaymentCompanyWarehouse,
-                        ];
-                    }
-
-
-                    $info[$countryCode][$warehouseId]['number_buy_cash']++;
-                    $info[$countryCode][$warehouseId]['amount_for_the_device'] += $item->sales->price;
-                    $info[$countryCode][$warehouseId]['amount_repayment_for_company'] += $amountRepayment;
-
-                }
-            }
-        }
-
-        /** buy for prepayment */
-        $model = StatusSales::find()
-            ->where([
-                'buy_for_money'=>[
-                    '$ne' => 1
-                ]
-            ])
-            ->andWhere([
-                'setSales.dateChange' => [
-                    '$gte' => new UTCDateTime($from * 1000),
-                    '$lt' => new UTCDateTime($to * 1000)
-                ]
-            ])
-            ->all();
-        if(!empty($model)){
-            foreach ($model as $item) {
-                if(!empty($item->setSales)  && $item->sales->type != -1){
-                    $countTemp = [];
-
-                    foreach ($item->setSales as $itemSet) {
-                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
-                        $countryCode    = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['country']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['country'] : 'none');
-                        $warehouseId    = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id'] : 'none');
-
-                        $listCountry[$countryCode] = (!empty($listAllCountry[$countryCode]) ? $listAllCountry[$countryCode]: $countryCode );
-
-                        if ($dateChange >= $from && $dateChange <= $to && $itemSet['status'] == 'status_sale_issued'
-                            && (empty($listWarehouse) || in_array($warehouseId,$listWarehouse))
-                            && (empty($request['listCountry']) || $request['listCountry']==$countryCode)) {
-
-                            $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
-
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods('warehouse',$warehouseId,$productId,$itemSet['dateChange']);
-
-                            if(empty($info[$countryCode][$warehouseId])){
-                                $repaymentCompanyWarehouse = Repayment::getRepayment('warehouse',$warehouseId,'company_warehouse',$request['from'],$request['to']);
-                                $repaymentWarehouseCompany = Repayment::getRepayment('warehouse',$warehouseId,'warehouse_company',$request['from'],$request['to']);
-
-                                $info[$countryCode][$warehouseId] = [
-                                    'number_buy_cash'                   => 0,
-                                    'number_buy_prepayment'             => 0,
-                                    'amount_for_the_device'             => 0,
-                                    'amount_repayment_for_company'      => 0,
-                                    'amount_repayment_for_warehouse'    => 0,
-                                    'repayment'                         => ($repaymentCompanyWarehouse-$repaymentWarehouseCompany),
-                                    'repayment_company'                 => $repaymentWarehouseCompany,
-                                    'repayment_warehouse'               => $repaymentCompanyWarehouse,
-                                ];
-                            }
-
-                            $countTemp[(string)$item->idSale] = [
-                                'country' => $countryCode,
-                                'warehouse' => $warehouseId
-                            ];
-
-                            $info[$countryCode][$warehouseId]['amount_for_the_device'] += $item->sales->price;
-                            $info[$countryCode][$warehouseId]['amount_repayment_for_warehouse'] += $amountRepayment;
-
-                        }
-                    }
-
-                    if(!empty($countTemp)){
-                        foreach ($countTemp as $itemTemp){
-                            $info[$itemTemp['country']][$itemTemp['warehouse']]['number_buy_prepayment']++;
-                        }
-                    }
-
-                }
-
-            }
-        }
-
-        return $this->render('offsets-with-warehouses',[
-            'language'          => Yii::$app->language,
-            'request'           => $request,
-            'info'              => $info,
-            'listCountry'       => $listCountry,
-            'representativeId'  => $representativeId
-        ]);
-    }
-
-    /**
-     * decomposition for pack and goods
-     * @return string
-     */
-    public function actionOffsetsWithGoods()
-    {
-        $infoGoodsInProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
-        $infoUserWarehouseCountry = Warehouse::getArrayAdminWithWarehouseCountry();
-
-        $request =  Yii::$app->request->post();
-
-        $from = strtotime($request['from']);
-        $to = strtotime($request['to'] . ' 23:59:59');
-
-        $info = [];
-
-        if($request['object'] == 'warehouse'){
-            $arrayWarehouse = [$request['id']];
-        } else {
-            $arrayWarehouse = Warehouse::getListHeadAdminWarehouseId($request['id']);
-        }
-
-        /** buy for money */
-        $model = StatusSales::find()->where(['buy_for_money'=>1])->all();
-        if(!empty($model)){
-
-            foreach ($model as $item) {
-                $dateCreate = strtotime($item->sales->dateCreate->toDateTime()->format('Y-m-d'));
-                $productSetId = (!empty($item->sales->product) ? $item->sales->product : '???');
-                $warehouseId = (!empty($infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id'] : 'none');
-
-                if ($dateCreate >= $from && $dateCreate <= $to && $item->sales->type != -1
-                    && in_array($warehouseId,$arrayWarehouse)) {
-
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($request['object'],$warehouseId,$productSetId,$item->sales->dateCreate);
-                    
-                    // info item pack
-                    if(empty($info[$productSetId])){
-                        $info[$productSetId] = [
-                            'number_buy_cash'                   => 0,
-                            'number_buy_prepayment'             => 0,
-                            'amount_for_the_device'             => 0,
-                            'amount_repayment_for_company'      => 0,
-                            'amount_repayment_for_warehouse'    => 0,
-                        ];
-                    }
-                    $info[$productSetId]['number_buy_cash']++;
-                    $info[$productSetId]['amount_for_the_device'] += $item->sales->price;
-                    $info[$productSetId]['amount_repayment_for_company'] += $amountRepayment;
-
-                    // info item pack
-                    foreach ($item->setSales as $itemSet) {
-                        $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
-                        if(empty($info[$productSetId]['set'][$productId])){
-                            $info[$productSetId]['set'][$productId] = [
-                                'number_buy_cash'                   => 0,
-                                'number_buy_prepayment'             => 0,
-                                'amount_for_the_device'             => '-',
-                                'amount_repayment_for_company'      => '-',
-                                'amount_repayment_for_warehouse'    => '-',
-                            ];
-                        }
-
-                        $info[$productSetId]['set'][$productId]['number_buy_cash']++;
-                    }
-
-
-                }
-            }
-        }
-
-        /** buy for prepayment */
-        $model = StatusSales::find()
-            ->where([
-                'buy_for_money'=>[
-                    '$ne' => 1
-                ]
-            ])
-            ->andWhere([
-                'setSales.dateChange' => [
-                    '$gte' => new UTCDateTime($from * 1000),
-                    '$lt' => new UTCDateTime($to * 1000)
-                ]
-            ])
-            ->all();
-        if(!empty($model)){
-            foreach ($model as $item) {
-
-                $productSetId   = (!empty($item->sales->product) ? $item->sales->product : '???');
-
-                if(!empty($item->setSales)  && $item->sales->type != -1){
-
-                    $countTemp=[];
-
-                    foreach ($item->setSales as $itemSet) {
-                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
-                        $warehouseId    = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id'] : 'none');
-
-                        if ($dateChange >= $from && $dateChange <= $to && $itemSet['status'] == 'status_sale_issued'
-                            && in_array($warehouseId,$arrayWarehouse)) {
-
-                            $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
-
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($request['object'],$warehouseId,$productId,$itemSet['dateChange']);
-                            
-                            // info pack
-                            if(empty($info[$productSetId])){
-                                $info[$productSetId] = [
-                                    'number_buy_cash'                   => 0,
-                                    'number_buy_prepayment'             => 0,
-                                    'amount_for_the_device'             => 0,
-                                    'amount_repayment_for_company'      => 0,
-                                    'amount_repayment_for_warehouse'    => 0,
-                                ];
-                            }
-
-                            $countTemp[(string)$item->idSale] = [
-                                'productSetId' => $productSetId
-                            ];
-
-                            $info[$productSetId]['amount_for_the_device'] += $item->sales->price;
-                            $info[$productSetId]['amount_repayment_for_warehouse'] += $amountRepayment;
-
-                            // info item pack
-                            if(empty($info[$productSetId]['set'][$productId])){
-                                $info[$productSetId]['set'][$productId] = [
-                                    'number_buy_cash'                   => 0,
-                                    'number_buy_prepayment'             => 0,
-                                    'amount_for_the_device'             => '-',
-                                    'amount_repayment_for_company'      => '-',
-                                    'amount_repayment_for_warehouse'    => '-',
-                                ];
-                            }
-
-                            $info[$productSetId]['set'][$productId]['number_buy_prepayment']++;
-                        }
-                    }
-
-                    if(!empty($countTemp)){
-                        foreach ($countTemp as $itemTemp) {
-                            $info[$itemTemp['productSetId']]['number_buy_prepayment']++;
-                        }
-                    }
-                }
-            }
-        }
-
-        return $this->renderPartial('_offsets-with-goods',[
-            'info' => $info,
-        ]);
-    }
-
-    /**
-     * get list repayment
-     * @param $object
-     * @param $id
-     * @return string
-     */
-    public function actionRepayment($object,$id)
-    {
-
-        if($object == 'representative'){
-            $field = 'representative_id';
-        } else {
-            $field = 'warehouse_id';
-        }
-
-        $model = Repayment::find()
-            ->where([$field=>new ObjectID($id)])
-            ->all();
-
-        $differenceRepaymentNow = $this->getDifferenceRepaymentNow($object,$id);
-
-        $directionTitle = '';
-        $userId = $this->user->id;
-
-        $infoWarehouse = Warehouse::getInfoWarehouse($userId);
-
-        if($object == 'representative'){
-            $hideBtnAdd = 0;
-            if((string)$infoWarehouse->_id != '5a056671dca7873e022be781'){
-                $directionTitle = 'Компании';
-            } else {
-                $userInfo = Users::findOne(['_id'=>new ObjectID($id)]);
-                $directionTitle = $userInfo->username . '(' .(!empty($userInfo->secondName) ? $userInfo->secondName : '') . ' ' . (!empty($userInfo->firstName) ? $userInfo->firstName : '') . ')';
-            }
-
-        } elseif ($object == 'warehouse'){
-
-            $infoWarehouseHeadAdmins = Warehouse::findOne(['_id'=>new ObjectID($id)]);
-
-            if((string)$infoWarehouseHeadAdmins->headUser == $userId){
-                $directionTitle = $infoWarehouseHeadAdmins->title;
-                $hideBtnAdd = 0;
-            } else {
-                if((string)$infoWarehouse->_id == '5a056671dca7873e022be781'){
-                    $hideBtnAdd = 1;
-                    $directionTitle = $infoWarehouseHeadAdmins->title . ' / ';
-                } else {
-                    $hideBtnAdd = 0;
-                    $directionTitle = '';
-                }
-
-                $userInfo = Users::findOne(['_id'=>$infoWarehouseHeadAdmins->headUser]);
-                $directionTitle .= $userInfo->username . '(' .(!empty($userInfo->secondName) ? $userInfo->secondName : '') . ' ' . (!empty($userInfo->firstName) ? $userInfo->firstName : '') . ')';
-
-
-            }
-
-
-        }
-
-        return $this->render('repayment',[
-            'id'                            => $id,
-            'hideBtnAdd'                    => $hideBtnAdd,
-            'directionTitle'                => $directionTitle,
-            'object'                        => $object,
-            'field'                         => $field,
-            'model'                         => $model,
-            'differenceRepaymentNow'        => $differenceRepaymentNow,
-            'alert'                         => Yii::$app->session->getFlash('alert', '', true)
-        ]);
-    }
-
-    /**
-     * popup for add repayment
-     * @param $object
-     * @param $id
-     * @return bool|string
-     */
-    public function actionAddRepayment($object,$id)
-    {
-        if($object=='representative'){
-            $directionRepayment = 'company';
-
-            $myWarehouseId = Warehouse::getIdMyWarehouse();
-            if($myWarehouseId != '5a056671dca7873e022be781'){
-                $typeRepayment = $object.'_'.$directionRepayment;
-            } else{
-                $typeRepayment = $directionRepayment.'_'.$object;
-            }
-        } else {
-
-            $directionRepayment = 'representative';
-
-            $infoWarehouse = Warehouse::findOne($id);
-            $userId = $this->user->id;
-            if($userId==(string)$infoWarehouse->headUser){
-                $typeRepayment = $directionRepayment.'_'.$object;
-            } elseif (in_array($userId,$infoWarehouse->idUsers)){
-                $typeRepayment = $object.'_'.$directionRepayment;
-            } else {
-                return false;
-            }
-        }
-
-        return $this->renderAjax('_add-repayment', [
-            'language'      => Yii::$app->language,
-            'object'  => $object,
-            'typeRepayment'  => $typeRepayment,
-            'id'  => $id
-        ]);
-    }
-
-    /**
-     * save new repayment
-     * @return \yii\web\Response
-     */
-    public function  actionSaveRepayment()
+    public function actionSavePercentForRepayment()
     {
         Yii::$app->session->setFlash('alert' ,[
                 'typeAlert' => 'danger',
@@ -776,27 +83,31 @@ class OffsetsWithWarehousesController extends BaseController {
         $request = Yii::$app->request->post();
 
         if(!empty($request)){
+            $object = $request['object'];
 
-            $model = new Repayment();
+            $model = new PercentForRepaymentAmounts();
 
-            $model->repayment = (float)$request['price'];
-            $model->type_repayment = $request['type_repayment'];
-            $model->method_repayment = $request['method_repayment'];
-            $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
-
-            if(!empty($request['representative_id'])){
-                $model->difference_repayment = (float)$this->getDifferenceRepaymentNow('representative',$request['representative_id']);
-                $model->warehouse_id = '';
-                $model->representative_id = new ObjectID($request['representative_id']);
-                $object = 'representative';
-                $id = $request['representative_id'];
-            } else {
-                $model->difference_repayment = (float)$this->getDifferenceRepaymentNow('warehouse',$request['warehouse_id']);
-                $model->warehouse_id = new ObjectID($request['warehouse_id']);
-                $model->representative_id = '';
-                $object = 'warehouse';
-                $id = $request['warehouse_id'];
+            if(!empty($request['_id'])){
+                $model = $model::findOne(['_id'=>new ObjectID($request['_id'])]);
             }
+
+            $turnover_boundary = [];
+            if(!empty($request['percent'])){
+                foreach ($request['percent'] as $k=>$item) {
+                    $turnover_boundary[] = [
+                        'turnover_boundary' => $request['turnover_boundary'][$k],
+                        'percent' => $item
+                    ];
+                }
+
+                ArrayHelper::multisort($turnover_boundary, ['turnover_boundary'], [SORT_ASC]);
+            }
+
+            $model->{$object.'_id'} = $request[$object.'_id'];
+            if(!empty($request['dop_price_per_warehouse'])){
+                $model->dop_price_per_warehouse = $request['dop_price_per_warehouse'];
+            }
+            $model->turnover_boundary = $turnover_boundary;
 
             if($model->save()){
                 Yii::$app->session->setFlash('alert' ,[
@@ -804,13 +115,670 @@ class OffsetsWithWarehousesController extends BaseController {
                         'message'=>'Сохранения применились.'
                     ]
                 );
-
-                return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment?object='.$object.'&id=' . $id);
             }
         }
 
-        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment-amounts');
+        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment');
+
     }
+
+    /**
+     * set default value
+     * @return \yii\web\Response
+     */
+    public function actionDefaultPercentForRepaymentRepresentative(){
+        $list = Warehouse::getListHeadAdmin();
+
+        foreach ($list as $k=>$item) {
+            $model = new PercentForRepaymentAmounts();
+
+            $model->representative_id = new ObjectID($k);
+            $model->dop_price_per_warehouse = (int)5000;
+            $model->turnover_boundary = [
+                '0' => [
+                    'turnover_boundary' => (int)0,
+                    'percent' => (int)10
+                ],
+                '1' => [
+                    'turnover_boundary' => (int)5000,
+                    'percent' => (int)15
+                ],
+                '2' => [
+                    'turnover_boundary' => (int)10000,
+                    'percent' => (int)20
+                ],
+                '3' => [
+                    'turnover_boundary' => (int)25000,
+                    'percent' => (int)25
+                ],
+            ];
+
+            if($model->save()){}
+        }
+
+        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object=representative');
+    }
+    /**
+     * set default value
+     * @return \yii\web\Response
+     */
+    public function actionDefaultPercentForRepaymentWarehouse(){
+        $list = Warehouse::getArrayWarehouse();
+
+        foreach ($list as $k=>$item) {
+            $model = new PercentForRepaymentAmounts();
+
+            $model->warehouse_id = new ObjectID($k);
+            $model->turnover_boundary = [
+                '0' => [
+                    'turnover_boundary' => (int)0,
+                    'percent' => (int)5
+                ],
+                '1' => [
+                    'turnover_boundary' => (int)5000,
+                    'percent' => (int)10
+                ],
+                '2' => [
+                    'turnover_boundary' => (int)10000,
+                    'percent' => (int)15
+                ]
+            ];
+
+            if($model->save()){}
+        }
+
+        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object=warehouse');
+    }
+
+
+    /**
+     * list recovery for repayment
+     * @param $object
+     * @param string $representative_id
+     * @return string
+     */
+    public function actionRecoveryForRepayment($object,$representative_id='')
+    {
+        $model = RecoveryForRepaymentAmounts::find();
+
+
+        if($object=='representative'){
+            $model = $model->where([
+                'warehouse_id'=>[
+                    '$in' => [null]
+                ]
+            ]);
+        } else{
+            $model = $model->where([
+                'representative_id'=>new ObjectId($representative_id),
+                'warehouse_id'=>[
+                    '$nin' => [null]
+                ]
+            ]);
+        }
+        $model = $model->all();
+
+        return $this->render('recovery-for-repayment',[
+            'model' => $model,
+            'object' => $object,
+            'representative_id'=>$representative_id,
+            'alert' => Yii::$app->session->getFlash('alert', '', true)
+        ]);
+    }
+
+    /**
+     * add recovery
+     * @param $object
+     * @param string $representative_id
+     * @return string
+     */
+    public function actionAddRecoveryForRepayment($object,$representative_id='')
+    {
+        $lastMonth = date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
+
+        if($object == 'representative'){
+            $model = RecoveryForRepaymentAmounts::find()
+                ->where([
+                    'month_recovery'=>$lastMonth,
+                    'warehouse_id'=>[
+                        '$in' => [null]
+                    ]
+                ])
+                ->all();
+        } else {
+            $model = RecoveryForRepaymentAmounts::find()
+                ->where([
+                    'month_recovery'=>$lastMonth,
+                    'representative_id'=>new ObjectId($representative_id),
+                    'warehouse_id'=>[
+                        '$nin' => [null]
+                    ]
+                ])
+                ->all();
+        }
+
+        $error_message = '';
+        if(!empty($model)){
+            $error_message = 'Данные уже были внесены за период';
+        }
+        return $this->renderAjax('_add-recovery-for-repayment', [
+            'language' => Yii::$app->language,
+            'object' => $object,
+            'representative_id' => $representative_id,
+            'lastMonth' => $lastMonth,
+            'error_message' => $error_message
+        ]);
+    }
+
+    /**
+     * save recovery
+     * @return \yii\web\Response
+     */
+    public function actionSaveRecoveryForRepayment()
+    {
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert' => 'danger',
+                'message' => 'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+
+        $request = Yii::$app->request->post();
+
+        if(!empty($request['recovery_amount'])) {
+
+            foreach ($request['recovery_amount'] as $k => $item) {
+                $model = new RecoveryForRepaymentAmounts();
+
+                $model->month_recovery = $request['month_recovery'];
+
+                if ($request['object'] == 'representative') {
+                    $model->representative_id = (!empty($request['representative'][$k]) ? new ObjectId($request['representative'][$k]) : '');
+
+                    $forRedirect = '?object='.$request['object'];
+                } else {
+                    $model->representative_id = (!empty($request['representative_id']) ? new ObjectId($request['representative_id']) : '');
+                    $model->warehouse_id = (!empty($request['warehouse'][$k]) ? new ObjectId($request['warehouse'][$k]) : '');
+
+                    $forRedirect = '?object='.$request['object'].'&representative_id='.$request['representative_id'];
+                }
+
+                $model->recovery = (float)$item;
+                $model->comment = (!empty($request['comment'][$k]) ? $request['comment'][$k] : '');
+
+                if ($model->save()) {
+
+                }
+            }
+
+            Yii::$app->session->setFlash('alert', [
+                    'typeAlert' => 'success',
+                    'message' => 'Сохранения применились.'
+                ]
+            );
+        }
+
+
+        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/recovery-for-repayment'.$forRedirect);
+
+    }
+
+    /**
+     * list Repayment Amounts
+     * @return string
+     */
+    public function actionRepaymentAmounts()
+    {
+        $model = RepaymentAmounts::find()
+            ->where(['!=', 'warehouse_id', new ObjectId('5a056671dca7873e022be781')])
+            ->andWhere(['!=', 'warehouse_id', new ObjectId('592426f6dca7872e64095b45')])
+            ->all();
+
+        return $this->render('repayment-amounts', [
+            'model' => $model,
+            'alert' => Yii::$app->session->getFlash('alert', '', true)
+        ]);
+    }
+
+    /**
+     * list repayment for representative
+     * @return string
+     */
+    public function actionListRepaymentRepresentative()
+    {
+        $info = [];
+
+        $request = Yii::$app->request->post();
+
+        if (empty($request)) {
+            $request['date_repayment'] =  date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
+        }
+
+        $modelRepayment = Repayment::find()
+            ->where([
+                'warehouse_id'=>[
+                    '$in' => [null]
+                ]
+            ])
+            ->andWhere(['date_for_repayment'=>$request['date_repayment']])
+            ->all();
+        if(!empty($modelRepayment)){
+
+            $repayment_paid = true;
+
+            foreach ($modelRepayment as $item) {
+                $info[(string)$item->representative_id] = [
+                    'title' => $item->representative->username,
+                    'amount_repayment' => $item->accrued,
+                    'deduction' => $item->deduction
+                ];
+            }
+        } else {
+
+            $repayment_paid = false;
+
+            // get repayment amount
+            $modelRepaymentAmount = RepaymentAmounts::find()->all();
+            if (!empty($modelRepaymentAmount)) {
+                foreach ($modelRepaymentAmount as $item) {
+                    if (empty($info[(string)$item->warehouse->headUser])) {
+                        $info[(string)$item->warehouse->headUser] = [
+                            'title' => $item->warehouse->infoHeadUser->username,
+                            'amount_repayment' => 0,
+                            'deduction' => 0
+                        ];
+                    }
+
+                    if (!empty($item->prices_representative[$request['date_repayment']])) {
+                        $info[(string)$item->warehouse->headUser]['amount_repayment'] += $item->prices_representative[$request['date_repayment']]['price'];
+                    }
+                }
+            }
+
+            // get deduction
+            $modeDeduction = RecoveryForRepaymentAmounts::find()
+                ->where([
+                    'warehouse_id' => [
+                        '$in' => [null]
+                    ]
+                ])
+                ->andWhere(['month_recovery' => $request['date_repayment']])
+                ->all();
+
+            if (!empty($modeDeduction)) {
+                foreach ($modeDeduction as $item) {
+                    $info[(string)$item->representative_id]['deduction'] = $item->recovery;
+                }
+            } else {
+                header('Content-Type: text/html; charset=utf-8');
+                echo '<xmp>';
+                print_r('Заполните удержаиня');
+                echo '</xmp>';
+                die();
+            }
+        }
+
+
+        return $this->render('list-repayment-representative', [
+            'language' => Yii::$app->language,
+            'request' => $request,
+            'info' => $info,
+            'repayment_paid'=>$repayment_paid,
+            'alert' => Yii::$app->session->getFlash('alert', '', true)
+        ]);
+    }
+
+    public function actionMakeRepaymentRepresentative($dateRepayment)
+    {
+        //TODO:KAA check issue repayment for $dateRepayment
+        if(Repayment::checkRepayment($dateRepayment,'representative')){
+            header('Content-Type: text/html; charset=utf-8');
+            echo '<xmp>';
+            print_r('Выплаты была произведена!');
+            echo '</xmp>';
+            die();
+        }
+
+
+        // get repayment amount
+        $modelRepaymentAmount = RepaymentAmounts::find()->all();
+        if(!empty($modelRepaymentAmount)){
+            foreach ($modelRepaymentAmount as $item) {
+                if(empty($info[(string)$item->warehouse->headUser])){
+                    $info[(string)$item->warehouse->headUser] = [
+                        'title' => $item->warehouse->infoHeadUser->username,
+                        'amount_repayment' => 0,
+                        'deduction' => 0
+                    ];
+                }
+
+                if(!empty($item->prices_representative[$dateRepayment])){
+                    $info[(string)$item->warehouse->headUser]['amount_repayment'] += $item->prices_representative[$dateRepayment]['price'];
+                }
+            }
+        }
+
+        // get deduction
+        $modeDeduction = RecoveryForRepaymentAmounts::find()
+            ->where([
+                'warehouse_id'=>[
+                    '$in' => [null]
+                ]
+            ])
+            ->andWhere(['month_recovery'=>$dateRepayment])
+            ->all();
+
+        if(!empty($modeDeduction)){
+            foreach ($modeDeduction as $item) {
+                $info[(string)$item->representative_id]['deduction'] = $item->recovery;
+            }
+        }
+
+        foreach ($info as $k=>$item){
+
+            $repayment = $item['amount_repayment']-$item['deduction'];
+
+            Charity::transferMoney('573a0d76965dd0fb16f60bfe',$k,$repayment,'repayment for representative');
+
+            $model = new Repayment();
+
+            $model->representative_id = new ObjectID($k);
+            $model->accrued = $item['amount_repayment'];
+            $model->deduction = $item['deduction'];
+            $model->repayment = $repayment;
+            $model->comment = 'repayment for representative';
+            $model->date_for_repayment = $dateRepayment;
+            $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            if($model->save()){
+
+            }
+        }
+
+        return $this->redirect('list-repayment-representative',301);
+    }
+
+
+
+    public function actionCalculationRepayment($look='')
+    {
+
+        $info = [];
+
+        $listGoodsWithTitle = PartsAccessories::getListPartsAccessoriesForSaLe();
+
+        $listGoodsWithPriceForPack = Products::getGoodsPriceForPack();
+
+        $infoUserWarehouseCountry = Warehouse::getArrayAdminWithWarehouseCountry();
+
+        $infoPercentForRepayment = [];
+        $modelPercentForRepayment = PercentForRepaymentAmounts::find()
+            ->where([
+                'representative_id'=>[
+                    '$nin' => [null]
+                ]
+            ])
+            ->all();
+        if(!empty($modelPercentForRepayment)){
+            foreach ($modelPercentForRepayment as $item) {
+                $infoPercentForRepayment[(string)$item->representative_id] = [
+                    'dop_price_per_warehouse' => $item->dop_price_per_warehouse,
+                    'turnover_boundary' => $item->turnover_boundary
+                ];
+            }
+        }
+
+        $listRepresentativeForWarehouse = [];
+        $infoWarehouse = Warehouse::find()->all();
+        if (!empty($infoWarehouse)) {
+            foreach ($infoWarehouse as $item) {
+
+                // get list warehouse for representative
+                $listRepresentativeForWarehouse[(string)$item->_id] = (!empty($item->headUser) ? (string)$item->headUser : '');
+
+                // calculate count warehouses
+                if (empty($info[(string)$item->headUser]['warehouses'][(string)$item->_id])) {
+                    $info[(string)$item->headUser]['warehouses'][(string)$item->_id] = [
+                        'packs' => 0,
+                        'other_sale' => 0,
+                        'listProducts' => [
+                            '59620f49dca78761ae2d01c1' => 0,
+                            '59620f57dca78747631d3c62' => 0,
+                            '5975afe2dca78748ce5e7e02' => 0
+                        ],
+                        'numberProducts' => [
+                            '59620f49dca78761ae2d01c1' => 0,
+                            '59620f57dca78747631d3c62' => 0,
+                            '5975afe2dca78748ce5e7e02' => 0
+                        ]
+                    ];
+                }
+
+                if(empty($info[(string)$item->headUser]['listProducts'])){
+                    $info[(string)$item->headUser]['listProducts'] = [
+                        '59620f49dca78761ae2d01c1' => 0,
+                        '59620f57dca78747631d3c62' => 0,
+                        '5975afe2dca78748ce5e7e02' => 0
+                    ];
+                    $info[(string)$item->headUser]['listOrderId'] = [];
+                }
+            }
+
+            // calculate dop repayment
+            foreach ($info as $kHeadAdmin => $item) {
+                $countWarehouse = count($item['warehouses']);
+                if ($countWarehouse > 5) {
+                    $info[$kHeadAdmin]['dopGoodsTurnover'] = ($countWarehouse - 5) * $infoPercentForRepayment[$kHeadAdmin]['dop_price_per_warehouse'];
+                } else {
+                    $info[$kHeadAdmin]['dopGoodsTurnover'] = 0;
+                }
+
+                $info[$kHeadAdmin]['totalAmount'] = 0;
+            }
+        }
+
+        $lastDate = date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
+        $lastDate = explode('-', $lastDate);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $lastDate['1'], $lastDate['0']);
+
+        $calculationData = implode('-', $lastDate);
+        $dateFrom = strtotime(implode($lastDate, '-') . '-01');
+        $dateTo = strtotime(implode($lastDate, '-') . '-' . $countDay);
+
+
+        // get info sale packs
+        $model = StatusSales::find()
+            ->where([
+                'buy_for_money' => [
+                    '$ne' => 1
+                ]
+            ])
+            ->andWhere([
+                'setSales.dateChange' => [
+                    '$gte' => new UTCDateTime($dateFrom * 1000),
+                    '$lte' => new UTCDateTime($dateTo * 1000)
+                ]
+            ])
+            ->all();
+
+        if (!empty($model)) {
+            foreach ($model as $item) {
+
+                if (!empty($item->setSales) && $item->sales->type != -1) {
+                    foreach ($item->setSales as $itemSet) {
+                        $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
+
+                        $warehouseId = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id'] : 'none');
+                        $representativeId = (!empty($listRepresentativeForWarehouse[$warehouseId]) ? $listRepresentativeForWarehouse[$warehouseId] : '');
+
+                        if ($dateChange >= $dateFrom && $dateChange <= $dateTo && $itemSet['status'] == 'status_sale_issued' && !empty($representativeId)) {
+                            if (!empty($info[$representativeId]['warehouses'][$warehouseId])) {
+
+                                // check calculation only one for order
+                                if(!in_array((string)$item->idSale,$info[$representativeId]['listOrderId'])){
+                                    $info[$representativeId]['warehouses'][$warehouseId]['packs'] += $item->sales->price;
+                                    $info[$representativeId]['totalAmount'] += $item->sales->price;
+                                    $info[$representativeId]['listOrderId'][] = (string)$item->idSale;
+                                }
+
+
+                                $productID = array_search($itemSet['title'],$listGoodsWithTitle);
+                                $info[$representativeId]['warehouses'][$warehouseId]['listProducts'][$productID] += $listGoodsWithPriceForPack[$item->sales->product][$productID];
+                                $info[$representativeId]['warehouses'][$warehouseId]['numberProducts'][$productID]++;
+                                $info[$representativeId]['listProducts'][$productID] += $listGoodsWithPriceForPack[$item->sales->product][$productID];
+
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        unset($model);
+
+        // get info sale with out pack vipcoin and other refill
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime($dateFrom * 1000),
+                    '$lte' => new UTCDateTime($dateTo * 1000)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne' => -1
+                ]
+            ])
+            ->andWhere([
+                'productType' => [
+                    '$in' => [9, 10,3,4,7,8]
+                ]
+            ])
+            ->all();
+
+        if (!empty($model)) {
+            foreach ($model as $item) {
+
+                $country = $item->infoUser->country;
+                $city = $item->infoUser->city;
+
+                if(!empty($country) && !empty($city)){
+
+                    $checkWarehouse = Warehouse::findOne(['country'=>$country,'cities'=>$city]);
+                    if(!empty($checkWarehouse)){
+                        $info[$listRepresentativeForWarehouse[(string)$checkWarehouse->_id]]['warehouses'][(string)$checkWarehouse->_id]['other_sale'] += $item->price;
+                        $info[$listRepresentativeForWarehouse[(string)$checkWarehouse->_id]]['totalAmount'] += $item->price;
+                    }
+                }
+            }
+        }
+
+        // calculation percent for representative
+        if (!empty($info)) {
+            foreach ($info as $k => $item) {
+                foreach ($infoPercentForRepayment[$k]['turnover_boundary'] as $kPercent=>$itemPercent) {
+                    if($itemPercent['turnover_boundary']<=$item['totalAmount']
+                        && !empty($infoPercentForRepayment[$k]['turnover_boundary'][($kPercent+1)])
+                        && $infoPercentForRepayment[$k]['turnover_boundary'][($kPercent+1)]['turnover_boundary']>$item['totalAmount']){
+
+                        $percent_representative = $itemPercent['percent'];
+                        break;
+                    } elseif ($itemPercent['turnover_boundary']<=$item['totalAmount']
+                        && empty($infoPercentForRepayment[$k]['turnover_boundary'][($kPercent+1)]['turnover_boundary'])){
+
+                        $percent_representative = $itemPercent['percent'];
+                        break;
+                    }
+                }
+                $info[$k]['percent_representative'] = $percent_representative;
+
+
+                foreach ($item['warehouses'] as $warehouseId => $warehouse) {
+
+                    $turnoverWarehouse = $warehouse['packs'] + $warehouse['other_sale'];
+                    $percent_warehouse = $this->calculationPercentWarehouse($warehouseId,$turnoverWarehouse);
+                    $info[$k]['warehouses'][$warehouseId]['percent_warehouse'] = $percent_warehouse;
+
+                    foreach ($warehouse['listProducts'] as $goodsId => $goodsPrice) {
+
+                        $modelWarehouse = RepaymentAmounts::findOne([
+                            'warehouse_id' => new ObjectId($warehouseId),
+                            'product_id' => new ObjectId($goodsId),
+                        ]);
+
+                        if (empty($modelWarehouse)) {
+                            $modelWarehouse = new RepaymentAmounts();
+                            $modelWarehouse->warehouse_id = new ObjectId($warehouseId);
+                            $modelWarehouse->product_id = new ObjectId($goodsId);
+                            $modelWarehouse->prices_warehouse = [];
+                            $modelWarehouse->prices_representative = [];
+                        }
+
+                        /* for representative */
+                        $arrayPrices = $modelWarehouse->prices_representative;
+                        $arrayPrices[$calculationData]['percent'] = $percent_representative;
+                        $arrayPrices[$calculationData]['price'] = (float)round($goodsPrice / 100 * $percent_representative, 2);
+                        $arrayPrices[$calculationData]['count'] = $warehouse['numberProducts'][$goodsId];
+                        $arrayPrices[$calculationData]['goods_turnover'] = $item['totalAmount'];
+                        $modelWarehouse->prices_representative = $arrayPrices;
+
+                        /* for warehouse */
+                        $arrayPrices = $modelWarehouse->prices_warehouse;
+                        $arrayPrices[$calculationData]['percent'] = $percent_warehouse;
+                        $arrayPrices[$calculationData]['price'] = (float)round($goodsPrice / 100 * $percent_warehouse, 2);
+                        $arrayPrices[$calculationData]['count'] = $warehouse['numberProducts'][$goodsId];
+                        $arrayPrices[$calculationData]['goods_turnover'] = $turnoverWarehouse;
+                        $modelWarehouse->prices_warehouse = $arrayPrices;
+
+                        if(empty($look)){
+                            if($modelWarehouse->save()) {}
+                        }
+                    }
+
+
+                }
+            }
+        }
+
+        if($look==1){
+            header('Content-Type: text/html; charset=utf-8');
+            echo '<xmp>';
+            print_r($info);
+            echo '</xmp>';
+            die();
+        } else {
+            return $this->redirect('repayment-amounts',301);
+        }
+    }
+
+    /**
+     * clear and update structure table
+     * @throws \yii\mongodb\Exception
+     */
+    public function actionClearTableForRepayment()
+    {
+        // Remove field in table
+        RepaymentAmounts::getCollection()->update(
+            [],
+            ['$unset' => ['price' => 1, 'price_representative' => 1]],
+            ['multi' => true]
+        );
+
+        // Clear field in table
+        RepaymentAmounts::getCollection()->update(
+            [],
+            ['$set' => ['prices_warehouse' => (array)[], 'prices_representative' => (array)[]]],
+            ['multi' => true]
+        );
+
+        Repayment::getCollection()->remove();
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r('all clear');
+        echo '</xmp>';
+        die();
+    }
+
 
 
     /**
@@ -819,11 +787,11 @@ class OffsetsWithWarehousesController extends BaseController {
      * @param $id
      * @return int|mixed
      */
-    protected function getDifferenceRepaymentNow($object,$id)
+    protected function getDifferenceRepaymentNow($object, $id)
     {
         $repayment = 0;
 
-        if($object=='representative'){
+        if ($object == 'representative') {
             $arrayWarehouse = Warehouse::getListHeadAdminWarehouseId($id);
             $directionRepayment = 'company';
         } else {
@@ -833,25 +801,25 @@ class OffsetsWithWarehousesController extends BaseController {
 
 
         $info = [
-            'amount_repayment_for_'.$directionRepayment => 0,
-            'amount_repayment_for_'.$object             => 0,
+            'amount_repayment_for_' . $directionRepayment => 0,
+            'amount_repayment_for_' . $object => 0,
         ];
 
         $infoGoodsInProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
         $infoUserWarehouseCountry = Warehouse::getArrayAdminWithWarehouseCountry();
 
         /** buy for money */
-        $model = StatusSales::find()->where(['buy_for_money'=>1])->all();
-        if(!empty($model)){
+        $model = StatusSales::find()->where(['buy_for_money' => 1])->all();
+        if (!empty($model)) {
 
             foreach ($model as $item) {
                 $productSetId = (!empty($item->sales->product) ? $item->sales->product : '???');
 
                 $warehouseId = (!empty($infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$item->sales->warehouseId]['warehouse_id'] : 'none');
 
-                if($item->sales->type != -1 && in_array($warehouseId,$arrayWarehouse)) {
-                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($object,$warehouseId,$productSetId,$item->sales->dateCreate);
-                    $info['amount_repayment_for_'.$directionRepayment] += $amountRepayment;
+                if ($item->sales->type != -1 && in_array($warehouseId, $arrayWarehouse)) {
+                    $amountRepayment = RepaymentAmounts::CalculateRepaymentSet($object, $warehouseId, $productSetId, $item->sales->dateCreate);
+                    $info['amount_repayment_for_' . $directionRepayment] += $amountRepayment;
                 }
             }
         }
@@ -859,65 +827,60 @@ class OffsetsWithWarehousesController extends BaseController {
         /** buy for prepayment */
         $model = StatusSales::find()
             ->where([
-                'buy_for_money'=>[
+                'buy_for_money' => [
                     '$ne' => 1
                 ]
             ])
             ->all();
-        if(!empty($model)){
+        if (!empty($model)) {
             foreach ($model as $item) {
 
-                if(!empty($item->setSales)  && $item->sales->type != -1){
+                if (!empty($item->setSales) && $item->sales->type != -1) {
 
                     foreach ($item->setSales as $itemSet) {
-                        $warehouseId    = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id'] : 'none');
+                        $warehouseId = (!empty($infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id']) ? $infoUserWarehouseCountry[(string)$itemSet['idUserChange']]['warehouse_id'] : 'none');
 
-                        if ($itemSet['status'] == 'status_sale_issued' && in_array($warehouseId,$arrayWarehouse)) {
-                            $productId  = array_search($itemSet['title'],$infoGoodsInProduct);
-                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($object,$warehouseId,$productId,$itemSet['dateChange']);
-                            $info['amount_repayment_for_'.$object] += $amountRepayment;
+                        if ($itemSet['status'] == 'status_sale_issued' && in_array($warehouseId, $arrayWarehouse)) {
+                            $productId = array_search($itemSet['title'], $infoGoodsInProduct);
+                            $amountRepayment = RepaymentAmounts::CalculateRepaymentGoods($object, $warehouseId, $productId, $itemSet['dateChange']);
+                            $info['amount_repayment_for_' . $object] += $amountRepayment;
                         }
                     }
                 }
             }
         }
 
-        $repaymentCompanyWarehouse = Repayment::getRepayment($object,$id,$directionRepayment.'_'.$object);
-        $repaymentWarehouseCompany = Repayment::getRepayment($object,$id,$object.'_'.$directionRepayment);
+        $repaymentCompanyWarehouse = Repayment::getRepayment($object, $id, $directionRepayment . '_' . $object);
+        $repaymentWarehouseCompany = Repayment::getRepayment($object, $id, $object . '_' . $directionRepayment);
 
-        $repayment = $info['amount_repayment_for_'.$directionRepayment]-$repaymentWarehouseCompany-$info['amount_repayment_for_'.$object]+$repaymentCompanyWarehouse;
+        $repayment = $info['amount_repayment_for_' . $directionRepayment] - $repaymentWarehouseCompany - $info['amount_repayment_for_' . $object] + $repaymentCompanyWarehouse;
 
         return $repayment;
     }
 
 
-//    public function actionFix()
-//    {
-//        $model = RepaymentAmounts::find()->all();
-//
-//        foreach ($model as $item) {
-//            $pricesWarehouse['0'] = [
-//                'from_date' => new UTCDatetime(strtotime('2017-01-01') * 1000),
-//                'price' => $item->price,
-//            ];
-//            $item->prices_warehouse=$pricesWarehouse;
-//
-//            $pricesRepresentative['0'] = [
-//                'from_date' => new UTCDatetime(strtotime('2017-01-01') * 1000),
-//                'price' => $item->price_representative,
-//            ];
-//            $item->prices_representative = $pricesRepresentative;
-//
-////            header('Content-Type: text/html; charset=utf-8');
-////            echo "<xmp>";
-////            print_r($item);
-////            echo "</xmp>";
-////            die();
-//
-//            if($item->save()){}
-//        }
-//
-//        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/repayment-amounts');
-//    }
+    protected function calculationPercentWarehouse($warehpuseId,$turnoverWarehouse)
+    {
+        $percent = 0;
 
+        $tablePercent = PercentForRepaymentAmounts::findOne(['warehouse_id'=>new ObjectID($warehpuseId)]);
+
+        foreach ($tablePercent->turnover_boundary as $kPercent=>$itemPercent) {
+
+            if($itemPercent['turnover_boundary']<=$turnoverWarehouse
+                && !empty($tablePercent->turnover_boundary[($kPercent+1)])
+                && $tablePercent->turnover_boundary[($kPercent+1)]['turnover_boundary']>$turnoverWarehouse){
+
+                $percent = $itemPercent['percent'];
+                break;
+            } elseif ($itemPercent['turnover_boundary']<=$turnoverWarehouse
+                && empty($tablePercent->turnover_boundary[($kPercent+1)]['turnover_boundary'])){
+
+                $percent = $itemPercent['percent'];
+                break;
+            }
+        }
+
+        return $percent;
+    }
 }

@@ -64,14 +64,14 @@ class PlanningPurchasingController extends BaseController {
 
         return $this->redirect('/' . Yii::$app->language .'/business/planning-purchasing/planning');
     }
-   
+
     public function actionMakePlanning()
     {
-        return $this->renderPartial('_make-planning',[
+        return $this->renderAjax('_make-planning',[
             'language' => Yii::$app->language
         ]);
     }
-    
+
     public function actionAllComponents()
     {
         $request = Yii::$app->request->post();
@@ -84,10 +84,9 @@ class PlanningPurchasingController extends BaseController {
             ]);
         }
 
-        return false; 
+        return false;
     }
 
-    
     public function actionUpdateChangeableList()
     {
         $request = Yii::$app->request->post();
@@ -95,16 +94,17 @@ class PlanningPurchasingController extends BaseController {
         return $this->renderPartial('_update-changeable-list',[
                 'infoComposite'     =>  ['_id'=>$request['goodsParent'],'number'=>1],
                 'selectedGoodsId'   =>  $request['goodsId'],
-                'level'             =>  $request['goodsCount'],
-                'count'             =>  $request['goodsLevel']
+                'level'             =>  $request['goodsLevel'],
+                'count'             =>  $request['goodsCount'],
+                'wantMake'          =>  $request['wantMake']
             ]
         );
     }
-    
+
     public function actionLookPlanning($id)
     {
         $model = PlanningPurchasing::findOne(['_id'=>new ObjectID($id)]);
-        
+
         return $this->renderPartial('_look-planning',[
             'model' => $model
         ]);
@@ -125,7 +125,7 @@ class PlanningPurchasingController extends BaseController {
 
     public function actionMultiplierPlanningPurchasing(){
         $info = [];
-        
+
         $request = Yii::$app->request->post();
 
         if(!empty($request)){
@@ -190,7 +190,7 @@ class PlanningPurchasingController extends BaseController {
                 $needCount = ($needCount > 0 ? $needCount : '0');
                 $priceAmount = $partAccessoriesPricePurchase[$k]*$needCount;
                 $amount += $priceAmount;
-                
+
                 $infoExport[] = [
                     'productTitle'      =>  $partAccessoriesAll[$k],
                     'needCount'         =>  $item,

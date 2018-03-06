@@ -418,7 +418,7 @@ Class Menu
                     [
                         'key'   =>  'sidebar_offsets_with_representative',
                         'label' => THelper::t('sidebar_offsets_with_representative'),
-                        'url' => ['offsets-with-warehouses/offsets-with-representative'],
+                        'url' => ['offsets-with-warehouses/list-repayment-representative'],
                         'action' => 'offsets-with-representative',
                     ],
 

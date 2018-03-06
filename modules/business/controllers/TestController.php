@@ -120,7 +120,7 @@ class TestController extends BaseController
                     'id'=>'catalogs.storages',
                     'name'=>$item->title,
                     'storageType'=>'1004000000000082',
-                    
+
                 ];
 
 //                $idLine = Storages::save($data);
@@ -1192,7 +1192,7 @@ class TestController extends BaseController
                 echo "</xmp>";
                 die();
 
-                sleep(1); 
+                sleep(1);
             }
         }
 
@@ -1223,42 +1223,15 @@ class TestController extends BaseController
 
     public function actionTest()
     {
-        header('Content-Type: text/html; charset=utf-8');
-        echo '<xmp>';
-        print_r($listOrderForMonth = $this->getOrderForMonth());
-        echo '</xmp>';
-        die();
-
-//        $model = PartsAccessories::find()->orderBy(['delovod_id'=>SORT_DESC])->all();
-//
-//        foreach ($model as $item) {
-//            echo $item->title . ' --- ' . $item->delovod_id;
-//            echo '<br>';
-//        }
-    }
-
-    public function actionFix()
-    {
-        //5a5db45bdca78759c02b3552    ----> 59243668dca78731c6788832
-        //5a5db4a5dca787500a116e12    ----> 5975afe2dca78748ce5e7e02
-
-
-        $modelComplectCopy = PartsAccessories::findOne(['_id'=>new ObjectID('59243668dca78731c6788832')]);
-        $modelComplect = PartsAccessories::findOne(['_id'=>new ObjectID('5a5db45bdca78759c02b3552')]);
-        $modelComplect->composite = $modelComplectCopy->composite;
-        if($modelComplect->save()){}
-
-        $modelComplectCopy = PartsAccessories::findOne(['_id'=>new ObjectID('5975afe2dca78748ce5e7e02')]);
-        $modelComplect = PartsAccessories::findOne(['_id'=>new ObjectID('5a5db4a5dca787500a116e12')]);
-        $modelComplect->composite = $modelComplectCopy->composite;
-        if($modelComplect->save()){}
 
         header('Content-Type: text/html; charset=utf-8');
         echo '<xmp>';
-        print_r('ok');
+        print_r(Purchase::all());
         echo '</xmp>';
         die();
     }
+
+
 
 
 }

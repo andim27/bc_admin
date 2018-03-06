@@ -20,8 +20,8 @@ if(!empty($changeableList)){
 }
 
 $priceOnePiece = LogWarehouse::getPriceOnePiece((string)$infoComposite['_id']);
-$warehouseCount = (!empty($listGoodsFromMyWarehouse[(string)$infoComposite['_id']]) ? $listGoodsFromMyWarehouse[(string)$infoComposite['_id']] : '0');
-$needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0');
+$warehouseCount = (!empty($listGoodsFromMyWarehouse[$selectedGoodsId]) ? $listGoodsFromMyWarehouse[$selectedGoodsId] : '0');
+$needOrder = (($warehouseCount-($needCount*$wantMake))<0 ? ($needCount*$wantMake)-$warehouseCount : '0');
 
 ?>
 
@@ -30,18 +30,17 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
 <?php if(!empty($infoGoods->composite)){ ?>
     <div class="form-group row headPart">
         <div class="col-md-5 offset-left-<?=$level?>">
-
-                <?=Html::dropDownList('complect[]',$infoComposite['_id'],
-                    $changeableList,[
-                        'class'     =>'form-control',
-                        'required'  =>'required',
-                        'data'      => [
-                            'parent'    =>  $parentChangeableList,
-                            'level'     =>  $level,
-                            'count'     =>  $needCount
-                        ],
-                            'options'   => [
-                        ]
+            <?=Html::dropDownList('complect[]',$selectedGoodsId,
+                $changeableList,[
+                    'class'     =>'form-control',
+                    'required'  =>'required',
+                    'data'      => [
+                        'parent'    =>  $parentChangeableList,
+                        'level'     =>  $level,
+                        'count'     =>  $needCount
+                    ],
+                    'options'   => [
+                    ]
                 ])?>
         </div>
         <div class="col-md-1"><?=($infoComposite['number'] * $count)?></div>
@@ -54,18 +53,18 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
     <?php $level++; ?>
     <?php foreach($infoGoods->composite as $item){ ?>
         <?= $this->render('_complects',[
-    'infoComposite'     => $item,
-    'level'             => $level,
-    'count'             => ($infoComposite['number'] * $count)
-    ]); ?>
+            'infoComposite'     => $item,
+            'level'             => $level,
+            'count'             => ($infoComposite['number'] * $count)
+        ]); ?>
     <?php } ?>
 
 <?php } else { ?>
     <div class="form-group row">
     <div class="col-md-5  offset-left-<?=$level?>">
 
-            <?=Html::dropDownList('complect[]',$infoComposite['_id'],
-                    $changeableList,[
+            <?=Html::dropDownList('complect[]',$selectedGoodsId,
+                $changeableList,[
                     'class'     =>'form-control',
                     'required'  =>'required',
                     'data'      => [
@@ -73,7 +72,8 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
                         'level'     =>  $level,
                         'count'     =>  $needCount
                     ],
-                        'options'   => [
+                    'options'   => [
+
                     ]
                 ])?>
     </div>
@@ -92,10 +92,10 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
     </div>
     <div class="col-md-1">
         <?=Html::input('number','buy[]',$needOrder,[
-        'class'=>'form-control needBuy',
-        'pattern'=>'\d*',
-        'min'=>'1',
-        'step'=>'1',
+            'class'=>'form-control needBuy',
+            'pattern'=>'\d*',
+            'min'=>'1',
+            'step'=>'1',
         ])?>
     </div>
     <div class="col-md-2 allSumma">
@@ -109,6 +109,6 @@ $needOrder = (($warehouseCount-$needCount)<0 ? $needCount-$warehouseCount : '0')
         <?php } ?>
     </div>
 </div>
-    <?php } ?>
+<?php } ?>
 
 </span>

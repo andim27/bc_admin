@@ -20,8 +20,12 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
 <div class="row">
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
-    <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>',['/business/offsets-with-warehouses/add-update-repayment-amounts'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+    <div class="col-md-12 form-group ">
+        <?php //=Html::a('<i class="fa fa-plus"></i>',['/business/offsets-with-warehouses/add-update-repayment-amounts'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
+        <?=Html::a('Таблица взысканий представителям',['/business/offsets-with-warehouses/recovery-for-repayment','object'=>'representative'],['class'=>'btn btn-default'])?>
+        <?=Html::a('Таблица процентов представителям',['/business/offsets-with-warehouses/percent-for-repayment','object'=>'representative'],['class'=>'btn btn-default'])?>
+        <?=Html::a('Таблица процентов складам',['/business/offsets-with-warehouses/percent-for-repayment','object'=>'warehouse'],['class'=>'btn btn-default'])?>
+        <?=Html::a('Просчитать за прошлый месяц',['/business/offsets-with-warehouses/calculation-repayment'],['class'=>'btn btn-default'])?>
     </div>
 </div>
 
@@ -32,18 +36,11 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
                 <thead>
                 <tr>
                     <th>№</th>
-                    <th>
-                        <?=THelper::t('warehouse')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('goods')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('amount_warehouse')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('amount_representative')?>
-                    </th>
+                    <th><?=THelper::t('warehouse')?></th>
+                    <th><?=THelper::t('goods')?></th>
+                    <th><?=THelper::t('date')?></th>
+                    <th><?=THelper::t('amount_warehouse')?></th>
+                    <th><?=THelper::t('amount_representative')?></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -51,32 +48,31 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
 
                 <?php foreach ($model as $k=>$item) { ?>
                     <?php
-                        $infoPriceWarehouse = 0;
-                        if(!empty($item->prices_warehouse)){
-                            $infoPriceWarehouse = (array)$item->prices_warehouse;
-                            $infoPriceWarehouse = end($infoPriceWarehouse);
-                            $infoPriceWarehouse = $infoPriceWarehouse['price'];
-                        }
-                        
-                        $infoPriceRepresentative = 0;
-                        if(!empty($item->prices_representative)) {
-                            $infoPriceRepresentative = (array)$item->prices_representative;
-                            $infoPriceRepresentative = end($infoPriceRepresentative);
-                            $infoPriceRepresentative = $infoPriceRepresentative['price'];
-                        }
+                    $priceWarehouse = $dateWarehouse = '-';
+                    if(!empty($item->prices_warehouse)){
+                        $infoPriceWarehouse = (array)$item->prices_warehouse;
+                        end($infoPriceWarehouse);
+                        $dateWarehouse = key($infoPriceWarehouse);
+                        $priceWarehouse = $infoPriceWarehouse[$dateWarehouse]['price'];
+                    }
+
+                    $priceRepresentative = $dateRepresentative = '-';
+                    if(!empty($item->prices_representative)) {
+                        $infoPriceRepresentative = (array)$item->prices_representative;
+                        end($infoPriceRepresentative);
+                        $dateRepresentative = key($infoPriceRepresentative);
+                        $priceRepresentative = $infoPriceRepresentative[$dateRepresentative]['price'];
+                    }
                     ?>
                     <tr>
                         <td><?=($k+1)?></td>
                         <td><?=$listWarehouse[(string)$item->warehouse_id]?></td>
                         <td><?=$listProduct[(string)$item->product_id]?></td>
+                        <td><?=$dateRepresentative?></td>
+                        <td><?=$priceWarehouse;?></td>
+                        <td><?=$priceRepresentative;?></td>
                         <td>
-                            <?=$infoPriceWarehouse;?>
-                        </td>
-                        <td>
-                            <?=$infoPriceRepresentative;?>
-                        </td>
-                        <td>
-                            <?= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/offsets-with-warehouses/add-update-repayment-amounts','id'=>(string)$item->warehouse_id], ['data-toggle'=>'ajaxModal']) ?>
+                            <?php //= Html::a('<i class="fa fa-pencil" title="редактировать"></i>', ['/business/offsets-with-warehouses/add-update-repayment-amounts','id'=>(string)$item->warehouse_id], ['data-toggle'=>'ajaxModal']) ?>
                             <?php //= Html::a('<i class="fa fa-trash-o" title="удалить"></i>', ['/business/offsets-with-warehouses/remove-repayment-amounts','id'=>$item->warehouse_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]); ?>
                         </td>
                     </tr>
@@ -95,5 +91,3 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
     });
 
 </script>
-
-

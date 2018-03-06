@@ -44,7 +44,8 @@
                 goodsId     :   $(this).val(),
                 goodsParent :   $(this).data('parent'),
                 goodsCount  :   $(this).data('count'),
-                goodsLevel  :   $(this).data('level')
+                goodsLevel  :   $(this).data('level'),
+                wantMake    :   $('.needPlaning').val()
             },
             success: function (data) {
                 blComposite.html(data);

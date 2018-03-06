@@ -919,12 +919,11 @@ class SettingController extends BaseController {
             }
             $infoWarehouse->idUsers = $userId;
 
-            $headUser = '';
-            if($request['headUser'] !== 'placeh'){
-                $headUser = new ObjectID($request['headUser']);
-            }
-            $infoWarehouse->headUser = $headUser;
-            
+
+            $infoWarehouse->headUser = ($request['headUser'] !== 'placeh' ? new ObjectID($request['headUser']) : '');
+
+            $infoWarehouse->responsible = ($request['responsible'] !== 'placeh' ? new ObjectID($request['responsible']) : '');
+
 
             if($infoWarehouse->save()){
                 $error = [

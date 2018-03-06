@@ -1077,9 +1077,9 @@ class SaleReportController extends BaseController
         if(!empty($model)){
             foreach ($model as $item) {
 
-                $listCountry[$item->infoUser->country] = $allListCountry[$item->infoUser->country];
+                $country = mb_strtolower($item->infoUser->country);
 
-                if(empty($request['countryReport']) || ($request['countryReport']==$item->infoUser->country)){
+                if(empty($request['countryReport']) || ($request['countryReport']==$country)){
                     $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
 
                     if(empty($listAvailableCities)){
@@ -1092,7 +1092,7 @@ class SaleReportController extends BaseController
                         ){
                         $infoSale[] = [
                             'dateCreate' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
-                            'userCountry'=>$allListCountry[$item->infoUser->country],
+                            'userCountry'=>$allListCountry[$country],
                             'userCity'=>$city,
                             'userAddress'=>$item->infoUser->address,
                             'userName'=>$item->infoUser->secondName .' ' . $item->infoUser->firstName,

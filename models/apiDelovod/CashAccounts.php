@@ -40,7 +40,8 @@ class CashAccounts
         'softpay'           =>  '1101100000001021',
         'bank_transfer'     =>  '1101100000001013',
         'paysera2'          =>  '1101100000001016',
-        'coinpayments'      =>  '1101100000001051'
+        'coinpayments'      =>  '1101100000001051',
+        'frgpay'            =>  '1101100000001057'
     ];
 
     /**

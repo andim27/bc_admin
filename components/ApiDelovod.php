@@ -81,7 +81,7 @@ class ApiDelovod {
             fclose($fp);
         }
 
-        $content =  json_encode(['date'=>date('Y-m-d H:i:s'),'error'=>$responce]);
+        $content = json_encode(['date'=>date('Y-m-d H:i:s'),'error'=>$responce]);
 
         file_put_contents($pathFile,$content.','."\n",FILE_APPEND);
 
@@ -89,13 +89,15 @@ class ApiDelovod {
     }
 
     public static function getLog(){
+
+        $dateNow = date('Y-m');
         $pathFile = Yii::getAlias('@apiDelovod');
 
         if (!file_exists($pathFile)) {
             mkdir($pathFile, 0775, true);
         }
 
-        $pathFile .= '/api-delovod-'.date('Y-m').'.txt';
+        $pathFile .= '/api-delovod-'.$dateNow.'.txt';
         if (!file_exists($pathFile)) {
             $fp = fopen($pathFile, "w");
             fclose($fp);
@@ -103,9 +105,11 @@ class ApiDelovod {
 
         $content = file_get_contents($pathFile);
 
-//        if(!empty($content)){
-//            $content = json_decode($content,TRUE);
-//        }
+        // check prev month
+        if(empty($content)){
+            self::removePrevFileLog($dateNow);
+        }
+
 
         return $content;
     }
@@ -122,6 +126,21 @@ class ApiDelovod {
 
         return $json ? json_decode($response) : $response;
     }
-    
+
+    /**
+     * remove file log for prev month
+     * @param $dateNow
+     */
+    private static function removePrevFileLog($dateNow)
+    {
+        $checkMonth = date('Y-m', strtotime('-1 month', strtotime($dateNow)));
+
+        $pathFile = Yii::getAlias('@apiDelovod');
+        $pathFile .= '/api-delovod-'.$checkMonth.'.txt';
+
+        if (file_exists($pathFile)) {
+            unlink($pathFile);
+        }
+    }
     
 }

@@ -167,23 +167,45 @@ class Products extends ActiveRecord
         return $list;
     }
     
-    public static function getSearchInfoProduct($field,$search){
+    public static function getSearchInfoProduct($field,$search)
+    {
         $model = Products::find()->where(['LIKE',$field,$search])->one();
 
         return !empty($model) ? $model->{$field} : '';
     }
 
+
+    public static function getGoodsPriceForPack()
+    {
+        $answer = [];
+
+        $model = self::find()->where(['productSet'=>[
+            '$exists' => true
+        ]])->all();
+
+        if(!empty($model)){
+            foreach ($model as $item){
+                if(!empty($item->productSet)){
+                    foreach ($item->productSet as $itemSet) {
+                        $answer[$item->product][$itemSet['setId']] = (!empty($itemSet['setPrice']) ? $itemSet['setPrice'] : '0');
+                    }
+                }
+            }
+        }
+
+        return $answer;
+    }
     
 }
 
 class ProductSet extends Model
 {
-    public $setName,$setId;
+    public $setName,$setId,$setPrice;
 
     public function rules()
     {
         return [
-            [['setName','setId'], 'required'],
+            [['setName','setId','setPrice'], 'required'],
         ];
     }
 }
