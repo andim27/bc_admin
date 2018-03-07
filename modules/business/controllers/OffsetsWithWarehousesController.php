@@ -828,11 +828,11 @@ class OffsetsWithWarehousesController extends BaseController
         $countDay = cal_days_in_month(CAL_GREGORIAN, $lastDate['1'], $lastDate['0']);
 
         $calculationData = implode('-', $lastDate);
-        $dateFrom = strtotime(implode($lastDate, '-') . '-01');
-        $dateTo = strtotime(implode($lastDate, '-') . '-' . $countDay);
+        $dateFrom = strtotime(implode($lastDate, '-') . '-01 00:00:00');
+        $dateTo = strtotime(implode($lastDate, '-') . '-' . $countDay.' 23:59:59');
 
 
-        // get info sale packs
+        // get info sale packs for issued
         $model = StatusSales::find()
             ->where([
                 'buy_for_money' => [
@@ -849,7 +849,6 @@ class OffsetsWithWarehousesController extends BaseController
 
         if (!empty($model)) {
             foreach ($model as $item) {
-
                 if (!empty($item->setSales) && $item->sales->type != -1) {
                     foreach ($item->setSales as $itemSet) {
                         $dateChange = strtotime($itemSet['dateChange']->toDateTime()->format('Y-m-d'));
@@ -859,15 +858,6 @@ class OffsetsWithWarehousesController extends BaseController
 
                         if ($dateChange >= $dateFrom && $dateChange <= $dateTo && $itemSet['status'] == 'status_sale_issued' && !empty($representativeId)) {
                             if (!empty($info[$representativeId]['warehouses'][$warehouseId])) {
-
-                                // check calculation only one for order
-                                if(!in_array((string)$item->idSale,$info[$representativeId]['listOrderId'])){
-                                    $info[$representativeId]['warehouses'][$warehouseId]['packs'] += $item->sales->price;
-                                    $info[$representativeId]['totalAmount'] += $item->sales->price;
-                                    $info[$representativeId]['listOrderId'][] = (string)$item->idSale;
-                                }
-
-
                                 $productID = array_search($itemSet['title'],$listGoodsWithTitle);
                                 $info[$representativeId]['warehouses'][$warehouseId]['listProducts'][$productID] += $listGoodsWithPriceForPack[$item->sales->product][$productID];
                                 $info[$representativeId]['warehouses'][$warehouseId]['numberProducts'][$productID]++;
@@ -881,6 +871,46 @@ class OffsetsWithWarehousesController extends BaseController
             }
         }
         unset($model);
+
+        //get turnover
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime($dateFrom * 1000),
+                    '$lte' => new UTCDateTime($dateTo * 1000)
+                ]
+            ])
+            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->andWhere([
+                'type' => ['$ne' => -1]
+            ])
+            ->all();
+        foreach ($model as $item){
+
+            if($item->statusSale->setSales){
+                foreach ($item->statusSale->setSales as $itemSet) {
+                    if(!empty($itemSet['idUserChange'])){
+                        $idUser = (string)$itemSet['idUserChange'];
+                    }
+
+                }
+            }
+
+            if(empty($idUser) && !empty((string)$item->warehouseId)){
+                $idUser = (string)$item->warehouseId;
+            }
+
+            if(!empty($idUser)){
+                $representativeId = $infoUserWarehouseCountry[$idUser]['head_admin_id'];
+                $warehouseId = $infoUserWarehouseCountry[$idUser]['warehouse_id'];
+
+                $info[$representativeId]['warehouses'][$warehouseId]['packs'] += $item->price;
+                $info[$representativeId]['totalAmount'] += $item->price;
+                $info[$representativeId]['listOrderId'][] = (string)$item->_id;
+            }
+
+            //todo:KAA найти не закрепленные склады
+        }
 
         // get info sale with out pack vipcoin and other refill
         $model = Sales::find()

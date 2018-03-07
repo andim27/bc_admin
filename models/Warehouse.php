@@ -207,6 +207,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
                     foreach ($itemWarehouse->idUsers as $itemUser) {
                         $list[$itemUser] = [
                             'warehouse_id' => (string)$itemWarehouse->_id,
+                            'head_admin_id' => (string)$itemWarehouse->headUser,
                             'country' => $itemWarehouse->country,
                             'cities' => (!empty($itemWarehouse->cities) ? $itemWarehouse->cities : [])
                         ];
