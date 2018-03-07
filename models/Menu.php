@@ -388,6 +388,21 @@ Class Menu
                         'url' => ['warehouses/stock-warehouses'],
                         'action' => 'sidebar-stock-warehouses',
                     ],
+
+
+                    [
+                        'key'   =>  'sidebar_offsets_with_representative',
+                        'label' => THelper::t('sidebar_offsets_with_representative'),
+                        'url' => ['offsets-with-warehouses/list-repayment-representative'],
+                        'action' => 'offsets-with-representative',
+                    ],
+
+                    [
+                        'key'   =>  'sidebar_offsets_with_warehouse',
+                        'label' => THelper::t('sidebar_offsets_with_warehouse'),
+                        'url' => ['offsets-with-warehouses/list-repayment-warehouse'],
+                        'action' => 'offsets-with-warehouse',
+                    ],
                 ]
             ],
 
@@ -414,12 +429,6 @@ Class Menu
                         'label' => THelper::t('sidebar_report_sale_for_country_warehouse'),
                         'url' => ['sale-report/info-sale-for-country-warehouse'],
                         'action' => 'info-sale-for-country-warehouse',
-                    ],
-                    [
-                        'key'   =>  'sidebar_offsets_with_representative',
-                        'label' => THelper::t('sidebar_offsets_with_representative'),
-                        'url' => ['offsets-with-warehouses/offsets-with-representative'],
-                        'action' => 'offsets-with-representative',
                     ],
 
                     [

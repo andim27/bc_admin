@@ -75,8 +75,8 @@ $listPartsAccessories = PartsAccessories::getListPartsAccessories();
         lengthMenu: [ 25, 50, 75, 100 ],
         "order": [[ 0, "desc" ]]
     });
-    
-    $(".showMore").on('click',function () {
+
+    $('.table-translations').on('click','.showMore',function () {
         $(this).closest("td").find(".shortItem150").css({'height':'100%'});
         $(this).hide();
     })

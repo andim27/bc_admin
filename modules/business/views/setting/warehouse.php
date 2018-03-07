@@ -57,6 +57,37 @@ $userArray = Users::getListAdmin();
                         <?=Html::input('hidden','id',$item->_id->__toString())?>
 
                         <div class="row">
+                            <div class="m-t-sm m-b-sm col-md-4 text-right">
+                                <label class="control-label m-t-xs"><?=THelper::t('representative');?></label>
+                            </div>
+                            <div class="m-t-sm m-b-sm col-md-8">
+                                <?=Html::dropDownList('headUser',(!empty($item->headUser) ? $item->headUser : ''),$userArray,[
+                                    'class'=>'form-control w100',
+                                    'id'=>'listAdmin',
+                                    'options' => [
+                                        //'placeh' => ['disabled' => true],
+                                    ]
+                                ])?>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="m-t-sm m-b-sm col-md-4 text-right">
+                                <label class="control-label m-t-xs"><?=THelper::t('responsible');?></label>
+                            </div>
+                            <div class="m-t-sm m-b-sm col-md-8">
+                                <?=Html::dropDownList('responsible',(!empty($item->responsible) ? $item->responsible : ''),$userArray,[
+                                    'class'=>'form-control w100',
+                                    'id'=>'listAdmin',
+                                    'options' => [
+                                        //'placeh' => ['disabled' => true],
+                                    ]
+                                ])?>
+                            </div>
+                        </div>
+
+                        <div class="row">
                             <div class="descrItem col-md-12">
                                 <?php if(!empty($item->idUsers)) { ?>
                                     <?php foreach($item->idUsers as $itemUser) { ?>
@@ -72,10 +103,10 @@ $userArray = Users::getListAdmin();
                             </div>
                         </div>
                         <div class="row">
-                            <div class="m-t-sm m-b-sm col-md-offset-4 col-md-2 text-right">
+                            <div class="m-t-sm m-b-sm col-md-4 text-right">
                                 <label class="control-label m-t-xs"><?=THelper::t('new_admin');?></label>
                             </div>
-                            <div class="m-t-sm m-b-sm col-md-5">
+                            <div class="m-t-sm m-b-sm col-md-6">
                                 <?=Html::dropDownList('listAdmin','placeh',$userArray,[
                                     'class'=>'form-control w100',
                                     'id'=>'listAdmin',
@@ -90,25 +121,15 @@ $userArray = Users::getListAdmin();
                                 </a>
                             </div>
                         </div>
+
                         <div class="row">
-                            <div class="m-t-sm m-b-sm col-md-offset-4 col-md-2 text-right">
-                                <label class="control-label m-t-xs"><?=THelper::t('head_admin');?></label>
-                            </div>
-                            <div class="m-t-sm m-b-sm col-md-5">
-                                <?=Html::dropDownList('headUser',(!empty($item->headUser) ? $item->headUser : ''),$userArray,[
-                                    'class'=>'form-control w100',
-                                    'id'=>'listAdmin',
-                                    'options' => [
-                                        //'placeh' => ['disabled' => true],
-                                    ]
-                                ])?>
-                            </div>
-                            <div class="m-t-sm m-b-sm col-md-1">
+                            <div class="m-t-sm m-b-sm col-md-12 text-right">
                                 <a href="javascript:void(0);" class="btn btn-default btn-sm btn-icon saveItemAdmin" data-toggle="tooltip" data-placement="right" title="" data-original-title="Применить правки">
                                     <i class="fa fa-save"></i>
                                 </a>
                             </div>
                         </div>
+
                     </td>
                 </tr>
             <?php } ?>
@@ -175,6 +196,7 @@ $userArray = Users::getListAdmin();
                 data: {
                     id : changeBl.find('input[name="id"]').val(),
                     headUser : changeBl.find('select[name="headUser"]').prop('selected',true).val(),
+                    responsible : changeBl.find('select[name="responsible"]').prop('selected',true).val(),
                     idUsers : changeBl.find('input[name="idUsers[]"]').map(function(){
                         return this.value;
                     }).get(),

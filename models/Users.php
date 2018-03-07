@@ -9,7 +9,7 @@ use yii2tech\embedded\mongodb\ActiveRecord;
 use yii\base\Model;
 
 /**
- * Class Pins
+ * Class Users
  * @package app\models
  */
 class Users extends ActiveRecord

@@ -55,6 +55,7 @@ if(Warehouse::checkWarehouseKharkov($idWarehouse)){
             <?=Html::dropDownList('listWarehouse',$request['listWarehouse'],$listWarehouse,[
                 'class'=>'form-control listWarehouse',
                 'id'=>'listWarehouse',
+                'promt'=>'Мои склады',
                 'options' => []
             ])?>
         </div>

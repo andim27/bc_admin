@@ -6,7 +6,6 @@ use yii\helpers\ArrayHelper;
 
 $listGoods = PartsAccessories::getListPartsAccessories();
 
-$listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
 ?>
 
 <div class="m-b-md">
@@ -56,28 +55,34 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
 
                         <?=Html::input('hidden','id',$item->_id->__toString())?>
 
-                        <div class="row">
-                            <div class="descrItem col-md-12">
-                                <?php if(!empty($item->set)) { ?>
-                                    <?php foreach($item->set as $itemSet) { ?>
-                                        <div class="input-group m-t-sm m-b-sm blItem">
+                        <div class="descrItem">
+                        <?php if(!empty($item->set)) { ?>
+                            <?php foreach($item->set as $itemSet) { ?>
+                                <div class="row">
+                                    <div class="m-t-sm m-b-sm col-md-6">
+                                        <div class="input-group">
                                             <span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>
                                             <input type="text" class="form-control input-sm" disabled="disabled" value="<?= $itemSet->setName; ?>">
                                             <input type="hidden" name="setName[]"  value="<?= $itemSet->setName ?>">
                                             <input type="hidden" name="setId[]"  value="<?= (!empty($itemSet->setId) ? $itemSet->setId : array_search($itemSet->setName,$listGoods)); ?>">
                                         </div>
-                                    <?php } ?>
-                                <?php } ?>
-                            </div>
+                                    </div>
+                                    <div class="m-t-sm m-b-sm col-md-6">
+                                        <input type="number" class="form-control" name="setPrice[]" value="<?= (!empty($itemSet->setPrice) ? $itemSet->setPrice : 0); ?>"  pattern="\d*" min="0" step="0.01">
+                                    </div>
+                                </div>
+                            <?php } ?>
+                        <?php } ?>
                         </div>
+
                         <div class="row">
-                            <div class="col-md-3"></div>
-                            <div class="col-md-6 ">
+                            <div class="col-md-6 col-md-offset-3">
                                 <?=Html::dropDownList('parts_accessories_id','',
                                     $listGoods,
                                     [
                                         'class'=>'form-control listGoods',
                                         'required'=>'required',
+                                        'prompt'=>'Выберите товар',
                                         'options' => [
                                             '' => ['disabled' => true]
                                         ]
@@ -128,19 +133,27 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
             return;
         }
 
+
         bl.find('.descrItem').append(
-            '<div class="input-group m-t-sm m-b-sm blItem">' +
-                '<span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>' +
-                '<input type="text" class="form-control input-sm" value="' + goodsName + '">' +
-                '<input type="hidden" name="setName[]"  value="' + goodsName + '">' +
-                '<input type="hidden" name="setId[]" value="' + goodsId + '">' +
+            '<div class="row">' +
+                '<div class="m-t-sm m-b-sm col-md-6">' +
+                    '<div class="input-group">' +
+                        '<span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span>' +
+                        '<input type="text" class="form-control input-sm" value="' + goodsName + '">' +
+                        '<input type="hidden" name="setName[]"  value="' + goodsName + '">' +
+                        '<input type="hidden" name="setId[]" value="' + goodsId + '">' +
+                    '</div>' +
+                '</div>' +
+                '<div class="m-t-sm m-b-sm col-md-6">' +
+                    '<input type="number" class="form-control" name="setPrice[]" value="0"  pattern="\d*" min="0" step="0.01">' +
+                '</div>' +
             '</div>'
         );
     });
 
     $(document).on('click','.removeItem',function () {
         if (confirm('Вы уверены что хотете удалить позицию?')) {
-            $(this).closest('.blItem').remove();
+            $(this).closest('.row').remove();
         }
     });
 
@@ -159,6 +172,9 @@ $listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
                         return this.value;
                     }).get(),
                     setId : changeBl.find('input[name="setId[]"]').map(function(){
+                        return this.value;
+                    }).get(),
+                    setPrice : changeBl.find('input[name="setPrice[]"]').map(function(){
                         return this.value;
                     }).get(),
                 },

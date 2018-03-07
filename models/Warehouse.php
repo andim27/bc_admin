@@ -5,6 +5,9 @@ use MongoDB\BSON\ObjectID;
 use yii\helpers\ArrayHelper;
 
 /**
+ * @inheritdoc
+ * @property Users $infoHeadUser
+ *
  * Class Warehouse
  * @package app\models
  */
@@ -29,10 +32,15 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             'country',
             'cities',
             'headUser',
+            'responsible',
             'idUsers',
             'stock',
             'delovod_id'
         ];
+    }
+
+    public function getInfoHeadUser(){
+        return $this->hasOne(Users::className(),['_id'=>'headUser']);
     }
 
     /**
@@ -44,7 +52,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         $listAdmin = [];
 
         $model = self::find()->all();
-        
+
         if(!empty($model)){
             foreach ($model as $item) {
                 $listAdmin[(string)$item->_id] = $item->title;
@@ -81,18 +89,22 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
      * get all warehouse head admin
      * @return mixed
      */
-    public static function getListHeadAdminWarehouse()
+    public static function getListHeadAdminWarehouse($headUser='')
     {
-        $listWarehouse['all'] = 'Мои склады';
+        $listWarehouse = [];
 
-        $model = self::find()->where(['headUser'=>new ObjectID(\Yii::$app->view->params['user']->id)])->all();
+        if(empty($headUser)){
+            $headUser = \Yii::$app->view->params['user']->id;
+        }
+
+        $model = self::find()->where(['headUser'=>new ObjectID($headUser)])->all();
 
         if(!empty($model)){
             foreach ($model as $item) {
                 $listWarehouse[(string)$item->_id] = $item->title;
             }
         }
-        
+
         return $listWarehouse;
     }
 
@@ -104,7 +116,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
         }
 
         $model = self::find()->where(['headUser'=>new ObjectID($idUser)])->all();
-        
+
         if(!empty($model)){
             foreach ($model as $item) {
                 $listWarehouse[] = (string)$item->_id;
@@ -119,16 +131,16 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
      * @return bool|string
      */
     public static function getIdMyWarehouse($idUser = ''){
-        
+
         if(empty($idUser)){
             $idUser = \Yii::$app->view->params['user']->id;
-        }       
+        }
 
         $infoWarehous = self::findOne(['idUsers'=>$idUser]);
         if(!empty($infoWarehous)){
             return (string)$infoWarehous->_id;
         }
-            
+
 
         return false;
     }
@@ -162,7 +174,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
 
         return $infoWarehous;
     }
-    
+
     public static function getAdminIdForWarehouse($idWarehouse = '')
     {
         $list = [];
@@ -170,7 +182,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             $model = self::find()->where(['_id'=>new ObjectID($idWarehouse)])->one();
             if(!empty($model->idUsers)){
                 $list = $model->idUsers;
-            }            
+            }
         } else {
             $model = self::find()->all();
             if(!empty($model)){
@@ -181,7 +193,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
                 }
             }
         }
-        
+
         return $list;
     }
 
@@ -195,7 +207,9 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
                     foreach ($itemWarehouse->idUsers as $itemUser) {
                         $list[$itemUser] = [
                             'warehouse_id' => (string)$itemWarehouse->_id,
-                            'country' => $itemWarehouse->country
+                            'head_admin_id' => (string)$itemWarehouse->headUser,
+                            'country' => $itemWarehouse->country,
+                            'cities' => (!empty($itemWarehouse->cities) ? $itemWarehouse->cities : [])
                         ];
                     }
                 }
@@ -205,7 +219,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
 
         return $list;
     }
-    
+
     public static function checkWarehouseKharkov($idWarehouse = '')
     {
         if(empty($idWarehouse)){

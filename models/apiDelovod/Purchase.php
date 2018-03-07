@@ -82,20 +82,52 @@ class Purchase
         return self::_getResults($response);
     }
 
-    public static function save($dataForSave,$id = self::FROM)
+    public static function save($dataForSave,$saveType = 0,$id = self::FROM,$dataForSaveGoods = [])
     {
+        if($id === false){
+            $id = self::FROM;
+        }
+
         $apiDelovod = new ApiDelovod();
 
         $data['action'] = 'saveObject';
 
         $data['params']['header'] = $dataForSave;
+        $data['params']['saveType'] = $saveType;
         $data['params']['header']['id'] = $id;
+
+        if(!empty($dataForSaveGoods)){
+            $data['params']['tableParts']['tpGoods'] = $dataForSaveGoods;
+        }
 
         $response = $apiDelovod->post($data);
 
         return ApiDelovod::getIdAfterSave($response);
     }
 
+    /**
+     * Check order to exist
+     *
+     * @param $orderId
+     * @return bool
+     */
+    public static function check($value)
+    {
+
+        $filters[] = [
+            'alias'     =>  'number',
+            'operator'  =>  '=',
+            'value'     =>  $value
+        ];
+
+        $orderInfo = self::all($filters);
+
+        if(count($orderInfo) > 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Get all fields for Api

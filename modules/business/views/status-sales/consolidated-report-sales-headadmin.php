@@ -44,6 +44,7 @@ $listAdmin = Users::getListHeadAdminAdmin();
             <?=Html::dropDownList('listWarehouse',(!empty($request['listWarehouse']) ? $request['listWarehouse'] : 'all'),$listWarehouse,[
                 'class'=>'form-control listWarehouse',
                 'id'=>'listWarehouse',
+                'promt'=>'Мои склады',
                 'disabled' => ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? false : true),
                 'style' =>  ((!empty($request['flWarehouse']) && $request['flWarehouse']==1) ? '' : 'display:none'),
                 'options' => [
