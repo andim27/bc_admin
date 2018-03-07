@@ -11,6 +11,9 @@
             <thead>
                 <tr>
                     <th>
+                        <?=THelper::t('id')?>
+                    </th>
+                    <th>
                         <?=THelper::t('surname')?>
                     </th>
                     <th>
@@ -32,7 +35,7 @@
                         <?=THelper::t('skype')?>
                     </th>
                     <th>
-                        <?=THelper::t('created')?>
+                        <?=THelper::t('activity_date')?>
                     </th>
                     <th>
                         <?=THelper::t('action')?>
@@ -51,13 +54,16 @@
 
     table = table.dataTable({
         language: TRANSLATION,
+        "paging": true,
         lengthMenu: [ 25, 50, 75, 100 ],
+        "pageLength": 10,
         "processing": true,
         "serverSide": true,
         "ajax": {
             "url": '/' + LANG + '/business/wellness-club-members'
         },
         "columns": [
+            {"data": "id"},
             {"data": "surname"},
             {"data": "name"},
             {"data": "countryId"},
