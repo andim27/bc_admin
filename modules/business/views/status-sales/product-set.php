@@ -68,7 +68,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                         </div>
                                     </div>
                                     <div class="m-t-sm m-b-sm col-md-6">
-                                        <input type="number" class="form-control" name="setPrice[]" value="<?= (!empty($itemSet->setPrice) ? $itemSet->setPrice : 0); ?>"  pattern="\d*" min="0" step="1">
+                                        <input type="number" class="form-control" name="setPrice[]" value="<?= (!empty($itemSet->setPrice) ? $itemSet->setPrice : 0); ?>"  pattern="\d*" min="0" step="0.01">
                                     </div>
                                 </div>
                             <?php } ?>
@@ -145,7 +145,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                     '</div>' +
                 '</div>' +
                 '<div class="m-t-sm m-b-sm col-md-6">' +
-                    '<input type="number" class="form-control" name="setPrice[]" value="0"  pattern="\d*" min="0" step="1">' +
+                    '<input type="number" class="form-control" name="setPrice[]" value="0"  pattern="\d*" min="0" step="0.01">' +
                 '</div>' +
             '</div>'
         );

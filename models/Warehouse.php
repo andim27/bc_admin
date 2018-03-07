@@ -91,6 +91,7 @@ class Warehouse extends \yii2tech\embedded\mongodb\ActiveRecord
      */
     public static function getListHeadAdminWarehouse($headUser='')
     {
+        $listWarehouse = [];
 
         if(empty($headUser)){
             $headUser = \Yii::$app->view->params['user']->id;

@@ -22,7 +22,7 @@ $listProduct = PartsAccessories::getListPartsAccessoriesForSaLe();
 
     <div class="col-md-12 form-group ">
         <?php //=Html::a('<i class="fa fa-plus"></i>',['/business/offsets-with-warehouses/add-update-repayment-amounts'],['class'=>'btn btn-default btn-block','data-toggle'=>'ajaxModal'])?>
-        <?=Html::a('Таблица взысканий представителям',['/business/offsets-with-warehouses/recovery-for-repayment','object'=>'representative'],['class'=>'btn btn-default'])?>
+        <?=Html::a('Таблица взысканий с представителя',['/business/offsets-with-warehouses/recovery-for-repayment','object'=>'representative'],['class'=>'btn btn-default'])?>
         <?=Html::a('Таблица процентов представителям',['/business/offsets-with-warehouses/percent-for-repayment','object'=>'representative'],['class'=>'btn btn-default'])?>
         <?=Html::a('Таблица процентов складам',['/business/offsets-with-warehouses/percent-for-repayment','object'=>'warehouse'],['class'=>'btn btn-default'])?>
         <?=Html::a('Просчитать за прошлый месяц',['/business/offsets-with-warehouses/calculation-repayment'],['class'=>'btn btn-default'])?>

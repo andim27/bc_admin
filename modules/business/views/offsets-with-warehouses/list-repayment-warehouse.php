@@ -10,7 +10,7 @@ $negative_payment = false;
 
 
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('sidebar_offsets_with_representative') ?></h3>
+    <h3 class="m-b-none"><?= THelper::t('sidebar_offsets_with_warehouse') ?></h3>
 </div>
 
 
@@ -18,7 +18,7 @@ $negative_payment = false;
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
     <?php $formStatus = ActiveForm::begin([
-        'action' => '/' . $language . '/business/offsets-with-warehouses/list-repayment-representative',
+        'action' => '/' . $language . '/business/offsets-with-warehouses/list-repayment-warehouse',
         'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
     ]); ?>
 
@@ -47,7 +47,7 @@ $negative_payment = false;
                 <table class="table table-translations table-striped datagrid m-b-sm">
                     <thead>
                     <tr>
-                        <th><?=THelper::t('representative')?></th>
+                        <th><?=THelper::t('warehouse')?></th>
                         <th><?=THelper::t('amount_repayment')?></th>
                         <th><?=THelper::t('deduction')?></th>
                         <th><?=THelper::t('total')?></th>
@@ -55,19 +55,19 @@ $negative_payment = false;
                     </thead>
                     <tbody>
                     <?php if(!empty($info)) { ?>
-                        <?php foreach($info as $kRepresentative=>$itemRepresentative) { ?>
+                        <?php foreach($info as $k=>$itemWarehouse) { ?>
 
                             <?php
-                                $repayment = $itemRepresentative['amount_repayment']-$itemRepresentative['deduction'];
-                                if($repayment<0){
-                                    $negative_payment = true;
-                                }
+                            $repayment = $itemWarehouse['amount_repayment']-$itemWarehouse['deduction'];
+                            if($repayment<0){
+                                $negative_payment = true;
+                            }
                             ?>
 
                             <tr>
-                                <td><?=$itemRepresentative['title']?></td>
-                                <td><?=$itemRepresentative['amount_repayment']?></td>
-                                <td><?=$itemRepresentative['deduction']?></td>
+                                <td><?=$itemWarehouse['title']?></td>
+                                <td><?=$itemWarehouse['amount_repayment']?></td>
+                                <td><?=$itemWarehouse['deduction']?></td>
                                 <td><?=$repayment?></td>
                             </tr>
                         <?php } ?>
@@ -78,7 +78,7 @@ $negative_payment = false;
                             <th colspan="4">
                                 <?=(($repayment_paid === true || $negative_payment== true) ?
                                     '' :
-                                    Html::a('Провести выплату',['offsets-with-warehouses/make-repayment-representative','dateRepayment'=>$request['date_repayment']],['class'=>'btn btn-default']))?>
+                                    Html::a('Провести выплату',['offsets-with-warehouses/make-repayment-warehouse','dateRepayment'=>$request['date_repayment'],'representative_id'=>$userId],['class'=>'btn btn-default']))?>
                             </th>
                         </tr>
                     </tfooter>
@@ -90,7 +90,7 @@ $negative_payment = false;
 </div>
 
 <div class="m-b-md">
-    <?=Html::a('Таблица взысканий с представителя',['/business/offsets-with-warehouses/recovery-for-repayment','object'=>'representative'],['class'=>'btn btn-default','target'=>'_blank'])?>
+    <?=Html::a('Таблица взысканий со складов',['/business/offsets-with-warehouses/recovery-for-repayment','object'=>'warehouse','representative_id'=>$userId],['class'=>'btn btn-default','target'=>'_blank'])?>
 </div>
 
 <script type="text/javascript">

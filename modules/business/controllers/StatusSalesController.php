@@ -1507,7 +1507,7 @@ class StatusSalesController extends BaseController {
 
                         $modelSet->setName = $item;
                         $modelSet->setId = $request['setId'][$k];
-                        $modelSet->setPrice = (int)$request['setPrice'][$k];
+                        $modelSet->setPrice = (float)$request['setPrice'][$k];
 
                         $infoProduct->set[] = $modelSet;
                     }

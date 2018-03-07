@@ -30,7 +30,9 @@ use app\models\PartsAccessories;
                 <thead>
                 <tr>
                     <th><?=THelper::t('representative')?></th>
+                    <?php if($object=='representative'){?>
                     <th><?=THelper::t('dop_price')?></th>
+                    <?php } ?>
                     <th><?=THelper::t('percent')?></th>
                     <th></th>
                 </tr>
@@ -42,7 +44,9 @@ use app\models\PartsAccessories;
                         <td>
                             <?= ($object == 'representative' ? $item->representative->username : $item->warehouse->title)  ?>
                         </td>
+                        <?php if($object=='representative'){?>
                         <td><?=$item->dop_price_per_warehouse;?></td>
+                        <?php } ?>
                         <td>
                             <?php $arrayPercent = $item->turnover_boundary;?>
                             <?php if(!empty($arrayPercent)){ ?>

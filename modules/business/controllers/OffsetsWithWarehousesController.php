@@ -103,7 +103,7 @@ class OffsetsWithWarehousesController extends BaseController
                 ArrayHelper::multisort($turnover_boundary, ['turnover_boundary'], [SORT_ASC]);
             }
 
-            $model->{$object.'_id'} = $request[$object.'_id'];
+            $model->{$object.'_id'} = new ObjectID($request[$object.'_id']);
             if(!empty($request['dop_price_per_warehouse'])){
                 $model->dop_price_per_warehouse = $request['dop_price_per_warehouse'];
             }
@@ -118,7 +118,7 @@ class OffsetsWithWarehousesController extends BaseController
             }
         }
 
-        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment');
+        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object='.$object);
 
     }
 
@@ -127,6 +127,8 @@ class OffsetsWithWarehousesController extends BaseController
      * @return \yii\web\Response
      */
     public function actionDefaultPercentForRepaymentRepresentative(){
+        PercentForRepaymentAmounts::getCollection()->remove();
+
         $list = Warehouse::getListHeadAdmin();
 
         foreach ($list as $k=>$item) {
@@ -209,6 +211,17 @@ class OffsetsWithWarehousesController extends BaseController
                 ]
             ]);
         } else{
+
+            $listRepresentative = Warehouse::getListHeadAdmin();
+            if(empty($listRepresentative[$representative_id])){
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert' => 'danger',
+                        'message' => 'У Вас нет складов!'
+                    ]
+                );
+            }
+
+
             $model = $model->where([
                 'representative_id'=>new ObjectId($representative_id),
                 'warehouse_id'=>[
@@ -389,7 +402,7 @@ class OffsetsWithWarehousesController extends BaseController
                     }
 
                     if (!empty($item->prices_representative[$request['date_repayment']])) {
-                        $info[(string)$item->warehouse->headUser]['amount_repayment'] += $item->prices_representative[$request['date_repayment']]['price'];
+                        $info[(string)$item->warehouse->headUser]['amount_repayment'] += ($item->prices_representative[$request['date_repayment']]['price'] - $item->prices_warehouse[$request['date_repayment']]['price']);
                     }
                 }
             }
@@ -427,6 +440,11 @@ class OffsetsWithWarehousesController extends BaseController
         ]);
     }
 
+    /**
+     * make repayment and send payment in api
+     * @param $dateRepayment
+     * @return \yii\web\Response
+     */
     public function actionMakeRepaymentRepresentative($dateRepayment)
     {
         //TODO:KAA check issue repayment for $dateRepayment
@@ -452,7 +470,7 @@ class OffsetsWithWarehousesController extends BaseController
                 }
 
                 if(!empty($item->prices_representative[$dateRepayment])){
-                    $info[(string)$item->warehouse->headUser]['amount_repayment'] += $item->prices_representative[$dateRepayment]['price'];
+                    $info[(string)$item->warehouse->headUser]['amount_repayment'] += ($item->prices_representative[$dateRepayment]['price'] - $item->prices_warehouse[$dateRepayment]['price']);
                 }
             }
         }
@@ -482,9 +500,9 @@ class OffsetsWithWarehousesController extends BaseController
             $model = new Repayment();
 
             $model->representative_id = new ObjectID($k);
-            $model->accrued = $item['amount_repayment'];
-            $model->deduction = $item['deduction'];
-            $model->repayment = $repayment;
+            $model->accrued = (float)$item['amount_repayment'];
+            $model->deduction = (float)$item['deduction'];
+            $model->repayment = (float)$repayment;
             $model->comment = 'repayment for representative';
             $model->date_for_repayment = $dateRepayment;
             $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
@@ -494,11 +512,240 @@ class OffsetsWithWarehousesController extends BaseController
             }
         }
 
+        Yii::$app->session->setFlash('alert', [
+                'typeAlert' => 'success',
+                'message' => 'Выплата произведена!'
+            ]
+        );
+
         return $this->redirect('list-repayment-representative',301);
     }
 
 
+    public function actionListRepaymentWarehouse()
+    {
+        $info = [];
 
+        $listRepresentative = Warehouse::getListHeadAdmin();
+        $userId = Yii::$app->view->params['user']->id;
+
+        //$userId = '587a3d4e52c6b9a46926bb57';
+        $warehouseId = Warehouse::getIdMyWarehouse($userId);
+
+        if(Warehouse::checkWarehouseKharkov($warehouseId) === true){
+            $userType = 'mainWarehouse';
+            $whereFilter = [];
+        } else if (!empty($listRepresentative[$userId])){
+            $userType = 'mainRepresentative';
+            $whereFilter = ['representative_id'=>new ObjectID($userId)];
+        } else {
+            header('Content-Type: text/html; charset=utf-8');
+            echo '<xmp>';
+            print_r('access denied');
+            echo '</xmp>';
+            die();
+        }
+
+        $request = Yii::$app->request->post();
+
+        if (empty($request)) {
+            $request['date_repayment'] =  date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
+        }
+
+        $modelRepayment = Repayment::find()
+            ->where([
+                'warehouse_id'=>[
+                    '$nin' => [null]
+                ]
+            ])
+            ->andWhere(['date_for_repayment'=>$request['date_repayment']])
+            ->andFilterWhere($whereFilter)
+            ->all();
+
+        if(!empty($modelRepayment)){
+
+            $repayment_paid = true;
+
+            foreach ($modelRepayment as $item) {
+                $info[(string)$item->warehouse_id] = [
+                    'title' => $item->warehouse->title,
+                    'amount_repayment' => $item->accrued,
+                    'deduction' => $item->deduction
+                ];
+            }
+        } else {
+
+            $repayment_paid = false;
+
+            if($userType=='mainWarehouse'){
+                $repayment_paid = true;
+            }
+
+            // get repayment amount
+            $modelRepaymentAmount = RepaymentAmounts::find()->all();
+            if (!empty($modelRepaymentAmount)) {
+                foreach ($modelRepaymentAmount as $item) {
+                    if($userType=='mainWarehouse' || ($userType=='mainRepresentative' && (string)$item->warehouse->headUser==$userId)){
+
+                        if (empty($info[(string)$item->warehouse_id])) {
+                            $info[(string)$item->warehouse_id] = [
+                                'title' => $item->warehouse->title,
+                                'amount_repayment' => 0,
+                                'deduction' => 0
+                            ];
+                        }
+
+                        $info[(string)$item->warehouse_id]['amount_repayment'] += $item->prices_warehouse[$request['date_repayment']]['price'];
+
+                    }
+                }
+            }
+
+            // get deduction
+            $modeDeduction = RecoveryForRepaymentAmounts::find()
+                ->where([
+                    'warehouse_id' => [
+                        '$nin' => [null]
+                    ]
+                ])
+                ->andWhere(['month_recovery' => $request['date_repayment']])
+                ->andFilterWhere($whereFilter)
+                ->all();
+
+            if (!empty($modeDeduction)) {
+                foreach ($modeDeduction as $item) {
+                    $info[(string)$item->warehouse_id]['deduction'] = $item->recovery;
+                }
+            } else {
+                $repayment_paid = true;
+
+                Yii::$app->session->setFlash('alert' ,[
+                        'typeAlert' => 'danger',
+                        'message' => 'Заполните удержания!'
+                    ]
+                );
+            }
+        }
+
+        return $this->render('list-repayment-warehouse', [
+            'language' => Yii::$app->language,
+            'request' => $request,
+            'info' => $info,
+            'userId' => $userId,
+            'repayment_paid'=>$repayment_paid,
+            'alert' => Yii::$app->session->getFlash('alert', '', true)
+        ]);
+    }
+
+    public function actionMakeRepaymentWarehouse($dateRepayment,$representative_id)
+    {
+        //TODO:KAA check issue repayment for $dateRepayment
+        if(Repayment::checkRepayment($dateRepayment,'warehouse',$representative_id)){
+            header('Content-Type: text/html; charset=utf-8');
+            echo '<xmp>';
+            print_r('Выплаты была произведена!');
+            echo '</xmp>';
+            die();
+        }
+
+        // get repayment amount
+        $modelRepaymentAmount = RepaymentAmounts::find()->all();
+        if (!empty($modelRepaymentAmount)) {
+            foreach ($modelRepaymentAmount as $item) {
+                if((string)$item->warehouse->headUser==$representative_id){
+
+                    if (empty($info[(string)$item->warehouse_id])) {
+                        $info[(string)$item->warehouse_id] = [
+                            'title' => $item->warehouse->title,
+                            'responsible_id' => (string)$item->warehouse->responsible,
+                            'amount_repayment' => 0,
+                            'deduction' => 0
+                        ];
+                    }
+
+                    $info[(string)$item->warehouse_id]['amount_repayment'] += $item->prices_warehouse[$dateRepayment]['price'];
+
+                }
+            }
+        }
+
+        // get deduction
+        $modeDeduction = RecoveryForRepaymentAmounts::find()
+            ->where([
+                'warehouse_id' => [
+                    '$nin' => [null]
+                ]
+            ])
+            ->andWhere(['month_recovery' => $dateRepayment])
+            ->andWhere(['representative_id' => new ObjectID($representative_id)])
+            ->all();
+
+        if (!empty($modeDeduction)) {
+            foreach ($modeDeduction as $item) {
+                $info[(string)$item->warehouse_id]['deduction'] = $item->recovery;
+            }
+        }
+
+        $returnCostRepresentative = 0;
+
+        foreach ($info as $k=>$item){
+
+            $returnCostRepresentative += $item['deduction'];
+
+            $repayment = $item['amount_repayment']-$item['deduction'];
+
+            Charity::transferMoney('573a0d76965dd0fb16f60bfe',$item['responsible_id'],$repayment,'repayment for warehouse');
+
+            $model = new Repayment();
+
+            $model->representative_id = new ObjectID($representative_id);
+            $model->warehouse_id = new ObjectID($k);
+            $model->warehouse_responsible_id = new ObjectID($item['responsible_id']);
+            $model->accrued = (float)$item['amount_repayment'];
+            $model->deduction = (float)$item['deduction'];
+            $model->repayment = (float)$repayment;
+            $model->comment = 'repayment for warehouse';
+            $model->date_for_repayment = $dateRepayment;
+            $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            if($model->save()){
+
+            }
+        }
+
+        if($returnCostRepresentative > 0){
+            Charity::transferMoney('573a0d76965dd0fb16f60bfe',$representative_id,$returnCostRepresentative,'repayment cost for representative');
+
+            $model = new Repayment();
+
+            $model->representative_id = new ObjectID($representative_id);
+            $model->accrued = (float)$returnCostRepresentative;
+            $model->deduction = (float)'0';
+            $model->repayment = (float)$returnCostRepresentative;
+            $model->comment = 'repayment cost for representative';
+            $model->date_for_repayment = $dateRepayment;
+            $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            if($model->save()){
+
+            }
+        }
+
+        Yii::$app->session->setFlash('alert', [
+                'typeAlert' => 'success',
+                'message' => 'Выплата произведена!'
+            ]
+        );
+
+        return $this->redirect(['offsets-with-warehouses/list-repayment-warehouse'],301);
+    }
+
+
+
+    /**
+     * @param string $look
+     * @return \yii\web\Response
+     */
     public function actionCalculationRepayment($look='')
     {
 
@@ -750,34 +997,34 @@ class OffsetsWithWarehousesController extends BaseController
         }
     }
 
-    /**
-     * clear and update structure table
-     * @throws \yii\mongodb\Exception
-     */
-    public function actionClearTableForRepayment()
-    {
-        // Remove field in table
-        RepaymentAmounts::getCollection()->update(
-            [],
-            ['$unset' => ['price' => 1, 'price_representative' => 1]],
-            ['multi' => true]
-        );
-
-        // Clear field in table
-        RepaymentAmounts::getCollection()->update(
-            [],
-            ['$set' => ['prices_warehouse' => (array)[], 'prices_representative' => (array)[]]],
-            ['multi' => true]
-        );
-
-        Repayment::getCollection()->remove();
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo '<xmp>';
-        print_r('all clear');
-        echo '</xmp>';
-        die();
-    }
+//    /**
+//     * clear and update structure table
+//     * @throws \yii\mongodb\Exception
+//     */
+//    public function actionClearTableForRepayment()
+//    {
+//        // Remove field in table
+//        RepaymentAmounts::getCollection()->update(
+//            [],
+//            ['$unset' => ['price' => 1, 'price_representative' => 1]],
+//            ['multi' => true]
+//        );
+//
+//        // Clear field in table
+//        RepaymentAmounts::getCollection()->update(
+//            [],
+//            ['$set' => ['prices_warehouse' => (array)[], 'prices_representative' => (array)[]]],
+//            ['multi' => true]
+//        );
+//
+//        Repayment::getCollection()->remove();
+//
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo '<xmp>';
+//        print_r('all clear');
+//        echo '</xmp>';
+//        die();
+//    }
 
 
 
@@ -859,28 +1106,43 @@ class OffsetsWithWarehousesController extends BaseController
     }
 
 
+    /**
+     * @param $warehpuseId
+     * @param $turnoverWarehouse
+     * @return int
+     */
     protected function calculationPercentWarehouse($warehpuseId,$turnoverWarehouse)
     {
         $percent = 0;
 
         $tablePercent = PercentForRepaymentAmounts::findOne(['warehouse_id'=>new ObjectID($warehpuseId)]);
 
-        foreach ($tablePercent->turnover_boundary as $kPercent=>$itemPercent) {
+        if($tablePercent){
+            foreach ($tablePercent->turnover_boundary as $kPercent=>$itemPercent) {
 
-            if($itemPercent['turnover_boundary']<=$turnoverWarehouse
-                && !empty($tablePercent->turnover_boundary[($kPercent+1)])
-                && $tablePercent->turnover_boundary[($kPercent+1)]['turnover_boundary']>$turnoverWarehouse){
+                if($itemPercent['turnover_boundary']<=$turnoverWarehouse
+                    && !empty($tablePercent->turnover_boundary[($kPercent+1)])
+                    && $tablePercent->turnover_boundary[($kPercent+1)]['turnover_boundary']>$turnoverWarehouse){
 
-                $percent = $itemPercent['percent'];
-                break;
-            } elseif ($itemPercent['turnover_boundary']<=$turnoverWarehouse
-                && empty($tablePercent->turnover_boundary[($kPercent+1)]['turnover_boundary'])){
+                    $percent = $itemPercent['percent'];
+                    break;
+                } elseif ($itemPercent['turnover_boundary']<=$turnoverWarehouse
+                    && empty($tablePercent->turnover_boundary[($kPercent+1)]['turnover_boundary'])){
 
-                $percent = $itemPercent['percent'];
-                break;
+                    $percent = $itemPercent['percent'];
+                    break;
+                }
             }
+        } else {
+            header('Content-Type: text/html; charset=utf-8');
+            echo '<xmp>';
+            print_r('не заполнены проценты для склада');
+            echo '</xmp>';
+            die();
         }
+
 
         return $percent;
     }
+
 }
