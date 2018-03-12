@@ -123,6 +123,10 @@ class Lang
             foreach ($data as $object) {
                 $lang = new self;
 
+                if (!isset($object->_id)) {
+                    continue;
+                }
+
                 $lang->id                  = $object->_id;
                 $lang->countryId           = $object->countryId;
                 $lang->stringId            = $object->stringId;
