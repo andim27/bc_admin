@@ -2,7 +2,8 @@
 
 namespace app\modules\business\controllers;
 
-use app\models\api\Product;
+use app\components\GoodException;
+use app\components\THelper;
 use app\models\api\transactions\Charity;
 use app\models\PartsAccessories;
 use app\models\PercentForRepaymentAmounts;
@@ -11,9 +12,7 @@ use app\models\RecoveryForRepaymentAmounts;
 use app\models\Repayment;
 use app\models\RepaymentAmounts;
 use app\models\Sales;
-use app\models\Settings;
 use app\models\StatusSales;
-use app\models\Users;
 use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
@@ -362,8 +361,13 @@ class OffsetsWithWarehousesController extends BaseController
 
         $request = Yii::$app->request->post();
 
+        $prevMonth = date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
         if (empty($request)) {
-            $request['date_repayment'] =  date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
+            $request['date_repayment'] =  $prevMonth;
+        }
+
+        if($request['date_repayment'] > $prevMonth || $request['date_repayment'] < '2018-02'){
+            throw new GoodException('Операция не возможна','За данный период данные не доступны');
         }
 
         $modelRepayment = Repayment::find()
@@ -422,11 +426,7 @@ class OffsetsWithWarehousesController extends BaseController
                     $info[(string)$item->representative_id]['deduction'] = $item->recovery;
                 }
             } else {
-                header('Content-Type: text/html; charset=utf-8');
-                echo '<xmp>';
-                print_r('Заполните удержаиня');
-                echo '</xmp>';
-                die();
+                throw new GoodException('Операция не возможна',THelper::t('fill_hold'));
             }
         }
 
@@ -441,21 +441,15 @@ class OffsetsWithWarehousesController extends BaseController
     }
 
     /**
-     * make repayment and send payment in api
+     * make repayment representative and send payment in api
      * @param $dateRepayment
      * @return \yii\web\Response
      */
     public function actionMakeRepaymentRepresentative($dateRepayment)
     {
-        //TODO:KAA check issue repayment for $dateRepayment
         if(Repayment::checkRepayment($dateRepayment,'representative')){
-            header('Content-Type: text/html; charset=utf-8');
-            echo '<xmp>';
-            print_r('Выплаты была произведена!');
-            echo '</xmp>';
-            die();
+            throw new GoodException('Операция не возможна','Оплата уже была проведена!');
         }
-
 
         // get repayment amount
         $modelRepaymentAmount = RepaymentAmounts::find()->all();
@@ -521,7 +515,11 @@ class OffsetsWithWarehousesController extends BaseController
         return $this->redirect('list-repayment-representative',301);
     }
 
-
+    /**
+     * list repayment for warehouse
+     * @return string
+     * @throws GoodException
+     */
     public function actionListRepaymentWarehouse()
     {
         $info = [];
@@ -539,18 +537,74 @@ class OffsetsWithWarehousesController extends BaseController
             $userType = 'mainRepresentative';
             $whereFilter = ['representative_id'=>new ObjectID($userId)];
         } else {
-            header('Content-Type: text/html; charset=utf-8');
-            echo '<xmp>';
-            print_r('access denied');
-            echo '</xmp>';
-            die();
+            throw new GoodException('Access denied','Доступ закрыт к данному разделу');
         }
 
         $request = Yii::$app->request->post();
 
+        $prevMonth = date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
+
         if (empty($request)) {
-            $request['date_repayment'] =  date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
+            $request['date_repayment'] =  $prevMonth;
         }
+
+        if($request['date_repayment'] > $prevMonth || $request['date_repayment'] < '2018-02'){
+            throw new GoodException('Операция не возможна','За данный период данные не доступны');
+        }
+
+
+        $repayment_paid = false;
+
+        if($userType=='mainWarehouse'){
+            $repayment_paid = true;
+        }
+
+        // get repayment amount
+        $modelRepaymentAmount = RepaymentAmounts::find()->all();
+        if (!empty($modelRepaymentAmount)) {
+            foreach ($modelRepaymentAmount as $item) {
+                if($userType=='mainWarehouse' || ($userType=='mainRepresentative' && (string)$item->warehouse->headUser==$userId)){
+
+                    if (empty($info[(string)$item->warehouse_id])) {
+                        $info[(string)$item->warehouse_id] = [
+                            'title' => $item->warehouse->title,
+                            'amount_repayment' => 0,
+                            'deduction' => 0,
+                            'paid' => false
+                        ];
+                    }
+
+                    $info[(string)$item->warehouse_id]['amount_repayment'] += $item->prices_warehouse[$request['date_repayment']]['price'];
+
+                }
+            }
+        }
+
+        // get deduction
+        $modeDeduction = RecoveryForRepaymentAmounts::find()
+            ->where([
+                'warehouse_id' => [
+                    '$nin' => [null]
+                ]
+            ])
+            ->andWhere(['month_recovery' => $request['date_repayment']])
+            ->andFilterWhere($whereFilter)
+            ->all();
+
+        if (!empty($modeDeduction)) {
+            foreach ($modeDeduction as $item) {
+                $info[(string)$item->warehouse_id]['deduction'] = $item->recovery;
+            }
+        } else {
+            $repayment_paid = true;
+
+            Yii::$app->session->setFlash('alert' ,[
+                    'typeAlert' => 'danger',
+                    'message' => THelper::t('fill_hold')
+                ]
+            );
+        }
+
 
         $modelRepayment = Repayment::find()
             ->where([
@@ -567,63 +621,7 @@ class OffsetsWithWarehousesController extends BaseController
             $repayment_paid = true;
 
             foreach ($modelRepayment as $item) {
-                $info[(string)$item->warehouse_id] = [
-                    'title' => $item->warehouse->title,
-                    'amount_repayment' => $item->accrued,
-                    'deduction' => $item->deduction
-                ];
-            }
-        } else {
-
-            $repayment_paid = false;
-
-            if($userType=='mainWarehouse'){
-                $repayment_paid = true;
-            }
-
-            // get repayment amount
-            $modelRepaymentAmount = RepaymentAmounts::find()->all();
-            if (!empty($modelRepaymentAmount)) {
-                foreach ($modelRepaymentAmount as $item) {
-                    if($userType=='mainWarehouse' || ($userType=='mainRepresentative' && (string)$item->warehouse->headUser==$userId)){
-
-                        if (empty($info[(string)$item->warehouse_id])) {
-                            $info[(string)$item->warehouse_id] = [
-                                'title' => $item->warehouse->title,
-                                'amount_repayment' => 0,
-                                'deduction' => 0
-                            ];
-                        }
-
-                        $info[(string)$item->warehouse_id]['amount_repayment'] += $item->prices_warehouse[$request['date_repayment']]['price'];
-
-                    }
-                }
-            }
-
-            // get deduction
-            $modeDeduction = RecoveryForRepaymentAmounts::find()
-                ->where([
-                    'warehouse_id' => [
-                        '$nin' => [null]
-                    ]
-                ])
-                ->andWhere(['month_recovery' => $request['date_repayment']])
-                ->andFilterWhere($whereFilter)
-                ->all();
-
-            if (!empty($modeDeduction)) {
-                foreach ($modeDeduction as $item) {
-                    $info[(string)$item->warehouse_id]['deduction'] = $item->recovery;
-                }
-            } else {
-                $repayment_paid = true;
-
-                Yii::$app->session->setFlash('alert' ,[
-                        'typeAlert' => 'danger',
-                        'message' => 'Заполните удержания!'
-                    ]
-                );
+                $info[(string)$item->warehouse_id]['paid'] = true;
             }
         }
 
@@ -633,19 +631,23 @@ class OffsetsWithWarehousesController extends BaseController
             'info' => $info,
             'userId' => $userId,
             'repayment_paid'=>$repayment_paid,
+            'userType'=>$userType,
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
 
+    /**
+     * make repayment to warehouse and send payment in api
+     * @param $dateRepayment
+     * @param $representative_id
+     * @return \yii\web\Response
+     * @throws GoodException
+     */
     public function actionMakeRepaymentWarehouse($dateRepayment,$representative_id)
     {
-        //TODO:KAA check issue repayment for $dateRepayment
+
         if(Repayment::checkRepayment($dateRepayment,'warehouse',$representative_id)){
-            header('Content-Type: text/html; charset=utf-8');
-            echo '<xmp>';
-            print_r('Выплаты была произведена!');
-            echo '</xmp>';
-            die();
+            throw new GoodException('Операция не возможна','Оплата уже была проведена!');
         }
 
         // get repayment amount
@@ -655,9 +657,17 @@ class OffsetsWithWarehousesController extends BaseController
                 if((string)$item->warehouse->headUser==$representative_id){
 
                     if (empty($info[(string)$item->warehouse_id])) {
+
+                        $responsibleId = (string)$item->warehouse->responsible;
+
+                        if(empty($responsibleId)){
+                            throw new GoodException('Операция не возможна','У склада отсутствует представитель!');
+                        }
+
+
                         $info[(string)$item->warehouse_id] = [
                             'title' => $item->warehouse->title,
-                            'responsible_id' => (string)$item->warehouse->responsible,
+                            'responsible_id' => $responsibleId,
                             'amount_repayment' => 0,
                             'deduction' => 0
                         ];
@@ -740,7 +750,138 @@ class OffsetsWithWarehousesController extends BaseController
         return $this->redirect(['offsets-with-warehouses/list-repayment-warehouse'],301);
     }
 
+    /**
+     * make repayment to all warehouses, if we didn't pay them
+     * @param $dateRepayment
+     * @return \yii\web\Response
+     * @throws GoodException
+     */
+    public function actionMakeRepaymentAllWarehouse($dateRepayment)
+    {
+        // get repayment amount
+        $modelRepaymentAmount = RepaymentAmounts::find()->all();
+        if (!empty($modelRepaymentAmount)) {
+            foreach ($modelRepaymentAmount as $item) {
 
+                if (empty($info[(string)$item->warehouse_id])) {
+
+                    $responsibleId = (string)$item->warehouse->responsible;
+                    $representativeId = (string)$item->warehouse->headUser;
+
+                    if(empty($responsibleId)){
+                        throw new GoodException('Операция не возможна','У склада '.$item->warehouse->title.' отсутствует представитель!');
+                    }
+                    if(empty($representativeId)){
+                        throw new GoodException('Операция не возможна','У склада '.$item->warehouse->title.' отсутствует главный админ!');
+                    }
+
+
+                    $info[(string)$item->warehouse_id] = [
+                        'title' => $item->warehouse->title,
+                        'representative_id' => $representativeId,
+                        'responsible_id' => $responsibleId,
+                        'amount_repayment' => 0,
+                        'deduction' => $this->getSetDeduction((string)$item->warehouse_id,$representativeId,$dateRepayment)
+                    ];
+                }
+
+                $info[(string)$item->warehouse_id]['amount_repayment'] += $item->prices_warehouse[$dateRepayment]['price'];
+
+            }
+        }
+
+        //exclude payment
+        $modelRepayment = Repayment::find()
+            ->where([
+                'warehouse_id'=>[
+                    '$nin' => [null]
+                ]
+            ])
+            ->andWhere(['date_for_repayment'=>$dateRepayment])
+            ->all();
+        if(!empty($modelRepayment)){
+            foreach ($modelRepayment as $item) {
+                unset($info[(string)$item->warehouse_id]);
+            }
+        }
+
+        if(empty($info)){
+            throw new GoodException('Операция не возможна','Всем складам все выплаченно!');
+        }
+
+        // calculation for a refund to a representative
+        $returnCostRepresentative = [];
+        foreach ($info as $k=>$item) {
+
+            $repayment = $item['amount_repayment'] - $item['deduction'];
+
+            if($repayment<0){
+                throw new GoodException('Операция не возможна','У склада '.$item['title'].' отрицательный баланс для оплаты!');
+            }
+
+            $info[$k]['repayment'] = $repayment;
+
+            if($item['deduction']>0){
+                if(empty($returnCostRepresentative[$item['representative_id']])){
+                    $returnCostRepresentative[$item['representative_id']] = 0;
+                }
+
+                $returnCostRepresentative[$item['representative_id']] += $item['deduction'];
+            }
+
+        }
+
+        // pay to warehouses
+        foreach ($info as $k=>$item){
+
+            Charity::transferMoney('573a0d76965dd0fb16f60bfe',$item['responsible_id'],$item['repayment'],'repayment for warehouse');
+
+            $model = new Repayment();
+
+            $model->representative_id = new ObjectID($item['representative_id']);
+            $model->warehouse_id = new ObjectID($k);
+            $model->warehouse_responsible_id = new ObjectID($item['responsible_id']);
+            $model->accrued = (float)$item['amount_repayment'];
+            $model->deduction = (float)$item['deduction'];
+            $model->repayment = (float)$item['repayment'];
+            $model->comment = 'repayment for warehouse';
+            $model->date_for_repayment = $dateRepayment;
+            $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            if($model->save()){
+
+            }
+        }
+
+        // pay to representatives
+        if(empty($returnCostRepresentative)){
+            foreach ($returnCostRepresentative as $k=>$item){
+                Charity::transferMoney('573a0d76965dd0fb16f60bfe',$k,$item,'repayment cost for representative');
+
+                $model = new Repayment();
+
+                $model->representative_id = new ObjectID($k);
+                $model->accrued = (float)$item;
+                $model->deduction = (float)'0';
+                $model->repayment = (float)$item;
+                $model->comment = 'repayment cost for representative';
+                $model->date_for_repayment = $dateRepayment;
+                $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+                if($model->save()){
+
+                }
+            }
+        }
+
+        Yii::$app->session->setFlash('alert', [
+                'typeAlert' => 'success',
+                'message' => 'Выплата произведена!'
+            ]
+        );
+
+        return $this->redirect(['offsets-with-warehouses/list-repayment-warehouse'],301);
+    }
 
     /**
      * @param string $look
@@ -777,6 +918,7 @@ class OffsetsWithWarehousesController extends BaseController
         $listRepresentativeForWarehouse = [];
         $infoWarehouse = Warehouse::find()->all();
         if (!empty($infoWarehouse)) {
+
             foreach ($infoWarehouse as $item) {
 
                 // get list warehouse for representative
@@ -1164,15 +1306,38 @@ class OffsetsWithWarehousesController extends BaseController
                 }
             }
         } else {
-            header('Content-Type: text/html; charset=utf-8');
-            echo '<xmp>';
-            print_r('не заполнены проценты для склада');
-            echo '</xmp>';
-            die();
+            throw new GoodException('Операция не возможна','Не заполненны проценту у складов!');
         }
 
 
         return $percent;
     }
 
+
+    protected function getSetDeduction($warehouse_id,$representative_id,$dateRepayment)
+    {
+        $deduction = 0;
+
+        $modeDeduction = RecoveryForRepaymentAmounts::findOne([
+            'representative_id' => new ObjectID($representative_id),
+            'warehouse_id' => new ObjectID($warehouse_id),
+            'month_recovery' => $dateRepayment
+        ]);
+
+        if(empty($modeDeduction)){
+            $modeDeduction = new RecoveryForRepaymentAmounts();
+
+            $modeDeduction->month_recovery = $dateRepayment;
+            $modeDeduction->representative_id = new ObjectID($representative_id);
+            $modeDeduction->warehouse_id = new ObjectID($warehouse_id);
+            $modeDeduction->recovery = (float)0;
+            $modeDeduction->comment = 'automated deduction';
+
+            if($modeDeduction->save()){}
+        } else {
+            $deduction = $modeDeduction->recovery;
+        }
+
+        return $deduction;
+    }
 }
