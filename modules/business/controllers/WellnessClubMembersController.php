@@ -56,8 +56,9 @@ class WellnessClubMembersController extends BaseController
 
             $data = [];
 
+            $offset = $request->get('start') ?: $pages->offset;
             $wellnessClubMembers = $wellnessClubMembers
-                ->offset($request->get('start') ?: $pages->offset)
+                ->offset($offset)
                 ->limit($request->get('length') ?: $pages->limit);
 
             $count = $wellnessClubMembers->count();
@@ -77,6 +78,7 @@ class WellnessClubMembersController extends BaseController
                     $address = $user->address;
                 }
 
+                $nestedData['id'] = $count - ($key + $offset);
                 $nestedData[$columns[0]] = $user->surname;
                 $nestedData[$columns[1]] = $user->name;
                 $nestedData[$columns[2]] = !empty(Country::get($user->country)->name) ? Country::get($user->country)->name : '';
@@ -85,7 +87,7 @@ class WellnessClubMembersController extends BaseController
                 $nestedData[$columns[5]] = $user->email;
                 $nestedData[$columns[6]] = $user->skype;
                 $nestedData[$columns[7]] = $user->wellness_club_partner_date_end;
-                $nestedData[$columns[8]] = '<button class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply'). '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ).' data-email="'. $user->email.'">' . THelper::t('apply') . '</button>';
+                $nestedData[$columns[8]] = '<button class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply'). '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ).' data-email="'. $user->email.'">' . THelper::t('accepted') . '</button>';
 
                 $data[] = $nestedData;
             }
