@@ -6,6 +6,7 @@ use app\models\Repayment;
 use app\components\AlertWidget;
 
 $negative_payment = false;
+$notPaid = false;
 ?>
 
 
@@ -35,9 +36,6 @@ $negative_payment = false;
 
     <?php ActiveForm::end(); ?>
 
-<!--    <div class="col-md-4 m-b text-right">-->
-<!--        --><?php//=Html::a(THelper::t('sidebar_offsets_with_warehouses'),'offsets-with-warehouses')?>
-<!--    </div>-->
 </div>
 
 <div class="row">
@@ -51,6 +49,7 @@ $negative_payment = false;
                         <th><?=THelper::t('amount_repayment')?></th>
                         <th><?=THelper::t('deduction')?></th>
                         <th><?=THelper::t('total')?></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -69,16 +68,31 @@ $negative_payment = false;
                                 <td><?=$itemWarehouse['amount_repayment']?></td>
                                 <td><?=$itemWarehouse['deduction']?></td>
                                 <td><?=$repayment?></td>
+                                <td>
+                                    <?php if($itemWarehouse['paid'] == true){ ?>
+                                        <i class="fa fa-check-square text-success"></i>
+                                    <?php } else { ?>
+                                        <?php $notPaid = true;?>
+                                        <i class="fa fa-minus-square text-danger"></i>
+                                    <?php } ?>
+                                </td>
                             </tr>
                         <?php } ?>
                     <?php } ?>
                     </tbody>
                     <tfooter>
                         <tr>
-                            <th colspan="4">
+                            <th colspan="5">
                                 <?=(($repayment_paid === true || $negative_payment== true) ?
                                     '' :
-                                    Html::a('Провести выплату',['offsets-with-warehouses/make-repayment-warehouse','dateRepayment'=>$request['date_repayment'],'representative_id'=>$userId],['class'=>'btn btn-default']))?>
+                                    Html::a(THelper::t('make_payment'),['offsets-with-warehouses/make-repayment-warehouse','dateRepayment'=>$request['date_repayment'],'representative_id'=>$userId],['class'=>'btn btn-default']))?>
+
+                            <?=(($userType=='mainWarehouse' && $negative_payment==false && $notPaid==true) ?
+                                    Html::a(THelper::t('make_payment_all_warehouse'),['offsets-with-warehouses/make-repayment-all-warehouse','dateRepayment'=>$request['date_repayment']],['class'=>'btn btn-default']) :
+                                    '')?>
+
+
+
                             </th>
                         </tr>
                     </tfooter>
@@ -90,7 +104,7 @@ $negative_payment = false;
 </div>
 
 <div class="m-b-md">
-    <?=Html::a('Таблица взысканий со складов',['/business/offsets-with-warehouses/recovery-for-repayment','object'=>'warehouse','representative_id'=>$userId],['class'=>'btn btn-default','target'=>'_blank'])?>
+    <?=Html::a(THelper::t('table_penalties_from_warehouses'),['/business/offsets-with-warehouses/recovery-for-repayment','object'=>'warehouse','representative_id'=>$userId],['class'=>'btn btn-default','target'=>'_blank'])?>
 </div>
 
 <script type="text/javascript">

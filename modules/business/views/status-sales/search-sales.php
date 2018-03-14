@@ -63,7 +63,7 @@
     </div>
     <div class="col-sm-3">
         <div class="form-group">
-            <?=Html::label('Login','login',['class'=>'control-label'])?>
+            <?=Html::label('Username','login',['class'=>'control-label'])?>
             <?=Html::input('text','login',(!empty($request['login']) ? $request['login'] : ''),['class'=>'form-control','id'=>'login'])?>
         </div>
     </div>

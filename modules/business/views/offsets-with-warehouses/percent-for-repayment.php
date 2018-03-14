@@ -12,7 +12,7 @@ use app\models\PartsAccessories;
 
 
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('sidebar_table_percent_for_repayment') ?></h3>
+    <h3 class="m-b-none"><?= THelper::t(($object=='representative' ? 'sidebar_table_percent_for_repayment' : 'sidebar_table_percent_for_warehouse')) ?></h3>
 </div>
 
 <div class="row">
