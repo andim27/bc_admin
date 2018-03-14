@@ -43,7 +43,7 @@ class WellnessClubMembersController extends BaseController
         ];
 
         $filterColumns = [
-            'created_at', 'surname', 'name', 'countryId',
+            'updated_at', 'surname', 'name', 'countryId',
             'address', 'mobile', 'email', 'skype'
         ];
 
