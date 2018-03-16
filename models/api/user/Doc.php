@@ -90,10 +90,10 @@ class Doc {
                 $info            = pathinfo($object->body);
                 $doc->fileName   = $info['basename'];
 
-                /**
-                 * @todo Переделать, слишком много запросов к апи
-                 */
-//                $doc->user       = api\User::get($object->idUser);
+                if (isset($object->user)) {
+                    $doc->user = $object->user;
+                }
+
                 $result[] = $doc;
             }
         }
