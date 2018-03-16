@@ -176,11 +176,11 @@ class Promotion {
      */
     public static function update($data)
     {
-        $apiClient = new ApiClient('promotion/update');
+        $apiClient = new ApiClient('promotion');
 
-        $response = $apiClient->post($data, false);
+        $response = $apiClient->put($data, true);
 
-        return $response == 'OK';
+        return $response == 'OK' || !empty($response->_id);
     }
 
 }

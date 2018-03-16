@@ -11,6 +11,7 @@
             <h4 class="modal-title"><?= THelper::t('backoffice_promotion_add_title') ?></h4>
         </div>
         <div class="modal-body">
+            <?= $form->field($editPromotionForm, 'id')->hiddenInput()->label(false)->error(false) ?>
             <?= $form->field($editPromotionForm, 'author')->hiddenInput()->label(false)->error(false) ?>
             <?= $form->field($editPromotionForm, 'lang')->hiddenInput()->label(false)->error(false) ?>
             <div class="row">

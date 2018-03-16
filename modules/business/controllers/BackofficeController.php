@@ -6,6 +6,7 @@ use app\controllers\BaseController;
 use app\modules\business\models\AddNewsForm;
 use app\modules\business\models\AddPromotionForm;
 use app\modules\business\models\ConferenceForm;
+use app\modules\business\models\EditPromotionForm;
 use app\modules\business\models\MarketingForm;
 use app\modules\business\models\CareerForm;
 use app\modules\business\models\PriceForm;
@@ -172,12 +173,13 @@ class BackofficeController extends BaseController
 
     public function actionPromotionEdit()
     {
-        $editPromotionForm = new AddPromotionForm();
+        $editPromotionForm = new EditPromotionForm();
 
         if ($id = Yii::$app->request->get('id')) {
             $promotion = api\Promotion::read($this->user->id, Yii::$app->request->get('id'));
 
             if ($promotion) {
+                $editPromotionForm->id = $id;
                 $editPromotionForm->title = $promotion->title;
                 $editPromotionForm->body = $promotion->body;
                 $editPromotionForm->lang = $promotion->lang;
@@ -191,6 +193,7 @@ class BackofficeController extends BaseController
             $editPromotionForm->load(Yii::$app->request->post());
 
             $result = api\Promotion::update([
+                'id'      => $editPromotionForm->id,
                 'title'      => $editPromotionForm->title,
                 'body'       => $editPromotionForm->body,
                 'lang'       => $editPromotionForm->lang,
