@@ -170,6 +170,49 @@ class BackofficeController extends BaseController
         }
     }
 
+    public function actionPromotionEdit()
+    {
+        $editPromotionForm = new AddPromotionForm();
+
+        if ($id = Yii::$app->request->get('id')) {
+            $promotion = api\Promotion::read($this->user->id, Yii::$app->request->get('id'));
+
+            if ($promotion) {
+                $editPromotionForm->title = $promotion->title;
+                $editPromotionForm->body = $promotion->body;
+                $editPromotionForm->lang = $promotion->lang;
+                $editPromotionForm->author = $promotion->author;
+                $editPromotionForm->dateStart = gmdate('d.m.Y', $promotion->dateStart);
+                $editPromotionForm->dateFinish = gmdate('d.m.Y', $promotion->dateFinish);
+            }
+        }
+
+        if (Yii::$app->request->isPost) {
+            $editPromotionForm->load(Yii::$app->request->post());
+
+            $result = api\Promotion::update([
+                'title'      => $editPromotionForm->title,
+                'body'       => $editPromotionForm->body,
+                'lang'       => $editPromotionForm->lang,
+                'author'     => $editPromotionForm->author,
+                'dateStart'  => $editPromotionForm->dateStart,
+                'dateFinish' => $editPromotionForm->dateFinish
+            ]);
+
+            if ($result) {
+                Yii::$app->session->setFlash('success', 'backoffice_promotion_edit_success');
+            } else {
+                Yii::$app->session->setFlash('danger', 'backoffice_promotion_edit_error');
+            }
+
+            $this->redirect('/' . Yii::$app->language . '/business/backoffice/promotion/?l=' . $editPromotionForm->lang);
+        } else {
+            return $this->renderAjax('promotion_edit', [
+                'language' => Yii::$app->language,
+                'editPromotionForm' => $editPromotionForm
+            ]);
+        }
+    }
 
     public function actionPromotionRemove()
     {
