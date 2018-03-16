@@ -168,4 +168,19 @@ class Promotion {
         return $response == 'OK';
     }
 
+    /**
+     * Update promotion
+     *
+     * @param $data
+     * @return mixed
+     */
+    public static function update($data)
+    {
+        $apiClient = new ApiClient('promotion/update');
+
+        $response = $apiClient->post($data, false);
+
+        return $response == 'OK';
+    }
+
 }
