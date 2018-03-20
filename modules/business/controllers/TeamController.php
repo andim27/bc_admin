@@ -254,49 +254,38 @@ class TeamController extends BaseController
 
     public function actionPartnerInfo()
     {
-        $uid = Yii::$app->request->get('id');
-        $models = api\User::spilover($uid, 1);
+        $userId = Yii::$app->request->get('id');
 
-        if ($models) {
-            if (isset($models[0])) {
-                $result = $models[0];
-            } else {
-                $result = [];
-            }
-        } else {
-            $result = [];
-        }
-
-        if ($result) {
-            $country = $result->getCountry();
+        if ($user = api\User::get($userId)) {
+            $country = $user->getCountry();
             if ($country) {
-                $result->country = $country->name;
+                $user->country = $country->name;
             }
-            if ($result->expirationDateBS > 0) {
-                $result->expirationDateBS = gmdate('d.m.Y', $result->expirationDateBS);
+            if ($user->expirationDateBS > 0) {
+                $user->expirationDateBS = gmdate('d.m.Y', $user->expirationDateBS);
             } else {
-                $result->expirationDateBS = '';
+                $user->expirationDateBS = '';
             }
-            if ($result->links) {
-                if ($result->links->site) {
-                    $result->linkSite = UrlHelper::getValidUrl($result->links->site);
+            if ($user->links) {
+                if ($user->links->site) {
+                    $user->linkSite = UrlHelper::getValidUrl($user->links->site);
                 }
-                if ($result->links->odnoklassniki) {
-                    $result->linkOdnoklassniki = UrlHelper::getValidUrl($result->links->odnoklassniki);
+                if ($user->links->odnoklassniki) {
+                    $user->linkOdnoklassniki = UrlHelper::getValidUrl($user->links->odnoklassniki);
                 }
-                if ($result->links->vk) {
-                    $result->linkVk = UrlHelper::getValidUrl($result->links->vk);
+                if ($user->links->vk) {
+                    $user->linkVk = UrlHelper::getValidUrl($user->links->vk);
                 }
-                if ($result->links->fb) {
-                    $result->linkFb = UrlHelper::getValidUrl($result->links->fb);
+                if ($user->links->fb) {
+                    $user->linkFb = UrlHelper::getValidUrl($user->links->fb);
                 }
-                if ($result->links->youtube) {
-                    $result->linkYoutube = UrlHelper::getValidUrl($result->links->youtube);
+                if ($user->links->youtube) {
+                    $user->linkYoutube = UrlHelper::getValidUrl($user->links->youtube);
                 }
             }
         }
 
-        return json_encode($result);
+        return json_encode($user);
     }
 
     public function actionMainUserData()
