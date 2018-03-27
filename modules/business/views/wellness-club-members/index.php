@@ -74,7 +74,7 @@
             {"data": "created"},
             {"data": "action"}
         ],
-        "order": [[ 5, "desc" ]]
+        "order": [[ 0, "desc" ]]
     });
 
     $(document).on('click', '.apply', function () {

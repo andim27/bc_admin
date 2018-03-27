@@ -68,7 +68,7 @@ class User
      * @param $param
      * @return bool|mixed
      */
-    public static function get($param)
+    public static function get($param, $withSponsor = true)
     {
         $apiClient = new ApiClient('user/' . $param);
 
@@ -78,7 +78,7 @@ class User
             return false;
         }
 
-        $result = self::_getResults($response);
+        $result = self::_getResults($response, $withSponsor);
 
         return $result ? current($result) : false;
     }
@@ -245,7 +245,7 @@ class User
 
         $response = $apiClient->get();
 
-        return self::_getResults($response);
+        return self::_getResults($response, false);
     }
 
     public static function upSpilover($userId, $levels = null)
@@ -289,9 +289,10 @@ class User
      * Convert response from API
      *
      * @param $data
-     * @return bool|mixed
+     * @param bool $withSponsor
+     * @return array
      */
-    private static function _getResults($data)
+    private static function _getResults($data, $withSponsor = true)
     {
         $result = [];
 
@@ -451,13 +452,15 @@ class User
                 if (isset($object->sponsor)) {
                     $user->sponsor = $object->sponsor;
                 } else {
-                    if (isset($object->sponsorId)) {
-                        $user->sponsorId = $object->sponsorId;
-                        $user->sponsor = self::get($object->sponsorId);
-                    }
-                    if (isset($object->sponsor['_id'])) {
-                        $user->sponsorId = $object->sponsor['_id'];
-                        $user->sponsor = self::get($object->sponsor['_id']);
+                    if ($withSponsor) {
+                        if (isset($object->sponsorId)) {
+                            $user->sponsorId = $object->sponsorId;
+                            $user->sponsor = self::get($object->sponsorId, false);
+                        }
+                        if (isset($object->sponsor['_id'])) {
+                            $user->sponsorId = $object->sponsor['_id'];
+                            $user->sponsor = self::get($object->sponsor['_id'], false);
+                        }
                     }
                 }
                 if (isset($object->statistics)) {

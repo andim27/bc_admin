@@ -28,9 +28,6 @@ class LotteryController extends BaseController
         $users = [];
         foreach ($lotteryTickets as $lotteryTicket) {
             $lotteryTicketUser = $lotteryTicket->user();
-            if (!$lotteryTicketUser) {
-                hh($lotteryTicket);
-            }
             $userId = strval($lotteryTicketUser->_id);
             if (!isset($users[$userId])) {
                 $users[$userId] = [
