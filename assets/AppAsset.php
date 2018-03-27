@@ -23,7 +23,7 @@ class AppAsset extends AssetBundle
         '/css/font-awesome.min.css',
         '/css/font.css',
         '/js/datatables/datatables.css',
-        '/js/datepicker/datepicker.css',
+        //'/js/datepicker/datepicker.css',
         '/js/select2/select2.css',
         '/js/select2/theme.css',
         '/css/fileinput.min.css',

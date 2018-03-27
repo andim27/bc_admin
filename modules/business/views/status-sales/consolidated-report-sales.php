@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use app\models\Warehouse;
 use app\models\Users;
 use kartik\widgets\Select2;
+use kartik\widgets\DatePicker;
 
 $listWarehouse = Warehouse::getArrayWarehouse();
 $listAdmin = Users::getListAdmin();
@@ -13,6 +14,12 @@ $amountPack = [
     'count'     =>  0,
     'amount'    =>  0,
 ];
+
+$layoutDate = <<< HTML
+    {input1}
+    {separator}
+    {input2}
+HTML;
 
 ?>
     <div class="m-b-md">
@@ -26,11 +33,19 @@ $amountPack = [
         ]); ?>
 
         <div class="col-md-2 m-b">
-            <?= Html::input('text','from',$dateInterval['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
-        </div>
-
-        <div class="col-md-2 m-b">
-            <?= Html::input('text','to',$dateInterval['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+            <?= DatePicker::widget([
+                'name' => 'from',
+                'value' => $dateInterval['from'],
+                'type' => DatePicker::TYPE_RANGE,
+                'name2' => 'to',
+                'value2' => $dateInterval['to'],
+                'separator' => '-',
+                'layout' => $layoutDate,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd',
+                ]
+            ]); ?>
         </div>
 
         <div class="col-md-1">

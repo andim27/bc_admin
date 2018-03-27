@@ -2,7 +2,7 @@
 use app\components\THelper;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use app\models\Repayment;
+use kartik\widgets\DatePicker;
 use app\components\AlertWidget;
 
 $negative_payment = false;
@@ -24,7 +24,17 @@ $negative_payment = false;
 
     <div class="col-md-10">
         <div class="input-group">
-            <?= Html::input('text','date_repayment',$request['date_repayment'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm'])?>
+            <?= DatePicker::widget([
+                'name' => 'date_repayment',
+                'value'=>$request['date_repayment'],
+                'type' => DatePicker::TYPE_INPUT,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm',
+                    'startView'=>'year',
+                    'minViewMode'=>'months',
+                ]
+            ]); ?>
         </div>
     </div>
 
@@ -105,5 +115,3 @@ $negative_payment = false;
         "order": [[ 1, "desc" ]]
     });
 </script>
-
-<?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>

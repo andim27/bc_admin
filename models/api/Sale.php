@@ -3,6 +3,7 @@
 namespace app\models\api;
 
 use app\components\ApiClient;
+use yii\helpers\ArrayHelper;
 
 class Sale {
 
@@ -144,7 +145,9 @@ class Sale {
         $params = [
             'iduser' => $data['iduser'],
             'pin' => $data['pin'],
-            'project' => 1
+            'project' => 1,
+            'whenceSale' => 'adminka',
+            'formPayment' => (!empty($data['formPayment']) ? $data['formPayment'] : '0')
         ];
 
         $warehouse = [];

@@ -7,10 +7,16 @@ use yii\bootstrap\Html;
 use kartik\widgets\Select2;
 use app\models\Warehouse;
 use app\models\LogWarehouse;
+use kartik\widgets\DatePicker;
 
 $listWarehouse = Warehouse::getArrayWarehouse();
 $listAction = LogWarehouse::getAllAction();
 
+$layoutDate = <<< HTML
+    {input1}
+    {separator}
+    {input2}
+HTML;
 ?>
 
 <div class="m-b-md">
@@ -27,10 +33,20 @@ $listAction = LogWarehouse::getAllAction();
 
     <div class="col-md-3">
         <div class="input-group">
-            <?= Html::input('text','from',$request['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
-            <span class="input-group-addon"> - </span>
-            <?= Html::input('text','to',$request['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
-        </div>
+            <?= DatePicker::widget([
+                'name' => 'from',
+                'value' => $request['from'],
+                'type' => DatePicker::TYPE_RANGE,
+                'name2' => 'to',
+                'value2' => $request['to'],
+                'separator' => '-',
+                'layout' => $layoutDate,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd',
+                ]
+            ]); ?>
+          </div>
     </div>
 
     <div class="col-md-2 m-b">
@@ -130,4 +146,3 @@ $listAction = LogWarehouse::getAllAction();
         formFilter.attr('action','<?=\yii\helpers\Url::to(['log-warehouse/move-on-warehouse-excel'])?>').submit();
     })
 </script>
-<?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>

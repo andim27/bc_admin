@@ -987,7 +987,8 @@ class UserController extends BaseController
                     $response = Sale::buy([
                         'iduser' => $partner->id,
                         'pin' => $pin,
-                        'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null
+                        'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
+                        'formPayment' => 1
                     ]);
 
                     if ($response === 'OK') {
