@@ -6,6 +6,8 @@ use yii\widgets\ActiveForm;
 use app\models\Warehouse;
 use app\models\PartsAccessories;
 use app\models\Users;
+use kartik\date\DatePicker;
+
 
 $layoutDate = <<< HTML
     {input1}
