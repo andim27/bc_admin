@@ -1297,9 +1297,11 @@ class SaleReportController extends BaseController
             foreach ($modelRepayment as $item) {
                 $representativeId = (string)$item->representative_id;
 
-                $report[$representativeId]['accrued'] += $item->accrued;
-                $report[$representativeId]['deduction'] += $item->deduction;
-                $report[$representativeId]['repayment'] += $item->repayment;
+                if(isset($report[$representativeId])){
+                    $report[$representativeId]['accrued'] += $item->accrued;
+                    $report[$representativeId]['deduction'] += $item->deduction;
+                    $report[$representativeId]['repayment'] += $item->repayment;
+                }
             }
         }
 
