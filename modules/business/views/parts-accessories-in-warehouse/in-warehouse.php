@@ -51,10 +51,10 @@ if(Warehouse::checkWarehouseKharkov($idWarehouse)){
 
         <div class="col-md-4 m-b">
             <?= DatePicker::widget([
-                'name' => 'from',
+                'name' => 'dateInterval[from]',
                 'value' => $request['dateInterval']['from'],
                 'type' => DatePicker::TYPE_RANGE,
-                'name2' => 'to',
+                'name2' => 'dateInterval[to]',
                 'value2' => $request['dateInterval']['to'],
                 'separator' => '-',
                 'layout' => $layoutDate,
