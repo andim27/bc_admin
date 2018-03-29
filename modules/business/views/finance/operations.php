@@ -1,6 +1,8 @@
 <?php
     use app\components\THelper;
-    $this->title = THelper::t('history_of_operations');
+use yii\helpers\Html;
+
+$this->title = THelper::t('history_of_operations');
     $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
@@ -20,6 +22,7 @@
                         <th width="20%"><?=THelper::t('finance_operations_saldo_from')?></th>
                         <th width="20%"><?=THelper::t('for_what')?></th>
                         <th width="20%"><?=THelper::t('date')?></th>
+                        <th width="20%"><?=THelper::t('action')?></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -28,10 +31,13 @@
                             <tr>
                                 <th width="20%"><?= $value->usernameFrom ?></th>
                                 <th width="20%"><?= $value->usernameTo ?></th>
-                                <th width="20%"><?= $value->amount ?></th>
-                                <th width="20%"><?= $value->saldoFrom ?></th>
+                                <th width="20%"><?= round($value->amount,2); ?></th>
+                                <th width="20%"><?= round($value->saldoFrom,2); ?></th>
                                 <th width="20%"><?= $value->forWhat ?></th>
                                 <th width="20%"><?= gmdate('d.m.Y', date('U', strtotime($value->dateReduce))) ?></th>
+                                <th width="20%">
+                                    <?= Html::a(THelper::t('cancel_operation'), 'transaction-cancel?id=' . $value->_id, ['data-toggle'=>'ajaxModal', 'class'=>'btn btn-facebook']); ?>
+                                </th>
                             </tr>
                         <?php } ?>
                     <?php } ?>

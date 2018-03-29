@@ -3,6 +3,8 @@
 namespace app\modules\business\controllers;
 
 use app\controllers\BaseController;
+use app\models\api\finance\Operations;
+use app\models\api\finance\Points;
 use app\models\api\Pin;
 use app\models\api\Product;
 use app\models\api\Sale;
@@ -483,6 +485,8 @@ class UserController extends BaseController
                 $personalPartners = api\User::personalPartners($user->id);
                 $upSpilovers = api\User::upSpilover($user->id);
                 $parent = api\User::get($user->parentId);
+                $operations = Operations::all($parent->id);
+                $points = Points::all($parent->id);
             }
             return $this->renderAjax('_info', [
                 'user' => isset($user) && $user ? $user : '',
@@ -494,11 +498,24 @@ class UserController extends BaseController
                 'upSpilovers' => isset($upSpilovers) && $upSpilovers ? $upSpilovers : [],
                 'parent' => isset($parent) && $parent ? $parent : '',
                 'totalPurchases' => $totalPurchases,
-                'selfPoints' => $selfPoints
+                'selfPoints' => $selfPoints,
+                'operations' => isset($operations) ? $operations : null,
+                'points' => isset($points) ? $points : null
             ]);
         }
 
         return false;
+    }
+
+    public function actionTransactionCancel()
+    {
+        $request = Yii::$app->request;
+
+        $status = Operations::cancel($request->get('id'));
+
+        if ($status) {
+            return $this->renderAjax('/finance/_success');
+        }
     }
 
     /**
