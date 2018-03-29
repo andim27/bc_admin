@@ -3,6 +3,13 @@ use app\components\THelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\PartsAccessories;
+use kartik\widgets\DatePicker;
+
+$layoutDate = <<< HTML
+    {input1}
+    {separator}
+    {input2}
+HTML;
 
 $listGoods = PartsAccessories::getListPartsAccessories();
 ?>
@@ -22,11 +29,19 @@ $listGoods = PartsAccessories::getListPartsAccessories();
     ]); ?>
 
     <div class="col-md-2 m-b">
-        <?= Html::input('text','from',$dateInterval['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
-    </div>
-
-    <div class="col-md-2 m-b">
-        <?= Html::input('text','to',$dateInterval['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+        <?= DatePicker::widget([
+            'name' => 'from',
+            'value' => $dateInterval['from'],
+            'type' => DatePicker::TYPE_RANGE,
+            'name2' => 'to',
+            'value2' => $dateInterval['to'],
+            'separator' => '-',
+            'layout' => $layoutDate,
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'yyyy-mm-dd',
+            ]
+        ]); ?>
     </div>
 
     <div class="col-md-8 m-b">

@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use app\models\Warehouse;
 use app\models\Users;
 use yii\helpers\ArrayHelper;
+use kartik\widgets\DatePicker;
 
 $listWarehouse = Warehouse::getListHeadAdminWarehouse();
 $myInfoWarehouse = Warehouse::getInfoWarehouse();
@@ -13,6 +14,12 @@ if(!in_array((string)$myInfoWarehouse->_id,$listWarehouse)){
 }
 
 $listAdmin = Users::getListHeadAdminAdmin();
+
+$layoutDate = <<< HTML
+    {input1}
+    {separator}
+    {input2}
+HTML;
 ?>
     <div class="m-b-md">
         <h3 class="m-b-none"><?= THelper::t('consolidated_report_for_sales') ?></h3>
@@ -25,11 +32,19 @@ $listAdmin = Users::getListHeadAdminAdmin();
         ]); ?>
 
         <div class="col-md-2 m-b">
-            <?= Html::input('text','from',$dateInterval['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
-        </div>
-
-        <div class="col-md-2 m-b">
-            <?= Html::input('text','to',$dateInterval['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+            <?= DatePicker::widget([
+                'name' => 'from',
+                'value' => $dateInterval['from'],
+                'type' => DatePicker::TYPE_RANGE,
+                'name2' => 'to',
+                'value2' => $dateInterval['to'],
+                'separator' => '-',
+                'layout' => $layoutDate,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd',
+                ]
+            ]); ?>
         </div>
 
         <div class="col-md-1">

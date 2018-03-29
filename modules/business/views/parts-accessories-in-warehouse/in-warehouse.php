@@ -6,7 +6,14 @@ use yii\widgets\ActiveForm;
 use app\models\Warehouse;
 use app\models\PartsAccessories;
 use app\models\Users;
+use kartik\date\DatePicker;
 
+
+$layoutDate = <<< HTML
+    {input1}
+    {separator}
+    {input2}
+HTML;
 
 $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
@@ -42,12 +49,20 @@ if(Warehouse::checkWarehouseKharkov($idWarehouse)){
             'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
         ]); ?>
 
-        <div class="col-md-2 m-b">
-            <?= Html::input('text','dateInterval[from]',$request['dateInterval']['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
-        </div>
-
-        <div class="col-md-2 m-b">
-            <?= Html::input('text','dateInterval[to]',$request['dateInterval']['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+        <div class="col-md-4 m-b">
+            <?= DatePicker::widget([
+                'name' => 'dateInterval[from]',
+                'value' => $request['dateInterval']['from'],
+                'type' => DatePicker::TYPE_RANGE,
+                'name2' => 'dateInterval[to]',
+                'value2' => $request['dateInterval']['to'],
+                'separator' => '-',
+                'layout' => $layoutDate,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd',
+                ]
+            ]); ?>
         </div>
 
         <?php if(!empty($listWarehouse)) { ?>

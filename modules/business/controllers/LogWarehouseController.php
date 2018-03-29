@@ -142,13 +142,16 @@ class LogWarehouseController extends BaseController {
         $infoAction = [
             'issued'        =>  ['status_sale_issued',],
             'posting'       =>  [
-                'posting_parcel','write_off_parcel_and_add_warehouse','return_in_warehouse',
+                'posting_parcel','return_in_warehouse',
                 'posting_ordering','add_execution_posting'
             ],
             'send'          =>  ['send_parcel'],
             'cancellation'  =>  ['cancellation'],
 
-            'skip_status'   => ['status_sale_delivered']
+            'skip_status'   => ['status_sale_delivered'],
+
+            'return'        => ['write_off_parcel_and_add_warehouse'],
+            'update'        => ['update_send_parcel']
         ];
 
         $request = Yii::$app->request->post();
@@ -223,6 +226,12 @@ class LogWarehouseController extends BaseController {
                         }
                     } else if(in_array($item->action,$infoAction['skip_status'])){
 
+                    }else if(in_array($item->action,$infoAction['return'])){
+                        $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['send']-=$item->number;
+                        $infoProductAmount[(string)$item->parts_accessories_id]['send']-=$item->number;
+                    }else if(in_array($item->action,$infoAction['update'])){
+                        $infoProduct[$dateCreate][(string)$item->parts_accessories_id]['send']+=$item->number;
+                        $infoProductAmount[(string)$item->parts_accessories_id]['send']+=$item->number;
                     }else {
                         $actionDontKnow[$item->action] = THelper::t($item->action);
                     }

@@ -4,6 +4,13 @@
     use yii\widgets\ActiveForm;
     use yii\helpers\ArrayHelper;
     use app\models\Warehouse;
+    use kartik\widgets\DatePicker;
+
+$layoutDate = <<< HTML
+    {input1}
+    {separator}
+    {input2}
+HTML;
 
     $myWarehouse = Warehouse::getMyWarehouse();
 
@@ -29,9 +36,19 @@
 
     <div class="col-md-3">
         <div class="input-group">
-            <?= Html::input('text','from',$request['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm-dd'])?>
-            <span class="input-group-addon"> - </span>
-            <?= Html::input('text','to',$request['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm-dd'])?>
+            <?= DatePicker::widget([
+                'name' => 'from',
+                'value' => $request['from'],
+                'type' => DatePicker::TYPE_RANGE,
+                'name2' => 'to',
+                'value2' => $request['to'],
+                'separator' => '-',
+                'layout' => $layoutDate,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd',
+                ]
+            ]); ?>
         </div>
     </div>
 
@@ -105,9 +122,4 @@
         document.location = "/business/status-sales/export-report?from="+$dateFrom+"&to="+$dateTo+"&infoUser="+$infoUser+"&infoTypeDate="+$infoTypeDate+"&infoTypePayment="+$infoTypePayment;
 
     });
-
-
-
-
 </script>
-<?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>

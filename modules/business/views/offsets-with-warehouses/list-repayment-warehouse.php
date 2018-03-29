@@ -2,8 +2,9 @@
 use app\components\THelper;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use app\models\Repayment;
 use app\components\AlertWidget;
+use kartik\widgets\DatePicker;
+
 
 $negative_payment = false;
 $notPaid = false;
@@ -25,7 +26,17 @@ $notPaid = false;
 
     <div class="col-md-10">
         <div class="input-group">
-            <?= Html::input('text','date_repayment',$request['date_repayment'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm'])?>
+            <?= DatePicker::widget([
+                'name' => 'date_repayment',
+                'value'=>$request['date_repayment'],
+                'type' => DatePicker::TYPE_INPUT,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm',
+                    'startView'=>'year',
+                    'minViewMode'=>'months',
+                ]
+            ]); ?>
         </div>
     </div>
 
@@ -85,13 +96,11 @@ $notPaid = false;
                             <th colspan="5">
                                 <?=(($repayment_paid === true || $negative_payment== true) ?
                                     '' :
-                                    Html::a(THelper::t('make_payment'),['offsets-with-warehouses/make-repayment-warehouse','dateRepayment'=>$request['date_repayment'],'representative_id'=>$userId],['class'=>'btn btn-default']))?>
+                                    Html::a(THelper::t('make_payment'),['offsets-with-warehouses/make-repayment-warehouse','dateRepayment'=>$request['date_repayment'],'representative_id'=>$userId],['class'=>'btn btn-default btnHideAfterClick']))?>
 
                             <?=(($userType=='mainWarehouse' && $negative_payment==false && $notPaid==true) ?
-                                    Html::a(THelper::t('make_payment_all_warehouse'),['offsets-with-warehouses/make-repayment-all-warehouse','dateRepayment'=>$request['date_repayment']],['class'=>'btn btn-default']) :
+                                    Html::a(THelper::t('make_payment_all_warehouse'),['offsets-with-warehouses/make-repayment-all-warehouse','dateRepayment'=>$request['date_repayment']],['class'=>'btn btn-default btnHideAfterClick']) :
                                     '')?>
-
-
 
                             </th>
                         </tr>
@@ -113,6 +122,8 @@ $notPaid = false;
         lengthMenu: [ 25, 50, 75, 100 ],
         "order": [[ 1, "desc" ]]
     });
-</script>
 
-<?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
+    $('.btnHideAfterClick').on('click',function () {
+        $(this).hide();
+    })
+</script>

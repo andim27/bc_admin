@@ -49,6 +49,8 @@ class Sales extends ActiveRecord
             '__v',
             'dateReduce',
             'dateCreate',
+            'formPayment',
+            ''
         ];
     }
 

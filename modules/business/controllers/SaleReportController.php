@@ -3,11 +3,13 @@
 namespace app\modules\business\controllers;
 
 use app\components\ArrayInfoHelper;
+use app\components\GoodException;
 use app\components\THelper;
 use app\controllers\BaseController;
-use app\models\api;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
+use app\models\Repayment;
+use app\models\RepaymentAmounts;
 use app\models\Sales;
 use app\models\SendingWaitingParcel;
 use app\models\Settings;
@@ -1170,9 +1172,11 @@ class SaleReportController extends BaseController
         if(!empty($model)){
             foreach ($model as $item) {
 
-                $listCountry[$item->infoUser->country] = $allListCountry[$item->infoUser->country];
+                $country = mb_strtolower($item->infoUser->country);
 
-                if(empty($request['countryReport']) || ($request['countryReport']==$item->infoUser->country)){
+                $listCountry[$country] = $allListCountry[$country];
+
+                if(empty($request['countryReport']) || ($request['countryReport']==$country)){
                     $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
 
                     if(empty($listAvailableCities)){
@@ -1185,7 +1189,7 @@ class SaleReportController extends BaseController
                     ){
                         $infoExport[] = [
                             'date_create' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
-                            'country'=>$allListCountry[$item->infoUser->country],
+                            'country'=>$allListCountry[$country],
                             'city'=>$city,
                             'address'=>$item->infoUser->address,
                             'full_name'=>$item->infoUser->secondName .' ' . $item->infoUser->firstName,
@@ -1228,5 +1232,86 @@ class SaleReportController extends BaseController
 
         die();
     }
+
+    /**
+     * make report for charges representative
+     * @return string
+     * @throws GoodException
+     */
+    public function actionReportChargesRepresentative()
+    {
+        $request =  Yii::$app->request->post();
+
+        if(empty($request)){
+            $request['date'] = date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
+        }
+
+        $report = [];
+
+        $listRepresentative = Warehouse::getListHeadAdmin();
+        foreach ($listRepresentative as $k=>$item) {
+            $report[$k] = [
+                'title'         => $item,
+                'percent'       => 0,
+                'goods_turnover'=> 0,
+                'accrued'       => 0,
+                'deduction'     => 0,
+                'repayment'     => 0,
+                'goods'         => []
+            ];
+        }
+
+        $modelRepaymentAmounts = RepaymentAmounts::find()->all();
+        /** @var RepaymentAmounts $item */
+        foreach ($modelRepaymentAmounts as $item){
+            if(!empty($item->prices_representative[$request['date']])){
+                $representativeId = (string)$item->warehouse->headUser;
+
+                if(empty($report[$representativeId]['goods'][(string)$item->product_id])){
+                    $report[$representativeId]['percent'] = $item->prices_representative[$request['date']]['percent'];
+                    $report[$representativeId]['goods_turnover'] = $item->prices_representative[$request['date']]['goods_turnover'];
+                    $report[$representativeId]['goods'][(string)$item->product_id] = [
+                        'title' => $item->product->title,
+                        'price' => 0,
+                        'count' => 0
+                    ];
+                }
+
+                $report[$representativeId]['goods'][(string)$item->product_id]['price'] += $item->prices_representative[$request['date']]['price'];
+                $report[$representativeId]['goods'][(string)$item->product_id]['count'] += $item->prices_representative[$request['date']]['count'];
+            } else {
+                throw new GoodException('Отчет не возможно сфомировать','Нет выплат по данной дате');
+            }
+        }
+
+        $modelRepayment = Repayment::find()
+            ->where([
+                'warehouse_id'=>[
+                    '$in' => [null]
+                ]
+            ])
+            ->andWhere(['date_for_repayment'=>$request['date']])
+            ->all();
+        if(!empty($modelRepayment)){
+            /** @var Repayment $item */
+            foreach ($modelRepayment as $item) {
+                $representativeId = (string)$item->representative_id;
+
+                if(isset($report[$representativeId])){
+                    $report[$representativeId]['accrued'] += $item->accrued;
+                    $report[$representativeId]['deduction'] += $item->deduction;
+                    $report[$representativeId]['repayment'] += $item->repayment;
+                }
+            }
+        }
+
+        return $this->render('report-charges-representative',[
+                'language' => Yii::$app->language,
+                'request' => $request,
+                'report' => $report
+            ]
+        );
+    }
+
 
 }

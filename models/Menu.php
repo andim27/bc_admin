@@ -437,6 +437,13 @@ Class Menu
                         'url' => ['sale-report/report-project-vipcoin'],
                         'action' => 'report-project-vipcoin',
                     ],
+
+                    [
+                        'key'   =>  'sidebar_report_charges_representative',
+                        'label' => THelper::t('sidebar_report_charges_representative'),
+                        'url' => ['sale-report/report-charges-representative'],
+                        'action' => 'report-charges-representative',
+                    ],
                 ]
             ],
 

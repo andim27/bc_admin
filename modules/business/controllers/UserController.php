@@ -417,20 +417,14 @@ class UserController extends BaseController
 
     public function actionBuildTree()
     {
-        if (preg_match("#[^\d]+#", Yii::$app->request->get("id"))) {
-            $uid = Yii::$app->request->get("id");
-        } else {
-            if ($user_top = User::getInfoApi(Yii::$app->request->get("id"))) {
-                $uid = $user_top->_id;
-            }
-        }
+        $userId = Yii::$app->request->get('id');
 
         if (is_numeric(Yii::$app->request->get("side", NULL))) {
-            $last_side = UsersReferrals::getLastSideApi($uid, Yii::$app->request->get("side"));
-            $uid = $last_side->_id;
+            $last_side = UsersReferrals::getLastSideApi($userId, Yii::$app->request->get('side'));
+            $userId = $last_side->_id;
         }
 
-        if ($models = api\User::spilover($uid, 4)) {
+        if ($models = api\User::spilover($userId, 4)) {
             if ($models[0]->accountId == $this->user->accountId) {
                 $models[0]->parentId = "000000000000000000000000";
             }
@@ -438,7 +432,7 @@ class UserController extends BaseController
             Yii::$app->params['number'] = 0;
             return $this->renderAjax('ajax_structure_tree', [
                 'current_user_model' => $current_user_model,
-                'tree' => UsersReferrals::build_tree($models, $uid, $uid, 0, '', $current_user_model),
+                'tree' => UsersReferrals::build_tree($models, $userId, $userId, 0, '', $current_user_model),
                 'count_all' => Yii::$app->params['number']
             ]);
         }
@@ -446,7 +440,7 @@ class UserController extends BaseController
 
     public function actionSearchLoginInTree($login, $iduser)
     {
-        $user = api\User::get($login);
+        $user = api\User::get($login, false);
 
         if ($user) {
             echo $user->id;
@@ -535,7 +529,7 @@ class UserController extends BaseController
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return ActiveForm::validate($purchaseForm);
             } else {
-                $purchaseUser = api\User::get($purchaseForm->user);
+                $purchaseUser = api\User::get($purchaseForm->user, false);
             }
         }
 
@@ -1004,7 +998,8 @@ class UserController extends BaseController
                     $response = Sale::buy([
                         'iduser' => $partner->id,
                         'pin' => $pin,
-                        'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null
+                        'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
+                        'formPayment' => 1
                     ]);
 
                     if ($response === 'OK') {

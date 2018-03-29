@@ -4,12 +4,16 @@ use yii\helpers\ArrayHelper;
 use app\components\THelper;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
-use kartik\widgets\Select2;
 use app\models\Warehouse;
-use app\models\LogWarehouse;
+use kartik\widgets\DatePicker;
 
 $listWarehouse = Warehouse::getArrayWarehouse();
 
+$layoutDate = <<< HTML
+    {input1}
+    {separator}
+    {input2}
+HTML;
 ?>
 
 <div class="m-b-md">
@@ -26,9 +30,21 @@ $listWarehouse = Warehouse::getArrayWarehouse();
 
     <div class="col-md-3">
         <div class="input-group">
-            <?= Html::input('text','from',$request['from'],['class' => 'form-control datepicker-input dateFrom', 'data-date-format'=>'yyyy-mm'])?>
-            <span class="input-group-addon"> - </span>
-            <?= Html::input('text','to',$request['to'],['class' => 'form-control datepicker-input dateTo', 'data-date-format'=>'yyyy-mm'])?>
+            <?= DatePicker::widget([
+                'name' => 'from',
+                'value' => $request['from'],
+                'type' => DatePicker::TYPE_RANGE,
+                'name2' => 'to',
+                'value2' => $request['to'],
+                'separator' => '-',
+                'layout' => $layoutDate,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm',
+                    'startView'=>'year',
+                    'minViewMode'=>'months',
+                ]
+            ]); ?>
         </div>
     </div>
 
@@ -118,4 +134,3 @@ $listWarehouse = Warehouse::getArrayWarehouse();
 
 
     </script>
-<?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>

@@ -1,11 +1,11 @@
 <?php
 
 namespace app\models;
-use MongoDB\BSON\ObjectID;
 
 /**
  * @inheritdoc
  * @property Warehouse $warehouse
+ * @property PartsAccessories $product
  *
  *
  * Class RepaymentAmounts
@@ -41,6 +41,14 @@ class RepaymentAmounts extends \yii2tech\embedded\mongodb\ActiveRecord
     public function getWarehouse()
     {
         return $this->hasOne(Warehouse::className(),['_id'=>'warehouse_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getProduct()
+    {
+        return $this->hasOne(PartsAccessories::className(),['_id'=>'product_id']);
     }
 
 }

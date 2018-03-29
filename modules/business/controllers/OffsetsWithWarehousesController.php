@@ -121,75 +121,75 @@ class OffsetsWithWarehousesController extends BaseController
 
     }
 
-    /**
-     * set default value
-     * @return \yii\web\Response
-     */
-    public function actionDefaultPercentForRepaymentRepresentative(){
-        PercentForRepaymentAmounts::getCollection()->remove();
-
-        $list = Warehouse::getListHeadAdmin();
-
-        foreach ($list as $k=>$item) {
-            $model = new PercentForRepaymentAmounts();
-
-            $model->representative_id = new ObjectID($k);
-            $model->dop_price_per_warehouse = (int)5000;
-            $model->turnover_boundary = [
-                '0' => [
-                    'turnover_boundary' => (int)0,
-                    'percent' => (int)10
-                ],
-                '1' => [
-                    'turnover_boundary' => (int)5000,
-                    'percent' => (int)15
-                ],
-                '2' => [
-                    'turnover_boundary' => (int)10000,
-                    'percent' => (int)20
-                ],
-                '3' => [
-                    'turnover_boundary' => (int)25000,
-                    'percent' => (int)25
-                ],
-            ];
-
-            if($model->save()){}
-        }
-
-        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object=representative');
-    }
-    /**
-     * set default value
-     * @return \yii\web\Response
-     */
-    public function actionDefaultPercentForRepaymentWarehouse(){
-        $list = Warehouse::getArrayWarehouse();
-
-        foreach ($list as $k=>$item) {
-            $model = new PercentForRepaymentAmounts();
-
-            $model->warehouse_id = new ObjectID($k);
-            $model->turnover_boundary = [
-                '0' => [
-                    'turnover_boundary' => (int)0,
-                    'percent' => (int)5
-                ],
-                '1' => [
-                    'turnover_boundary' => (int)5000,
-                    'percent' => (int)10
-                ],
-                '2' => [
-                    'turnover_boundary' => (int)10000,
-                    'percent' => (int)15
-                ]
-            ];
-
-            if($model->save()){}
-        }
-
-        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object=warehouse');
-    }
+//    /**
+//     * set default value
+//     * @return \yii\web\Response
+//     */
+//    public function actionDefaultPercentForRepaymentRepresentative(){
+//        PercentForRepaymentAmounts::getCollection()->remove();
+//
+//        $list = Warehouse::getListHeadAdmin();
+//
+//        foreach ($list as $k=>$item) {
+//            $model = new PercentForRepaymentAmounts();
+//
+//            $model->representative_id = new ObjectID($k);
+//            $model->dop_price_per_warehouse = (int)5000;
+//            $model->turnover_boundary = [
+//                '0' => [
+//                    'turnover_boundary' => (int)0,
+//                    'percent' => (int)10
+//                ],
+//                '1' => [
+//                    'turnover_boundary' => (int)5000,
+//                    'percent' => (int)15
+//                ],
+//                '2' => [
+//                    'turnover_boundary' => (int)10000,
+//                    'percent' => (int)20
+//                ],
+//                '3' => [
+//                    'turnover_boundary' => (int)25000,
+//                    'percent' => (int)25
+//                ],
+//            ];
+//
+//            if($model->save()){}
+//        }
+//
+//        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object=representative');
+//    }
+//    /**
+//     * set default value
+//     * @return \yii\web\Response
+//     */
+//    public function actionDefaultPercentForRepaymentWarehouse(){
+//        $list = Warehouse::getArrayWarehouse();
+//
+//        foreach ($list as $k=>$item) {
+//            $model = new PercentForRepaymentAmounts();
+//
+//            $model->warehouse_id = new ObjectID($k);
+//            $model->turnover_boundary = [
+//                '0' => [
+//                    'turnover_boundary' => (int)0,
+//                    'percent' => (int)5
+//                ],
+//                '1' => [
+//                    'turnover_boundary' => (int)5000,
+//                    'percent' => (int)10
+//                ],
+//                '2' => [
+//                    'turnover_boundary' => (int)10000,
+//                    'percent' => (int)15
+//                ]
+//            ];
+//
+//            if($model->save()){}
+//        }
+//
+//        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object=warehouse');
+//    }
 
 
     /**
@@ -704,7 +704,9 @@ class OffsetsWithWarehousesController extends BaseController
 
             $repayment = $item['amount_repayment']-$item['deduction'];
 
-            Charity::transferMoney('573a0d76965dd0fb16f60bfe',$item['responsible_id'],$repayment,'repayment for warehouse');
+            if ($repayment > 0){
+                Charity::transferMoney('573a0d76965dd0fb16f60bfe',$item['responsible_id'],$repayment,'repayment for warehouse');
+            }
 
             $model = new Repayment();
 
@@ -740,6 +742,103 @@ class OffsetsWithWarehousesController extends BaseController
 
             }
         }
+
+        Yii::$app->session->setFlash('alert', [
+                'typeAlert' => 'success',
+                'message' => 'Выплата произведена!'
+            ]
+        );
+
+        return $this->redirect(['offsets-with-warehouses/list-repayment-warehouse'],301);
+    }
+
+    public function actionMakeRepaymentWarehousePersonal($dateRepayment,$warehouse_id)
+    {
+        $modelRepayment = Repayment::find()
+            ->where([
+                'warehouse_id'=>new ObjectID($warehouse_id),
+                'date_for_repayment'=>$dateRepayment
+            ])
+            ->one();
+        if(!empty($modelRepayment)){
+            throw new GoodException('Операция не возможна','Оплата уже была проведена!');
+        }
+
+        // get repayment amount
+        $modelRepaymentAmount = RepaymentAmounts::find()
+            ->where(['warehouse_id'=>new ObjectID($warehouse_id)])
+            ->one();
+        if (!empty($modelRepaymentAmount)) {
+
+            if (empty($info[$warehouse_id])) {
+                $responsibleId = (string)$modelRepaymentAmount->warehouse->responsible;
+                $representativeId = (string)$modelRepaymentAmount->warehouse->headUser;
+
+                if(empty($responsibleId)){
+                    throw new GoodException('Операция не возможна','У склада отсутствует представитель!');
+                }
+
+                $info[$warehouse_id] = [
+                    'title' => $modelRepaymentAmount->warehouse->title,
+                    'representative_id' => $representativeId,
+                    'responsible_id' => $responsibleId,
+                    'amount_repayment' => 0,
+                    'deduction' => $this->getSetDeduction($warehouse_id,$representativeId,$dateRepayment)
+                ];
+            }
+
+            $info[$warehouse_id]['amount_repayment'] += $modelRepaymentAmount->prices_warehouse[$dateRepayment]['price'];
+
+        }
+
+        $returnCostRepresentative = 0;
+
+        foreach ($info as $k=>$item){
+
+            $returnCostRepresentative += $item['deduction'];
+
+            $repayment = $item['amount_repayment']-$item['deduction'];
+
+            if ($repayment > 0){
+                Charity::transferMoney('573a0d76965dd0fb16f60bfe',$item['responsible_id'],$repayment,'repayment for warehouse');
+            }
+
+            $model = new Repayment();
+
+            $model->representative_id = new ObjectID($item['representative_id']);
+            $model->warehouse_id = new ObjectID($k);
+            $model->warehouse_responsible_id = new ObjectID($item['responsible_id']);
+            $model->accrued = (float)$item['amount_repayment'];
+            $model->deduction = (float)$item['deduction'];
+            $model->repayment = (float)$repayment;
+            $model->comment = 'repayment for warehouse';
+            $model->date_for_repayment = $dateRepayment;
+            $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            if($model->save()){
+
+            }
+
+            if($returnCostRepresentative > 0){
+                Charity::transferMoney('573a0d76965dd0fb16f60bfe',$item['representative_id'],$returnCostRepresentative,'repayment cost for representative');
+
+                $model = new Repayment();
+
+                $model->representative_id = new ObjectID($item['representative_id']);
+                $model->accrued = (float)$returnCostRepresentative;
+                $model->deduction = (float)'0';
+                $model->repayment = (float)$returnCostRepresentative;
+                $model->comment = 'repayment cost for representative';
+                $model->date_for_repayment = $dateRepayment;
+                $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+                if($model->save()){
+
+                }
+            }
+        }
+
+
 
         Yii::$app->session->setFlash('alert', [
                 'typeAlert' => 'success',
@@ -834,7 +933,9 @@ class OffsetsWithWarehousesController extends BaseController
         // pay to warehouses
         foreach ($info as $k=>$item){
 
-            Charity::transferMoney('573a0d76965dd0fb16f60bfe',$item['responsible_id'],$item['repayment'],'repayment for warehouse');
+            if($item['repayment']>0) {
+                Charity::transferMoney('573a0d76965dd0fb16f60bfe', $item['responsible_id'], $item['repayment'], 'repayment for warehouse');
+            }
 
             $model = new Repayment();
 
@@ -856,7 +957,9 @@ class OffsetsWithWarehousesController extends BaseController
         // pay to representatives
         if(empty($returnCostRepresentative)){
             foreach ($returnCostRepresentative as $k=>$item){
-                Charity::transferMoney('573a0d76965dd0fb16f60bfe',$k,$item,'repayment cost for representative');
+                if($item>0){
+                    Charity::transferMoney('573a0d76965dd0fb16f60bfe',$k,$item,'repayment cost for representative');
+                }
 
                 $model = new Repayment();
 
@@ -1094,6 +1197,9 @@ class OffsetsWithWarehousesController extends BaseController
         // calculation percent for representative
         if (!empty($info)) {
             foreach ($info as $k => $item) {
+                if (empty($infoPercentForRepayment[$k]['turnover_boundary'])){
+                    throw new GoodException('Операция не возможна','У склада отсутствует представитель!');
+                }
                 foreach ($infoPercentForRepayment[$k]['turnover_boundary'] as $kPercent=>$itemPercent) {
                     if($itemPercent['turnover_boundary']<=$item['totalAmount']
                         && !empty($infoPercentForRepayment[$k]['turnover_boundary'][($kPercent+1)])
