@@ -1327,8 +1327,6 @@ class SaleReportController extends BaseController
             $request['date'] = date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
         }
 
-        $request['date'] = '2018-02';
-
         $report = [];
 
         $listWarehouse = Warehouse::getArrayWarehouse();
