@@ -426,7 +426,7 @@ class OffsetsWithWarehousesController extends BaseController
                     $info[(string)$item->representative_id]['deduction'] = $item->recovery;
                 }
             } else {
-                throw new GoodException('Операция не возможна',THelper::t('fill_hold'));
+                throw new GoodException('Операция не возможна','Не заполненны удержания');
             }
         }
 
@@ -564,6 +564,10 @@ class OffsetsWithWarehousesController extends BaseController
         if (!empty($modelRepaymentAmount)) {
             foreach ($modelRepaymentAmount as $item) {
                 if($userType=='mainWarehouse' || ($userType=='mainRepresentative' && (string)$item->warehouse->headUser==$userId)){
+
+                    if(empty($item->prices_warehouse[$request['date_repayment']])){
+                        throw new GoodException('Операция не возможна','За данный период данные не доступны');
+                    }
 
                     if (empty($info[(string)$item->warehouse_id])) {
                         $info[(string)$item->warehouse_id] = [
