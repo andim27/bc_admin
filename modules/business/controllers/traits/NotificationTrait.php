@@ -445,6 +445,7 @@ trait NotificationTrait
      * @param $user
      * @param $queue
      * @param $datetime
+     * @param $message
      * @return bool
      */
     public function addTemplateQueueToQueueForUser($template, $user, $queue, $datetime, $message)

@@ -61,7 +61,6 @@
             "url": '/' + LANG + '/business/user'
         },
         "columns": [
-
             {"data": "email"},
             {"data": "username"},
             {"data": "created"},

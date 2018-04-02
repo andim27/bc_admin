@@ -74,7 +74,7 @@
             return ((a < b) ? 1 : ((a > b) ? -1 : 0));
         }
     } );
-    $('table.unique_table_class').dataTable({
+/*    $('table.unique_table_class').dataTable({
         columnDefs: [
             {type: 'date-eu', targets: 4}
         ],
@@ -82,5 +82,5 @@
         sDom: "<'row'<'col-sm-6'l><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
         lengthMenu: [ 25, 50, 75, 100 ],
         aaSorting: [4, 'desc']
-    });
+    });*/
 </script>
