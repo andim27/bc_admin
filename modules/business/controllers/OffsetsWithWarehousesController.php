@@ -489,7 +489,11 @@ class OffsetsWithWarehousesController extends BaseController
 
             $repayment = $item['amount_repayment']-$item['deduction'];
 
-            Charity::transferMoney('573a0d76965dd0fb16f60bfe',$k,$repayment,'repayment for representative');
+            if($repayment < 0){
+                Charity::transferMoney($k,'573a0d76965dd0fb16f60bfe',abs($repayment),'deduction for representative');
+            } else {
+                Charity::transferMoney('573a0d76965dd0fb16f60bfe',$k,$repayment,'repayment for representative');
+            }
 
             $model = new Repayment();
 
@@ -1279,37 +1283,6 @@ class OffsetsWithWarehousesController extends BaseController
         }
     }
 
-//    /**
-//     * clear and update structure table
-//     * @throws \yii\mongodb\Exception
-//     */
-//    public function actionClearTableForRepayment()
-//    {
-//        // Remove field in table
-//        RepaymentAmounts::getCollection()->update(
-//            [],
-//            ['$unset' => ['price' => 1, 'price_representative' => 1]],
-//            ['multi' => true]
-//        );
-//
-//        // Clear field in table
-//        RepaymentAmounts::getCollection()->update(
-//            [],
-//            ['$set' => ['prices_warehouse' => (array)[], 'prices_representative' => (array)[]]],
-//            ['multi' => true]
-//        );
-//
-//        Repayment::getCollection()->remove();
-//
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo '<xmp>';
-//        print_r('all clear');
-//        echo '</xmp>';
-//        die();
-//    }
-
-
-
     /**
      * get amount repayment
      * @param $object
@@ -1387,7 +1360,6 @@ class OffsetsWithWarehousesController extends BaseController
         return $repayment;
     }
 
-
     /**
      * @param $warehpuseId
      * @param $turnoverWarehouse
@@ -1422,7 +1394,6 @@ class OffsetsWithWarehousesController extends BaseController
 
         return $percent;
     }
-
 
     protected function getSetDeduction($warehouse_id,$representative_id,$dateRepayment)
     {

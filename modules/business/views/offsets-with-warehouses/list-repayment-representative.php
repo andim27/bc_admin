@@ -5,7 +5,6 @@ use yii\helpers\Html;
 use kartik\widgets\DatePicker;
 use app\components\AlertWidget;
 
-$negative_payment = false;
 ?>
 
 
@@ -67,9 +66,6 @@ $negative_payment = false;
 
                             <?php
                                 $repayment = $itemRepresentative['amount_repayment']-$itemRepresentative['deduction'];
-                                if($repayment<0){
-                                    $negative_payment = true;
-                                }
                             ?>
 
                             <tr>
@@ -91,7 +87,7 @@ $negative_payment = false;
                     <tfooter>
                         <tr>
                             <th colspan="5">
-                                <?=(($repayment_paid === true || $negative_payment== true) ?
+                                <?=(($repayment_paid === true) ?
                                     '' :
                                     Html::a(THelper::t('make_payment'),['offsets-with-warehouses/make-repayment-representative','dateRepayment'=>$request['date_repayment']],['class'=>'btn btn-default']))?>
                             </th>
