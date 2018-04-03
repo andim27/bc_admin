@@ -1313,5 +1313,98 @@ class SaleReportController extends BaseController
         );
     }
 
+    /**
+     * make report for charges representative
+     * @return string
+     * @throws GoodException
+     */
+    public function actionReportChargesWarehouse()
+    {
+        $request =  Yii::$app->request->post();
+
+        if(empty($request)){
+            $request['representative'] = '';
+            $request['date'] = date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
+        }
+
+        $report = [];
+
+        $listWarehouse = Warehouse::getArrayWarehouse();
+
+        foreach ($listWarehouse as $k=>$item) {
+            $report[$k] = [
+                'title'         => $item,
+                'representative_id'=>'',
+                'percent'       => 0,
+                'goods_turnover'=> 0,
+                'accrued'       => 0,
+                'deduction'     => 0,
+                'repayment'     => 0,
+                'goods'         => []
+            ];
+        }
+
+        $modelRepaymentAmounts = RepaymentAmounts::find()->all();
+        /** @var RepaymentAmounts $item */
+        foreach ($modelRepaymentAmounts as $item){
+            if(!empty($item->prices_warehouse[$request['date']])){
+                $representativeId = (string)$item->warehouse->headUser;
+                $warehouse_id = (string)$item->warehouse_id;
+
+                if(empty($report[$warehouse_id]['goods'][(string)$item->product_id])){
+                    $report[$warehouse_id]['representative_id'] = $representativeId;
+                    $report[$warehouse_id]['percent'] = $item->prices_warehouse[$request['date']]['percent'];
+                    $report[$warehouse_id]['goods_turnover'] = $item->prices_warehouse[$request['date']]['goods_turnover'];
+                    $report[$warehouse_id]['goods'][(string)$item->product_id] = [
+                        'title' => $item->product->title,
+                        'price' => 0,
+                        'count' => 0
+                    ];
+                }
+
+                $report[$warehouse_id]['goods'][(string)$item->product_id]['price'] += $item->prices_warehouse[$request['date']]['price'];
+                $report[$warehouse_id]['goods'][(string)$item->product_id]['count'] += $item->prices_warehouse[$request['date']]['count'];
+
+
+            } else {
+                throw new GoodException('Отчет не возможно сфомировать','Нет выплат по данной дате');
+            }
+        }
+
+        $modelRepayment = Repayment::find()
+            ->where([
+                'warehouse_id'=>[
+                    '$nin' => [null]
+                ]
+            ])
+            ->andWhere(['date_for_repayment'=>$request['date']])
+            ->all();
+        if(!empty($modelRepayment)){
+            /** @var Repayment $item */
+            foreach ($modelRepayment as $item) {
+                $warehouseId = (string)$item->warehouse_id;
+
+                if(isset($report[$warehouseId])){
+                    $report[$warehouseId]['accrued'] += $item->accrued;
+                    $report[$warehouseId]['deduction'] += $item->deduction;
+                    $report[$warehouseId]['repayment'] += $item->repayment;
+                }
+            }
+        }
+
+        foreach ($report as $k=>$item) {
+            if(!empty($request['representative']) && $request['representative']!=$item['representative_id']){
+                unset($report[$k]);
+            }
+        }
+
+
+        return $this->render('report-charges-warehouse',[
+                'language' => Yii::$app->language,
+                'request' => $request,
+                'report' => $report
+            ]
+        );
+    }
 
 }
