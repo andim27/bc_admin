@@ -121,77 +121,6 @@ class OffsetsWithWarehousesController extends BaseController
 
     }
 
-//    /**
-//     * set default value
-//     * @return \yii\web\Response
-//     */
-//    public function actionDefaultPercentForRepaymentRepresentative(){
-//        PercentForRepaymentAmounts::getCollection()->remove();
-//
-//        $list = Warehouse::getListHeadAdmin();
-//
-//        foreach ($list as $k=>$item) {
-//            $model = new PercentForRepaymentAmounts();
-//
-//            $model->representative_id = new ObjectID($k);
-//            $model->dop_price_per_warehouse = (int)5000;
-//            $model->turnover_boundary = [
-//                '0' => [
-//                    'turnover_boundary' => (int)0,
-//                    'percent' => (int)10
-//                ],
-//                '1' => [
-//                    'turnover_boundary' => (int)5000,
-//                    'percent' => (int)15
-//                ],
-//                '2' => [
-//                    'turnover_boundary' => (int)10000,
-//                    'percent' => (int)20
-//                ],
-//                '3' => [
-//                    'turnover_boundary' => (int)25000,
-//                    'percent' => (int)25
-//                ],
-//            ];
-//
-//            if($model->save()){}
-//        }
-//
-//        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object=representative');
-//    }
-//    /**
-//     * set default value
-//     * @return \yii\web\Response
-//     */
-//    public function actionDefaultPercentForRepaymentWarehouse(){
-//        $list = Warehouse::getArrayWarehouse();
-//
-//        foreach ($list as $k=>$item) {
-//            $model = new PercentForRepaymentAmounts();
-//
-//            $model->warehouse_id = new ObjectID($k);
-//            $model->turnover_boundary = [
-//                '0' => [
-//                    'turnover_boundary' => (int)0,
-//                    'percent' => (int)5
-//                ],
-//                '1' => [
-//                    'turnover_boundary' => (int)5000,
-//                    'percent' => (int)10
-//                ],
-//                '2' => [
-//                    'turnover_boundary' => (int)10000,
-//                    'percent' => (int)15
-//                ]
-//            ];
-//
-//            if($model->save()){}
-//        }
-//
-//        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object=warehouse');
-//    }
-
-
     /**
      * list recovery for repayment
      * @param $object
@@ -385,6 +314,7 @@ class OffsetsWithWarehousesController extends BaseController
             foreach ($modelRepayment as $item) {
                 $info[(string)$item->representative_id] = [
                     'title' => $item->representative->username,
+                    'current_balance' => round($item->representative->moneys,2),
                     'amount_repayment' => $item->accrued,
                     'deduction' => $item->deduction
                 ];
@@ -426,7 +356,7 @@ class OffsetsWithWarehousesController extends BaseController
                     $info[(string)$item->representative_id]['deduction'] = $item->recovery;
                 }
             } else {
-                throw new GoodException('Операция не возможна',THelper::t('fill_hold'));
+                throw new GoodException('Операция не возможна','Не заполненны удержания');
             }
         }
 
@@ -489,7 +419,11 @@ class OffsetsWithWarehousesController extends BaseController
 
             $repayment = $item['amount_repayment']-$item['deduction'];
 
-            Charity::transferMoney('573a0d76965dd0fb16f60bfe',$k,$repayment,'repayment for representative');
+            if($repayment < 0){
+                Charity::transferMoney($k,'573a0d76965dd0fb16f60bfe',abs($repayment),'deduction for representative');
+            } else {
+                Charity::transferMoney('573a0d76965dd0fb16f60bfe',$k,$repayment,'repayment for representative');
+            }
 
             $model = new Repayment();
 
@@ -564,6 +498,10 @@ class OffsetsWithWarehousesController extends BaseController
         if (!empty($modelRepaymentAmount)) {
             foreach ($modelRepaymentAmount as $item) {
                 if($userType=='mainWarehouse' || ($userType=='mainRepresentative' && (string)$item->warehouse->headUser==$userId)){
+
+                    if(empty($item->prices_warehouse[$request['date_repayment']])){
+                        throw new GoodException('Операция не возможна','За данный период данные не доступны');
+                    }
 
                     if (empty($info[(string)$item->warehouse_id])) {
                         $info[(string)$item->warehouse_id] = [
@@ -1275,37 +1213,6 @@ class OffsetsWithWarehousesController extends BaseController
         }
     }
 
-//    /**
-//     * clear and update structure table
-//     * @throws \yii\mongodb\Exception
-//     */
-//    public function actionClearTableForRepayment()
-//    {
-//        // Remove field in table
-//        RepaymentAmounts::getCollection()->update(
-//            [],
-//            ['$unset' => ['price' => 1, 'price_representative' => 1]],
-//            ['multi' => true]
-//        );
-//
-//        // Clear field in table
-//        RepaymentAmounts::getCollection()->update(
-//            [],
-//            ['$set' => ['prices_warehouse' => (array)[], 'prices_representative' => (array)[]]],
-//            ['multi' => true]
-//        );
-//
-//        Repayment::getCollection()->remove();
-//
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo '<xmp>';
-//        print_r('all clear');
-//        echo '</xmp>';
-//        die();
-//    }
-
-
-
     /**
      * get amount repayment
      * @param $object
@@ -1383,7 +1290,6 @@ class OffsetsWithWarehousesController extends BaseController
         return $repayment;
     }
 
-
     /**
      * @param $warehpuseId
      * @param $turnoverWarehouse
@@ -1418,7 +1324,6 @@ class OffsetsWithWarehousesController extends BaseController
 
         return $percent;
     }
-
 
     protected function getSetDeduction($warehouse_id,$representative_id,$dateRepayment)
     {

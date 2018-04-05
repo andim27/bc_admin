@@ -10,7 +10,6 @@ class Price
     public $author;
     public $dateOfPublication;
     public $lang;
-    public $v;
     public $isDelete;
     public $dateUpdate;
     public $dateCreate;
@@ -69,9 +68,8 @@ class Price
                 $promotion->id         = $object->_id;
                 $promotion->author     = $object->author;
                 $promotion->lang       = $object->lang;
-                $promotion->v          = $object->__v;
                 $promotion->isDelete   = $object->isDelete;
-                $promotion->dateOfPublication = strtotime($object->dateOfPublication);
+                $promotion->dateOfPublication = isset($object->dateOfPublication) ? strtotime($object->dateOfPublication) : '';
                 $promotion->dateUpdate = strtotime($object->dateUpdate);
                 $promotion->dateCreate = strtotime($object->dateCreate);
                 $promotion->body       = $object->body;
