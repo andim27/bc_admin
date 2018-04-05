@@ -9,7 +9,7 @@ namespace app\commands;
 
 
 use app\modules\business\controllers\traits\NotificationTrait;
-use app\modules\business\models\MailTemplates;
+use app\modules\business\models\NotificationMailTemplates;
 use yii\console\Controller;
 
 
@@ -79,7 +79,7 @@ class PushController extends Controller
      */
     public function actionFireEvent($event, $user, $data)
     {
-        $templates = MailTemplates::find()->where(['event' => $event])->all();
+        $templates = NotificationMailTemplates::find()->where(['event' => $event])->all();
 
         $this->addTemplatesToAQueue($templates, $user, json_decode($data));
     }

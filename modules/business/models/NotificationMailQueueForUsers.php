@@ -9,14 +9,14 @@ use yii\mongodb\ActiveRecord;
  * Class MailQueueForUsers
  * @package app\models
  */
-class MailQueueForUsers extends ActiveRecord
+class NotificationMailQueueForUsers extends ActiveRecord
 {
     /**
      * @return string
      */
     public static function collectionName()
     {
-        return 'mail_queue_for_users';
+        return 'notification_mail_queue_for_users';
     }
 
 

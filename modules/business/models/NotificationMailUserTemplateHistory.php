@@ -8,14 +8,14 @@ use yii\mongodb\ActiveRecord;
  * Class MailUserTemplateHistory
  * @package app\models
  */
-class MailUserTemplateHistory extends ActiveRecord
+class NotificationMailUserTemplateHistory extends ActiveRecord
 {
     /**
      * @return string
      */
     public static function collectionName()
     {
-        return 'mail_user_template_history';
+        return 'notification_mail_user_template_histories';
     }
 
 

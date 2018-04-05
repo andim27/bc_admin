@@ -7,13 +7,13 @@ use MongoDB\BSON\ObjectID;
 use app\components\THelper;
 use app\components\DateTimeHelper;
 use app\components\PushNotification\PushNotification;
-use app\modules\business\models\MailUserTemplateHistory;
-use app\modules\business\models\MailQueueForUsers;
-use app\modules\business\models\MailTemplateGroup;
-use app\modules\business\models\MailTemplates;
-use app\modules\business\models\MailVariables;
-use app\modules\business\models\MailPushes;
-use app\modules\business\models\MailQueue;
+use app\modules\business\models\NotificationMailUserTemplateHistory;
+use app\modules\business\models\NotificationMailQueueForUsers;
+use app\modules\business\models\NotificationMailTemplateGroup;
+use app\modules\business\models\NotificationMailTemplates;
+use app\modules\business\models\NotificationMailVariables;
+use app\modules\business\models\NotificationMailPushes;
+use app\modules\business\models\NotificationMailQueue;
 use app\models\Users;
 
 
@@ -84,7 +84,7 @@ trait NotificationTrait
             '[daystoendaction]' => 'test var',
         ];
 
-        $dbVariables = MailVariables::find()->all();
+        $dbVariables = NotificationMailVariables::find()->all();
 
         $customVariables = $dbVariables ? ArrayHelper::map($dbVariables, 'name', 'value') : [];
 
@@ -175,7 +175,7 @@ trait NotificationTrait
                 continue;
             }
 
-            $templateInfo = MailUserTemplateHistory::find()->where([
+            $templateInfo = NotificationMailUserTemplateHistory::find()->where([
                 'template_id' => $template->_id,
                 'user_id' => $user->_id
             ])->one();
@@ -188,7 +188,7 @@ trait NotificationTrait
     /**
      * @param $template
      * @param $user
-     * @param MailUserTemplateHistory $templateInfo|null
+     * @param NotificationMailUserTemplateHistory $templateInfo|null
      * @param $sendDatetime
      * @param $data
      */
@@ -201,9 +201,9 @@ trait NotificationTrait
             //@todo day interval
 
             if (DateTimeHelper::firstDateIsSmaller($lastTimeNewTimeDiff, $intervalHour)) {
-                MailTemplateGroup::create($template->_id, $user->_id, $data);
+                NotificationMailTemplateGroup::create($template->_id, $user->_id, $data);
             } else {
-                $templateGroupInfo = MailTemplateGroup::find()->where([
+                $templateGroupInfo = NotificationMailTemplateGroup::find()->where([
                     'template_id' => $template->_id,
                     'user_id' => $user->_id
                 ])->all();
@@ -216,14 +216,14 @@ trait NotificationTrait
                         $this->sendTemplatePush($message->template_id, $message->user_id, $sendDatetime, $message->data, [
                             'interval' => true,
                             'group' => true,
-                            'from' => MailTemplateGroup::className(),
+                            'from' => NotificationMailTemplateGroup::className(),
                         ]);
                     } else {
                         foreach ($templateGroupInfo as $item) {
                             $this->sendTemplatePush($item->template_id, $item->user_id, $sendDatetime, $item->data, [
                                 'interval' => true,
                                 'group' => false,
-                                'from' => MailTemplateGroup::className(),
+                                'from' => NotificationMailTemplateGroup::className(),
                             ]);
 
                             $item->delete();
@@ -250,7 +250,7 @@ trait NotificationTrait
                 'from' => 'when MailUserTemplateHistory is empty (fresh sending)',
             ]);
 
-            MailUserTemplateHistory::create($template->_id, $user->_id, $sendDatetime);
+            NotificationMailUserTemplateHistory::create($template->_id, $user->_id, $sendDatetime);
         }
     }
 
@@ -325,11 +325,11 @@ trait NotificationTrait
             exit;
         }
 
-        $template = MailTemplates::find()->where(['_id' => $template])->one();
+        $template = NotificationMailTemplates::find()->where(['_id' => $template])->one();
         $user = Users::find()->where(['_id' => $user])->one();
         //@todo send to users
 
-        $queue = MailQueue::create(null, $template->_id, $template->phrase, $template->language, $sendDatetime, $template->event, 'not_sent');
+        $queue = NotificationMailQueue::create(null, $template->_id, $template->phrase, $template->language, $sendDatetime, $template->event, 'not_sent');
         // подставляем переменные
         $message = !empty($template->message) ? $this->substituteVariables($user, $template->message, $data) : 'message is unavailable';
 
@@ -343,7 +343,7 @@ trait NotificationTrait
      */
     protected function addPushesToAQueue()
     {
-        $queue = MailQueue::find()->all();
+        $queue = NotificationMailQueue::find()->all();
 
         foreach ($queue as $item) {
             if (
@@ -355,15 +355,15 @@ trait NotificationTrait
         }
 
         foreach ($this->messagesToSend as $msg) {
-            $push = MailPushes::find()->where(['_id' => $msg->push_id])->one();
-            $queue = MailQueue::find()->where(['push_id' => new ObjectID($msg->push_id)])->one();
+            $push = NotificationMailPushes::find()->where(['_id' => $msg->push_id])->one();
+            $queue = NotificationMailQueue::find()->where(['push_id' => new ObjectID($msg->push_id)])->one();
 
             if ($msg->push_id && $queue) {
                 $users = $this->getUsersToBeSent($push);
                 $this->addPushQueueToQueueForUsers($push, $users, $queue);
 
                 if (
-                    $queue && !MailQueueForUsers::find()->where([
+                    $queue && !NotificationMailQueueForUsers::find()->where([
                         'queue_id' => new ObjectID($queue->_id)
                     ])->one()
                 ) {
@@ -371,7 +371,7 @@ trait NotificationTrait
                 }
 
                 // Сменить статус сообщения на отправлено
-                MailPushes::markAsSent($push);
+                NotificationMailPushes::markAsSent($push);
             }
         }
 
@@ -386,11 +386,11 @@ trait NotificationTrait
      */
     protected function queueForUsersWalker(callable $callback)
     {
-        $queue = MailQueueForUsers::find()->all();
+        $queue = NotificationMailQueueForUsers::find()->all();
 
         foreach ($queue as $item) {
-            $push = MailPushes::find()->where(['_id' => new ObjectID($item->push_id)])->one();
-            $template = MailTemplates::find()->where(['_id' => new ObjectID($item->template_id)])->one();
+            $push = NotificationMailPushes::find()->where(['_id' => new ObjectID($item->push_id)])->one();
+            $template = NotificationMailTemplates::find()->where(['_id' => new ObjectID($item->template_id)])->one();
             $user = Users::find()->where(['_id' => new ObjectID($item->user_id)])->one();
 
             $pushOrTemplate = $push;
@@ -413,7 +413,7 @@ trait NotificationTrait
     public function addPushQueueToQueueForUsers($push, $users, $queue)
     {
         if (
-            MailQueueForUsers::find()->where([
+            NotificationMailQueueForUsers::find()->where([
                 'queue_id' => new ObjectID($queue->_id)
             ])->one()
         ) {
@@ -433,7 +433,7 @@ trait NotificationTrait
             // подставляем переменные
             $message = !empty($push->message) ? $this->substituteVariables($user, $push->message) : 'message is unavailable';
 
-            MailQueueForUsers::create($user->_id, $queue->_id, $push->_id, null, $datetime, null, $message);
+            NotificationMailQueueForUsers::create($user->_id, $queue->_id, $push->_id, null, $datetime, null, $message);
         }
 
         return true;
@@ -450,19 +450,19 @@ trait NotificationTrait
      */
     public function addTemplateQueueToQueueForUser($template, $user, $queue, $datetime, $message)
     {
-        $queue = MailQueue::find()->where(['_id' => $queue])->one();
+        $queue = NotificationMailQueue::find()->where(['_id' => $queue])->one();
 
         if (
-            MailQueueForUsers::find()->where([
+            NotificationMailQueueForUsers::find()->where([
                 'queue_id' => new ObjectID($queue->_id)
             ])->one()
         ) {
             return false;
         }
 
-        $template = is_numeric($template) ? MailTemplates::find()->where(['_id' => $template])->one() : $template;
+        $template = is_numeric($template) ? NotificationMailTemplates::find()->where(['_id' => $template])->one() : $template;
 
-        return MailQueueForUsers::create($user->_id, $queue->_id, null, $template->_id, $datetime, $template->event ?: null, $message);
+        return NotificationMailQueueForUsers::create($user->_id, $queue->_id, null, $template->_id, $datetime, $template->event ?: null, $message);
     }
 
 

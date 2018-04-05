@@ -8,14 +8,14 @@ use yii\mongodb\ActiveRecord;
  * Class MailTemplateGroup
  * @package app\models
  */
-class MailTemplateGroup extends ActiveRecord
+class NotificationMailTemplateGroup extends ActiveRecord
 {
     /**
      * @return string
      */
     public static function collectionName()
     {
-        return 'mail_template_group';
+        return 'notification_mail_template_groups';
     }
 
     /**

@@ -8,14 +8,14 @@ use yii\mongodb\ActiveRecord;
  * Class MailVariables
  * @package app\models
  */
-class MailVariables extends ActiveRecord
+class NotificationMailVariables extends ActiveRecord
 {
     /**
      * @return string
      */
     public static function collectionName()
     {
-        return 'mail_variables';
+        return 'notification_mail_variables';
     }
 
     /**
