@@ -10,14 +10,14 @@ use yii\mongodb\ActiveRecord;
  * Class MailPushes
  * @package app\models
  */
-class MailPushes extends ActiveRecord implements iPush
+class NotificationMailPushes extends ActiveRecord implements iPush
 {
     /**
      * @return string
      */
     public static function collectionName()
     {
-        return 'mail_pushes';
+        return 'notification_mail_pushes';
     }
 
     /**

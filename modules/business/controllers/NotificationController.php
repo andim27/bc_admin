@@ -3,7 +3,7 @@
 namespace app\modules\business\controllers;
 
 use app\components\DateTimeHelper;
-use app\modules\business\models\MailQueueForUsers;
+use app\modules\business\models\NotificationMailQueueForUsers;
 use MongoDB\BSON\ObjectID;
 use Yii;
 use yii\web\Response;
@@ -11,10 +11,10 @@ use yii\helpers\ArrayHelper;
 use app\models\api;
 use app\components\THelper;
 use app\controllers\BaseController;
-use app\modules\business\models\MailPushes;
-use app\modules\business\models\MailVariables;
-use app\modules\business\models\MailTemplates;
-use app\modules\business\models\MailQueue;
+use app\modules\business\models\NotificationMailPushes;
+use app\modules\business\models\NotificationMailVariables;
+use app\modules\business\models\NotificationMailTemplates;
+use app\modules\business\models\NotificationMailQueue;
 use app\modules\business\models\PushVarAddForm;
 use app\modules\business\models\PushAddForm;
 use app\modules\business\models\PushTemplateAddForm;
@@ -35,9 +35,9 @@ class NotificationController extends BaseController
         $pushAddForm = new PushAddForm();
         $pushTemplateAddForm = new PushTemplateAddForm();
 
-        $pushes = MailPushes::find()->all();
-        $pushTemplates = MailTemplates::find()->all();
-        $queue = MailQueue::find()->all();
+        $pushes = NotificationMailPushes::find()->all();
+        $pushTemplates = NotificationMailTemplates::find()->all();
+        $queue = NotificationMailQueue::find()->all();
         $languages = api\dictionary\Lang::all();
         $deliveryConditions = self::getDeliveryConditions();
         $variables = $this->getVariables();
@@ -66,7 +66,7 @@ class NotificationController extends BaseController
         $pushAddForm = new PushAddForm();
 
         if ($pushAddForm->load($request)) {
-            $model = new MailPushes([
+            $model = new NotificationMailPushes([
                 'language' => $pushAddForm['language'],
                 'phrase' => $pushAddForm['phrase'],
                 'message' => $pushAddForm['message'],
@@ -97,7 +97,7 @@ class NotificationController extends BaseController
         $pushAddForm = new PushAddForm();
 
         if ($pushAddForm->load($request = Yii::$app->request->post())) {
-            $push = MailPushes::find()->where(['_id' => $pushAddForm['id']])->one();
+            $push = NotificationMailPushes::find()->where(['_id' => $pushAddForm['id']])->one();
 
             $push->language = $pushAddForm['language'];
             $push->phrase = $pushAddForm['phrase'];
@@ -116,7 +116,7 @@ class NotificationController extends BaseController
             return $this->redirect(self::NOTIFICATION_URL);
         }
 
-        $push = MailPushes::find()->where(['_id' => $id])->one();
+        $push = NotificationMailPushes::find()->where(['_id' => $id])->one();
 
         $pushAddForm->id = (string)$push->_id;
         $pushAddForm->language = $push->language;
@@ -153,7 +153,7 @@ class NotificationController extends BaseController
 
         $id = $request->post('id');
 
-        $push = MailPushes::find()->where(['_id' => $id])->one();
+        $push = NotificationMailPushes::find()->where(['_id' => $id])->one();
 
         if ($push) {
             $push->delete();
@@ -172,7 +172,7 @@ class NotificationController extends BaseController
     public function actionPushView($id)
     {
         $request = Yii::$app->request;
-        $push = MailPushes::find()->where(['_id' => $id])->one();
+        $push = NotificationMailPushes::find()->where(['_id' => $id])->one();
 
         if ($request->isAjax) {
             return $this->renderAjax('modals/planing_view', [
@@ -192,7 +192,7 @@ class NotificationController extends BaseController
     public function actionTemplateView($id)
     {
         $request = Yii::$app->request;
-        $tpl = MailTemplates::find()->where(['_id' => $id])->one();
+        $tpl = NotificationMailTemplates::find()->where(['_id' => $id])->one();
 
         if ($request->isAjax) {
             return $this->renderAjax('modals/template_view', [
@@ -213,8 +213,8 @@ class NotificationController extends BaseController
     {
 
         $request = Yii::$app->request;
-        $queue = MailQueue::find()->where(['_id' => $id])->one();
-        $template = MailTemplates::find()->where(['_id' => $queue->template_id])->one();
+        $queue = NotificationMailQueue::find()->where(['_id' => $id])->one();
+        $template = NotificationMailTemplates::find()->where(['_id' => $queue->template_id])->one();
 
         if ($request->isAjax) {
             return $this->renderAjax('modals/queue_view', [
@@ -250,12 +250,12 @@ class NotificationController extends BaseController
         $id = $request->post('id');
         $type = $request->post('type');
 
-        $queue = MailQueue::find()->where(['_id' => $id])->one();
+        $queue = NotificationMailQueue::find()->where(['_id' => $id])->one();
 
         if ($queue) {
             switch ($type){
                 case 'current-one':
-                    $queueForUser = MailQueueForUsers::find()->where(['queue_id' => $id])->all();
+                    $queueForUser = NotificationMailQueueForUsers::find()->where(['queue_id' => $id])->all();
 
                     foreach ($queueForUser as $item) {
                         $item->delete();
@@ -264,10 +264,10 @@ class NotificationController extends BaseController
                     $queue->delete();
                     break;
                 case 'current-all':
-                    $queueForUser = MailQueueForUsers::find()->where(['queue_id' => new ObjectID($id)])->one();
+                    $queueForUser = NotificationMailQueueForUsers::find()->where(['queue_id' => new ObjectID($id)])->one();
 
                     if ($queueForUser) {
-                        $queueForUserAll = MailQueueForUsers::find()->where(['user_id' => $queueForUser->user_id])->all();
+                        $queueForUserAll = NotificationMailQueueForUsers::find()->where(['user_id' => $queueForUser->user_id])->all();
 
                         foreach ($queueForUserAll as $item) {
                             $item->delete();
@@ -277,18 +277,18 @@ class NotificationController extends BaseController
                     $queue->delete();
                     break;
                 case 'all':
-                    $queueForUser = MailQueueForUsers::find()->where(['queue_id' => new ObjectID($id)])->one();
+                    $queueForUser = NotificationMailQueueForUsers::find()->where(['queue_id' => new ObjectID($id)])->one();
 
                     if ($queueForUser) {
                         $param = ['template_id' => new ObjectID($queueForUser->template_id)];
                         
-                        $queueForUserAll = MailQueueForUsers::find()->where($param)->all();
+                        $queueForUserAll = NotificationMailQueueForUsers::find()->where($param)->all();
 
                         foreach ($queueForUserAll as $item) {
                             $item->delete();
                         }
 
-                        $queueAll = MailQueue::find()->where($param)->one();
+                        $queueAll = NotificationMailQueue::find()->where($param)->one();
 
                         foreach ($queueAll as $item) {
                             $item->delete();
@@ -316,7 +316,7 @@ class NotificationController extends BaseController
         $pushTplAddForm = new PushTemplateAddForm();
 
         if ($pushTplAddForm->load($request)) {
-            $model = new MailTemplates([
+            $model = new NotificationMailTemplates([
                 'language' => $pushTplAddForm['language'],
                 'phrase' => $pushTplAddForm['phrase'],
                 'message' => $pushTplAddForm['message'],
@@ -352,7 +352,7 @@ class NotificationController extends BaseController
         $pushTplAddForm = new PushTemplateAddForm();
 
         if ($pushTplAddForm->load($request = Yii::$app->request->post())) {
-            $push = MailTemplates::find()->where(['_id' => $pushTplAddForm['id']])->one();
+            $push = NotificationMailTemplates::find()->where(['_id' => $pushTplAddForm['id']])->one();
 
             $push->language = $pushTplAddForm['language'];
             $push->phrase = $pushTplAddForm['phrase'];
@@ -377,7 +377,7 @@ class NotificationController extends BaseController
             return $this->redirect(self::NOTIFICATION_URL);
         }
 
-        $pushTpl = MailTemplates::find()->where(['_id' => $id])->one();
+        $pushTpl = NotificationMailTemplates::find()->where(['_id' => $id])->one();
 
         $pushTplAddForm->id = (string)$pushTpl->_id;
         $pushTplAddForm->language = $pushTpl->language;
@@ -417,7 +417,7 @@ class NotificationController extends BaseController
 
         $id = $request->post('id');
 
-        $push = MailTemplates::find()->where(['_id' => $id])->one();
+        $push = NotificationMailTemplates::find()->where(['_id' => $id])->one();
 
         if ($push) {
             $push->delete();
@@ -448,7 +448,7 @@ class NotificationController extends BaseController
         }
 
         if ($variableModel->load($request = $request->post())) {
-            $variable = new MailVariables();
+            $variable = new NotificationMailVariables();
 
             $variable->name = $variableModel['name'];
             $variable->value = $variableModel['value'];
@@ -469,7 +469,7 @@ class NotificationController extends BaseController
      */
     public function actionPushSend($id)
     {
-        $push = MailPushes::find()->where(['_id' => $id])->one();
+        $push = NotificationMailPushes::find()->where(['_id' => $id])->one();
 
         $datetime = $push->date;
 
@@ -477,10 +477,10 @@ class NotificationController extends BaseController
             $datetime .= ' ' . $push->time;
         }
 
-        $queue = MailQueue::find()->where(['push_id' => new ObjectID($id)])->one();
+        $queue = NotificationMailQueue::find()->where(['push_id' => new ObjectID($id)])->one();
 
         if (!$queue) {
-            $queue = new MailQueue();
+            $queue = new NotificationMailQueue();
         }
 
         $queue->title = $push->phrase;
@@ -498,7 +498,7 @@ class NotificationController extends BaseController
 
         $queue->save();
 
-        MailPushes::markAsInAQueue($push);
+        NotificationMailPushes::markAsInAQueue($push);
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
@@ -530,12 +530,12 @@ class NotificationController extends BaseController
 
         $id = $request->post('id');
 
-        $push = MailPushes::find()->where(['_id' => $id])->one();
-        $queue = MailQueue::find()->where(['push_id' => new ObjectID($id)])->one();
+        $push = NotificationMailPushes::find()->where(['_id' => $id])->one();
+        $queue = NotificationMailQueue::find()->where(['push_id' => new ObjectID($id)])->one();
 
         $queue->delete();
 
-        MailPushes::markAsStopped($push);
+        NotificationMailPushes::markAsStopped($push);
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
