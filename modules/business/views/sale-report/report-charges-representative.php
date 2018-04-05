@@ -59,6 +59,7 @@ use yii\bootstrap\Html;
                 <th><?=THelper::t('deduction')?></th>
                 <th><?=THelper::t('total')?></th>
                 <th><?=THelper::t('goods_turnover')?></th>
+                <th><?=THelper::t('issued_for_amount')?></th>
                 <th></th>
             </tr>
             </thead>
@@ -74,6 +75,7 @@ use yii\bootstrap\Html;
                         <td><?=$item['deduction']?></td>
                         <td><?=$item['repayment']?></td>
                         <td><?=$item['goods_turnover']?></td>
+                        <td><?=$item['issued_for_amount']?></td>
                         <td>
                             <?php foreach ($item['goods'] as $itemGoods) { ?>
                                 <?=$itemGoods['title']?> - <?=$itemGoods['count']?> шт (на <?=$itemGoods['price']?>)<br/>

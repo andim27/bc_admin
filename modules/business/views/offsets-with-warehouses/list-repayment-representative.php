@@ -54,6 +54,7 @@ use app\components\AlertWidget;
                     <thead>
                     <tr>
                         <th><?=THelper::t('representative')?></th>
+                        <th><?=THelper::t('current_balance')?></th>
                         <th><?=THelper::t('amount_repayment')?></th>
                         <th><?=THelper::t('deduction')?></th>
                         <th><?=THelper::t('total')?></th>
@@ -70,6 +71,7 @@ use app\components\AlertWidget;
 
                             <tr>
                                 <td><?=$itemRepresentative['title']?></td>
+                                <td><?=$itemRepresentative['current_balance']?></td>
                                 <td><?=$itemRepresentative['amount_repayment']?></td>
                                 <td><?=$itemRepresentative['deduction']?></td>
                                 <td><?=$repayment?></td>

@@ -121,77 +121,6 @@ class OffsetsWithWarehousesController extends BaseController
 
     }
 
-//    /**
-//     * set default value
-//     * @return \yii\web\Response
-//     */
-//    public function actionDefaultPercentForRepaymentRepresentative(){
-//        PercentForRepaymentAmounts::getCollection()->remove();
-//
-//        $list = Warehouse::getListHeadAdmin();
-//
-//        foreach ($list as $k=>$item) {
-//            $model = new PercentForRepaymentAmounts();
-//
-//            $model->representative_id = new ObjectID($k);
-//            $model->dop_price_per_warehouse = (int)5000;
-//            $model->turnover_boundary = [
-//                '0' => [
-//                    'turnover_boundary' => (int)0,
-//                    'percent' => (int)10
-//                ],
-//                '1' => [
-//                    'turnover_boundary' => (int)5000,
-//                    'percent' => (int)15
-//                ],
-//                '2' => [
-//                    'turnover_boundary' => (int)10000,
-//                    'percent' => (int)20
-//                ],
-//                '3' => [
-//                    'turnover_boundary' => (int)25000,
-//                    'percent' => (int)25
-//                ],
-//            ];
-//
-//            if($model->save()){}
-//        }
-//
-//        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object=representative');
-//    }
-//    /**
-//     * set default value
-//     * @return \yii\web\Response
-//     */
-//    public function actionDefaultPercentForRepaymentWarehouse(){
-//        $list = Warehouse::getArrayWarehouse();
-//
-//        foreach ($list as $k=>$item) {
-//            $model = new PercentForRepaymentAmounts();
-//
-//            $model->warehouse_id = new ObjectID($k);
-//            $model->turnover_boundary = [
-//                '0' => [
-//                    'turnover_boundary' => (int)0,
-//                    'percent' => (int)5
-//                ],
-//                '1' => [
-//                    'turnover_boundary' => (int)5000,
-//                    'percent' => (int)10
-//                ],
-//                '2' => [
-//                    'turnover_boundary' => (int)10000,
-//                    'percent' => (int)15
-//                ]
-//            ];
-//
-//            if($model->save()){}
-//        }
-//
-//        return $this->redirect('/' . Yii::$app->language .'/business/offsets-with-warehouses/percent-for-repayment?object=warehouse');
-//    }
-
-
     /**
      * list recovery for repayment
      * @param $object
@@ -385,6 +314,7 @@ class OffsetsWithWarehousesController extends BaseController
             foreach ($modelRepayment as $item) {
                 $info[(string)$item->representative_id] = [
                     'title' => $item->representative->username,
+                    'current_balance' => round($item->representative->moneys,2),
                     'amount_repayment' => $item->accrued,
                     'deduction' => $item->deduction
                 ];

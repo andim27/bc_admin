@@ -1080,6 +1080,7 @@ class SaleReportController extends BaseController
             foreach ($model as $item) {
 
                 $country = mb_strtolower($item->infoUser->country);
+                $listCountry[$country]=$allListCountry[$country];
 
                 if(empty($request['countryReport']) || ($request['countryReport']==$country)){
                     $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
@@ -1254,6 +1255,7 @@ class SaleReportController extends BaseController
                 'title'         => $item,
                 'percent'       => 0,
                 'goods_turnover'=> 0,
+                'issued_for_amount'=> 0,
                 'accrued'       => 0,
                 'deduction'     => 0,
                 'repayment'     => 0,
@@ -1279,6 +1281,9 @@ class SaleReportController extends BaseController
 
                 $report[$representativeId]['goods'][(string)$item->product_id]['price'] += $item->prices_representative[$request['date']]['price'];
                 $report[$representativeId]['goods'][(string)$item->product_id]['count'] += $item->prices_representative[$request['date']]['count'];
+
+                $report[$representativeId]['issued_for_amount'] += round(($item->prices_representative[$request['date']]['price']/$report[$representativeId]['percent']*100),2);
+
             } else {
                 throw new GoodException('Отчет не возможно сфомировать','Нет выплат по данной дате');
             }
