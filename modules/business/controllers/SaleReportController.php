@@ -1284,9 +1284,10 @@ class SaleReportController extends BaseController
 
                 $report[$representativeId]['issued_for_amount'] += round(($item->prices_representative[$request['date']]['price']/$report[$representativeId]['percent']*100),2);
 
-            } else {
-                throw new GoodException('Отчет не возможно сфомировать','Нет выплат по данной дате');
             }
+//            else {
+//                throw new GoodException('Отчет не возможно сфомировать','Нет выплат по данной дате');
+//            }
         }
 
         $modelRepayment = Repayment::find()
@@ -1371,9 +1372,10 @@ class SaleReportController extends BaseController
                 $report[$warehouse_id]['goods'][(string)$item->product_id]['count'] += $item->prices_warehouse[$request['date']]['count'];
 
 
-            } else {
-                throw new GoodException('Отчет не возможно сфомировать','Нет выплат по данной дате');
             }
+//            else {
+//                throw new GoodException('Отчет не возможно сфомировать','Нет выплат по данной дате');
+//            }
         }
 
         $modelRepayment = Repayment::find()
