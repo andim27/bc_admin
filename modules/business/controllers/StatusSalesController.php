@@ -125,7 +125,6 @@ class StatusSalesController extends BaseController {
                     ->where(['idUser'=>$idUser])
                     ->orderBy(['dateCreate' => SORT_DESC])
                     ->all();
-
             }
         }
 
