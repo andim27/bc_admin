@@ -73,7 +73,7 @@ class Price
                 $promotion->dateUpdate = strtotime($object->dateUpdate);
                 $promotion->dateCreate = strtotime($object->dateCreate);
                 $promotion->body       = $object->body;
-                $promotion->title      = $object->title;
+                $promotion->title      = isset($object->title) ? $object->title : '';
 
                 $result[] = $promotion;
             }
