@@ -59,7 +59,11 @@ trait NotificationTrait
             'missed_points' => THelper::t('missed_points'),
             'end_of_activity' => THelper::t('end_of_activity'),
             'birthday_of_sponsor' => THelper::t('birthday_of_sponsor'),
-        ] + $activityFinishesInX + $selfBirthdayX;
+            'first_notification' => THelper::t('first_notification'),
+            'career_updated_self' => THelper::t('career_updated_self'),
+            'career_updated_personal_partner' => THelper::t('career_updated_personal_partner'),
+            'career_updated_sponsor' => THelper::t('career_updated_sponsor'),
+            ] + $activityFinishesInX + $selfBirthdayX;
     }
 
     /**
