@@ -30,4 +30,17 @@ class Operations {
         ], false);
     }
 
+    /**
+     * @param $data
+     * @return bool
+     */
+    public static function add($data)
+    {
+        $apiClient = new ApiClient('transactions/money');
+
+        $response = $apiClient->post($data, false);
+
+        return $response == 'OK';
+    }
+
 }
