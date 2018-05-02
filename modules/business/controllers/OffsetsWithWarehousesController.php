@@ -12,6 +12,7 @@ use app\models\RecoveryForRepaymentAmounts;
 use app\models\Repayment;
 use app\models\RepaymentAmounts;
 use app\models\Sales;
+use app\models\Settings;
 use app\models\StatusSales;
 use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
@@ -330,6 +331,7 @@ class OffsetsWithWarehousesController extends BaseController
                     if (empty($info[(string)$item->warehouse->headUser])) {
                         $info[(string)$item->warehouse->headUser] = [
                             'title' => $item->warehouse->infoHeadUser->username,
+                            'current_balance' => round($item->warehouse->infoHeadUser->moneys,2),
                             'amount_repayment' => 0,
                             'deduction' => 0
                         ];
@@ -551,6 +553,7 @@ class OffsetsWithWarehousesController extends BaseController
                 ]
             ])
             ->andWhere(['date_for_repayment'=>$request['date_repayment']])
+            ->andWhere(['comment'=>'repayment for warehouse'])
             ->andFilterWhere($whereFilter)
             ->all();
 
@@ -697,6 +700,7 @@ class OffsetsWithWarehousesController extends BaseController
                 'warehouse_id'=>new ObjectID($warehouse_id),
                 'date_for_repayment'=>$dateRepayment
             ])
+            ->andWhere(['comment'=>'repayment for warehouse'])
             ->one();
         if(!empty($modelRepayment)){
             throw new GoodException('Операция не возможна','Оплата уже была проведена!');
@@ -930,7 +934,6 @@ class OffsetsWithWarehousesController extends BaseController
      */
     public function actionCalculationRepayment($look='')
     {
-
         $info = [];
 
         $listGoodsWithTitle = PartsAccessories::getListPartsAccessoriesForSaLe();
@@ -970,25 +973,13 @@ class OffsetsWithWarehousesController extends BaseController
                     $info[(string)$item->headUser]['warehouses'][(string)$item->_id] = [
                         'packs' => 0,
                         'other_sale' => 0,
-                        'listProducts' => [
-                            '59620f49dca78761ae2d01c1' => 0,
-                            '59620f57dca78747631d3c62' => 0,
-                            '5975afe2dca78748ce5e7e02' => 0
-                        ],
-                        'numberProducts' => [
-                            '59620f49dca78761ae2d01c1' => 0,
-                            '59620f57dca78747631d3c62' => 0,
-                            '5975afe2dca78748ce5e7e02' => 0
-                        ]
+                        'listProducts' => PartsAccessories::getIdArrayForSaLe(),
+                        'numberProducts' => PartsAccessories::getIdArrayForSaLe()
                     ];
                 }
 
                 if(empty($info[(string)$item->headUser]['listProducts'])){
-                    $info[(string)$item->headUser]['listProducts'] = [
-                        '59620f49dca78761ae2d01c1' => 0,
-                        '59620f57dca78747631d3c62' => 0,
-                        '5975afe2dca78748ce5e7e02' => 0
-                    ];
+                    $info[(string)$item->headUser]['listProducts'] = PartsAccessories::getIdArrayForSaLe();
                     $info[(string)$item->headUser]['listOrderId'] = [];
                 }
             }
@@ -1110,7 +1101,7 @@ class OffsetsWithWarehousesController extends BaseController
             ])
             ->andWhere([
                 'productType' => [
-                    '$in' => [9, 10,3,4,7,8]
+                    '$in' => [9,10,3,4,7,8]
                 ]
             ])
             ->all();
@@ -1211,6 +1202,120 @@ class OffsetsWithWarehousesController extends BaseController
         } else {
             return $this->redirect('repayment-amounts',301);
         }
+    }
+
+    public function actionListRepaymentVipCoin()
+    {
+        $info = $notUseOrder = [];
+
+        $listCountry = Settings::getListCountry();
+
+        $listWarehouse = Warehouse::getArrayWarehouse();
+
+        $request = Yii::$app->request->post();
+        if (!isset($request['date_repayment'])) {
+            $request['date_repayment'] =  date('Y-m', strtotime('-1 month', strtotime(date("Y-m"))));
+
+//            if($request['date_repayment'] < '2018-04'){
+//                $request['date_repayment'] = '2018-04';
+//            }
+        }
+
+        $lastDate = $request['date_repayment'];
+        $lastDate = explode('-', $lastDate);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $lastDate['1'], $lastDate['0']);
+
+        $dateFrom = strtotime(implode($lastDate, '-') . '-01 00:00:00');
+        $dateTo = strtotime(implode($lastDate, '-') . '-' . $countDay.' 23:59:59');
+
+        // get info sale with out pack vipcoin and other refill
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime($dateFrom * 1000),
+                    '$lte' => new UTCDateTime($dateTo * 1000)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne' => -1
+                ]
+            ])
+            ->andWhere([
+                'productType' => [
+                    '$in' => [9,10]
+                ]
+            ])
+            ->all();
+
+        if (!empty($model)) {
+            foreach ($model as $item) {
+
+                $country = $item->infoUser->country;
+                $city = $item->infoUser->city;
+
+                if(!empty($country) && !empty($city)){
+
+                    $checkWarehouse = Warehouse::findOne(['country'=>$country,'cities'=>$city]);
+
+                    if(!empty($checkWarehouse)){
+                        if(!isset($info[(string)$checkWarehouse->_id]['amount'])){
+                            $info[(string)$checkWarehouse->_id] = [
+                                'title' => $listWarehouse[(string)$checkWarehouse->_id],
+                                'paid' => false,
+                                'amount' => 0,
+                                'issued_for_amount' => 0
+                            ];
+                        }
+                        $info[(string)$checkWarehouse->_id]['amount'] += round($item->price/100,2);
+                    } else {
+                        $notUseOrder[] = [
+                            'country' => $listCountry[$country],
+                            'city' => $city
+                        ];
+                    }
+                }
+            }
+        }
+
+        $model = Repayment::find()
+            ->where([
+                'warehouse_id'=>[
+                    '$nin' => [null]
+                ]
+            ])
+            ->andWhere(['date_for_repayment'=>$request['date_repayment']])
+            ->andWhere(['comment'=>'repayment on vipcoin'])
+            ->all();
+
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $info[(string)$item->warehouse_id]['issued_for_amount'] += $item->repayment;
+            }
+        }
+
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo '<xmp>';
+//        print_r($info);
+//        echo '</xmp>';
+//        die();
+
+        return $this->render('list-repayment-vip-coin', [
+            'language' => Yii::$app->language,
+            'request' => $request,
+            'info' => $info,
+            'notUseOrder' => $notUseOrder
+        ]);
+
+    }
+
+    public function actionMakeRepaymentVipCoin()
+    {
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r('in process ...');
+        echo '</xmp>';
+        die();
     }
 
     /**

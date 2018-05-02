@@ -32,7 +32,7 @@ HTML;
             'options' => ['name' => 'saveStatus', 'data-pjax' => '1'],
         ]); ?>
 
-        <div class="col-md-2 m-b">
+        <div class="col-md-6 m-b">
             <?= DatePicker::widget([
                 'name' => 'from',
                 'value' => $dateInterval['from'],
@@ -113,7 +113,7 @@ HTML;
 
         <?php ActiveForm::end(); ?>
 
-        <div class="col-md-4 m-b text-right">
+        <div class="col-md-1 m-b text-right">
             <?= Html::a('Export <i class="fa fa-file-text"></i>', 'javascript:void(0);', ['class' => 'btn btn-success exportReport']) ?>
         </div>
     </div>
@@ -247,8 +247,8 @@ HTML;
         });
 
         $('.exportReport').on('click',function () {
-            $dateFrom = $('.dateFrom').val();
-            $dateTo = $('.dateTo').val();
+            $dateFrom = $('input[name="from"]').val();
+            $dateTo = $('input[name="to"]').val();
 
 
             if($('.btnflWarehouse').is(':checked')){

@@ -24,7 +24,11 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
     protected static $productForSale = [
         '59620f49dca78761ae2d01c1',
         '59620f57dca78747631d3c62',
-        '5975afe2dca78748ce5e7e02'
+        '5975afe2dca78748ce5e7e02',
+
+        '5ac48adb4ec6e100093d2a92',
+        '5ac48b5d4ec6e100075980c2',
+        '5ac48bb84ec6e100065962f3'
     ];
 
     /**
@@ -112,6 +116,19 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
 
         return $list;
     }
+
+    public static function getIdPartsAccessoriesForSaLe(){
+        return self::$productForSale;
+    }
+
+    public static function getIdArrayForSaLe(){
+        $array = [];
+        foreach (self::$productForSale as $item) {
+            $array[$item] = 0;
+        }
+        return $array;
+    }
+
     
     public static function getListPartsAccessoriesWithComposite()
     {

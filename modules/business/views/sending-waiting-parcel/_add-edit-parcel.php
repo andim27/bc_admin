@@ -59,7 +59,7 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                             'options' => [
                                 'class'=>'form-control',
                                 'id'=>'selectGoods',
-                                'placeholder' => 'Выберите товар',
+                                'placeholder' => THelper::t('choose_good'),
                                 'multiple' => false
                             ]
                         ]);?>
@@ -103,7 +103,7 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                                 'class'=>'form-control',
                                 'id'=>'whereSend',
                                 'required'=>true,
-                                'placeholder' => 'Куда отправляем',
+                                'placeholder' => THelper::t('where_we_ship'),
                                 'multiple' => false
                             ],
                             'pluginOptions' => [
@@ -114,7 +114,7 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                     <div class="col-md-5">
                         <?=Html::input('text','comment', (!empty($model->comment) ? (string)$model->comment : ''),[
                             'class'=>'form-control',
-                            'placeholder'=>'Комментарий',
+                            'placeholder'=>THelper::t('write_you_comment'),
                         ])?>
                     </div>
                 </div>
@@ -123,7 +123,7 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                     <div class="col-md-12">
                         <?=Html::input('text','who_gets', (!empty($model->who_gets) ? (string)$model->who_gets : ''),[
                             'class'=>'form-control',
-                            'placeholder'=>'Кто получает',
+                            'placeholder'=>THelper::t('who_gets'),
                             'id' => 'whoGets'
                         ])?>
                     </div>
@@ -133,14 +133,14 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                     <div class="col-md-12">
                         <?=Html::input('text','delivery', (!empty($model->delivery) ? (string)$model->delivery : ''),[
                             'class'=>'form-control',
-                            'placeholder'=>'Чем отправленна',
+                            'placeholder'=>THelper::t('than_sent'),
                         ])?>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-md-6">
-                        <?=Html::input('text','', (!empty($model->documents) ? $model->documents : 'файл не загружен'),[
+                        <?=Html::input('text','', (!empty($model->documents) ? $model->documents : THelper::t('file_not_loaded')),[
                             'class'=>'form-control',
                             'disabled' => true
                         ])?>
@@ -148,7 +148,7 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                     <div class="col-md-6">
                         <?=Html::fileInput('documents', '',[
                             'class'=>'form-control',
-                            'placeholder'=>'Документы',
+                            'placeholder'=>THelper::t('documents'),
                         ])?>
                     </div>
                 </div>
@@ -183,14 +183,14 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
         goodsCount = 1;
 
         if(goodsID==''){
-            alert('Выберите товар!');
+            alert('<?=THelper::t('choose_good')?>');
             flAddNow = 0;
         }
 
 
         $(".complectPack").find(".row").each(function () {
             if($(this).find('input[name="complect[id][]"]').val() == goodsID) {
-                alert('Уже добавлен товар в посылку!');
+                alert('<?=THelper::t('already_added_goods_to_the_parcel!')?>');
                 flAddNow = 0;
             }
         });
@@ -237,7 +237,7 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
             $(".infoDanger").html(
                 '<div class="alert alert-danger fade in">' +
                     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-                    'Такого количества нет на складе. Доступно ' + (warehouseCount + countGoodsInParcel) + 'шт.' +
+                    '<?=THelper::t('this_amount_is_not_in_stock.available')?> ' + (warehouseCount + countGoodsInParcel) + ' <?=THelper::t('pcs')?>' +
                 '</div>'
             );
 

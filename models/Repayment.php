@@ -75,6 +75,7 @@ class Repayment extends \yii2tech\embedded\mongodb\ActiveRecord
                 ]
             ])
             ->andWhere(['date_for_repayment'=>$dateCheck])
+            ->andWhere(['comment'=>'repayment for '.$object])
             ->andFilterWhere($filterWhere)
             ->all();
 
