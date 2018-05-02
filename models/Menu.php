@@ -304,18 +304,6 @@ Class Menu
                 'controller' => 'promotion',
                 'items' => [
                     [
-                        'key'   =>  'sidebar_promotion_travel',
-                        'label' => THelper::t('sidebar_promotion_travel'),
-                        'url' => ['/business/promotion/travel'],
-                        'action' => 'travel',
-                    ],
-                    [
-                        'key'   =>  'sidebar_promotion_turkey_forum',
-                        'label' => THelper::t('sidebar_promotion_turkey_forum'),
-                        'url' => ['/business/promotion/turkey-forum'],
-                        'action' => 'turkey-forum',
-                    ],
-                    [
                         'key'   =>  'sidebar_promotion_current',
                         'label' => THelper::t('sidebar_promotion_current'),
                         'url' => ['/business/promotion/current'],
