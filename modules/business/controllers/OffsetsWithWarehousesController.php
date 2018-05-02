@@ -1101,7 +1101,7 @@ class OffsetsWithWarehousesController extends BaseController
             ])
             ->andWhere([
                 'productType' => [
-                    '$in' => [9,10,3,4,7,8]
+                    '$in' => [9,10,3,7,8]
                 ]
             ])
             ->all();
@@ -1118,6 +1118,11 @@ class OffsetsWithWarehousesController extends BaseController
                     if(!empty($checkWarehouse)){
                         $info[$listRepresentativeForWarehouse[(string)$checkWarehouse->_id]]['warehouses'][(string)$checkWarehouse->_id]['other_sale'] += $item->price;
                         $info[$listRepresentativeForWarehouse[(string)$checkWarehouse->_id]]['totalAmount'] += $item->price;
+
+                        $info[$listRepresentativeForWarehouse[(string)$checkWarehouse->_id]]['listOtherSale'][(string)$item->_id] = [
+                            'product' => $item->productName,
+                            'price' => $item->price
+                        ];
                     }
                 }
             }
