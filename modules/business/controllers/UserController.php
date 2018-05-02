@@ -16,11 +16,13 @@ use app\models\Products;
 use app\models\Sales;
 use app\models\Transaction;
 use app\models\Users;
+use app\modules\business\models\AddWriteOffFrom;
 use app\modules\business\models\PincodeCancelForm;
 use app\modules\business\models\PincodeForm;
 use app\modules\business\models\PincodeGenerateForm;
 use app\modules\business\models\ProfileForm;
 use app\modules\business\models\PurchaseForm;
+use app\modules\business\models\WriteOffs;
 use Yii;
 use app\models\api;
 use app\modules\business\models\UsersReferrals;
@@ -55,33 +57,114 @@ class UserController extends BaseController
             }
 
             if (isset($user)) {
-                $model->id                          = $user->id;
-                $model->name                        = $user->firstName;
-                $model->surname                     = $user->secondName;
-                $model->email                       = $user->email;
-                $model->mobile                      = $user->phoneNumber;
-                $model->smobile                     = $user->phoneNumber2;
-                $model->phoneWellness               = $user->phoneWellness;
-                $model->skype                       = $user->skype;
-                $model->state                       = $user->state;
-                $model->city                        = $user->city;
-                $model->address                     = $user->address;
-                $model->site                        = $user->links->site;
-                $model->odnoklassniki               = $user->links->odnoklassniki;
-                $model->vk                          = $user->links->vk;
-                $model->fb                          = $user->links->fb;
-                $model->youtube                     = $user->links->youtube;
-                $model->login                       = $user->username;
-                $model->notifyAboutJoinPartner      = $user->settings->notifyAboutJoinPartner;
-                $model->notifyAboutReceiptsMoney    = $user->settings->notifyAboutReceiptsMoney;
-                $model->notifyAboutReceiptsPoints   = $user->settings->notifyAboutReceiptsPoints;
-                $model->notifyAboutEndActivity      = $user->settings->notifyAboutEndActivity;
-                $model->notifyAboutOtherNews        = $user->settings->notifyAboutOtherNews;
-                $model->phoneTelegram               = $user->settings->phoneTelegram;
-                $model->phoneViber                  = $user->settings->phoneViber;
-                $model->phoneWhatsApp               = $user->settings->phoneWhatsApp;
-                $model->phoneFB                     = $user->settings->phoneFB;
-                $model->selectedLang                = $user->settings->selectedLang;
+                if (isset($user->id)) {
+                    $model->id                          = $user->id;
+                }
+
+                if (isset($user->firstName)) {
+                    $model->name                        = $user->firstName;
+                }
+
+                if (isset($user->secondName)) {
+                    $model->surname                     = $user->secondName;
+                }
+
+                if (isset($user->email)) {
+                    $model->email                       = $user->email;
+                }
+
+                if (isset($user->phoneNumber)) {
+                    $model->mobile                      = $user->phoneNumber;
+                }
+
+                if (isset($user->phoneNumber2)) {
+                    $model->smobile                     = $user->phoneNumber2;
+                }
+
+                if (isset($user->phoneWellness)) {
+                    $model->phoneWellness               = $user->phoneWellness;
+                }
+
+                if (isset($user->skype)) {
+                    $model->skype                       = $user->skype;
+                }
+
+                if (isset($user->state)) {
+                    $model->state                       = $user->state;
+                }
+
+                if (isset($user->city)) {
+                    $model->city                        = $user->city;
+                }
+
+                if (isset($user->address)) {
+                    $model->address                     = $user->address;
+                }
+
+                if (isset($user->links->site)) {
+                    $model->site                        = $user->links->site;
+                }
+
+                if (isset($user->links->odnoklassniki)) {
+                    $model->odnoklassniki               = $user->links->odnoklassniki;
+                }
+
+                if (isset($user->links->vk)) {
+                    $model->vk                          = $user->links->vk;
+                }
+
+                if (isset($user->links->fb)) {
+                    $model->fb                          = $user->links->fb;
+                }
+
+                if (isset($user->links->youtube)) {
+                    $model->youtube                     = $user->links->youtube;
+                }
+
+                if (isset($user->username)) {
+                    $model->login                       = $user->username;
+                }
+
+                if (isset($user->settings->notifyAboutJoinPartner)) {
+                    $model->notifyAboutJoinPartner      = $user->settings->notifyAboutJoinPartner;
+                }
+
+                if (isset($user->settings->notifyAboutReceiptsMoney)) {
+                    $model->notifyAboutReceiptsMoney    = $user->settings->notifyAboutReceiptsMoney;
+                }
+
+                if (isset($user->settings->notifyAboutReceiptsPoints)) {
+                    $model->notifyAboutReceiptsPoints   = $user->settings->notifyAboutReceiptsPoints;
+                }
+
+                if (isset($user->settings->notifyAboutEndActivity)) {
+                    $model->notifyAboutEndActivity   = $user->settings->notifyAboutEndActivity;
+                }
+
+                if (isset($user->settings->notifyAboutOtherNews)) {
+                    $model->notifyAboutOtherNews        = $user->settings->notifyAboutOtherNews;
+                }
+
+                if (isset($user->settings->phoneTelegram)) {
+                    $model->phoneTelegram               = $user->settings->phoneTelegram;
+                }
+
+                if (isset($user->settings->phoneViber)) {
+                    $model->phoneViber               = $user->settings->phoneViber;
+                }
+
+                if (isset($user->settings->phoneWhatsApp)) {
+                    $model->phoneWhatsApp               = $user->settings->phoneWhatsApp;
+                }
+
+                if (isset($user->settings->phoneFB)) {
+                    $model->phoneFB               = $user->settings->phoneFB;
+                }
+
+                if (isset($user->settings->phoneWhatsApp)) {
+                    $model->selectedLang               = $user->settings->selectedLang;
+                }
+
                 $model->cards                       = (!empty($user->cards) ? ArrayHelper::toArray($user->cards) : '');
 
                 return $this->render('profile', [
@@ -481,6 +564,7 @@ class UserController extends BaseController
                 $parent = api\User::get($user->parentId);
                 $operations = Operations::all($parent->id);
                 $points = Points::all($parent->id);
+                $writeOffs = WriteOffs::find()->where(['uid' => $user->id])->all();
             }
             return $this->renderAjax('_info', [
                 'user' => isset($user) && $user ? $user : '',
@@ -494,8 +578,68 @@ class UserController extends BaseController
                 'totalPurchases' => $totalPurchases,
                 'selfPoints' => $selfPoints,
                 'operations' => isset($operations) ? $operations : null,
-                'points' => isset($points) ? $points : null
+                'points' => isset($points) ? $points : null,
+                'writeOffs' => isset($writeOffs) ? $writeOffs : null
             ]);
+        }
+
+        return false;
+    }
+
+    public function actionSentWriteOff()
+    {
+        $request = Yii::$app->request;
+
+        $model = new AddWriteOffFrom();
+
+        $model->userId = $request->get('u');
+
+        return $this->renderAjax('/finance/add_write_off', [
+            'model' => $model,
+            'language' => Yii::$app->language
+        ]);
+    }
+
+    public function actionWriteOff()
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isPost) {
+            $addWriteOffForm = new AddWriteOffFrom();
+
+            $addWriteOffForm->load($request->post());
+
+            if ($request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($addWriteOffForm);
+
+            } else {
+                $data = [
+                    'iduser' => $addWriteOffForm->userId,
+                    'amount' => $addWriteOffForm->amount,
+                    'type' => 0,
+                ];
+
+                $status = Operations::add($data);
+
+                if ($status) {
+                    $date = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+                    $writeOffs = new WriteOffs();
+
+                    $writeOffs->uid = $addWriteOffForm->userId;
+                    $writeOffs->amount = $addWriteOffForm->amount;
+                    $writeOffs->comment = $addWriteOffForm->comment;
+                    $writeOffs->who = $this->user->username;
+                    $writeOffs->datetime = $date;
+
+                    $writeOffs->save();
+                } else {
+                    Yii::$app->session->setFlash('danger', THelper::t('something_went_wrong'));
+                }
+
+                return $this->render('/user/info');
+            }
         }
 
         return false;
@@ -510,6 +654,8 @@ class UserController extends BaseController
         if ($status) {
             return $this->renderAjax('/finance/_success');
         }
+
+        return false;
     }
 
     /**
