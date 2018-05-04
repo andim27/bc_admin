@@ -22,20 +22,16 @@ class LoanController extends BaseController {
     {
         $infoLoad = [];
 
-        $model = Pins::find()
-            ->where([
-                'loan'=>true,
-                'isDelete' => false
-            ])
-            ->all();
-        if(!empty($model)){
+        $model = Pins::find()->where([
+            'loan' => true,
+            'isDelete' => false
+        ])->all();
+
+        if ($model) {
             foreach ($model as $item) {
                 $infoPin = api\Pin::getPinInfo($item->pin);
-
-                if(!empty($infoPin->pinUsedBy)){
-
-                    $infoUser = Users::findOne(['username'=>$infoPin->pinUsedBy]);
-
+                if (!empty($infoPin->pinUsedBy)) {
+                    $infoUser = Users::findOne(['username' => $infoPin->pinUsedBy]);
                     if(empty($infoLoad[(string)$infoUser->_id])){
 
                         $infoLoad[(string)$infoUser->_id] = [
@@ -44,16 +40,18 @@ class LoanController extends BaseController {
                             'amountRepayment' => 0
                         ];
                     }
-
                     $infoLoad[(string)$infoUser->_id]['amountLoan'] += ($infoPin->productPrice * $infoPin->count);
-
                 }
-
             }
         }
 
-        $model = LoanRepayment::find()->all();
-        if(!empty($model)){
+        if ($this->user->isMain()) {
+            $model = LoanRepayment::find()->all();
+        } else {
+            $model = LoanRepayment::find()->where(['user_id' => new ObjectID($this->user->id)])->all();
+        }
+
+        if ($model) {
             foreach ($model as $item){
                 $infoUser = Users::findOne(['_id'=>$item->user_id]);
 
@@ -68,7 +66,6 @@ class LoanController extends BaseController {
                 $infoLoad[(string)$item->user_id]['amountRepayment'] += $item->amount;
             }
         }
-
 
         return $this->render('loans',[
             'infoLoad'  => $infoLoad,
@@ -134,17 +131,20 @@ class LoanController extends BaseController {
      */
     public function actionMoreLookRepayment($id)
     {
+        if (!$this->user->isMain()) {
+            if ($this->user->id != $id) {
+                return $this->redirect('/' . Yii::$app->language .'/business/loan/loans');
+            }
+        }
 
-        $infoUser = Users::findOne(['_id'=>new ObjectID($id)]);
+        $infoUser = Users::findOne(['_id' => new ObjectID($id)]);
 
         $info = [];
 
-        $model = Pins::find()
-            ->where([
-                'loan'=>true,
-                'isDelete' => false
-            ])
-            ->all();
+        $model = Pins::find()->where([
+            'loan'=>true,
+            'isDelete' => false
+        ])->all();
 
         if(!empty($model)){
             foreach ($model as $item) {

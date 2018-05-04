@@ -648,4 +648,9 @@ class User
         return $response == 'OK';
     }
 
+    public function isMain()
+    {
+        return $this->id == '573a0d76965dd0fb16f60bfe';
+    }
+
 }
