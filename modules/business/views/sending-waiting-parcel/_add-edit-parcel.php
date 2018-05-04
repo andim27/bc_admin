@@ -190,7 +190,7 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
 
         $(".complectPack").find(".row").each(function () {
             if($(this).find('input[name="complect[id][]"]').val() == goodsID) {
-                alert('<?=THelper::t('already_added_goods_to_the_parcel!')?>');
+                alert('<?=THelper::t('already_added_goods_to_the_parcel')?>');
                 flAddNow = 0;
             }
         });
