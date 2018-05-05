@@ -22,10 +22,16 @@ class LoanController extends BaseController {
     {
         $infoLoad = [];
 
-        $model = Pins::find()->where([
+        $wherePins = [
             'loan' => true,
             'isDelete' => false
-        ])->all();
+        ];
+
+        if (!$this->user->isMain()) {
+            $wherePins['userId'] = new ObjectID($this->user->id);
+        }
+
+        $model = Pins::find()->where($wherePins)->all();
 
         if ($model) {
             foreach ($model as $item) {
@@ -53,7 +59,7 @@ class LoanController extends BaseController {
 
         if ($model) {
             foreach ($model as $item){
-                $infoUser = Users::findOne(['_id'=>$item->user_id]);
+                $infoUser = Users::findOne(['_id' => $item->user_id]);
 
                 if(empty($infoLoad[(string)$item->user_id])){
                     $infoLoad[(string)$item->user_id] = [
