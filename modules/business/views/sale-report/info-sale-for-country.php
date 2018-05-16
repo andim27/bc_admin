@@ -6,7 +6,7 @@ use app\models\Settings;
 
 use app\models\Products;
 use yii\helpers\ArrayHelper;
-
+use kartik\date\DatePicker;
 
 $listCountry = Settings::getListCountry();
 
@@ -22,6 +22,12 @@ $total=[
     'count_send'    =>  0,
     'count_repair'  =>  0
 ];
+
+$layoutDate = <<< HTML
+    {input1}
+    {separator}
+    {input2}
+HTML;
 ?>
 
 
@@ -34,6 +40,22 @@ $total=[
         'action' => '/' . $language . '/business/sale-report/info-sale-for-country',
         'options' => ['name' => 'selectGoods',],
     ]); ?>
+
+    <div class="col-md-4 m-b">
+        <?= DatePicker::widget([
+            'name' => 'from',
+            'value' => $request['from'],
+            'type' => DatePicker::TYPE_RANGE,
+            'name2' => 'to',
+            'value2' => $request['to'],
+            'separator' => '-',
+            'layout' => $layoutDate,
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'yyyy-mm-dd',
+            ]
+        ]); ?>
+    </div>
 
     <div class="col-md-1">
         <label class="control-label switch-center"></label>
@@ -63,7 +85,7 @@ $total=[
     </div>
 
     <div class="col-md-1 m-b">
-        <?=Html::label(THelper::t('number_send') . THelper::t('from_kharkov'),'send_kh')?>
+        <?=Html::label(THelper::t('number_send') . ' ' . THelper::t('from_kharkov'),'send_kh')?>
     </div>
     <div class="col-md-1 m-b">
         <?=Html::checkbox('send_kh',($request['send_kh']==0 ? false : true),['id'=>'send_kh'])?>
@@ -75,8 +97,8 @@ $total=[
 
     <?php ActiveForm::end(); ?>
 
-    <div class="col-md-4 m-b text-right">
-
+    <div class="col-md-1 m-b text-right">
+        <?= Html::a('Export <i class="fa fa-file-text"></i>', 'javascript:void(0);', ['class' => 'btn btn-success exportReport']) ?>
     </div>
 </div>
 
@@ -179,6 +201,24 @@ $total=[
         "order": [[ 0, "desc" ]]
     });
 
+    $('.exportReport').on('click',function () {
+        $dateFrom = $('input[name="from"]').val();
+        $dateTo = $('input[name="to"]').val();
+
+
+        if($('.btnflGoods').is(':checked')){
+            $flGoods = 1;
+            $listPack = $('.listPack').val();
+            $listGoods = '';
+        } else {
+            $flGoods = 0;
+            $listPack = '';
+            $listGoods = $('.listGoods').val();
+        }
+
+        document.location = "/business/sale-report/export-info-sale-for-country?from="+$dateFrom+"&to="+$dateTo+"&flGoods="+$flGoods+"&listPack="+$listPack+"&listGoods="+$listGoods;
+
+    });
 
     $('.btnflGoods').on('change',function () {
         if($(this).is(':checked')) {

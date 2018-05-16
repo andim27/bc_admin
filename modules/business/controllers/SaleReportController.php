@@ -18,6 +18,7 @@ use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
+use yii\base\Theme;
 use yii\helpers\ArrayHelper;
 
 
@@ -225,6 +226,11 @@ class SaleReportController extends BaseController
 
         $request =  Yii::$app->request->post();
 
+        if(empty($request)){
+            $request['to'] = date("Y-m-d");
+            $request['from'] = date("Y-m-d", strtotime( $request['to']." -6 months"));
+        }
+
         if(empty($request['send_kh'])){
             $request['send_kh'] = 0;
         }
@@ -241,14 +247,12 @@ class SaleReportController extends BaseController
 
         $infoSale = [];
 
-        $dateTo = date("Y-m-d");
-        $dateFrom = date("Y-m-d", strtotime( $dateTo." -6 months"));
 
         $model = Sales::find()
             ->where([
                 'dateCreate' => [
-                    '$gte' => new UTCDatetime(strtotime($dateFrom) * 1000),
-                    '$lte' => new UTCDateTime(strtotime($dateTo . '23:59:59') * 1000)
+                    '$gte' => new UTCDatetime(strtotime($request['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
                 ]
             ])
             ->andWhere([
@@ -441,6 +445,282 @@ class SaleReportController extends BaseController
             'infoSale'      =>   $infoSale,
             'request'       =>   $request
         ]);
+    }
+
+    public function actionExportInfoSaleForCountry($from,$to,$flGoods,$listPack,$listGoods)
+    {
+        $listGoodsWithKey = Products::getListGoodsWithKey();
+        $listCountry = Settings::getListCountry();
+
+        $model = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime(strtotime($from . '00:00:01') * 1000),
+                    '$lte' => new UTCDateTime(strtotime($to . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->all();
+
+
+        if(!empty($model)){
+
+            /** @var Sales $item */
+            foreach ($model as $item) {
+
+                /** PACK */
+                if(!empty($listPack)){
+
+                    if($item->product == $listPack || $listPack == 'all') {
+
+                        $country = 'none';
+                        $flIssuedPack = '1';
+                        $flRepairsPack = '0';
+                        foreach ($item->statusSale->set as $itemSet) {
+
+                            if(!empty($itemSet->idUserChange)) {
+                                $infoWarehouse = Warehouse::getInfoWarehouse((string)$itemSet->idUserChange);
+
+                                if (!empty($infoWarehouse->country)) {
+                                    $country = $infoWarehouse->country;
+                                }
+                            }
+
+                            if (!in_array($itemSet->status, ['status_sale_issued', 'status_sale_issued_after_repair'])) {
+                                $flIssuedPack = '0';
+                            }
+
+                            if(in_array($itemSet->status,['status_sale_repairs_under_warranty','status_sale_repair_without_warranty'])){
+                                $flRepairsPack = '1';
+                            }
+                        }
+
+                        if (empty($infoSale[$country][$item->productName])) {
+                            $infoSale[$country][$item->productName] = [
+                                'all'       => 0,
+                                'issued'    => 0,
+                                'in_stock'  => 0,
+                                'wait'      => 0,
+                                'repair'    => 0,
+                                'send'      => 0,
+                            ];
+                        }
+
+                        if ($flIssuedPack == '1') {
+                            $infoSale[$country][$item->productName]['issued']++;
+                        } else {
+                            $infoSale[$country][$item->productName]['wait']++;
+                        }
+
+                        if($flRepairsPack == '1'){
+                            $infoSale[$country][$item->productName]['repair']++;
+                        }
+
+                        $infoSale[$country][$item->productName]['all']++;
+                    }
+                    /** GOODS */
+                } else {
+                    foreach ($item->statusSale->set as $itemSet){
+
+                        if($itemSet->title == $listGoods || $listGoods == 'all'){
+
+                            $country = 'none';
+                            if(!empty($itemSet->idUserChange)) {
+                                $infoWarehouse = Warehouse::getInfoWarehouse((string)$itemSet->idUserChange);
+
+                                if (!empty($infoWarehouse->country)) {
+                                    $country = $infoWarehouse->country;
+                                }
+                            }
+
+
+                            if(empty($infoSale[$country][$itemSet->title])){
+                                $infoSale[$country][$itemSet->title] = [
+                                    'all'       => 0,
+                                    'issued'    => 0,
+                                    'in_stock'  => 0,
+                                    'wait'      => 0,
+                                    'repair'    => 0,
+                                    'send'      => 0,
+                                ];
+                            }
+
+                            $infoSale[$country][$itemSet->title]['all']++;
+
+                            if(in_array($itemSet->status,['status_sale_issued','status_sale_issued_after_repair'])){
+                                $infoSale[$country][$itemSet->title]['issued']++;
+                            } else {
+                                $infoSale[$country][$itemSet->title]['wait']++;
+                            }
+
+                            if(in_array($itemSet->status,['status_sale_repairs_under_warranty','status_sale_repair_without_warranty'])){
+                                $infoSale[$country][$itemSet->title]['repair']++;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        if(!empty($listGoods)) {
+
+            // get info about sending parcel with goods
+            $modelSending = SendingWaitingParcel::find()
+                ->where(['is_posting' => (int)0])
+                ->orWhere(['is_posting' => (string)0]);
+
+            $modelSending = $modelSending->all();
+
+            if (!empty($modelSending)) {
+                foreach ($modelSending as $item) {
+
+                    if (empty($item->infoWarehouse->country)) {
+                        $item->infoWarehouse->country = 'none';
+                    }
+
+                    if (!empty($item->part_parcel)) {
+                        foreach ($item->part_parcel as $itemParcel) {
+                            if(!empty($listGoodsWithKey[$itemParcel['goods_id']]) &&
+                                ($listGoodsWithKey[$itemParcel['goods_id']] == $listGoods || $listGoods == 'all')) {
+                                if (empty($infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]])) {
+                                    $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]] = [
+                                        'all'               => 0,
+                                        'issued'            => 0,
+                                        'in_stock'          => 0,
+                                        'wait'              => 0,
+                                        'repair'            => 0,
+                                        'send'              => 0,
+                                    ];
+                                }
+
+                                $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[$itemParcel['goods_id']]]['send'] += $itemParcel['goods_count'];
+
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            // get info about info for goods in warehouse
+            $modelWarehouseGoods = PartsAccessoriesInWarehouse::find()->all();
+            if (!empty($modelWarehouseGoods)) {
+                foreach ($modelWarehouseGoods as $item) {
+                    if(!empty($listGoodsWithKey[(string)$item->parts_accessories_id]) && ($listGoodsWithKey[(string)$item->parts_accessories_id] == $listGoods  || $listGoods == 'all')) {
+
+                        if (empty($item->infoWarehouse->country)) {
+                            $item->infoWarehouse->country = 'none';
+                        }
+
+
+                        if (empty($infoSale[$item->infoWarehouse->country][$listGoodsWithKey[(string)$item->parts_accessories_id]])) {
+                            $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[(string)$item->parts_accessories_id]] = [
+                                'all' => 0,
+                                'issued' => 0,
+                                'in_stock' => 0,
+                                'wait' => 0,
+                                'repair' => 0,
+                                'send' => 0,
+                            ];
+                        }
+
+                        $infoSale[$item->infoWarehouse->country][$listGoodsWithKey[(string)$item->parts_accessories_id]]['in_stock'] += $item->number;
+
+                    }
+
+                }
+            }
+        }
+
+        if($flGoods == 1){
+            $infoExport = [];
+            foreach ($infoSale as $kCountry=>$itemCountry) {
+                foreach ($itemCountry as $k=>$item) {
+                    $infoExport[] = [
+                        'country'       => !empty($listCountry[$kCountry]) ? $listCountry[$kCountry] : 'none',
+                        'product_name'  => $k,
+                        'all'           => $item['all'],
+                        'issued'        => $item['issued'],
+                        'margin'        => ($item['issued'] + $item['send'] + $item['in_stock'] - $item['all']),
+                        'repair'        => $item['repair']
+                    ];
+                }
+
+            }
+
+
+            \moonland\phpexcel\Excel::export([
+                'models' => $infoExport,
+                'fileName' => 'export_'.$from.'-'.$to,
+                'columns' => [
+                    'country',
+                    'product_name',
+                    'all',
+                    'issued',
+                    'margin',
+                    'repair'
+                ],
+                'headers' => [
+                    'country' => THelper::t('country'),
+                    'product_name' => THelper::t('business_product'),
+                    'all' => THelper::t('number_all_ordering'),
+                    'issued' => THelper::t('number_issue'),
+                    'margin' =>THelper::t('number_difference'),
+                    'repair' => THelper::t('number_repair')
+                ]
+            ]);
+        } else {$infoExport = [];
+
+            foreach ($infoSale as $kCountry=>$itemCountry) {
+                foreach ($itemCountry as $k=>$item) {
+                    $infoExport[] = [
+                        'country'       => !empty($listCountry[$kCountry]) ? $listCountry[$kCountry] : 'none',
+                        'product_name'  => $k,
+                        'all'           => $item['all'],
+                        'issued'        => $item['issued'],
+                        'in_stock'      => $item['in_stock'],
+                        'send'          => $item['send'],
+                        'margin'        => ($item['issued'] + $item['send'] + $item['in_stock'] - $item['all']),
+                        'repair'        => $item['repair']
+                    ];
+                }
+
+            }
+
+
+            \moonland\phpexcel\Excel::export([
+                'models' => $infoExport,
+                'fileName' => 'export_'.$from.'-'.$to,
+                'columns' => [
+                    'country',
+                    'product_name',
+                    'all',
+                    'issued',
+                    'in_stock',
+                    'send',
+                    'margin',
+                    'repair'
+                ],
+                'headers' => [
+                    'country' => THelper::t('country'),
+                    'product_name' => THelper::t('goods'),
+                    'all' => THelper::t('number_all_ordering'),
+                    'issued' => THelper::t('number_issue'),
+                    'in_stock' => THelper::t('number_in_stock'),
+                     'send' => THelper::t('number_send'),
+                    'margin' =>THelper::t('number_difference'),
+                    'repair' => THelper::t('number_repair')
+                ]
+            ]);
+        }
+
+        die();
     }
 
     public function actionInfoSaleForCountryWarehouse()
