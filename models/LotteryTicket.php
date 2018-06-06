@@ -24,6 +24,7 @@ Class LotteryTicket extends ActiveRecord
             'userId',
             'ticket',
             'saleId',
+            'x2',
             'date'
         ];
     }

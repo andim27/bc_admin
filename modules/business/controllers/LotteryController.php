@@ -7,6 +7,7 @@ use app\models\LotteryTicket;
 use app\models\LotteryWinnerTicket;
 use app\models\Users;
 use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDateTime;
 use Yii;
 use yii\web\Response;
 
@@ -31,15 +32,15 @@ class LotteryController extends BaseController
             $userId = strval($lotteryTicketUser->_id);
             if (!isset($users[$userId])) {
                 $users[$userId] = [
-                    'username' => $lotteryTicketUser->username,
-                    'firstName' => $lotteryTicketUser->firstName,
-                    'secondName' => $lotteryTicketUser->secondName,
+                    'username'    => $lotteryTicketUser->username,
+                    'firstName'   => $lotteryTicketUser->firstName,
+                    'secondName'  => $lotteryTicketUser->secondName,
                     'countryName' => $lotteryTicketUser->getCountry(),
-                    'city' => $lotteryTicketUser->city,
-                    'tickets' => [$lotteryTicket->ticket]
+                    'city'        => $lotteryTicketUser->city,
+                    'tickets'     => [$lotteryTicket]
                 ];
             } else {
-                $users[$userId]['tickets'][] = $lotteryTicket->ticket;
+                $users[$userId]['tickets'][] = $lotteryTicket;
             }
         }
 
@@ -195,5 +196,56 @@ class LotteryController extends BaseController
         }
 
         return $result;
+    }
+
+    public function actionX2Tickets()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $userId = Yii::$app->request->post('id');
+
+        $lotteryTickets = LotteryTicket::find()->where(['userId' => new ObjectID($userId)])->all();
+        $lotteryTicketsX2 = LotteryTicket::find()->where(['userId' => new ObjectID($userId), 'x2' => true])->all();
+
+        if ($lotteryTicketsX2) {
+            $result = ['success' => false, 'error' => 'Lottery tickets X2 already exists'];
+        } else {
+            if ($lotteryTickets) {
+                $lotteryTicketsCount = count($lotteryTickets);
+
+                $tickets = [];
+                for ($i = 0; $i < $lotteryTicketsCount; $i++) {
+                    $tickets[] = $this->_generateTicket();
+                }
+
+                foreach ($tickets as $ticket) {
+                    $lotteryTicket = new LotteryTicket();
+                    $lotteryTicket->userId = new ObjectID($userId);
+                    $lotteryTicket->date = new UTCDateTime(time() * 1000);
+                    $lotteryTicket->ticket = $ticket;
+                    $lotteryTicket->x2 = true;
+                    $lotteryTicket->save();
+                }
+
+                $lotteryTickets = LotteryTicket::find()->where(['userId' => new ObjectID($userId)])->all();
+
+                $result = ['success' => true, 'tickets' => $this->renderAjax('_tickets', ['tickets' => $lotteryTickets])];
+            } else {
+                $result = ['success' => false, 'error' => 'Lottery tickets not found'];
+            }
+        }
+
+        return $result;
+    }
+
+    private function _generateTicket()
+    {
+        $ticket = intval(rand(1, 9) . rand(1, 9) . rand(1, 9) . rand(1, 9) . rand(1, 9));
+
+        while ($lotteryTicket = LotteryTicket::find()->where(['ticket' => $ticket])->one()) {
+            $this->_generateTicket();
+        }
+
+        return $ticket;
     }
 }

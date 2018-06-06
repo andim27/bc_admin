@@ -5,11 +5,13 @@ namespace app\modules\business\controllers;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api\dictionary\Country;
+use app\models\api\Lang;
+use app\models\WellnessClubInfo;
+use app\models\WellnessClubMembersInfoForm;
 use app\modules\business\models\WellnessClubMembers;
-use DateTime;
-use MongoDate;
 use Yii;
 use yii\data\Pagination;
+use yii\helpers\ArrayHelper;
 
 
 class WellnessClubMembersController extends BaseController
@@ -100,7 +102,46 @@ class WellnessClubMembersController extends BaseController
             ];
         }
 
-        return $this->render('index', []);
+        if ($requestLanguage = $request->get('l')) {
+            $currentTab = 'info';
+        } else {
+            $currentTab = 'members';
+        }
+
+        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
+        $languages = \app\models\api\dictionary\Lang::all();
+
+        $wellnessClubInfo = WellnessClubInfo::find()->where(['language' => $language])->one();
+
+        return $this->render('index', [
+            'language' => Yii::$app->language,
+            'selectedLanguage' => $language,
+            'body' => $wellnessClubInfo ? $wellnessClubInfo->body : '',
+            'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : [],
+            'currentTab' => $currentTab
+        ]);
+    }
+
+    public function actionAddInfo()
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isPost) {
+
+            $wellnessClubInfo = new WellnessClubInfo();
+            $wellnessClubInfo->language = $request->post('language');
+            $wellnessClubInfo->body = $request->post('body');
+
+            $result = $wellnessClubInfo->save();
+
+            if ($result) {
+                Yii::$app->session->setFlash('success', 'wellness_club_info_save_success');
+            } else {
+                Yii::$app->session->setFlash('danger', 'wellness_club_info_save_error');
+            }
+
+            $this->redirect('/' . Yii::$app->language . '/business/wellness-club-members?l=' . $wellnessClubInfo->language);
+        }
     }
 
     /**

@@ -40,7 +40,7 @@
                                 <?= $b->user()->city ?>
                             </td>
                             <td>
-                                <?= Html::a('<i class="fa fa-trash-o"></i>', 'javascript:void(0);', ['class' => 'remove-banned', 'data-id' => strval($b->userId) ]) ?>
+                                <?= Html::a('<i class="fa fa-trash-o"></i>', 'javascript:void(0);', ['class' => 'btn btn-danger remove-banned', 'data-id' => strval($b->userId) ]) ?>
                             </td>
                         </tr>
                         <?php $j++; } ?>

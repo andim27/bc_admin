@@ -53,10 +53,11 @@
                         <th><?= THelper::t('settings_lottery_rules_table_country') ?></th>
                         <th><?= THelper::t('settings_lottery_rules_table_city') ?></th>
                         <th><?= THelper::t('settings_lottery_rules_table_tickets') ?></th>
+                        <th><?= THelper::t('settings_lottery_rules_table_actions') ?></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <?php $m = count($users); foreach ($users as $user) { ?>
+                    <?php $m = count($users); foreach ($users as $userId => $user) { ?>
                         <tr>
                             <td>
                                 <?= $m ?>
@@ -76,9 +77,17 @@
                             <td>
                                 <?= $user['city'] ?>
                             </td>
+                            <td class="tickets" data-id="<?= strval($userId) ?>">
+                                <?php $x2 = false; foreach ($user['tickets'] as $ticket) {
+                                    if ($x2 == false) {
+                                        $x2 = $ticket->x2 == true;
+                                    } ?>
+                                    <p><span class="text-<?= $ticket->x2 ? 'success' : 'danger'?>"><b><?= $ticket->ticket ?></b></span></p>
+                                <?php } ?>
+                            </td>
                             <td>
-                                <?php foreach ($user['tickets'] as $ticket) { ?>
-                                    <p><span class="text-danger"><b><?= $ticket ?></b></span></p>
+                                <?php if (!$x2) { ?>
+                                    <?= Html::a('<i class="fa fa-times"></i> <b>2</b>', 'javascript:void(0);', ['class' => 'btn btn-success x2-tickets', 'data-id' => strval($userId)]) ?>
                                 <?php } ?>
                             </td>
                         </tr>
@@ -232,6 +241,29 @@
             }
         });
     }
+
+    $('.x2-tickets').click(function () {
+        var thisA = $(this);
+        var userId = thisA.data('id');
+        if (confirm("<?= THelper::t('settings_lottery_x2_tickets_confirm') ?>")) {
+            $.ajax({
+                url: '/' + LANG + '/ru/business/lottery/x2-tickets',
+                method: 'post',
+                data: {'id': userId},
+                success: function (data) {
+                    if (data.success) {
+                        thisA.hide();
+                        $('.tickets[data-id="' + userId + '"]').html(data.tickets);
+                    } else {
+                        alert(data.error);
+                    }
+                    return false;
+                }
+            });
+        } else {
+            return false;
+        }
+    });
 
     var table = $('.table-users').dataTable({
         language: TRANSLATION,
