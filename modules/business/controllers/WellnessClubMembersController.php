@@ -8,6 +8,7 @@ use app\models\api\dictionary\Country;
 use app\models\api\Lang;
 use app\models\WellnessClubInfo;
 use app\models\WellnessClubMembersInfoForm;
+use app\models\WellnessClubVideo;
 use app\modules\business\models\WellnessClubMembers;
 use Yii;
 use yii\data\Pagination;
@@ -102,23 +103,26 @@ class WellnessClubMembersController extends BaseController
             ];
         }
 
-        if ($requestLanguage = $request->get('l')) {
-            $currentTab = 'info';
+        if ($currentTab = $request->get('t')) {
         } else {
             $currentTab = 'members';
         }
+
+        $requestLanguage = $request->get('l');
 
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
         $languages = \app\models\api\dictionary\Lang::all();
 
         $wellnessClubInfo = WellnessClubInfo::find()->where(['language' => $language])->one();
+        $wellnessClubVideo = WellnessClubVideo::find()->where(['language' => $language])->one();
 
         return $this->render('index', [
             'language' => Yii::$app->language,
             'selectedLanguage' => $language,
             'body' => $wellnessClubInfo ? $wellnessClubInfo->body : '',
             'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : [],
-            'currentTab' => $currentTab
+            'currentTab' => $currentTab,
+            'videoUrl' => $wellnessClubVideo ? $wellnessClubVideo->url : '',
         ]);
     }
 
@@ -127,20 +131,46 @@ class WellnessClubMembersController extends BaseController
         $request = Yii::$app->request;
 
         if ($request->isPost) {
+            $language = $request->post('language');
 
-            $wellnessClubInfo = new WellnessClubInfo();
-            $wellnessClubInfo->language = $request->post('language');
+            if (!$wellnessClubInfo = WellnessClubInfo::find()->where(['language' => $language])->one()) {
+                $wellnessClubInfo = new WellnessClubInfo();
+                $wellnessClubInfo->language = $language;
+            }
+
             $wellnessClubInfo->body = $request->post('body');
 
-            $result = $wellnessClubInfo->save();
-
-            if ($result) {
+            if ($result = $wellnessClubInfo->save()) {
                 Yii::$app->session->setFlash('success', 'wellness_club_info_save_success');
             } else {
                 Yii::$app->session->setFlash('danger', 'wellness_club_info_save_error');
             }
 
-            $this->redirect('/' . Yii::$app->language . '/business/wellness-club-members?l=' . $wellnessClubInfo->language);
+            $this->redirect('/' . Yii::$app->language . '/business/wellness-club-members?l=' . $wellnessClubInfo->language . '&t=info');
+        }
+    }
+
+    public function actionAddVideo()
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isPost) {
+            $language = $request->post('language');
+
+            if (!$wellnessClubVideo = WellnessClubVideo::find()->where(['language' => $language])->one()) {
+                $wellnessClubVideo = new WellnessClubVideo();
+                $wellnessClubVideo->language = $language;
+            }
+
+            $wellnessClubVideo->url = $request->post('url');
+
+            if ($result = $wellnessClubVideo->save()) {
+                Yii::$app->session->setFlash('success', 'wellness_club_video_save_success');
+            } else {
+                Yii::$app->session->setFlash('danger', 'wellness_club_video_save_error');
+            }
+
+            $this->redirect('/' . Yii::$app->language . '/business/wellness-club-members?l=' . $wellnessClubVideo->language . '&t=video');
         }
     }
 

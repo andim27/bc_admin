@@ -1,24 +1,23 @@
 <?php
     use app\components\THelper;
-    use yii\helpers\Html;
 ?>
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('wellness_club_members'); ?></h3>
+    <h3 class="m-b-none"><?= THelper::t('wellness_club_members_title'); ?></h3>
 </div>
 <div class="row">
     <div class="col-md-12">
         <ul class="nav nav-tabs" role="tablist">
             <li <?= $currentTab == 'members' ? 'class="active"' : '' ?>>
-                <a href="#members" aria-controls="members" role="tab" data-toggle="tab">Заявки в члены клуба</a>
+                <a href="#members" aria-controls="members" role="tab" data-toggle="tab"><?= THelper::t('wellness_club_members_tab_members') ?></a>
             </li>
             <li <?= $currentTab == 'info' ? 'class="active"' : '' ?>>
-                <a href="#info" aria-controls="info" role="tab" data-toggle="tab">Информация</a>
+                <a href="#info" aria-controls="info" role="tab" data-toggle="tab"><?= THelper::t('wellness_club_members_tab_info') ?></a>
             </li>
             <li <?= $currentTab == 'conferences' ? 'class="active"' : '' ?>>
-                <a href="#conferences" aria-controls="conferences" role="tab" data-toggle="tab">Конференции онлайн</a>
+                <a href="#conferences" aria-controls="conferences" role="tab" data-toggle="tab"><?= THelper::t('wellness_club_members_tab_conference') ?></a>
             </li>
             <li <?= $currentTab == 'video' ? 'class="active"' : '' ?>>
-                <a href="#video" aria-controls="video" role="tab" data-toggle="tab">Видео</a>
+                <a href="#video" aria-controls="video" role="tab" data-toggle="tab"><?= THelper::t('wellness_club_members_tab_video') ?></a>
             </li>
         </ul>
     </div>
@@ -39,7 +38,12 @@
                 <?= $this->render('_tab_conferences'); ?>
             </div>
             <div role="tabpanel" class="tab-pane <?= $currentTab == 'video' ? 'active' : '' ?>" id="video">
-                <?= $this->render('_tab_video'); ?>
+                <?= $this->render('_tab_video', [
+                    'language' => $language,
+                    'videoUrl' => $videoUrl,
+                    'selectedLanguage' => $selectedLanguage,
+                    'translationList' => $translationList
+                ]); ?>
             </div>
         </div>
     </div>
