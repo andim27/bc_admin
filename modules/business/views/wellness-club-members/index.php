@@ -13,9 +13,6 @@
             <li <?= $currentTab == 'info' ? 'class="active"' : '' ?>>
                 <a href="#info" aria-controls="info" role="tab" data-toggle="tab"><?= THelper::t('wellness_club_members_tab_info') ?></a>
             </li>
-            <li <?= $currentTab == 'conferences' ? 'class="active"' : '' ?>>
-                <a href="#conferences" aria-controls="conferences" role="tab" data-toggle="tab"><?= THelper::t('wellness_club_members_tab_conference') ?></a>
-            </li>
             <li <?= $currentTab == 'video' ? 'class="active"' : '' ?>>
                 <a href="#video" aria-controls="video" role="tab" data-toggle="tab"><?= THelper::t('wellness_club_members_tab_video') ?></a>
             </li>
@@ -33,9 +30,6 @@
                     'selectedLanguage' => $selectedLanguage,
                     'translationList' => $translationList
                 ]); ?>
-            </div>
-            <div role="tabpanel" class="tab-pane <?= $currentTab == 'conferences' ? 'active' : '' ?>" id="conferences" style="height: 500px">
-                <?= $this->render('_tab_conferences'); ?>
             </div>
             <div role="tabpanel" class="tab-pane <?= $currentTab == 'video' ? 'active' : '' ?>" id="video">
                 <?= $this->render('_tab_video', [

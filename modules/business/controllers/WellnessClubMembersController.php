@@ -10,6 +10,8 @@ use app\models\WellnessClubInfo;
 use app\models\WellnessClubMembersInfoForm;
 use app\models\WellnessClubVideo;
 use app\modules\business\models\WellnessClubMembers;
+use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDateTime;
 use Yii;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
@@ -81,6 +83,8 @@ class WellnessClubMembersController extends BaseController
                     $address = $user->address;
                 }
 
+                $endDate = $user->wellness_club_partner_date_end;
+
                 $nestedData['id'] = $count - ($key + $offset);
                 $nestedData[$columns[0]] = $user->surname;
                 $nestedData[$columns[1]] = $user->name;
@@ -89,8 +93,8 @@ class WellnessClubMembersController extends BaseController
                 $nestedData[$columns[4]] = $user->phone;
                 $nestedData[$columns[5]] = $user->email;
                 $nestedData[$columns[6]] = $user->skype;
-                $nestedData[$columns[7]] = $user->wellness_club_partner_date_end;
-                $nestedData[$columns[8]] = '<button class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply'). '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ).' data-email="'. $user->email.'">' . THelper::t('accepted') . '</button>';
+                $nestedData[$columns[7]] = '';
+                $nestedData[$columns[8]] = '<button class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply') . '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ) . ' data-id="' . strval($user->userId) . '">' . THelper::t('accepted') . '</button>';
 
                 $data[] = $nestedData;
             }
@@ -181,9 +185,15 @@ class WellnessClubMembersController extends BaseController
     {
         $request = Yii::$app->request->post();
 
-        $wellnessClubMember = wellnessClubMembers::find()->where(['email' => $request['email']])->one();
+        $wellnessClubMember = wellnessClubMembers::find()->where(['userId' => new ObjectID($request['userId'])])->one();
 
-        $wellnessClubMember->wellness_club_partner_date_end = date('d/m/Y h:m:i', strtotime('+1 year',  time()));
+        $dateInterval = \DateInterval::createFromDateString('1 year');
+
+        $now = new \DateTime();
+
+        $now->add($dateInterval);
+
+        $wellnessClubMember->wellness_club_partner_date_end = new UTCDateTime($now->getTimestamp() * 1000);
 
         return $wellnessClubMember->save();
     }

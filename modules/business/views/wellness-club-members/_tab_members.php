@@ -77,10 +77,10 @@
         var $this = $(this);
 
         $.ajax({
-            url: '<?=\yii\helpers\Url::to(['wellness-club-members/apply'])?>',
+            url: '<?= \yii\helpers\Url::to(['wellness-club-members/apply']) ?>',
             type: 'POST',
             data: {
-                email: $this.data('email')
+                userId: $this.data('id')
             },
             success: function (response) {
                 if (response) {
