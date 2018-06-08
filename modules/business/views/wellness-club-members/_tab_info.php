@@ -29,6 +29,6 @@
     tinymce.init({
         selector: 'textarea',
         paste_data_images: true,
-        plugins : 'advlist autolink link image lists charmap print preview fullscreen'
+        plugins : 'advlist autolink link image lists charmap print preview fullscreen media'
     });
 </script>

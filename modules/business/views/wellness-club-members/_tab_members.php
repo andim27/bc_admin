@@ -66,7 +66,7 @@
             {"data": "mobile"},
             {"data": "email"},
             {"data": "skype"},
-            {"data": "created"},
+            {"data": "wellness_club_partner_date_end"},
             {"data": "action"}
         ],
         "order": [[ 0, "desc" ]]

@@ -22,7 +22,7 @@ use app\components\THelper;
         <?php if ($videoUrl) { ?>
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <video src="<?= $videoUrl ?>" width="320" height="240" controls>
+                    <video src="<?= $videoUrl ?>" width="640" controls>
                         Sorry, your browser doesn't support embedded videos,
                         but don't worry, you can <a href="<?= $videoUrl ?>">download it</a>
                         and watch it with your favorite video player!

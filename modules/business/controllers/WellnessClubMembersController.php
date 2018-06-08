@@ -43,13 +43,11 @@ class WellnessClubMembersController extends BaseController
         $pages = new Pagination(['totalCount' => $wellnessClubMembers->count()]);
 
         $columns = [
-            'surname', 'name', 'countryId',
-            'address', 'mobile', 'email', 'skype', 'created', 'action'
+            'surname', 'name', 'countryId', 'address', 'mobile', 'email', 'skype', 'wellness_club_partner_date_end', 'action'
         ];
 
         $filterColumns = [
-            'updated_at', 'surname', 'name', 'countryId',
-            'address', 'mobile', 'email', 'skype'
+            'surname', 'name', 'countryId', 'address', 'mobile', 'email', 'skype', 'wellness_club_partner_date_end', 'action'
         ];
 
         if ($order = $request->get('order')[0]) {
@@ -84,6 +82,11 @@ class WellnessClubMembersController extends BaseController
                 }
 
                 $endDate = $user->wellness_club_partner_date_end;
+                if ($endDate) {
+                    if (!is_string($endDate)) {
+                        $endDate = gmdate('d/m/Y H:i:s', $endDate->toDateTime()->getTimestamp());
+                    }
+                }
 
                 $nestedData['id'] = $count - ($key + $offset);
                 $nestedData[$columns[0]] = $user->surname;
@@ -93,7 +96,7 @@ class WellnessClubMembersController extends BaseController
                 $nestedData[$columns[4]] = $user->phone;
                 $nestedData[$columns[5]] = $user->email;
                 $nestedData[$columns[6]] = $user->skype;
-                $nestedData[$columns[7]] = '';
+                $nestedData[$columns[7]] = $endDate;
                 $nestedData[$columns[8]] = '<button class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply') . '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ) . ' data-id="' . strval($user->userId) . '">' . THelper::t('accepted') . '</button>';
 
                 $data[] = $nestedData;
