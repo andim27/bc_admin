@@ -121,7 +121,7 @@ class WellnessClubMembersController extends BaseController
         $languages = \app\models\api\dictionary\Lang::all();
 
         $wellnessClubInfo = WellnessClubInfo::find()->where(['language' => $language])->one();
-        $wellnessClubVideo = WellnessClubVideo::find()->where(['language' => $language])->one();
+        $wellnessClubVideos = WellnessClubVideo::find()->where(['language' => $language])->all();
 
         return $this->render('index', [
             'language' => Yii::$app->language,
@@ -129,7 +129,7 @@ class WellnessClubMembersController extends BaseController
             'body' => $wellnessClubInfo ? $wellnessClubInfo->body : '',
             'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : [],
             'currentTab' => $currentTab,
-            'videoUrl' => $wellnessClubVideo ? $wellnessClubVideo->url : '',
+            'videos' => $wellnessClubVideos,
         ]);
     }
 
@@ -164,18 +164,19 @@ class WellnessClubMembersController extends BaseController
         if ($request->isPost) {
             $language = $request->post('language');
 
-            if (!$wellnessClubVideo = WellnessClubVideo::find()->where(['language' => $language])->one()) {
-                $wellnessClubVideo = new WellnessClubVideo();
-                $wellnessClubVideo->language = $language;
+            WellnessClubVideo::deleteAll();
+
+            foreach ($request->post('url') as $url) {
+                $url = trim($url);
+                if ($url) {
+                    $wellnessClubVideo = new WellnessClubVideo();
+                    $wellnessClubVideo->language = $language;
+                    $wellnessClubVideo->url = $url;
+                    $wellnessClubVideo->save();
+                }
             }
 
-            $wellnessClubVideo->url = $request->post('url');
-
-            if ($result = $wellnessClubVideo->save()) {
-                Yii::$app->session->setFlash('success', 'wellness_club_video_save_success');
-            } else {
-                Yii::$app->session->setFlash('danger', 'wellness_club_video_save_error');
-            }
+            Yii::$app->session->setFlash('success', 'wellness_club_video_save_success');
 
             $this->redirect('/' . Yii::$app->language . '/business/wellness-club-members?l=' . $wellnessClubVideo->language . '&t=video');
         }

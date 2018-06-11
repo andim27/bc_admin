@@ -34,7 +34,7 @@
             <div role="tabpanel" class="tab-pane <?= $currentTab == 'video' ? 'active' : '' ?>" id="video">
                 <?= $this->render('_tab_video', [
                     'language' => $language,
-                    'videoUrl' => $videoUrl,
+                    'videos' => $videos,
                     'selectedLanguage' => $selectedLanguage,
                     'translationList' => $translationList
                 ]); ?>
