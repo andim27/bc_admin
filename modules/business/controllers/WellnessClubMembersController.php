@@ -5,11 +5,16 @@ namespace app\modules\business\controllers;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api\dictionary\Country;
+use app\models\api\Lang;
+use app\models\WellnessClubInfo;
+use app\models\WellnessClubMembersInfoForm;
+use app\models\WellnessClubVideo;
 use app\modules\business\models\WellnessClubMembers;
-use DateTime;
-use MongoDate;
+use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDateTime;
 use Yii;
 use yii\data\Pagination;
+use yii\helpers\ArrayHelper;
 
 
 class WellnessClubMembersController extends BaseController
@@ -38,13 +43,11 @@ class WellnessClubMembersController extends BaseController
         $pages = new Pagination(['totalCount' => $wellnessClubMembers->count()]);
 
         $columns = [
-            'surname', 'name', 'countryId',
-            'address', 'mobile', 'email', 'skype', 'created', 'action'
+            'surname', 'name', 'countryId', 'address', 'mobile', 'email', 'skype', 'wellness_club_partner_date_end', 'action'
         ];
 
         $filterColumns = [
-            'updated_at', 'surname', 'name', 'countryId',
-            'address', 'mobile', 'email', 'skype'
+            'surname', 'name', 'countryId', 'address', 'mobile', 'email', 'skype', 'wellness_club_partner_date_end', 'action'
         ];
 
         if ($order = $request->get('order')[0]) {
@@ -78,6 +81,13 @@ class WellnessClubMembersController extends BaseController
                     $address = $user->address;
                 }
 
+                $endDate = $user->wellness_club_partner_date_end;
+                if ($endDate) {
+                    if (!is_string($endDate)) {
+                        $endDate = gmdate('d/m/Y H:i:s', $endDate->toDateTime()->getTimestamp());
+                    }
+                }
+
                 $nestedData['id'] = $count - ($key + $offset);
                 $nestedData[$columns[0]] = $user->surname;
                 $nestedData[$columns[1]] = $user->name;
@@ -86,8 +96,8 @@ class WellnessClubMembersController extends BaseController
                 $nestedData[$columns[4]] = $user->phone;
                 $nestedData[$columns[5]] = $user->email;
                 $nestedData[$columns[6]] = $user->skype;
-                $nestedData[$columns[7]] = $user->wellness_club_partner_date_end;
-                $nestedData[$columns[8]] = '<button class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply'). '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ).' data-email="'. $user->email.'">' . THelper::t('accepted') . '</button>';
+                $nestedData[$columns[7]] = $endDate;
+                $nestedData[$columns[8]] = '<button class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply') . '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ) . ' data-id="' . strval($user->userId) . '">' . THelper::t('accepted') . '</button>';
 
                 $data[] = $nestedData;
             }
@@ -100,7 +110,76 @@ class WellnessClubMembersController extends BaseController
             ];
         }
 
-        return $this->render('index', []);
+        if ($currentTab = $request->get('t')) {
+        } else {
+            $currentTab = 'members';
+        }
+
+        $requestLanguage = $request->get('l');
+
+        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
+        $languages = \app\models\api\dictionary\Lang::all();
+
+        $wellnessClubInfo = WellnessClubInfo::find()->where(['language' => $language])->one();
+        $wellnessClubVideos = WellnessClubVideo::find()->where(['language' => $language])->all();
+
+        return $this->render('index', [
+            'language' => Yii::$app->language,
+            'selectedLanguage' => $language,
+            'body' => $wellnessClubInfo ? $wellnessClubInfo->body : '',
+            'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : [],
+            'currentTab' => $currentTab,
+            'videos' => $wellnessClubVideos,
+        ]);
+    }
+
+    public function actionAddInfo()
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isPost) {
+            $language = $request->post('language');
+
+            if (!$wellnessClubInfo = WellnessClubInfo::find()->where(['language' => $language])->one()) {
+                $wellnessClubInfo = new WellnessClubInfo();
+                $wellnessClubInfo->language = $language;
+            }
+
+            $wellnessClubInfo->body = $request->post('body');
+
+            if ($result = $wellnessClubInfo->save()) {
+                Yii::$app->session->setFlash('success', 'wellness_club_info_save_success');
+            } else {
+                Yii::$app->session->setFlash('danger', 'wellness_club_info_save_error');
+            }
+
+            $this->redirect('/' . Yii::$app->language . '/business/wellness-club-members?l=' . $wellnessClubInfo->language . '&t=info');
+        }
+    }
+
+    public function actionAddVideo()
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isPost) {
+            $language = $request->post('language');
+
+            WellnessClubVideo::deleteAll();
+
+            foreach ($request->post('url') as $url) {
+                $url = trim($url);
+                if ($url) {
+                    $wellnessClubVideo = new WellnessClubVideo();
+                    $wellnessClubVideo->language = $language;
+                    $wellnessClubVideo->url = $url;
+                    $wellnessClubVideo->save();
+                }
+            }
+
+            Yii::$app->session->setFlash('success', 'wellness_club_video_save_success');
+
+            $this->redirect('/' . Yii::$app->language . '/business/wellness-club-members?l=' . $wellnessClubVideo->language . '&t=video');
+        }
     }
 
     /**
@@ -110,9 +189,15 @@ class WellnessClubMembersController extends BaseController
     {
         $request = Yii::$app->request->post();
 
-        $wellnessClubMember = wellnessClubMembers::find()->where(['email' => $request['email']])->one();
+        $wellnessClubMember = wellnessClubMembers::find()->where(['userId' => new ObjectID($request['userId'])])->one();
 
-        $wellnessClubMember->wellness_club_partner_date_end = date('d/m/Y h:m:i', strtotime('+1 year',  time()));
+        $dateInterval = \DateInterval::createFromDateString('1 year');
+
+        $now = new \DateTime();
+
+        $now->add($dateInterval);
+
+        $wellnessClubMember->wellness_club_partner_date_end = new UTCDateTime($now->getTimestamp() * 1000);
 
         return $wellnessClubMember->save();
     }

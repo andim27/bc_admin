@@ -42,7 +42,7 @@
                         <?= $w->ticket()->user()->city ?>
                     </td>
                     <td>
-                        <?= Html::a('<i class="fa fa-trash-o"></i>', 'javascript:void(0);', ['class' => 'remove-winner', 'data-id' => strval($w->_id) ]) ?>
+                        <?= Html::a('<i class="fa fa-trash-o"></i>', 'javascript:void(0);', ['class' => 'btn btn-danger remove-winner', 'data-id' => strval($w->_id) ]) ?>
                     </td>
                 </tr>
                 <?php $k++; } ?>

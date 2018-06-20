@@ -1,98 +1,44 @@
 <?php
     use app\components\THelper;
-    use yii\helpers\Html;
 ?>
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('wellness_club_members'); ?></h3>
+    <h3 class="m-b-none"><?= THelper::t('wellness_club_members_title'); ?></h3>
 </div>
-<section class="panel panel-default">
-    <div class="table-responsive">
-        <table class="table table-users table-striped datagrid m-b-sm">
-            <thead>
-                <tr>
-                    <th>
-                        <?=THelper::t('id')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('surname')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('name')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('country')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('address')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('mobile')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('email')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('skype')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('activity_date')?>
-                    </th>
-                    <th>
-                        <?=THelper::t('action')?>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs" role="tablist">
+            <li <?= $currentTab == 'members' ? 'class="active"' : '' ?>>
+                <a href="#members" aria-controls="members" role="tab" data-toggle="tab"><?= THelper::t('wellness_club_members_tab_members') ?></a>
+            </li>
+            <li <?= $currentTab == 'info' ? 'class="active"' : '' ?>>
+                <a href="#info" aria-controls="info" role="tab" data-toggle="tab"><?= THelper::t('wellness_club_members_tab_info') ?></a>
+            </li>
+            <li <?= $currentTab == 'video' ? 'class="active"' : '' ?>>
+                <a href="#video" aria-controls="video" role="tab" data-toggle="tab"><?= THelper::t('wellness_club_members_tab_video') ?></a>
+            </li>
+        </ul>
     </div>
-</section>
-
-<script>
-    var table = $('.table-users');
-
-    table = table.dataTable({
-        language: TRANSLATION,
-        "paging": true,
-        lengthMenu: [ 25, 50, 75, 100 ],
-        "pageLength": 10,
-        "processing": true,
-        "serverSide": true,
-        "ajax": {
-            "url": '/' + LANG + '/business/wellness-club-members'
-        },
-        "columns": [
-            {"data": "id"},
-            {"data": "surname"},
-            {"data": "name"},
-            {"data": "countryId"},
-            {"data": "address"},
-            {"data": "mobile"},
-            {"data": "email"},
-            {"data": "skype"},
-            {"data": "created"},
-            {"data": "action"}
-        ],
-        "order": [[ 0, "desc" ]]
-    });
-
-    $(document).on('click', '.apply', function () {
-
-        var $this = $(this);
-
-        $.ajax({
-            url: '<?=\yii\helpers\Url::to(['wellness-club-members/apply'])?>',
-            type: 'POST',
-            data: {
-                email: $this.data('email')
-            },
-            success: function (response) {
-                if (response) {
-                    location.reload();
-                }
-            }
-        });
-    });
-
-</script>
+    <div class="col-md-12">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane <?= $currentTab == 'members' ? 'active' : '' ?>" id="members">
+                <?= $this->render('_tab_members'); ?>
+            </div>
+            <div role="tabpanel" class="tab-pane <?= $currentTab == 'info' ? 'active' : '' ?>" id="info">
+                <?= $this->render('_tab_info', [
+                    'language' => $language,
+                    'body' => $body,
+                    'selectedLanguage' => $selectedLanguage,
+                    'translationList' => $translationList
+                ]); ?>
+            </div>
+            <div role="tabpanel" class="tab-pane <?= $currentTab == 'video' ? 'active' : '' ?>" id="video">
+                <?= $this->render('_tab_video', [
+                    'language' => $language,
+                    'videos' => $videos,
+                    'selectedLanguage' => $selectedLanguage,
+                    'translationList' => $translationList
+                ]); ?>
+            </div>
+        </div>
+    </div>
+</div>

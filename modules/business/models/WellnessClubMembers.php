@@ -25,6 +25,7 @@ class WellnessClubMembers extends ActiveRecord
     {
         return [
             '_id',
+            'userId',
             'surname',
             'name',
             'middleName',
