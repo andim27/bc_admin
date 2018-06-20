@@ -323,7 +323,7 @@ class DelovodController extends Controller{
     {
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL,"http://vipsite.biz/admin/get_order.php");
+        curl_setopt($ch, CURLOPT_URL,"https://vipsite.biz/admin/get_order.php");
         curl_setopt($ch, CURLOPT_POST, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 

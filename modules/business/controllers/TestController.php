@@ -21,8 +21,11 @@ use app\models\apiDelovod\Users;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
+use app\models\Sales;
+use app\models\Settings;
 use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDateTime;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -1223,11 +1226,104 @@ class TestController extends BaseController
 
     public function actionTest()
     {
+        $listCountry = Settings::getListCountry();
 
-        header('Content-Type: text/html; charset=utf-8');
-        echo '<xmp>';
-        print_r(Purchase::all());
-        echo '</xmp>';
+        $response = $turnover = [];
+
+        $model = Products::find()
+            ->select(['product','productSet'])
+            ->where(['productSet'=>[
+                '$exists' => true
+            ]])
+            ->all();
+        $listProduct = $listProductName = [];
+        foreach ($model as $item) {
+            if(!empty($item->productSet)){
+                foreach ($item->productSet as $itemSet) {
+                    if(empty($listProduct[$item->product][$itemSet['setName']])){
+                        $listProduct[$item->product][$itemSet['setName']]=0;
+                    }
+                    $listProduct[$item->product][$itemSet['setName']]++;
+
+                    $listProductName[$itemSet['setName']]=0;
+                }
+            }
+        }
+        $model = Sales::find()
+            ->select(['product','idUser','price'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime('2018-05-01 00:00:01') * 1000),
+                    '$lte' => new UTCDateTime(strtotime('2018-05-31 23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere(['in','product',array_keys($listProduct)])
+            ->all();
+        foreach ($model as $item) {
+
+            $country = \app\models\Users::findOne(['_id'=>$item->idUser])->country;
+
+            if(empty($country)){
+                $country = 'none';
+            }
+
+            $country = strtolower($country);
+
+
+            $listProductOrder = $listProduct[$item->product];
+            foreach ($listProductOrder as $kProduct => $itemProduct) {
+                if(empty($response[$country][$kProduct])){
+                    $response[$country][$kProduct] = 0;
+                }
+
+                $response[$country][$kProduct] += $itemProduct;
+
+            }
+
+
+            if(empty($turnover[$country])){
+                $turnover[$country] = 0;
+            }
+            $turnover[$country] += $item->price;
+
+
+        }
+
+//
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo '<xmp>';
+//        print_r($turnover);
+//        echo '</xmp>';
+//        die();
+
+        $bl = '
+            <table>
+                <tr>
+                    <th>Страна
+            ';
+        foreach ($listProductName as $kP=>$itemP){
+            $bl .= '<th> ' .$kP;
+        }
+        $bl .= '<th> Товарооборот';
+
+        foreach ($response as $k=>$item) {
+            $bl .= '
+                <tr>
+                    <td>' . $listCountry[$k];
+            foreach ($listProductName as $kP=>$itemP){
+                $bl .= '<td> ' .(!empty($item[$kP]) ? $item[$kP] : '0');
+            }
+
+            $bl .= '<th> ' . $turnover[$k];
+        }
+        $bl.='</table>';
+
+        echo $bl;
         die();
     }
 

@@ -31,8 +31,8 @@ $countGoods = $countGoodsFromMyWarehouse[$goodsID];
                 <?=Html::label(THelper::t('Количество'))?>
                 <?=Html::input('number','number','0',[
                     'class'=>'form-control wantCancellations',
-                    'min'=>'1',
-                    'step'=>'1',
+                    'min'=>'0.01',
+                    'step'=>'0.01',
                 ])?>
             </div>
 
