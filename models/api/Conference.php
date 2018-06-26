@@ -69,7 +69,7 @@ class Conference
                 $promotion->id         = $object->_id;
                 $promotion->author     = $object->author;
                 $promotion->lang       = $object->lang;
-                $promotion->v          = $object->__v;
+                $promotion->v          = isset($object->__v)?$object->__v:0;
                 $promotion->isDelete   = $object->isDelete;
                 $promotion->dateOfPublication = strtotime($object->dateOfPublication);
                 $promotion->dateUpdate = strtotime($object->dateUpdate);
