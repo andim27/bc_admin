@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment                                          
+metadata:
+  name: bpt-admin
+spec:
+  replicas: 3                                             
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate                                   
+    rollingUpdate: 
+      maxUnavailable: 1                                   
+      maxSurge: 1                                         
+  template:                                               
+    metadata:
+      labels:
+        app: sa-frontend                                  
+    spec:
+      containers:
+        - image: registry.ooo.ua/bulich/admin
+          imagePullPolicy: Always                         
+          name: bpt-admin
+          ports:
+            - containerPort: 80
