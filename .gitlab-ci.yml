@@ -12,7 +12,7 @@ stages:
 .testing-staging-only: &testing-staging-only
   only:
     - tags
-    - /^feature_.*$/
+    - /^master.*$/
     - /^infra_.*$/
 
 # задачи на стадиях approve И production
