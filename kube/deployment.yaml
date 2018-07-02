@@ -13,11 +13,13 @@ spec:
   template:                                               
     metadata:
       labels:
-        app: sa-frontend                                  
+        app: bpt-admin                                  
     spec:
       containers:
-        - image: registry.ooo.ua/bulich/admin
+        - image: registry.ooo.ua/bulich/bpt-admin:latest
           imagePullPolicy: Always                         
           name: bpt-admin
           ports:
             - containerPort: 80
+      imagePullSecrets:
+        - name: gitlab-registry

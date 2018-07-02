@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: bpt-admin
+  namespace: bpt
+spec:
+  rules:
+  - host: bpt-admin.ooo.ua
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: bpt-admin
+          servicePort: 80
