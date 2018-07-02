@@ -6,9 +6,9 @@ metadata:
     name: bpt-admin
   namespace: bpt
 spec:
+  type: NodePort
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
+    - port: 80
+      nodePort: 30082
   selector:
     name: bpt-admin
