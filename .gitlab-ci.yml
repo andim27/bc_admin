@@ -15,6 +15,7 @@ build:
   stage: build
   script:
     - ls
+    - pre-admin.sh
     - docker build -t $CONTAINER_RELEASE_IMAGE .
     - docker push $CONTAINER_RELEASE_IMAGE
     - post-admin.sh
