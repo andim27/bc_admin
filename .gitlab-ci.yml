@@ -1,6 +1,4 @@
 image: docker:git
-services:
-- docker:dind
 
 stages:
 - build
@@ -16,7 +14,7 @@ before_script:
 build:
   stage: build
   script:
-    - pre-admin.sh
+    - ls
     - docker build -t $CONTAINER_RELEASE_IMAGE .
     - docker push $CONTAINER_RELEASE_IMAGE
     - post-admin.sh
