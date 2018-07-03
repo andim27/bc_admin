@@ -1,21 +1,9 @@
-stages:
-  - build
+image: docker:latest
 
-
-## build stage
+before_script:
+- docker info
 
 build:
   stage: build
-  tags: [deploy]
   script:
-    - mkdir -p .ci_status
-    - echo "Build"
-    - sh pre-admin.sh
-    - sh build.sh
-    - sh post-admin.sh
-    - touch .ci_status/build_success
-  artifacts:
-    paths:
-      - .ci_status/
-
-
+  - echo 'test33'
