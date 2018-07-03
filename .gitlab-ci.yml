@@ -5,24 +5,26 @@ stages:
 - deploy
 
 variables:
-  CONTAINER_TEST_IMAGE: registry.example.com/my-group/my-project:$CI_BUILD_REF_NAME
-  CONTAINER_RELEASE_IMAGE: registry.ooo.ua/bulich/bpt-admin:latest
+  CONTAINER_REGISTRY: registry.ooo.ua
+  
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.ooo.ua
 
 build:
   stage: build
-  script:
-    - ls
-    - ./pre-admin.sh
-    - docker build -t $CONTAINER_RELEASE_IMAGE .
-    - docker push $CONTAINER_RELEASE_IMAGE
+  script:    
+    - ./pre-admin.sh  
+    - docker info   
+    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
+    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_REF_NAME}    
+    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_REF_NAME}
     - ./post-admin.sh
-
 deploy:
   stage: deploy
   script:
-    - ./deploy.sh
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+    - chmod +x ./kubectl
+    - mv ./kubectl /usr/local/bin/kubectl    
   only:
     - master
