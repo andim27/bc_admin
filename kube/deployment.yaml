@@ -11,7 +11,7 @@ spec:
     metadata:
       labels:
         name: bpt-admin
-        version: __VERSION__
+        version: "0.2"
     spec:
       containers:
       - name: bpt-admin
