@@ -4,14 +4,14 @@ metadata:
   name: bpt-admin
   labels:
     name: bpt-admin
+    version: "0.__VERSION__"
   namespace: bpt
 spec:
   replicas: 3
   template:
     metadata:
       labels:
-        name: bpt-admin
-        version: "0.2"
+        name: bpt-admin        
     spec:
       containers:
       - name: bpt-admin
