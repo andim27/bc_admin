@@ -9,7 +9,7 @@ variables:
   
 
 before_script:
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.ooo.ua
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
 
 build:
   stage: build
@@ -17,14 +17,50 @@ build:
     - ./pre-admin.sh  
     - docker info   
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
-    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_REF_NAME}    
+    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_REF_NAME}
     - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_REF_NAME}
     - ./post-admin.sh
-deploy:
-  stage: deploy
-  script:
-    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-    - chmod +x ./kubectl
-    - mv ./kubectl /usr/local/bin/kubectl    
-  only:
-    - master
+
+deploy_test:
+    image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
+    stage: deploy
+    environment:
+        name: test
+        url: "http://bpt-admin.ooo.ua/"
+    script:
+        - echo "${KUBE_CA_PEM}" > kube_ca.pem
+        - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
+        - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
+        - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
+        - kubectl config use-context default-system
+        - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" ./kube/deployment.yaml ./kube/ingress.yaml ./kube/service.yaml
+        - sed -i "s/__VERSION__/${CI_COMMIT_REF_NAME}/" ./kube/deployment.yaml ./kube/ingress.yaml ./kube/service.yaml
+        - kubectl cluster-info
+        - kubectl get deployments -l app=${CI_ENVIRONMENT_SLUG}
+        - kubectl create -f ./kube/deployment.yaml || (kubectl delete -f ./kube/deployment.yaml && kubectl apply -f ./kube/deployment.yaml)
+        - kubectl create -f ./kube/service.yaml || true
+        - kubectl apply -f ./kube/ingress.yaml
+
+# deploy to live "environment", the Kubernetes manifests to the cluster
+deploy_prod:
+    image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
+    stage: deploy
+    environment:
+        name: prod
+        url: "http://admin.businessprocess.biz/"
+    only:
+        - master
+    when: manual
+    script:
+        - echo "${KUBE_CA_PEM}" > kube_ca.pem
+        - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
+        - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
+        - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
+        - kubectl config use-context default-system
+        - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml ingress.yaml service.yaml
+        - sed -i "s/__VERSION__/${CI_COMMIT_REF_NAME}/" deployment.yaml ingress.yaml service.yaml
+        - kubectl cluster-info
+        - kubectl get deployments -l app=${CI_ENVIRONMENT_SLUG}
+        - kubectl apply -f deployment.yaml
+        - kubectl create -f service.yaml || true
+        - kubectl apply -f ingress.yaml

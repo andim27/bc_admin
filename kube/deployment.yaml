@@ -1,53 +1,25 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: bpt-admin
+  name: __CI_ENVIRONMENT_SLUG__
   labels:
     name: bpt-admin
-  namespace: bpt
+    app: __CI_ENVIRONMENT_SLUG__
+    track: stable 
 spec:
   replicas: 3
   template:
     metadata:
       labels:
-        name: bpt-admin
+        name: __CI_ENVIRONMENT_SLUG__
+        track: stable
         version: "0.1"
     spec:
       containers:
       - name: bpt-admin
-        image: registry.ooo.ua/bulich/bpt-admin:latest
-        ports:
-        - name: admin
+        image: registry.ooo.ua/bulich/bpt-admin:__VERSION__
+        imagePullPolicy: Always
+        ports:        
           containerPort: 80
       imagePullSecrets:
         - name: gitlab-registry
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: bpt-admin
-  labels:
-    name: bpt-admin
-  namespace: bpt
-spec:
-  ports:
-    # the port that this service should serve on
-  - port: 80
-    targetPort: 80
-  selector:
-    name: bpt-admin
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: bpt-admin
-  namespace: bpt
-spec:
-  rules:
-  - host: bpt-admin.ooo.ua
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: bpt-admin
-          servicePort: 80
