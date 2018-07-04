@@ -36,7 +36,6 @@ deploy_test:
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" ./kube/deployment.yaml ./kube/ingress.yaml ./kube/service.yaml
         - sed -i "s/__VERSION__/${CI_COMMIT_REF_NAME}/" ./kube/deployment.yaml ./kube/ingress.yaml ./kube/service.yaml
         - kubectl cluster-info
-        - kubectl get deployments -l app=${CI_ENVIRONMENT_SLUG}
         - kubectl create -f ./kube/deployment.yaml || (kubectl delete -f ./kube/deployment.yaml && kubectl apply -f ./kube/deployment.yaml)
         - kubectl create -f ./kube/service.yaml || true
         - kubectl apply -f ./kube/ingress.yaml
