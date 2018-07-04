@@ -16,7 +16,7 @@ build:
   script:    
     - ./pre-admin.sh  
     - docker info   
-    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
+    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest . --no-cache
     - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
     - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
     - ./post-admin.sh
