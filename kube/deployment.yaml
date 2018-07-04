@@ -10,7 +10,8 @@ spec:
   template:
     metadata:
       labels:
-        name: bpt-admin        
+        name: bpt-admin
+        version: "0.1"
     spec:
       containers:
       - name: bpt-admin
