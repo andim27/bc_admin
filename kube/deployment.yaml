@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: bpt-admin
-        image: registry.ooo.ua/bulich/bpt-admin:latest
+        image: registry.ooo.ua/bulich/bpt-admin:__VERSION__
         ports:
         - name: admin
           containerPort: 80
