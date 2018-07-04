@@ -1,18 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: bpt-admin-__CI_ENVIRONMENT_SLUG__
+  name: bpt-admin
   labels:
     name: bpt-admin
-    prometheus-scrape: "true"
   namespace: bpt
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
-    # the port that this service should serve on
-    - name: http
-      port: 80
-      targetPort: 80
-      protocol: TCP
+    - port: 80
+      nodePort: 30082
   selector:
-    app: __CI_ENVIRONMENT_SLUG__
+    name: bpt-admin

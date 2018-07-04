@@ -1,25 +1,23 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: __CI_ENVIRONMENT_SLUG__
+  name: bpt-admin
   labels:
     name: bpt-admin
-    app: __CI_ENVIRONMENT_SLUG__
-    track: stable 
+  namespace: bpt
 spec:
   replicas: 3
   template:
     metadata:
       labels:
-        name: __CI_ENVIRONMENT_SLUG__
-        track: stable
+        name: bpt-admin
         version: "0.1"
     spec:
       containers:
       - name: bpt-admin
-        image: registry.ooo.ua/bulich/bpt-admin:__VERSION__
-        imagePullPolicy: Always
-        ports:        
-        - containerPort: 80
+        image: registry.ooo.ua/bulich/bpt-admin:latest
+        ports:
+        - name: admin
+          containerPort: 80
       imagePullSecrets:
         - name: gitlab-registry

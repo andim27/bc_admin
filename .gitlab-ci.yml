@@ -17,8 +17,8 @@ build:
     - ./pre-admin.sh  
     - docker info   
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
-    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_REF_NAME}
-    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_REF_NAME}
+    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
+    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
     - ./post-admin.sh
 
 deploy_test:
