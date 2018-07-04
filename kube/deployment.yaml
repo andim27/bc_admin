@@ -20,6 +20,6 @@ spec:
         image: registry.ooo.ua/bulich/bpt-admin:__VERSION__
         imagePullPolicy: Always
         ports:        
-          containerPort: 80
+        - containerPort: 80
       imagePullSecrets:
         - name: gitlab-registry
