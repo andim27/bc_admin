@@ -17,8 +17,8 @@ build:
     - ./pre-admin.sh  
     - docker info   
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
-    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_REF_SLUG}
-    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_REF_SLUG}
+    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
+    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
     - ./post-admin.sh
 
 deploy_test:
@@ -34,7 +34,7 @@ deploy_test:
         - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
         - kubectl config use-context default-system
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" ./kube/deployment.yaml ./kube/ingress.yaml ./kube/service.yaml
-        - sed -i "s/__VERSION__/${CI_COMMIT_REF_SLUG}/" ./kube/deployment.yaml ./kube/ingress.yaml ./kube/service.yaml
+        - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" ./kube/deployment.yaml ./kube/ingress.yaml ./kube/service.yaml
         - kubectl cluster-info
         - kubectl apply -f ./kube/deployment.yaml 
         - kubectl apply -f ./kube/service.yaml || true
