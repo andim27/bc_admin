@@ -41,7 +41,6 @@ deploy_test:
         - kubectl apply -f ./kube/service.yaml || true
         - kubectl apply -f ./kube/ingress.yaml
 
-# deploy to live "environment", the Kubernetes manifests to the cluster
 deploy_prod:
     image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
     stage: deploy
