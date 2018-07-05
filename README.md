@@ -1,3 +1,4 @@
+[![build status](http://git.ooo.ua/bulich/bpt-admin/badges/master/build.svg)](http://git.ooo.ua/bulich/bpt-admin/commits/master)
 Yii 2 Basic Application Template
 ================================
 
