@@ -4,6 +4,7 @@ metadata:
   name: bpt-admin
   labels:
     name: bpt-admin
+    commit: __COMMIT__
   namespace: bpt
 spec:
   type: NodePort
