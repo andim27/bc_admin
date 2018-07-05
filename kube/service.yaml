@@ -12,4 +12,4 @@ spec:
     - port: 80
       nodePort: 30082
   selector:
-    name: bpt-admin
+    app: bpt-admin
