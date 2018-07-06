@@ -334,4 +334,32 @@ class ReferenceController extends BaseController
 
         $this->redirect('/' . Yii::$app->language . '/business/reference/career/?l=' . $language);
     }
+
+    //--------------------newAdmin-----------------
+    public function actionGoods() {
+        $goods = [];
+
+        $request = Yii::$app->request;
+        $requestLanguage = $request->get('l');
+        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
+        $languages = api\dictionary\Lang::all();
+        return $this->render('goods', [
+            'goods' => $goods,
+            'language' => $language,
+            'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : []
+        ]);
+    }
+    public function actionComplects() {
+        $complects = [];
+
+        $request = Yii::$app->request;
+        $requestLanguage = $request->get('l');
+        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
+        $languages = api\dictionary\Lang::all();
+        return $this->render('complects', [
+            'goods' => $complects,
+            'language' => $language,
+            'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : []
+        ]);
+    }
 }
