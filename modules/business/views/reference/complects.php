@@ -25,8 +25,11 @@ GoodsAsset::register($this);
                         <i class="fa fa-refresh"></i>
                     </button>
                 </div>
-                <a href="modal.html" data-toggle="ajaxModal" class="btn btn-sm btn-default">
-                    <i class="fa fa-plus"></i> Create</a>
+<!--                <a href="#ajaxModal" data-toggle="ajaxModal" class="btn btn-sm btn-default">-->
+<!--                    <i class="fa fa-plus"></i> Create</a>-->
+                <button id="create-btn" type="button" class="btn btn-sm btn-default" title="Create">
+                    <i class="fa fa-plus"></i>
+                </button>
             </div>
             <div class="col-sm-4 m-b-xs">
                 <div class="input-group">
@@ -625,6 +628,11 @@ GoodsAsset::register($this);
                 $('#complexItems').append('<div class="row"><div class="m-b-sm col-md-6"><div class="input-group"><span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span><input type="text" class="form-control input-sm" disabled="disabled" value="'+$('#select2-option option:selected').text()+'"><input type="hidden" name="setName[]" value="'+$('#select2-option option:selected').text()+'"><input type="hidden" name="setId[]" value="59620f57dca78747631d3c62"></div></div><div class="m-b-sm col-md-6"><input type="number" class="form-control" name="setPrice[]" value="0" min="0" step="0.01"></div></div>');
             })
         })
+        $(function() {
+          $('#create-btn').click(function () {
+              $('#create-modal').show().modal()
+          })
+        })
     </script>
 
 </div>
@@ -633,7 +641,7 @@ GoodsAsset::register($this);
 
 <div class="select2-drop select2-display-none select2-with-searchbox select2-drop-active" style="top: 695.817px; left: 615px; width: 260px; display: none;">   <div class="select2-search">       <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="select2-input select2-focused" type="text">   </div>   <ul class="select2-results"></ul></div>
 
-<div class="modal" id="ajaxModal" style="display: none;" aria-hidden="true"><div class="modal-dialog">
+<div class="modal" id="create-modal" style="display: none;" aria-hidden="true"><div class="modal-dialog">
         <div class="modal-content">
             <form role="form">
                 <div class="modal-header">

@@ -10,27 +10,46 @@ GoodsAsset::register($this);
         padding-top: 30px;
         padding-bottom: 30px;
     }
+
+    .categorySelected {
+        color: #fff !important;
+        /*background-color: #00b2de !important;*/
+        border-color: #1f2a34!important;
+    }
 </style>
 <div class="m-b-md">
     <h3 class="m-b-none"><?=THelper::t('goods') ?></h3>
+<!--    --><?php //foreach ($goods as $item) { ?>
+<!--    <p>-->
+<!--        <pre style="width:100%;overflow: auto">-->
+<!--        --><?//=json_encode($item); ?>
+<!--        </pre>-->
+<!--    </p>-->
+<!--    --><?php //}?>
 </div>
 <section class="hbox stretch">
     <aside class="aside-md bg-white b-r" id="subNav">
-        <div class="wrapper b-b header">Категории</div>
+        <div class="wrapper b-b header">
+            Категории
+            <button id="add-category-btn" type="button" class="btn btn-link" style="margin-top: 0px;"><i class="fa fa-plus"></i></button>
+            <button id="edit-category-btn" type="button" class="btn btn-link" style="margin-top: 0px;margin-left:10px"><i class="fa fa-edit"></i></button>
+<!--            <button type="button" class="btn btn-default btn-sm" id="createBtn"> <i class="fa fa-plus"></i></button>-->
+        </div>
+
         <ul class="nav">
-            <li class="b-b b-light">
+            <li id="cat-menu-0" class="b-b b-light categorySelected" onclick="categorySelect(this,0)">
                 <a href="#">
                     <i class="fa fa-chevron-right pull-right m-t-xs text-xs icon-muted"></i>Все товары</a>
             </li>
-            <li class="b-b b-light">
+            <li id="cat-menu-1" class="b-b b-light" onclick="categorySelect(this,1)">
                 <a href="#">
                     <i class="fa fa-chevron-right pull-right m-t-xs text-xs icon-muted"></i>Webwellness</a>
             </li>
-            <li class="b-b b-light">
+            <li id="cat-menu-2" class="b-b b-light" onclick="categorySelect(this,2)">
                 <a href="#">
                     <i class="fa fa-chevron-right pull-right m-t-xs text-xs icon-muted"></i>VipVip</a>
             </li>
-            <li class="b-b b-light">
+            <li id="cat-menu-3" class="b-b b-light" onclick="categorySelect(this,3)">
                 <a href="#">
                     <i class="fa fa-chevron-right pull-right m-t-xs text-xs icon-muted"></i>VipCoin</a>
             </li>
@@ -50,187 +69,109 @@ GoodsAsset::register($this);
                                 <i class="fa fa-refresh"></i>
                             </button>
                         </div>
-                        <a href="modal.html" data-toggle="ajaxModal" class="btn btn-sm btn-default">
-                            <i class="fa fa-plus"></i> Create</a>
+<!--                        <a id="#createBtn" href="#" class="btn btn-sm btn-default">-->
+<!--                            <i class="fa fa-plus"></i> Create</a>-->
+                        <button type="button" class="btn btn-default btn-sm" id="createBtn"> <i class="fa fa-plus"></i>Create</button>
                     </div>
                     <div class="col-sm-4 m-b-xs">
-                        <div class="input-group">
-                            <input class="input-sm form-control" placeholder="Search" type="text">
-                            <span class="input-group-btn">
-                                                    <button class="btn btn-sm btn-default" type="button">Go!</button>
-                                                </span>
-                        </div>
+<!--                        <div class="input-group">-->
+<!--                            <input class="input-sm form-control" placeholder="Search" type="text">-->
+<!--                            <span class="input-group-btn">-->
+<!--                                                    <button class="btn btn-sm btn-default" type="button">Go!</button>-->
+<!--                            </span>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </header>
             <section class="scrollable wrapper w-f">
                 <section class="panel panel-default">
-                    <div class="table-responsive">
-                        <table class="table table-striped m-b-none">
-                            <thead>
-                            <tr>
-                                <th class="th-sortable" data-toggle="class" width="60">ID
-                                    <span class="th-sort">
-                                                                <i class="fa fa-sort-down text"></i>
-                                                                <i class="fa fa-sort-up text-active"></i>
-                                                                <i class="fa fa-sort"></i>
-                                                            </span>
 
-                                </th>
-                                <th width="20"></th>
-                                <th class="th-sortable" data-toggle="class">Название
-                                    <span class="th-sort">
-                                                                <i class="fa fa-sort-down text"></i>
-                                                                <i class="fa fa-sort-up text-active"></i>
-                                                                <i class="fa fa-sort"></i>
-                                                            </span>
-                                </th>
-                                <th class="th-sortable" data-toggle="class" width="80">Цена
-                                    <span class="th-sort">
-                                                                <i class="fa fa-sort-down text"></i>
-                                                                <i class="fa fa-sort-up text-active"></i>
-                                                                <i class="fa fa-sort"></i>
-                                                            </span>
-                                </th>
-                                <th class="th-sortable" data-toggle="class" width="80">Бонус
-                                    <span class="th-sort">
-                                                                <i class="fa fa-sort-down text"></i>
-                                                                <i class="fa fa-sort-up text-active"></i>
-                                                                <i class="fa fa-sort"></i>
-                                                            </span>
-                                </th>
-                                <th>Баллы</th>
-                                <th>Акции</th>
-                                <th>Последняя продажа</th>
-                                <th>Тип</th>
-                                <th width="30"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>
-                                    1
-                                </td>
-                                <td>
-                                    <a href="#modal" data-toggle="modal">
-                                        <i class="fa fa-search-plus"></i>
-                                    </a>
-                                </td>
-                                <td>VipCoin активация бизнес-места на 12 месяцев (VipCoin activation of business cell for 12 month)</td>
-                                <td>150</td>
-                                <td>25</td>
-                                <td>30</td>
-                                <td>936</td>
-                                <td class="text-center">21/05/2018</td>
-                                <td>2</td>
-                                <td>
-                                    <i class="fa fa-check text-success text"></i>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    2
-                                </td>
-                                <td>
-                                    <a href="#modal" data-toggle="modal">
-                                        <i class="fa fa-search-plus"></i>
-                                    </a>
-                                </td>
-                                <td>Business Pack "VIP" (Вип) - Wellness Life Watch 2pcs + Life Animal</td>
-                                <td>1005</td>
-                                <td>150</td>
-                                <td>150</td>
-                                <td>20000</td>
-                                <td class="text-center">21/05/2018</td>
-                                <td>5</td>
-                                <td>
-                                    <i class="fa fa-times text-danger text"></i>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    3
-                                </td>
-                                <td>
-                                    <a href="#modal" data-toggle="modal">
-                                        <i class="fa fa-search-plus"></i>
-                                    </a>
-                                </td>
-                                <td>VipCoin активация бизнес-места на 12 месяцев (VipCoin activation of business cell for 12 month)</td>
-                                <td>150</td>
-                                <td>25</td>
-                                <td>30</td>
-                                <td>936</td>
-                                <td class="text-center">21/05/2018</td>
-                                <td>2</td>
-                                <td>
-                                    <i class="fa fa-check text-success text"></i>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    4
-                                </td>
-                                <td>
-                                    <a href="#modal" data-toggle="modal">
-                                        <i class="fa fa-search-plus"></i>
-                                    </a>
-                                </td>
-                                <td>Business Pack "VIP" (Вип) - Wellness Life Watch 2pcs + Life Animal</td>
-                                <td>1005</td>
-                                <td>150</td>
-                                <td>150</td>
-                                <td>20000</td>
-                                <td class="text-center">21/05/2018</td>
-                                <td>5</td>
-                                <td>
-                                    <i class="fa fa-times text-danger text"></i>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    5
-                                </td>
-                                <td>
-                                    <a href="#modal" data-toggle="modal">
-                                        <i class="fa fa-search-plus"></i>
-                                    </a>
-                                </td>
-                                <td>VipCoin активация бизнес-места на 12 месяцев (VipCoin activation of business cell for 12 month)</td>
-                                <td>150</td>
-                                <td>25</td>
-                                <td>30</td>
-                                <td>936</td>
-                                <td class="text-center">21/05/2018</td>
-                                <td>2</td>
-                                <td>
-                                    <i class="fa fa-check text-success text"></i>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    6
-                                </td>
-                                <td>
-                                    <a href="#modal" data-toggle="modal">
-                                        <i class="fa fa-search-plus"></i>
-                                    </a>
-                                </td>
-                                <td>Business Pack "VIP" (Вип) - Wellness Life Watch 2pcs + Life Animal</td>
-                                <td>1005</td>
-                                <td>150</td>
-                                <td>150</td>
-                                <td>20000</td>
-                                <td class="text-center">21/05/2018</td>
-                                <td>5</td>
-                                <td>
-                                    <i class="fa fa-times text-danger text"></i>
-                                </td>
-                            </tr>
 
-                            </tbody>
-                        </table>
-                    </div>
+
+                <!--                    Products table from BD-->
+                 <div class="table-responsive">
+                    <table id="goods-table" class="table table-striped m-b-none">
+                        <thead>
+                        <tr>
+                            <th class="th-sortable" data-toggle="class" width="60">ID
+                                <span class="th-sort">
+                                                                <i class="fa fa-sort-down text"></i>
+                                                                <i class="fa fa-sort-up text-active"></i>
+                                                                <i class="fa fa-sort"></i>
+                                    </span>
+
+                            </th>
+                            <th width="20"></th>
+                            <th class="th-sortable" data-toggle="class">Название
+                                <span class="th-sort">
+                                                                <i class="fa fa-sort-down text"></i>
+                                                                <i class="fa fa-sort-up text-active"></i>
+                                                                <i class="fa fa-sort"></i>
+                                    </span>
+                            </th>
+                            <th class="th-sortable" data-toggle="class" width="80">Цена
+                                <span class="th-sort">
+                                                                <i class="fa fa-sort-down text"></i>
+                                                                <i class="fa fa-sort-up text-active"></i>
+                                                                <i class="fa fa-sort"></i>
+                                    </span>
+                            </th>
+                            <th class="th-sortable" data-toggle="class" width="80">Бонус
+                                <span class="th-sort">
+                                                                <i class="fa fa-sort-down text"></i>
+                                                                <i class="fa fa-sort-up text-active"></i>
+                                                                <i class="fa fa-sort"></i>
+                                    </span>
+                            </th>
+                            <th>Баллы</th>
+                            <th>Акции</th>
+                            <th>Последняя продажа</th>
+                            <th>Тип</th>
+                            <th width="30"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $index=1;
+                        foreach ($goods as $item) { ?>
+                        <tr>
+                            <td>
+                                <?php
+                                echo $index++;
+                                ?>
+                            </td>
+                            <td>
+                                <a href="#modal" data-toggle="modal" data-myvar="<?=$item['_id'] ?>">
+                                    <i class="fa fa-search-plus"></i>
+                                </a>
+                            </td>
+                            <td><?=$item['productName'] ?></td>
+                            <td><?=$item['price'] ?></td>
+                            <td><?=$item['bonusMoney'] ?></td>
+                            <td><?=$item['bonusPoints'] ?></td>
+                            <td><?=$item['bonusStocks'] ?></td>
+                            <td class="text-center">
+                                <?=@gmdate('d.m.Y', $item['updated_at']) ?>
+
+                            </td>
+                            <td>
+                                <?=$item['type'] ?>
+                            </td>
+
+                            <td>
+                                <i class="fa fa-check text-success text"></i>
+                            </td>
+                            <?php } ?>
+                        </tr>
+
+
+
+
+
+
+                        </tbody>
+                    </table>
+                </div>
                 </section>
             </section>
             <footer class="footer bg-white b-t">
@@ -417,78 +358,6 @@ GoodsAsset::register($this);
                         </div>
                     </div>
 
-                    <!--
-                    <div class="row m-b">
-
-                            <label class="col-sm-12 control-label m-b text-center">Градация стоимости в зависимости от суммы заказа</label>
-
-                            <div id="difShow">
-                                <div class="table-responsive">
-                                    <table class="table table-striped m-b-none">
-                                        <thead>
-                                            <tr>
-
-                                                <th data-toggle="class">Сумма от<br> (в Евро)</th>
-                                                <th data-toggle="class">Розничная цена (в Евро)</th>
-                                                <th data-toggle="class">Премия</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    1000
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" value="150">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" value="150">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    2000
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" value="150">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" value="150">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    5000
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control " value="150">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control " value="150">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    10000
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control " value="150">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control " value="150">
-                                                </td>
-                                            </tr>
-
-
-                                        </tbody>
-                                    </table>
-                                </div>
-
-
-                            </div>
-                        </div>
-                    -->
-
 
                     <div class="row">
                         <div class="form-group col-sm-6 m-b plnone">
@@ -654,58 +523,7 @@ GoodsAsset::register($this);
 
                     <div class="row m-b">
 
-                        <!--  <div class="form-group col-sm-6 m-b">
 
-                              <div class="row form-group">
-                                  <label class="col-sm-7 control-label">Составной товар</label>
-                                  <div class="col-sm-5" style="padding-left: 5px">
-                                      <label class="switch">
-                                          <input id="complex" type="checkbox">
-                                          <span></span>
-                                      </label>
-                                  </div>
-                              </div>
-
-                              <div class="row form-group">
-
-                              <div id="showComplex" class="hidden form-group col-sm-12">
-                                  <div class="form-group">
-                                      <div class="m-b col-sm-10 plnone">
-                                          <select id="select2-option" style="width:260px">
-                                              <optgroup label="Wellness">
-                                                  <option value="AK">Alaska</option>
-                                                  <option value="HI">Hawaii</option>
-                                              </optgroup>
-                                              <optgroup label="VipVip">
-                                                  <option value="CA">California</option>
-                                                  <option value="NV">Nevada</option>
-                                                  <option value="OR">Oregon</option>
-                                                  <option value="WA">Washington</option>
-                                              </optgroup>
-                                              <optgroup label="VipCoin">
-                                                  <option value="AZ">Arizona</option>
-                                                  <option value="CO">Colorado</option>
-                                                  <option value="ID">Idaho</option>
-                                                  <option value="MT">Montana</option>
-                                                  <option value="NE">Nebraska</option>
-                                              </optgroup>
-                                          </select>
-                                      </div>
-
-                                      <div class="m-b col-sm-2">
-                                              <a href="#" class="btn btn-dark btn-sm btn-icon addItemSet" id="addComplex">+</a>
-                                      </div>
-                                      <div class="row" id="complexItems">
-
-
-                                      </div>
-                                  </div>
-                              </div>
-
-                              </div>
-
-                          </div>
-                      -->
                         <div class="form-group col-sm-6 m-b plnone">
 
                             <label class="col-sm-7 control-label">Активный товар</label>
@@ -736,45 +554,13 @@ GoodsAsset::register($this);
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-    <script>
-        $(function() {
-            $('#difPremia').change(function() {
 
-                $('#difShow').toggleClass('hidden')
-
-            })
-        })
-        $(function() {
-            $('#complex').change(function() {
-
-                $('#showComplex').toggleClass('hidden')
-
-            })
-        })
-        $(function() {
-            $('span.removeItem').click(function() {
-
-                $("#complexItems").parent().parent().parent().remove();
-
-            })
-        })
-        $(document).on('click','.removeItem',function () {
-            if (confirm('Вы уверены что хотете удалить позицию?')) {
-                $(this).closest('.row').remove();
-            }
-        });
-
-        $(function() {
-            $('#addComplex').click(function() {
-
-                $('#complexItems').append('<div class="row"><div class="m-b-sm col-md-6"><div class="input-group"><span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span><input type="text" class="form-control input-sm" disabled="disabled" value="'+$('#select2-option option:selected').text()+'"><input type="hidden" name="setName[]" value="'+$('#select2-option option:selected').text()+'"><input type="hidden" name="setId[]" value="59620f57dca78747631d3c62"></div></div><div class="m-b-sm col-md-6"><input type="number" class="form-control" name="setPrice[]" value="0" min="0" step="0.01"></div></div>');
-            })
-        })
-    </script>
 
 </div>
 
-<div class="modal" id="ajaxModal" style="display: none;" aria-hidden="true"><div class="modal-dialog">
+<!--<div class="modal" id="ajaxModal" style="display: none;" aria-hidden="true" >-->
+<div class="modal" id="ajaxModal" style="display: none;" aria-hidden="true"  role="dialog">
+    <div class="modal-dialog">
         <div class="modal-content">
             <form role="form">
                 <div class="modal-header">
@@ -1069,3 +855,114 @@ GoodsAsset::register($this);
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog --></div>
+
+<!--B:Category modal-->
+<div id="categoryModal" class="modal fade pos-ask-modal" role="dialog" data-action="add">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header btn-twitter">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Категории</h4>
+            </div>
+            <div class="modal-body">
+                <p><strong id="category-action-title"></strong></p>
+                <div class="form-group">
+                    <label for="text"><?= THelper::t('title_name') ?></label>
+                    <input type="text" class="form-control" id="category-name">
+                    <input type="hidden"  id="category-id">
+                </div>
+                <p class="text-center" id="server-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"  onclick="doCancelPin()"><?= THelper::t('save') ?></button>
+                <button type="button" class="btn btn-default" onclick="$('#categoryModal').modal('hide')"><?= THelper::t('cancel') ?></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--E:Category modal-->
+<script>
+    category_items=<?=$cat_items ?>;
+    function categorySelect(elem,selected_index) {
+        for (let i=0;i<category_items.length;i++) {
+            $('#cat-menu-'+i).removeClass('categorySelected');
+            console.log('selected is',selected_index);
+            console.log('elem is',elem);
+            if (i == selected_index) {
+                $(elem).addClass('categorySelected')
+            }
+        }
+
+    }
+    $(function() {
+        $('#difPremia').change(function() {
+
+            $('#difShow').toggleClass('hidden')
+
+        })
+    })
+    $(function() {
+        $('#complex').change(function() {
+
+            $('#showComplex').toggleClass('hidden')
+
+        })
+    })
+    $(function() {
+        $('span.removeItem').click(function() {
+
+            $("#complexItems").parent().parent().parent().remove();
+
+        })
+    })
+    $(document).on('click','.removeItem',function () {
+        if (confirm('Вы уверены что хотете удалить позицию?')) {
+            $(this).closest('.row').remove();
+        }
+    });
+
+    $(function() {
+        $('#addComplex').click(function() {
+
+            $('#complexItems').append('<div class="row"><div class="m-b-sm col-md-6"><div class="input-group"><span class="input-group-addon input-sm removeItem"><i class="fa fa-trash-o"></i></span><input type="text" class="form-control input-sm" disabled="disabled" value="'+$('#select2-option option:selected').text()+'"><input type="hidden" name="setName[]" value="'+$('#select2-option option:selected').text()+'"><input type="hidden" name="setId[]" value="59620f57dca78747631d3c62"></div></div><div class="m-b-sm col-md-6"><input type="number" class="form-control" name="setPrice[]" value="0" min="0" step="0.01"></div></div>');
+        })
+    })
+
+    $(function() {
+
+        $('#add-category-btn').click(function () {
+            $('#categoryModal').attr('data-action','add');
+            $('#category-action-title').html('Add');
+            $('#categoryModal').show().modal();
+        });
+        $('#edit-category-btn').click(function () {
+            $('#categoryModal').attr('data-action','edit');
+            $('#category-action-title').html('Edit');
+            $('#categoryModal').show().modal();
+        });
+        $('#categoryModal').on('show.bs.modal', function (e) {
+            // do something...
+            var $target = $(e.target);
+
+            var dataValue = $target.data('action');
+
+            console.log(dataValue);
+        });
+
+    })
+    $(function() {
+        $('#createBtn').click(function () {
+            //alert('Create');
+            $('#ajaxModal').show().modal();
+        })
+    })
+    $(function() {
+        $('#goods-table').DataTable({
+            language: TRANSLATION,
+            sDom: "<'row'<'col-sm-6'l><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+        });
+    } );
+</script>

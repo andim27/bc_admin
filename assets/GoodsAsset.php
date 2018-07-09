@@ -22,19 +22,20 @@ class GoodsAsset extends AssetBundle
         '/css/helpers.css',
         //'/css/font.css',
         '/js/fuelux/fuelux.css',
-
+        '/js/datatables/datatables.css',
         //'/js/select2/select2.css',
         //'/js/select2/theme.css',
 
     ];
     public $js = [
         //'//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js',
-        'js/app.v2.js',
+        //'js/app.v2.js',
         '/js/fuelux/fuelux.js',
         '/js/wysiwyg/jquery.hotkeys.js',
         '/js/wysiwyg/bootstrap-wysiwyg.js',
         '/js/wysiwyg/demo.js',
-        'js/select2/select2.min.js'
+        'js/select2/select2.min.js',
+        '/js/datatables/jquery.dataTables.min.js',
     ];
     public $jsOptions = ['position' => yii\web\View::POS_HEAD];
     public $depends = [

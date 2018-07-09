@@ -5,6 +5,7 @@ namespace app\modules\business\controllers;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\Langs;
+use app\models\Products;
 use app\modules\business\models\Career;
 use app\modules\business\models\CareerAddForm;
 use MongoDB\BSON\Binary;
@@ -337,13 +338,21 @@ class ReferenceController extends BaseController
 
     //--------------------newAdmin-----------------
     public function actionGoods() {
-        $goods = [];
-
+        //$goods = [];
+        //$goods = Products::find()->orderBy(['productName'=>SORT_ASC])->all();
+        $cat_items=[
+            ['id'=>0,'name'=>'Все товары'],
+            ['id'=>1,'name'=>'Webwellness'],
+            ['id'=>2,'name'=>'VipVip'],
+            ['id'=>3,'name'=>'VipCoin'],
+        ];
+        $goods = Products::find()->asArray()->all();
         $request = Yii::$app->request;
         $requestLanguage = $request->get('l');
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
         $languages = api\dictionary\Lang::all();
         return $this->render('goods', [
+            'cat_items' => json_encode($cat_items),
             'goods' => $goods,
             'language' => $language,
             'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : []
