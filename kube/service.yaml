@@ -7,9 +7,11 @@ metadata:
     commit: __COMMIT__
   namespace: bpt
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
-    - port: 80
-      nodePort: 30082
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
   selector:
     name: bpt-admin
