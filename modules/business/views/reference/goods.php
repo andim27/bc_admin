@@ -10,12 +10,21 @@ GoodsAsset::register($this);
         padding-top: 30px;
         padding-bottom: 30px;
     }
-
+    .modal-head {
+        color: #fff !important;
+        background-color: #1b6d85;
+        border-color: #00c7f7;
+    }
     .categorySelected {
         color: #fff !important;
         /*background-color: #00b2de !important;*/
+        background-color: #1b6d85;
         border-color: #1f2a34!important;
     }
+    .nav > li > a:hover, .nav > li > a:focus {
+        text-decoration: none;
+        background-color: #1b6d85;
+        color:white;
 </style>
 <div class="m-b-md">
     <h3 class="m-b-none"><?=THelper::t('goods') ?></h3>
@@ -32,28 +41,23 @@ GoodsAsset::register($this);
         <div class="wrapper b-b header">
             Категории
             <button id="add-category-btn" type="button" class="btn btn-link" style="margin-top: 0px;"><i class="fa fa-plus"></i></button>
-            <button id="edit-category-btn" type="button" class="btn btn-link" style="margin-top: 0px;margin-left:10px"><i class="fa fa-edit"></i></button>
+            <button id="edit-category-btn" type="button" class="btn btn-link" style="display:none;margin-top: 0px;margin-left:10px"><i class="fa fa-edit"></i></button>
 <!--            <button type="button" class="btn btn-default btn-sm" id="createBtn"> <i class="fa fa-plus"></i></button>-->
         </div>
 
         <ul class="nav">
-            <li id="cat-menu-0" class="b-b b-light categorySelected" onclick="categorySelect(this,0)">
-                <a href="#">
-                    <i class="fa fa-chevron-right pull-right m-t-xs text-xs icon-muted"></i>Все товары</a>
-            </li>
-            <li id="cat-menu-1" class="b-b b-light" onclick="categorySelect(this,1)">
-                <a href="#">
-                    <i class="fa fa-chevron-right pull-right m-t-xs text-xs icon-muted"></i>Webwellness</a>
-            </li>
-            <li id="cat-menu-2" class="b-b b-light" onclick="categorySelect(this,2)">
-                <a href="#">
-                    <i class="fa fa-chevron-right pull-right m-t-xs text-xs icon-muted"></i>VipVip</a>
-            </li>
-            <li id="cat-menu-3" class="b-b b-light" onclick="categorySelect(this,3)">
-                <a href="#">
-                    <i class="fa fa-chevron-right pull-right m-t-xs text-xs icon-muted"></i>VipCoin</a>
-            </li>
+            <?php foreach ($cat_items as $item) { ?>
+
+                <li id="cat-menu-<?=$item['rec_id'] ?>" class="b-b b-light  <?= ($item['id'] ==0)?'categorySelected':'' ?> " onclick="categorySelect(this,'<?=$item['rec_id'] ?>')">
+                    <a href="#">
+                        <i class="fa fa-chevron-right pull-right m-t-xs text-xs icon-muted"></i><?=$item['name'] ?></a>
+                </li>
+            <?php }?>
+
         </ul>
+<!--        <pre>-->
+<!--            --><?//=json_encode($cat_items); ?>
+<!--        </pre>-->
     </aside>
     <aside>
         <section class="vbox">
@@ -176,38 +180,38 @@ GoodsAsset::register($this);
             </section>
             <footer class="footer bg-white b-t">
                 <div class="row text-center-xs">
-                    <div class="col-md-6 hidden-sm">
-                        <p class="text-muted m-t">Показано 1-6 из 6</p>
-                    </div>
-                    <div class="col-md-6 col-sm-12 text-right text-center-xs">
-                        <ul class="pagination pagination-sm m-t-sm m-b-none">
-                            <li>
-                                <a href="#">
-                                    <i class="fa fa-chevron-left"></i>
-                                </a>
-                            </li>
-                            <li class="active">
-                                <a href="#">1</a>
-                            </li>
-                            <li>
-                                <a href="#">2</a>
-                            </li>
-                            <li>
-                                <a href="#">3</a>
-                            </li>
-                            <li>
-                                <a href="#">4</a>
-                            </li>
-                            <li>
-                                <a href="#">5</a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <i class="fa fa-chevron-right"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+<!--                    <div class="col-md-6 hidden-sm">-->
+<!--                        <p class="text-muted m-t">Показано 1-6 из 6</p>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-6 col-sm-12 text-right text-center-xs">-->
+<!--                        <ul class="pagination pagination-sm m-t-sm m-b-none">-->
+<!--                            <li>-->
+<!--                                <a href="#">-->
+<!--                                    <i class="fa fa-chevron-left"></i>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li class="active">-->
+<!--                                <a href="#">1</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href="#">2</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href="#">3</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href="#">4</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href="#">5</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href="#">-->
+<!--                                    <i class="fa fa-chevron-right"></i>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
                 </div>
             </footer>
         </section>
@@ -862,7 +866,7 @@ GoodsAsset::register($this);
 
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header btn-twitter">
+            <div class="modal-header modal-head">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Категории</h4>
             </div>
@@ -870,13 +874,14 @@ GoodsAsset::register($this);
                 <p><strong id="category-action-title"></strong></p>
                 <div class="form-group">
                     <label for="text"><?= THelper::t('title_name') ?></label>
-                    <input type="text" class="form-control" id="category-name">
-                    <input type="hidden"  id="category-id">
+                    <input type="text" class="form-control" id="category-name" />
+                    <input type="hidden"  id="category-id" >
+                    <input type="hidden"  id="category-action">
                 </div>
-                <p class="text-center" id="server-message"></p>
+                <div class="text-center" id="server-message"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default"  onclick="doCancelPin()"><?= THelper::t('save') ?></button>
+                <button type="button" class="btn btn-default"  onclick="saveCategory()"><?= THelper::t('save') ?></button>
                 <button type="button" class="btn btn-default" onclick="$('#categoryModal').modal('hide')"><?= THelper::t('cancel') ?></button>
             </div>
         </div>
@@ -885,16 +890,56 @@ GoodsAsset::register($this);
 </div>
 <!--E:Category modal-->
 <script>
-    category_items=<?=$cat_items ?>;
-    function categorySelect(elem,selected_index) {
+    category_items=<?=json_encode($cat_items) ?>;
+    cur_category_id=0;
+    cur_category_name='all';
+    function categorySelect(elem,rec_id) {
         for (let i=0;i<category_items.length;i++) {
-            $('#cat-menu-'+i).removeClass('categorySelected');
-            console.log('selected is',selected_index);
-            console.log('elem is',elem);
-            if (i == selected_index) {
-                $(elem).addClass('categorySelected')
+            var rec_id_str=category_items[i].rec_id;
+            $('#cat-menu-'+rec_id_str).removeClass('categorySelected');
+            if (category_items[i].rec_id == rec_id) {
+                //$(elem).addClass('categorySelected');
+                cur_category_id=rec_id;
+                cur_category_name=category_items[i].name;
+                //setGoodsByCategory(cur_category_id);
             }
         }
+        if (rec_id != 0) {
+            $('#edit-category-btn').show();
+        } else {
+            $('#edit-category-btn').hide();
+        }
+
+    }
+    function setGoodsByCategory(i) {
+        var table = $('#goods-table').DataTable();
+        var filteredData = table
+            .column( 2 )
+            .data()
+            .filter( function ( value, index ) {
+                return value.substr(0,3) == 'Vip' ? true : false;
+            } );
+        table.rows.add(filteredData);
+        console.log('filteredData ',filteredData);
+    }
+    function saveCategory() {
+        $('#server-message').removeClass('bg-danger');
+        var url="/<?=Yii::$app->language?>/business/reference/category-change";
+        var c_action=$('#category-action').val();
+        var c_name  =$('#category-name').val();
+        $.post(url,{'category-action':c_action,'category-name': c_name,'category-id':cur_category_id}).done(function(data) {
+                        mes = data.message;
+                        if (data.success == true) {
+                            $('#server-message').removeClass('alert-danger').addClass('alert alert-success').html(mes);
+                        } else {
+                            $('#server-message').removeClass('alert-success').addClass('alert alert-danger').html(mes);
+                        }
+                        setTimeout(function () {
+                            $('#categoryModal').modal('hide');
+                            window.location.reload();
+                        },2200)
+                   });
+
 
     }
     $(function() {
@@ -934,14 +979,20 @@ GoodsAsset::register($this);
     $(function() {
 
         $('#add-category-btn').click(function () {
-            $('#categoryModal').attr('data-action','add');
+            //$('#categoryModal').attr('data-action','add');
             $('#category-action-title').html('Add');
-            $('#categoryModal').show().modal();
+            $('#category-action').val('add');
+            $('#category-name').html('');
+            $('#server-message').removeClass('alert alert-danger alert-success').html('');
+            $('#categoryModal').attr('data-action','add').show().modal();
         });
         $('#edit-category-btn').click(function () {
-            $('#categoryModal').attr('data-action','edit');
+            //$('#categoryModal').attr('data-action','edit');
             $('#category-action-title').html('Edit');
-            $('#categoryModal').show().modal();
+            $('#category-action').val('edit');
+            $('#category-name').val(cur_category_name);
+            $('#server-message').removeClass('alert alert-danger alert-success').html('');
+            $('#categoryModal').attr('data-action','edit').show().modal();
         });
         $('#categoryModal').on('show.bs.modal', function (e) {
             // do something...

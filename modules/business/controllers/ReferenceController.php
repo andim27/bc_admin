@@ -6,6 +6,7 @@ use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\Langs;
 use app\models\Products;
+use app\models\ProductsCategories;
 use app\modules\business\models\Career;
 use app\modules\business\models\CareerAddForm;
 use MongoDB\BSON\Binary;
@@ -14,6 +15,8 @@ use Yii;
 use app\models\api;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
+use yii\web\Response;
+use app\models\ProductCategories;
 
 class ReferenceController extends BaseController
 {
@@ -340,24 +343,67 @@ class ReferenceController extends BaseController
     public function actionGoods() {
         //$goods = [];
         //$goods = Products::find()->orderBy(['productName'=>SORT_ASC])->all();
+        $category_items = ProductsCategories::find()->all();
         $cat_items=[
-            ['id'=>0,'name'=>'Все товары'],
-            ['id'=>1,'name'=>'Webwellness'],
-            ['id'=>2,'name'=>'VipVip'],
-            ['id'=>3,'name'=>'VipCoin'],
+            ['id'=>0,'name'=>'Все товары','rec_id'=>0],
         ];
+        $index=1;
+        foreach ($category_items as $item) {
+            array_push($cat_items,['id'=>$index,'rec_id'=>(string)$item['_id'],'name'=>$item->name]);
+            $index++;
+        }
+
         $goods = Products::find()->asArray()->all();
         $request = Yii::$app->request;
         $requestLanguage = $request->get('l');
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
         $languages = api\dictionary\Lang::all();
         return $this->render('goods', [
-            'cat_items' => json_encode($cat_items),
+            'category_items'=>$category_items,
+            'cat_items' => $cat_items,
             'goods' => $goods,
             'language' => $language,
             'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : []
         ]);
     }
+    public function actionCategoryChange() {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res=['success'=>true,'message'=>'All is ok'];
+        try {
+            $request = Yii::$app->request;
+            $category_action = $request->post('category-action');
+            $category_name = $request->post('category-name');
+            $category_id   = $request->post('category-id');
+            $cat_coll_name ='product_categories';
+            $Categories=Yii::$app->mongodb->getCollection($cat_coll_name);
+            if (!($Categories->name ==$cat_coll_name)) {
+                $col_create_res =Yii::$app->mongodb->createCollection($cat_coll_name);
+                $mes='Collection created='.$cat_coll_name;
+            } else {
+                //--exist collection--
+
+                if ($category_action =='add') {
+                    $Categories->insert(['name'=>$category_name]);
+                    $mes='Added ='.$category_name;
+                }
+                if ($category_action =='edit') {
+                    $rec=ProductsCategories::findOne(['_id'=>new ObjectID($category_id)]);
+                    $rec->name=$category_name;
+                    $rec->save();
+                    $mes='Changed!';
+                }
+
+            }
+
+
+            $res=['success'=>true,'message'=>$mes];
+        } catch (\Exception $e) {
+            $res=['success'=>false,'message' =>$e->getMessage().' code='.$e->getLine()];
+        }
+
+        return $res;
+    }
+    //---------------new Admin-------------
     public function actionComplects() {
         $complects = [];
 
