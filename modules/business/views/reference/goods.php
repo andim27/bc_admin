@@ -140,12 +140,14 @@ GoodsAsset::register($this);
                         foreach ($goods as $item) { ?>
                         <tr>
                             <td>
-                                <?php
-                                echo $index++;
-                                ?>
+                                <span title="<?=$item['_id']; ?>">
+                                    <?=$index++; ?>
+                                </span>
+
                             </td>
                             <td>
-                                <a href="#modal" data-toggle="modal" data-myvar="<?=$item['_id'] ?>">
+                                <?php $p_id=$item['_id'];?>
+                                <a href="#" onclick='showEditProduct("<?=$p_id; ?>")' data-toggle="modal" data-productid="<?=$item['_id'] ?>">
                                     <i class="fa fa-search-plus"></i>
                                 </a>
                             </td>
@@ -219,18 +221,20 @@ GoodsAsset::register($this);
 </section>
 
 
-<div class="modal fade" id="modal" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="editProductModal" style="display: none;" aria-hidden="true" >
     <div class="modal-dialog modal-dialog-product">
         <div class="modal-content">
             <form role="form">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title">Редактирование товара</h4>
+                    <h4 class="modal-title">Редактирование товара: id=<span id="p-id"></span></h4>
+
                 </div>
                 <div class="modal-body">
                     <p class="m-b text-center font-bold">VipCoin активация бизнес-места на 12 месяцев (VipCoin activation of business cell for 12 month)</p>
                     <div class="row">
                         <div class="form-group col-md-12">
+
                             <label>Название</label>
                             <div class="input-group">
                                 <input class="form-control" value="VipCoin активация бизнес-места на 12 месяцев" type="text">
@@ -262,8 +266,19 @@ GoodsAsset::register($this);
 
                     <div class="row">
                         <div class="form-group col-md-6">
+                            <label for="sel1">Категория товара:</label>
+                            <select class="form-control" id="cat-list">
+                                <?php foreach ($cat_items as $item) { ?>
+                                    <?php if ($item['rec_id'] !=0) { ?>
+                                        <option value="<?=$item['rec_id'] ?>"><?=$item['name'] ?></option>
+                                    <?php } ?>
+                                <?php } ?>
+
+                            </select>
                             <label>Код товара</label>
                             <input class="form-control m-b" id="id" placeholder="Введите Код товара" value="12" type="text">
+
+
                             <label>ID товара в магазине</label>
                             <input class="form-control m-b" id="inShop" placeholder="ID товара в магазине" value="77" type="text">
                             <label>Розничная цена</label>
@@ -942,6 +957,11 @@ GoodsAsset::register($this);
 
 
     }
+    function showEditProduct(p_id) {
+        console.log(p_id);
+        $("#p-id").html(p_id);
+        $("#editProductModal").modal();
+    }
     $(function() {
         $('#difPremia').change(function() {
 
@@ -1001,6 +1021,14 @@ GoodsAsset::register($this);
             var dataValue = $target.data('action');
 
             console.log(dataValue);
+        });
+        $('#editProductModal').on('show.bs.modal', function (e) {
+            // do something...
+            var $target = $(e.target);
+
+            //var dataValue = $target.data('productid');
+
+            //console.log('productid='+dataValue);
         });
 
     })
