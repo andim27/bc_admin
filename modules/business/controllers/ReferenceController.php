@@ -403,6 +403,77 @@ class ReferenceController extends BaseController
 
         return $res;
     }
+    public function actionProductEdit() {
+        $request = Yii::$app->request;
+        $p_id = $request->post('p_id');
+        $product_action = $request->post('product-action');
+        //---------------------PRODUCT EDIT----------------------------------
+        if ($product_action =='edit') {
+            $product = Products::findOne(['_id'=>new ObjectID($p_id)]);
+            $product->pinsVouchers=[];
+            $category_items = ProductsCategories::find()->all();
+            $cat_items=[
+                ['id'=>0,'name'=>'??','rec_id'=>0],
+            ];
+            $index=1;
+            foreach ($category_items as $item) {
+                array_push($cat_items,['id'=>$index,'rec_id'=>(string)$item['_id'],'name'=>$item->name]);
+                $index++;
+            }
+            return $this->renderAjax('product_edit', [
+                'product' => $product,
+                'cat_items' => $cat_items
+            ]);
+        }
+        //----------------------PRODUCT SAVE------------------------------
+        if ($product_action =='save') {
+            try {
+                $product_name    =$request->post('product-name');
+                $product_category=$request->post('product-category');
+                $product_id      =$request->post('product-id');
+                $product_idInMarket =$request->post('product-idInMarket');
+                $product_price      =$request->post('product-price');
+                $product_bonusMoney =$request->post('product-premia-direct');
+                $product_bonusStart    =$request->post('product-bonus-start');
+                $product_bonusStandart =$request->post('product-bonus-standart');
+                $product_bonusVip        =$request->post('product-bonus-vip');
+                $product_bonusInvestor   =$request->post('product-bonus-investor');
+                $product_bonusInvestor_1 =$request->post('product-bonus-investor-1');
+                $product_bonusInvestor_2 =$request->post('product-bonus-investor-2');
+                $product = Products::findOne(['_id'=>new ObjectID($p_id)]);
+                if ($product) {
+                    $product->category_id =$product_category;
+                    $product->productName =$product_name;
+                    $product->product     =$product_id;
+                    $product->idInMarket  =$product_idInMarket;
+                    $product->price       =$product_price;
+                    $product->bonusMoney  =$product_bonusMoney;
+                    //$product->bonuses=[];
+                    $product->setAttribute('bonuses.start', $product_bonusStart);
+                    $product->setAttribute('bonuses.standart', $product_bonusStandart);
+                    //$product->bonuses['start']     =$product_bonusStart;
+                    //$product->bonuses['standart']  =$product_bonusStandart;
+                    //$product->bonuses['vip']       =$product_bonusVip;
+                    //$product->bonuses['investor']    =$product_bonusInvestor;
+                    //$product->bonuses->investor_1  =$product_bonusInvestor_1;
+                    //$product->bonuses->investor_2  =$product_bonusInvestor_2;
+                    $product->save();
+                    $mes='Saved! product_category='.$product_category;
+                } else {
+                    $mes='Error! product_id='.$p_id;
+                }
+            } catch (\Exception $e) {
+                $mes='Error! product_id='.$p_id.' line='.$e->getLine();
+            }
+
+
+            $res=['success'=>true,'message'=>$mes];
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            return $res;
+        }
+      ;
+    }
     //---------------new Admin-------------
     public function actionComplects() {
         $complects = [];

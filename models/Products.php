@@ -41,7 +41,10 @@ class Products extends ActiveRecord
             'type',
             'pinsVouchers',
             'statusHide',
-            'delovod_id'
+            'delovod_id',
+            'expirationPeriod',
+            'category_id',
+            'bonuses',
         ];
     }
 
