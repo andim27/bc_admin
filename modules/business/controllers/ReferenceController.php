@@ -339,7 +339,7 @@ class ReferenceController extends BaseController
         $this->redirect('/' . Yii::$app->language . '/business/reference/career/?l=' . $language);
     }
 
-    //--------------------newAdmin-----------------
+    //--------------------b:newAdmin-----------------
     public function actionGoods() {
         //$goods = [];
         //$goods = Products::find()->orderBy(['productName'=>SORT_ASC])->all();
@@ -411,6 +411,10 @@ class ReferenceController extends BaseController
         if ($product_action =='edit') {
             $product = Products::findOne(['_id'=>new ObjectID($p_id)]);
             $product->pinsVouchers=[];
+            $product_type_items=[
+                ['id'=>1,'name'=>'Простой'],
+                ['id'=>2,'name'=>'Комплект']
+            ];
             $category_items = ProductsCategories::find()->all();
             $cat_items=[
                 ['id'=>0,'name'=>'??','rec_id'=>0],
@@ -422,14 +426,17 @@ class ReferenceController extends BaseController
             }
             return $this->renderAjax('product_edit', [
                 'product' => $product,
-                'cat_items' => $cat_items
+                'cat_items' => $cat_items,
+                'product_type_items' => $product_type_items
             ]);
         }
         //----------------------PRODUCT SAVE------------------------------
         if ($product_action =='save') {
             try {
+                $product_lang    =$request->post('product-lang');
                 $product_name    =$request->post('product-name');
                 $product_category=$request->post('product-category');
+                $product_type=$request->post('product-type');
                 $product_id      =$request->post('product-id');
                 $product_idInMarket =$request->post('product-idInMarket');
                 $product_price      =$request->post('product-price');
@@ -438,32 +445,55 @@ class ReferenceController extends BaseController
                 $product_bonusStandart =$request->post('product-bonus-standart');
                 $product_bonusVip        =$request->post('product-bonus-vip');
                 $product_bonusInvestor   =$request->post('product-bonus-investor');
-                $product_bonusInvestor_1 =$request->post('product-bonus-investor-1');
                 $product_bonusInvestor_2 =$request->post('product-bonus-investor-2');
+                $product_bonusInvestor_3 =$request->post('product-bonus-investor-3');
+
+                $product_expirationPeriodValue =$request->post('product-expirationPeriod-value');
+
+                $product_description =$request->post('product-description');
+
+                $product_singlePurchase =$request->post('product-single-purchase');
+                $product_productActive  =$request->post('product-active');
+                $product_taxNds         =$request->post('product-tax-nds');
+
                 $product = Products::findOne(['_id'=>new ObjectID($p_id)]);
                 if ($product) {
                     $product->category_id =$product_category;
+                    $product->productType =(int)$product_type;
                     $product->productName =$product_name;
-                    $product->product     =$product_id;
+                    $product->product     =(int)$product_id;
                     $product->idInMarket  =$product_idInMarket;
-                    $product->price       =$product_price;
-                    $product->bonusMoney  =$product_bonusMoney;
-                    //$product->bonuses=[];
-                    $product->setAttribute('bonuses.start', $product_bonusStart);
-                    $product->setAttribute('bonuses.standart', $product_bonusStandart);
-                    //$product->bonuses['start']     =$product_bonusStart;
-                    //$product->bonuses['standart']  =$product_bonusStandart;
-                    //$product->bonuses['vip']       =$product_bonusVip;
-                    //$product->bonuses['investor']    =$product_bonusInvestor;
-                    //$product->bonuses->investor_1  =$product_bonusInvestor_1;
-                    //$product->bonuses->investor_2  =$product_bonusInvestor_2;
+                    $product->price       =(float)round($product_price,2);
+                    $product->bonusMoney  =(int)$product_bonusMoney;
+
+                    $product->setAttribute('bonuses.start', (int)$product_bonusStart);
+                    $product->setAttribute('bonuses.standart', (int)$product_bonusStandart);
+                    $product->setAttribute('bonuses.vip', (int)$product_bonusVip);
+                    $product->setAttribute('bonuses.investor', (int)$product_bonusInvestor);
+                    $product->setAttribute('bonuses.investor_2', (int)$product_bonusInvestor_2);
+                    $product->setAttribute('bonuses.investor_3', (int)$product_bonusInvestor_3);
+
+                    $product->expirationPeriod=['value'=>$product_expirationPeriodValue,'format'=>'month'];
+
+                    $productDescription = !Empty($product->productDescription)?$product->productDescription:[];
+                    $productDescription[$product_lang]=$product_description;
+                    $product->productDescription      =$productDescription;
+
+                    $productNameLangs=!Empty($product->productNameLangs)?$product->productNameLangs:[];
+                    $productNameLangs[$product_lang]=$product_name;
+                    $product->productNameLangs      =$productNameLangs;
+
+                    $product->singlePurchase  =(int)$product_singlePurchase;
+                    $product->productActive   =(int)$product_productActive;
+                    $product->productTaxNds   =(int)$product_taxNds;
+
                     $product->save();
-                    $mes='Saved! product_category='.$product_category;
+                    $mes='Saved! product_category='.$product_category.'>> _id:'.$p_id;
                 } else {
                     $mes='Error! product_id='.$p_id;
                 }
             } catch (\Exception $e) {
-                $mes='Error! product_id='.$p_id.' line='.$e->getLine();
+                $mes='Error! product_id='.$p_id.' error mes:'.$e->getMessage().' line='.$e->getLine();
             }
 
 
@@ -474,7 +504,28 @@ class ReferenceController extends BaseController
         }
       ;
     }
-    //---------------new Admin-------------
+    public function actionNameDescLang(){
+        $request = Yii::$app->request;
+        $product_lang=$request->post('product-lang');
+        $p_id = $request->post('p_id');
+        $mes='done!';
+        $name_lang='';
+        $desc_lang='';
+        try {
+            $product = Products::findOne(['_id'=>new ObjectID($p_id)]);
+            if ($product) {
+                $name_lang=$product['productNameLangs'][$product_lang];
+                $desc_lang=$product['productDescription'][$product_lang];
+            }
+        } catch (\Exception $e) {
+            $mes='Error! product_id='.$p_id.' error mes:'.$e->getMessage().' line='.$e->getLine();
+        }
+        $res=['success'=>true,'name_lang'=>$name_lang,'desc_lang'=>$desc_lang,'message'=>$mes];
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return $res;
+    }
+    //---------------e:new Admin-------------
     public function actionComplects() {
         $complects = [];
 

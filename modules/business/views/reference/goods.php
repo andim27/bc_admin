@@ -938,6 +938,26 @@ GoodsAsset::register($this);
         table.rows.add(filteredData);
         console.log('filteredData ',filteredData);
     }
+    function setProductLang(lang) {
+        $('#product-lang').attr('cur-lang',lang).html(lang.toUpperCase())
+        $('#product-desc-lang').html(lang.toUpperCase());
+        getNameDescLang(lang);
+    }
+    function getNameDescLang(lang) {
+        var url="/<?=Yii::$app->language?>/business/reference/name-desc-lang";
+        $.post(url,{'product-lang':lang,'p_id':cur_product_id}).done(function (data) {
+            if (data.success == true) {
+                var name_lang=data.name_lang;
+                var desc_lang=data.desc_lang;
+                //if (name_lang != '') {
+                    $('#product-name').val(name_lang);
+                //}
+                //if (desc_lang != '') {
+                    $('#editor').html(desc_lang);
+                //}
+            }
+        })
+    }
     function saveCategory() {
         $('#server-message').removeClass('bg-danger');
         var url="/<?=Yii::$app->language?>/business/reference/category-change";
@@ -979,8 +999,10 @@ GoodsAsset::register($this);
         var product_data={
             'product-action':$('#product-action').val(),
             'p_id':cur_product_id,
+            'product-lang':$('#product-lang').attr('cur-lang'),
             'product-name':$('#product-name').val(),
             'product-category':$('#product-category').val(),
+            'product-type':$('#product-type').val(),
             'product-id':$('#product-id').val(),
             'product-idInMarket':$('#product-idInMarket').val(),
             'product-price':$('#product-price').val(),
@@ -991,6 +1013,11 @@ GoodsAsset::register($this);
             'product-bonus-investor':$('#product-bonus-investor').val(),
             'product-bonus-investor-2':$('#product-bonus-investor-2').val(),
             'product-bonus-investor-3':$('#product-bonus-investor-3').val(),
+            'product-expirationPeriod-value':$('#product-expirationPeriod-value').val(),
+            'product-single-purchase':$('#product-single-purchase').is(':checked')?1:0,
+            'product-active':$('#product-active').is(':checked')?1:0,
+            'product-tax-nds':$('#product-tax-nds').val(),
+            'product-description':$('#editor').html(),
         };
         $.ajax( {
             url: url,

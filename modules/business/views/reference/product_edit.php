@@ -30,22 +30,23 @@ use yii\widgets\ActiveForm;
                     <input type="hidden" id="product-action" value="save">
                     <input id="product-name" class="form-control" value="<?=htmlspecialchars($product->productName); ?>" size=80 type="text">
                     <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" tabindex="-1">RU</button>
+                        <button type="button" class="btn btn-default" id="product-name-save" >Save</button>
+                        <button type="button" class="btn btn-default" id="product-lang" cur-lang="ru" tabindex="-1">RU</button>
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu pull-right">
                             <li>
-                                <a href="#">RU</a>
+                                <a href="#" onclick="setProductLang('ru')" >RU</a>
                             </li>
                             <li>
-                                <a href="#">EN</a>
+                                <a href="#" onclick="setProductLang('en')">EN</a>
                             </li>
                             <li>
-                                <a href="#">TR</a>
+                                <a href="#" onclick="setProductLang('tr')">TR</a>
                             </li>
                             <li>
-                                <a href="#">ES</a>
+                                <a href="#" onclick="setProductLang('es')">ES</a>
                             </li>
                         </ul>
                     </div>
@@ -65,6 +66,17 @@ use yii\widgets\ActiveForm;
                         <?php } else { ?>
                             <option value="<?=$item['rec_id'] ?>"><?=$item['name'] ?></option>
                             <?php } ?>
+                    <?php } ?>
+
+                </select>
+                <label for="sel1">Тип товара:</label>
+                <select class="form-control" id="product-type">
+                    <?php foreach ($product_type_items as $item) { ?>
+                        <?php if ((!Empty($product->productType))&&($item['id'] == $product->productType)) { ?>
+                            <option selected value="<?=$item['id'] ?>"><?=$item['name'] ?></option>
+                        <?php } else { ?>
+                            <option value="<?=$item['id'] ?>"><?=$item['name'] ?></option>
+                        <?php } ?>
                     <?php } ?>
 
                 </select>
@@ -115,27 +127,27 @@ use yii\widgets\ActiveForm;
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">Стандартный</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-standart" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['standart'])?0:$product->bonuses->standart;  ?>"> </div>
+                        <input class="form-control m-b" id="product-bonus-standart" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['standart'])?0:$product['bonuses']['standart'];  ?>"> </div>
                 </div>
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">Vip</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-vip" placeholder="Премия" type="text" value="" > </div>
+                        <input class="form-control m-b" id="product-bonus-vip" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['vip'])?0:$product['bonuses']['vip'];  ?>" > </div>
                 </div>
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">VIP (Инвестор)</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-investor" placeholder="Премия" type="text"> </div>
+                        <input class="form-control m-b" id="product-bonus-investor" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['investor'])?0:$product['bonuses']['investor'];  ?>" > </div>
                 </div>
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">VIP (Инвестор2)</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-investor-2" placeholder="Премия" type="text"> </div>
+                        <input class="form-control m-b" id="product-bonus-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['investor_2'])?0:$product['bonuses']['investor_2'];  ?>" > </div>
                 </div>
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">VIP (Инвестор3)</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-investor-3" placeholder="Премия" type="text"> </div>
+                        <input class="form-control m-b" id="product-bonus-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['investor_3'])?0:$product['bonuses']['investor_3'];  ?>" > </div>
                 </div>
 
             </div>
@@ -147,7 +159,7 @@ use yii\widgets\ActiveForm;
                 <label class="col-sm-7 control-label">Продлевает активность BS (месяцев)</label>
                 <div class="col-sm-5">
                     <div id="MySpinner" class="spinner input-group" data-min="0" data-max="12">
-                        <input class="form-control spinner-input" value="<?=$product['expirationPeriod']['value'] ?>" name="spinner" maxlength="2" type="text">
+                        <input class="form-control spinner-input" id="product-expirationPeriod-value" value="<?=$product['expirationPeriod']['value'] ?>" name="spinner" maxlength="2" type="text">
                         <div class="btn-group btn-group-vertical input-group-btn">
                             <button type="button" class="btn btn-default spinner-up">
                                 <i class="fa fa-chevron-up text-muted"></i>
@@ -169,7 +181,7 @@ use yii\widgets\ActiveForm;
 
         <div class="row m-b">
             <div class="form-group">
-                <label class="col-sm-2 control-label">Описание товара</label>
+                <label class="col-sm-2 control-label">Описание товара (<span id="product-desc-lang" >RU</span>)</label>
                 <div class="col-sm-10">
                     <div class="btn-toolbar m-b-sm btn-editor" id="editorButtons" data-role="editor-toolbar" data-target="#editor">
                         <div class="btn-group">
@@ -277,7 +289,7 @@ use yii\widgets\ActiveForm;
 
 
                     <div id="editor" class="form-control" style="overflow:scroll;height:150px;max-height:150px" contenteditable="true">
-                        Описание товара
+                        <?=@$product['productDescription']['ru']; ?>
                     </div>
                 </div>
             </div>
@@ -289,7 +301,7 @@ use yii\widgets\ActiveForm;
                 <label class="col-sm-7 control-label">Однократная покупка</label>
                 <div class="col-sm-5">
                     <label class="switch">
-                        <input id="loop" type="checkbox">
+                        <input id="product-single-purchase" <?=empty($product->singlePurchase)?'':(($product->singlePurchase)==1)?'checked':''  ?> type="checkbox">
                         <span></span>
                     </label>
                 </div>
@@ -312,7 +324,7 @@ use yii\widgets\ActiveForm;
                 <label class="col-sm-7 control-label">Активный товар</label>
                 <div class="col-sm-5">
                     <label class="switch">
-                        <input id="active" checked="" type="checkbox">
+                        <input id="product-active" <?=empty($product->productActive)?'':(($product->productActive)==1)?'checked':''  ?> type="checkbox">
                         <span></span>
                     </label>
                 </div>
@@ -322,7 +334,7 @@ use yii\widgets\ActiveForm;
 
                 <label class="col-sm-7 control-label">НДС (%)</label>
                 <div class="col-sm-5">
-                    <input class="form-control" id="NDS" placeholder="НДС (%)" value="20" type="text">
+                    <input class="form-control" id="product-tax-nds" placeholder="НДС (%)" value="<?=$product->productTaxNds ?>" type="text">
                 </div>
             </div>
         </div>
@@ -344,5 +356,10 @@ ActiveForm::end();
             $('#difShow').toggleClass('hidden')
 
         })
+        $('#editor').wysiwyg({
+
+        });
+        //-------------------
+
     })
 </script>

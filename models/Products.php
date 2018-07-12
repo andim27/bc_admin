@@ -44,7 +44,19 @@ class Products extends ActiveRecord
             'delovod_id',
             'expirationPeriod',
             'category_id',
+            'productType',
             'bonuses',
+            'bonuses.start',
+            'bonuses.standart',
+            'bonuses.vip',
+            'bonuses.investor',
+            'bonuses.investor_2',
+            'bonuses.investor_3',
+            'productNameLangs',
+            'productDescription',
+            'singlePurchase',
+            'productActive',
+            'productTaxNds',
         ];
     }
 
