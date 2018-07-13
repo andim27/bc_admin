@@ -113,6 +113,13 @@ GoodsAsset::register($this);
                                                                 <i class="fa fa-sort"></i>
                                     </span>
                             </th>
+                            <th class="th-sortable" data-toggle="class">Категория
+                                <span class="th-sort">
+                                                                <i class="fa fa-sort-down text"></i>
+                                                                <i class="fa fa-sort-up text-active"></i>
+                                                                <i class="fa fa-sort"></i>
+                                    </span>
+                            </th>
                             <th class="th-sortable" data-toggle="class" width="80">Цена
                                 <span class="th-sort">
                                                                 <i class="fa fa-sort-down text"></i>
@@ -151,7 +158,9 @@ GoodsAsset::register($this);
                                     <i class="fa fa-search-plus"></i>
                                 </a>
                             </td>
+
                             <td><?=empty($item['productName'])?'??':$item['productName'] ?></td>
+                            <td><?=empty($item['category_id'])?'??':$item['category_id'] ?></td>
                             <td><?=empty($item['price'])?'??':$item['price'] ?></td>
                             <td><?=empty($item['bonusMoney'])?'??':$item['bonusMoney']   ?></td>
                             <td><?=empty($item['bonusPoints'])?'??':$item['bonusPoints'] ?></td>
@@ -918,7 +927,7 @@ GoodsAsset::register($this);
                 //$(elem).addClass('categorySelected');
                 cur_category_id=rec_id;
                 cur_category_name=category_items[i].name;
-                //setGoodsByCategory(cur_category_id);
+               // setGoodsByCategory(cur_category_id);
             }
         }
         if (rec_id != 0) {
@@ -930,14 +939,21 @@ GoodsAsset::register($this);
     }
     function setGoodsByCategory(i) {
         var table = $('#goods-table').DataTable();
-        var filteredData = table
-            .column( 2 )
-            .data()
-            .filter( function ( value, index ) {
-                return value.substr(0,3) == 'Vip' ? true : false;
-            } );
-        table.rows.add(filteredData);
-        console.log('filteredData ',filteredData);
+        if (cur_category_id ==0) {
+            table.fnFilterClear();
+        } else {
+            var filteredData = table
+                .column( 3 )
+                .data()
+                .filter( function ( value, index ) {
+                    return value == cur_category_id ? true : false;
+                } );
+            table.rows.clear();
+            table.rows.add(filteredData);
+            table.draw();
+            console.log('filteredData ',filteredData);
+        }
+
     }
     function setProductLang(lang) {
         $('#product-lang').attr('cur-lang',lang).html(lang.toUpperCase())

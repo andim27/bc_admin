@@ -72,16 +72,19 @@ use yii\widgets\ActiveForm;
 
                 </select>
                 <label for="sel1">Тип товара:</label>
-                <select class="form-control" id="product-type">
-                    <?php foreach ($product_type_items as $item) { ?>
-                        <?php if ((!Empty($product->productType))&&($item['id'] == $product->productType)) { ?>
-                            <option selected value="<?=$item['id'] ?>"><?=$item['name'] ?></option>
-                        <?php } else { ?>
-                            <option value="<?=$item['id'] ?>"><?=$item['name'] ?></option>
-                        <?php } ?>
-                    <?php } ?>
 
-                </select>
+                    <select class="form-control" id="product-type">
+                        <?php foreach ($product_type_items as $item) { ?>
+                            <?php if ((!Empty($product->productType))&&($item['id'] == $product->productType)) { ?>
+                                <option selected value="<?=$item['id'] ?>"><?=$item['name'] ?></option>
+                            <?php } else { ?>
+                                <option value="<?=$item['id'] ?>"><?=$item['name'] ?></option>
+                            <?php } ?>
+                        <?php } ?>
+
+                    </select>
+                    <button id="add-category-btn" type="button" class="btn btn-link" style="display:none;float:right;margin-top: 0px;"><i class="fa fa-plus"></i></button>
+
                 <label>Код товара</label>
                 <input class="form-control m-b" id="product-id" onblur="checkProduct()"  placeholder="Введите Код товара" value="<?=$product->product ?>" type="text">
 
