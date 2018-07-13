@@ -404,12 +404,19 @@ class ReferenceController extends BaseController
         return $res;
     }
     public function actionProductEdit() {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $request = Yii::$app->request;
         $p_id = $request->post('p_id');
-        $product_action = $request->post('product-action');
+        $product_action     = $request->post('product-action');
+        $cur_product_action = $request->post('cur-product-action');
         //---------------------PRODUCT EDIT----------------------------------
-        if ($product_action =='edit') {
-            $product = Products::findOne(['_id'=>new ObjectID($p_id)]);
+        if (($product_action =='edit') || ($product_action =='add')) {
+            if ($cur_product_action =='add') {
+                $product = new Products();
+            } else {
+                $product = Products::findOne(['_id'=>new ObjectID($p_id)]);
+            }
+
             $product->pinsVouchers=[];
             $product_type_items=[
                 ['id'=>1,'name'=>'Простой'],
@@ -455,23 +462,46 @@ class ReferenceController extends BaseController
                 $product_singlePurchase =$request->post('product-single-purchase');
                 $product_productActive  =$request->post('product-active');
                 $product_taxNds         =$request->post('product-tax-nds');
+                if ($cur_product_action =='add') {
+                    $product = new Products();
+                    //---check product_id
+                    $isProduct=Products::find()->Where(['product'=>$product_id])->one();
+                    if (!empty($isProduct)) {
+                        $mes='Error! product_id='.$product_id.' Product exist.Fill anothe code';
+                        $res=['success'=>false,'message'=>$mes];
+                        return $res;
+                    }
+                } else {
+                    $product = Products::findOne(['_id'=>new ObjectID($p_id)]);
+                }
 
-                $product = Products::findOne(['_id'=>new ObjectID($p_id)]);
                 if ($product) {
                     $product->category_id =$product_category;
                     $product->productType =(int)$product_type;
                     $product->productName =$product_name;
                     $product->product     =(int)$product_id;
+                    $product->products     =[];//--depends on productType
                     $product->idInMarket  =$product_idInMarket;
                     $product->price       =(float)round($product_price,2);
                     $product->bonusMoney  =(int)$product_bonusMoney;
+                    $product->bonusMoneys=[
+                        'elementary'=>(int)$product_bonusStart,
+                        'standart'=>(int)$product_bonusStandart,
+                        'vip'=>(int)$product_bonusVip,
+                        'investor'=>(int)$product_bonusInvestor,
+                        'investor_2'=>(int)$product_bonusInvestor_2,
+                        'investor_3'=>(int)$product_bonusInvestor_3,
 
-                    $product->setAttribute('bonuses.start', (int)$product_bonusStart);
-                    $product->setAttribute('bonuses.standart', (int)$product_bonusStandart);
-                    $product->setAttribute('bonuses.vip', (int)$product_bonusVip);
-                    $product->setAttribute('bonuses.investor', (int)$product_bonusInvestor);
-                    $product->setAttribute('bonuses.investor_2', (int)$product_bonusInvestor_2);
-                    $product->setAttribute('bonuses.investor_3', (int)$product_bonusInvestor_3);
+                        ];
+//                    if (isset($product_bonusStart)) {
+//                        $product->setAttribute('bonusMoneys.elementary', (int)$product_bonusStart);
+//                    }
+//
+//                    $product->setAttribute('bonusMoneys.standart', (int)$product_bonusStandart);
+//                    $product->setAttribute('bonusMoneys.vip', (int)$product_bonusVip);
+//                    $product->setAttribute('bonusMoneys.investor', (int)$product_bonusInvestor);
+//                    $product->setAttribute('bonusMoneys.investor_2', (int)$product_bonusInvestor_2);
+//                    $product->setAttribute('bonusMoneys.investor_3', (int)$product_bonusInvestor_3);
 
                     $product->expirationPeriod=['value'=>$product_expirationPeriodValue,'format'=>'month'];
 
@@ -498,11 +528,23 @@ class ReferenceController extends BaseController
 
 
             $res=['success'=>true,'message'=>$mes];
-            Yii::$app->response->format = Response::FORMAT_JSON;
+
 
             return $res;
         }
       ;
+    }
+    public function actionProductSaveImage() {
+        $request = Yii::$app->request;
+        $mes='done!';
+        $file_name='a.jpg';
+        if (Yii::$app->request->isPost) {
+            $mes.=' post';
+        }
+        $res=['success'=>true,'filename'=>$file_name,'message'=>$mes];
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return $res;
     }
     public function actionNameDescLang(){
         $request = Yii::$app->request;
@@ -523,6 +565,20 @@ class ReferenceController extends BaseController
         $res=['success'=>true,'name_lang'=>$name_lang,'desc_lang'=>$desc_lang,'message'=>$mes];
         Yii::$app->response->format = Response::FORMAT_JSON;
 
+        return $res;
+    }
+    public function actionProductCheck() {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $request = Yii::$app->request;
+        $product_id = (int)$request->post('product-id');
+        $isProduct=Products::find()->Where(['product'=>$product_id])->one();
+        if (!empty($isProduct)) {
+            $mes='Error! product_id='.$product_id.' Product exist.Fill anothe code';
+            $res=['success'=>false,'message'=>$mes];
+            return $res;
+        }
+        $mes='done';
+        $res=['success'=>true,'message'=>$mes];
         return $res;
     }
     //---------------e:new Admin-------------

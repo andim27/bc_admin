@@ -9,10 +9,12 @@ use yii\widgets\ActiveForm;
 <?php
 
 ?>
-<?php $formStatus = ActiveForm::begin([
+<?php
+ $formProduct = ActiveForm::begin([
     'action' => '/' . Yii::$app->language . '/business/reference/product-edit',
     'options' => ['name' => 'formEditProduct', 'id'=>'formEditProduct', 'data-pjax' => '1','enctype' => 'multipart/form-data']
 ]); ?>
+<form id="formEditProduct" enctype="multipart/form-data" method="post">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h4 class="modal-title">Редактирование товара: id=<span id="p-id"><?=$product->_id; ?></span></h4>
@@ -81,7 +83,7 @@ use yii\widgets\ActiveForm;
 
                 </select>
                 <label>Код товара</label>
-                <input class="form-control m-b" id="product-id" placeholder="Введите Код товара" value="<?=$product->product ?>" type="text">
+                <input class="form-control m-b" id="product-id" onblur="checkProduct()"  placeholder="Введите Код товара" value="<?=$product->product ?>" type="text">
 
 
                 <label>ID товара в магазине</label>
@@ -122,32 +124,32 @@ use yii\widgets\ActiveForm;
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">Начальный</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-start" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['start'])?0:$product['bonuses']['start'];  ?>"> </div>
+                        <input class="form-control m-b" id="product-bonus-start" placeholder="Премия" type="text" value="<?=empty($product['bonusMoneys']['elementary'])?0:$product['bonusMoneys']['elementary'];  ?>"> </div>
                 </div>
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">Стандартный</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-standart" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['standart'])?0:$product['bonuses']['standart'];  ?>"> </div>
+                        <input class="form-control m-b" id="product-bonus-standart" placeholder="Премия" type="text" value="<?=empty($product['bonusMoneys']['standart'])?0:$product['bonusMoneys']['standart'];  ?>"> </div>
                 </div>
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">Vip</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-vip" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['vip'])?0:$product['bonuses']['vip'];  ?>" > </div>
+                        <input class="form-control m-b" id="product-bonus-vip" placeholder="Премия" type="text" value="<?=empty($product['bonusMoneys']['vip'])?0:$product['bonusMoneys']['vip'];  ?>" > </div>
                 </div>
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">VIP (Инвестор)</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-investor" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['investor'])?0:$product['bonuses']['investor'];  ?>" > </div>
+                        <input class="form-control m-b" id="product-bonus-investor" placeholder="Премия" type="text" value="<?=empty($product['bonusMoneys']['investor'])?0:$product['bonusMoneys']['investor'];  ?>" > </div>
                 </div>
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">VIP (Инвестор2)</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['investor_2'])?0:$product['bonuses']['investor_2'];  ?>" > </div>
+                        <input class="form-control m-b" id="product-bonus-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonusMoneys']['investor_2'])?0:$product['bonusMoneys']['investor_2'];  ?>" > </div>
                 </div>
                 <div class="form-group col-sm-6">
                     <label class="col-sm-6 control-label">VIP (Инвестор3)</label>
                     <div class="col-sm-6">
-                        <input class="form-control m-b" id="product-bonus-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonuses']['investor_3'])?0:$product['bonuses']['investor_3'];  ?>" > </div>
+                        <input class="form-control m-b" id="product-bonus-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonusMoneys']['investor_3'])?0:$product['bonusMoneys']['investor_3'];  ?>" > </div>
                 </div>
 
             </div>

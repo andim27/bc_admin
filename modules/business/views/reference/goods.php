@@ -69,13 +69,13 @@ GoodsAsset::register($this);
                             <i class="fa fa-caret-left text-active fa-lg"></i>
                         </a>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-default" title="Refresh">
+                            <button type="button" class="btn btn-sm btn-default" id="refresh-btn" title="Refresh">
                                 <i class="fa fa-refresh"></i>
                             </button>
                         </div>
 <!--                        <a id="#createBtn" href="#" class="btn btn-sm btn-default">-->
 <!--                            <i class="fa fa-plus"></i> Create</a>-->
-                        <button type="button" class="btn btn-default btn-sm" id="createBtn"> <i class="fa fa-plus"></i>Create</button>
+                        <button type="button" class="btn btn-default btn-sm" id="createBtn" > <i class="fa fa-plus"></i>Create</button>
                     </div>
                     <div class="col-sm-4 m-b-xs">
 <!--                        <div class="input-group">-->
@@ -151,17 +151,17 @@ GoodsAsset::register($this);
                                     <i class="fa fa-search-plus"></i>
                                 </a>
                             </td>
-                            <td><?=$item['productName'] ?></td>
-                            <td><?=$item['price'] ?></td>
-                            <td><?=$item['bonusMoney'] ?></td>
-                            <td><?=$item['bonusPoints'] ?></td>
-                            <td><?=$item['bonusStocks'] ?></td>
+                            <td><?=empty($item['productName'])?'??':$item['productName'] ?></td>
+                            <td><?=empty($item['price'])?'??':$item['price'] ?></td>
+                            <td><?=empty($item['bonusMoney'])?'??':$item['bonusMoney']   ?></td>
+                            <td><?=empty($item['bonusPoints'])?'??':$item['bonusPoints'] ?></td>
+                            <td><?=empty($item['bonusStocks'])?'??':$item['bonusStocks'] ?></td>
                             <td class="text-center">
                                 <?=@gmdate('d.m.Y', $item['updated_at']) ?>
 
                             </td>
                             <td>
-                                <?=$item['type'] ?>
+                                <?=empty($item['type'])?'??':$item['type'] ?>
                             </td>
 
                             <td>
@@ -906,6 +906,7 @@ GoodsAsset::register($this);
 <!--E:Category modal-->
 <script>
     category_items=<?=json_encode($cat_items) ?>;
+    cur_product_action='edit';
     cur_category_id=0;
     cur_product_id=0;
     cur_category_name='all';
@@ -978,6 +979,22 @@ GoodsAsset::register($this);
 
 
     }
+    function checkProduct() {
+        var url="/<?=Yii::$app->language?>/business/reference/product-check";
+        $.post(url,{'product-id':$('#product-id').val()}).done(function(data){
+            if (data.success==false) {
+                alert('Product with code:'+$('#product-id').val()+' exist!');
+                $('#product-id').focus();
+            }
+        });
+    }
+    function getProductAddContent() {
+        var url="/<?=Yii::$app->language?>/business/reference/product-edit";
+        $.post(url,{'product-action':'add','cur-product-action':'add'}).done(function(data){
+            //--add form content--
+            $("#edit-product-content").html(data);
+        });
+    }
     function getProductEditContent() {
         var url="/<?=Yii::$app->language?>/business/reference/product-edit";
         $.post(url,{'product-action':'edit','p_id':cur_product_id}).done(function(data){
@@ -987,9 +1004,17 @@ GoodsAsset::register($this);
     }
     function showEditProduct(p_id) {
         console.log(p_id);
+        cur_product_action='edit';
         cur_product_id=p_id;
         $("#edit-product-content").html('');
         $("#p-id").html(p_id);
+        $("#editProductModal").modal();
+    }
+    function showAddProduct() {
+        console.log('add product to cat_id:',cur_category_id);
+        cur_product_id='';
+        cur_product_action='add';
+        $("#edit-product-content").html('');
         $("#editProductModal").modal();
     }
     function saveProduct() {
@@ -998,6 +1023,7 @@ GoodsAsset::register($this);
         var url="/<?=Yii::$app->language?>/business/reference/product-edit";
         var product_data={
             'product-action':$('#product-action').val(),
+            'cur-product-action':cur_product_action,
             'p_id':cur_product_id,
             'product-lang':$('#product-lang').attr('cur-lang'),
             'product-name':$('#product-name').val(),
@@ -1100,7 +1126,12 @@ GoodsAsset::register($this);
         $('#editProductModal').on('show.bs.modal', function (e) {
             // do something...
             var $target = $(e.target);
-            getProductEditContent();
+            if (cur_product_action == 'edit') {
+                getProductEditContent();
+            }
+            if (cur_product_action == 'add') {
+                getProductAddContent();
+            }
             //var dataValue = $target.data('productid');
 
             //console.log('productid='+dataValue);
@@ -1108,9 +1139,14 @@ GoodsAsset::register($this);
 
     })
     $(function() {
+        $('#refresh-btn').click(function () {
+            window.location.reload();
+        })
+    })
+
+    $(function() {
         $('#createBtn').click(function () {
-            //alert('Create');
-            $('#ajaxModal').show().modal();
+            showAddProduct();
         })
     })
     $(function() {
