@@ -421,7 +421,7 @@
                                                     <?= $promo->city ?>
                                                 </td>
                                                 <td>
-                                                    <?= $promo->steps ?>
+                                                    <?= $promo->steps2 ?>
                                                 </td>
                                                 <td>
                                                     <?= $promo->needSteps2 ?>
