@@ -915,6 +915,7 @@ GoodsAsset::register($this);
 <!--E:Category modal-->
 <script>
     category_items=<?=json_encode($cat_items) ?>;
+
     cur_product_action='edit';
     cur_category_id=0;
     cur_product_id=0;
@@ -959,6 +960,27 @@ GoodsAsset::register($this);
         $('#product-lang').attr('cur-lang',lang).html(lang.toUpperCase())
         $('#product-desc-lang').html(lang.toUpperCase());
         getNameDescLang(lang);
+    }
+    function addComplectItem(item_name,item_cnt=0) {
+        //alert('add');
+        var item_number=complect_items.length+1;
+        var del_item_html="<a href=\"#\" onclick=\"deleteComplectItem("+item_number+")\">\n" + "<span class=\"glyphicon glyphicon-remove\"></span>\n" + "</a>";
+        //var del_item_html="";
+        var item_html="<tr id='complect-item-"+item_number+"'><td>"+item_number+")</td><td>"+item_name+"</td><td>"+item_cnt+"</td><td>"+del_item_html+"</td></tr>";
+        //var item_html="<h2>hello</h2>";
+        $('#complect-items').append(item_html);
+        complect_items.push({'id':item_number,'rec_id':0,'name':item_name,'cnt':item_cnt});
+    }
+    function deleteComplectItem(item_id) {
+        console.log('delete '+item_id);
+        for (i=0;i<complect_items.length;i++) {
+            if (complect_items[i].id == item_id) {
+                delete complect_items[i];
+                break;
+            }
+        }
+        $("#complect-item-"+item_id).remove();
+
     }
     function getNameDescLang(lang) {
         var url="/<?=Yii::$app->language?>/business/reference/name-desc-lang";
@@ -1043,6 +1065,7 @@ GoodsAsset::register($this);
             'p_id':cur_product_id,
             'product-lang':$('#product-lang').attr('cur-lang'),
             'product-name':$('#product-name').val(),
+            'product-natural':$('#product-natural').is(':checked')?1:0,
             'product-category':$('#product-category').val(),
             'product-type':$('#product-type').val(),
             'product-id':$('#product-id').val(),
@@ -1058,6 +1081,7 @@ GoodsAsset::register($this);
             'product-expirationPeriod-value':$('#product-expirationPeriod-value').val(),
             'product-single-purchase':$('#product-single-purchase').is(':checked')?1:0,
             'product-active':$('#product-active').is(':checked')?1:0,
+            'product-bonus-points':$('#product-bonus-points').val(),
             'product-tax-nds':$('#product-tax-nds').val(),
             'product-description':$('#editor').html(),
         };

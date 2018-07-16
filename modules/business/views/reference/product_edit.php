@@ -32,7 +32,7 @@ use yii\widgets\ActiveForm;
                     <input type="hidden" id="product-action" value="save">
                     <input id="product-name" class="form-control" value="<?=htmlspecialchars($product->productName); ?>" size=80 type="text">
                     <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" id="product-name-save" >Save</button>
+                       <!-- <button type="button" class="btn btn-default" id="product-name-save" >Save</button>-->
                         <button type="button" class="btn btn-default" id="product-lang" cur-lang="ru" tabindex="-1">RU</button>
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                             <span class="caret"></span>
@@ -60,6 +60,9 @@ use yii\widgets\ActiveForm;
 
         <div class="row">
             <div class="form-group col-md-6">
+                <div class="checkbox" style="padding-left:0px">
+                    <label><input id="product-natural"  type="checkbox" <?=(!(empty($product->productNatural))&&($product->productNatural ==1))?'checked':'' ?> value="0">Физический товар</label>
+                </div>
                 <label for="sel1">Категория товара:</label>
                 <select class="form-control" id="product-category">
                     <?php foreach ($cat_items as $item) { ?>
@@ -83,8 +86,46 @@ use yii\widgets\ActiveForm;
                         <?php } ?>
 
                     </select>
-                    <button id="add-category-btn" type="button" class="btn btn-link" style="display:none;float:right;margin-top: 0px;"><i class="fa fa-plus"></i></button>
-
+                <div class="row" id="product-complect-block" <?=($product->productType <= 1)?'style="display:none"':'' ?> >
+                    <div class="col-md-offset-1" style="background-color: lightcyan;padding-left: 5px;padding-right:5px;margin-right: 15px">
+                        <table width="100%">
+                            <th>N</th>
+                            <th>Товар</th>
+                            <th>Кол-во</th>
+                            <th></th>
+                            <tbody id="complect-items">
+                            <?php foreach ($complect_items as $item) { ?>
+                                <tr id="complect-item-<?=$item['id'] ?>">
+                                    <td><?=$item['id'] ?>)</td>
+                                    <td><?=$item['name'] ?></td>
+                                    <td><?=$item['cnt'] ?></td>
+                                    <td> <a href="#" onclick="deleteComplectItem(<?=$item['id'] ?>)">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-7">
+                                <select id="complect-new-name" class="form-control ">
+                                    <option value="tt-1">Товар-1</option>
+                                    <option>Товар-2</option>
+                                    <option>Товар-3</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input id="complect-new-cnt"  class="form-control " value="0" maxlength="2" type="text">
+                            </div>
+                            <div class="col-md-2">
+                                <a href="#" class="btn btn-dark btn-sm btn-icon addItemSet" onclick="addComplectItem($('#complect-new-name').val(),$('#complect-new-cnt').val())">+</a>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
                 <label>Код товара</label>
                 <input class="form-control m-b" id="product-id" onblur="checkProduct()"  placeholder="Введите Код товара" value="<?=$product->product ?>" type="text">
 
@@ -316,7 +357,7 @@ use yii\widgets\ActiveForm;
 
                 <label class="col-sm-7 control-label">Балловая стоимость</label>
                 <div class="col-sm-5">
-                    <input class="form-control" id="bPrice" placeholder="Балловая стоимость" value="<?=$product->bonusPoints ?>" type="text">
+                    <input class="form-control" id="product-bonus-points" placeholder="Балловая стоимость" value="<?=$product->bonusPoints ?>" type="text">
                 </div>
             </div>
         </div>
@@ -355,16 +396,26 @@ ActiveForm::end();
 //Pjax::end();
 ?>
 <script>
+    complect_items=<?=json_encode($complect_items) ?>;
+
     $(function() {
+        $('#product-type').change(function() {
+            if ($('#product-type').val()==2) {
+                $('#product-complect-block').show();
+            } else {
+                $('#product-complect-block').hide();
+            }
+        });
         $('#difPremia').change(function() {
 
             $('#difShow').toggleClass('hidden')
 
-        })
+        });
         $('#editor').wysiwyg({
 
         });
         //-------------------
+
 
     })
 </script>

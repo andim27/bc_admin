@@ -422,6 +422,24 @@ class ReferenceController extends BaseController
                 ['id'=>1,'name'=>'Простой'],
                 ['id'=>2,'name'=>'Комплект']
             ];
+            $complect_items=[];
+
+            $complect_products=$product->products;
+            if (!Empty($complect_products)) {
+                $index=1;
+                foreach ($complect_products as $item) {
+                    array_push($complect_items,['id'=>$index,'rec_id'=>(string)$item['_id'],'name'=>$item->name,'cnt'=>$item->name]);
+                    $index=1;
+                }
+            }
+
+            $complect_items=[
+                ['id'=>1,'rec_id'=>'asdfg','name'=>'Goods -1','cnt'=>1],
+                ['id'=>2,'rec_id'=>'asdfg','name'=>'Goods -2','cnt'=>2],
+                ['id'=>3,'rec_id'=>'asdfg','name'=>'Goods -3','cnt'=>3],
+                ['id'=>4,'rec_id'=>'asdfg','name'=>'Goods -4','cnt'=>4],
+                ['id'=>5,'rec_id'=>'asdfg','name'=>'Goods -5','cnt'=>5]
+            ];
             $category_items = ProductsCategories::find()->all();
             $cat_items=[
                 ['id'=>0,'name'=>'??','rec_id'=>0],
@@ -434,6 +452,7 @@ class ReferenceController extends BaseController
             return $this->renderAjax('product_edit', [
                 'product' => $product,
                 'cat_items' => $cat_items,
+                'complect_items'=>$complect_items,
                 'product_type_items' => $product_type_items
             ]);
         }
@@ -442,18 +461,19 @@ class ReferenceController extends BaseController
             try {
                 $product_lang    =$request->post('product-lang');
                 $product_name    =$request->post('product-name');
+                $product_natural    =$request->post('product-natural');
                 $product_category=$request->post('product-category');
                 $product_type=$request->post('product-type');
                 $product_id      =$request->post('product-id');
                 $product_idInMarket =$request->post('product-idInMarket');
                 $product_price      =$request->post('product-price');
-                $product_bonusMoney =$request->post('product-premia-direct');
-                $product_bonusStart    =$request->post('product-bonus-start');
-                $product_bonusStandart =$request->post('product-bonus-standart');
-                $product_bonusVip        =$request->post('product-bonus-vip');
-                $product_bonusInvestor   =$request->post('product-bonus-investor');
-                $product_bonusInvestor_2 =$request->post('product-bonus-investor-2');
-                $product_bonusInvestor_3 =$request->post('product-bonus-investor-3');
+                $product_bonusMoney =$request->post('product-premia-direct') ?? 0;
+                $product_bonusStart    =$request->post('product-bonus-start') ?? 0;
+                $product_bonusStandart =$request->post('product-bonus-standart') ?? 0;
+                $product_bonusVip        =$request->post('product-bonus-vip') ?? 0;
+                $product_bonusInvestor   =$request->post('product-bonus-investor') ?? 0;
+                $product_bonusInvestor_2 =$request->post('product-bonus-investor-2') ?? 0;
+                $product_bonusInvestor_3 =$request->post('product-bonus-investor-3') ?? 0;
 
                 $product_expirationPeriodValue =$request->post('product-expirationPeriod-value');
 
@@ -461,7 +481,8 @@ class ReferenceController extends BaseController
 
                 $product_singlePurchase =$request->post('product-single-purchase');
                 $product_productActive  =$request->post('product-active');
-                $product_taxNds         =$request->post('product-tax-nds');
+                $product_bonusPoints    =$request->post('product-bonus-points') ?? 0;
+                $product_taxNds         =$request->post('product-tax-nds') ?? 0;
                 if ($cur_product_action =='add') {
                     $product = new Products();
                     //---check product_id
@@ -479,6 +500,7 @@ class ReferenceController extends BaseController
                     $product->category_id =$product_category;
                     $product->productType =(int)$product_type;
                     $product->productName =$product_name;
+                    $product->productNatural =(int)$product_natural;
                     $product->product     =(int)$product_id;
                     $product->products     =[];//--depends on productType
                     $product->idInMarket  =$product_idInMarket;
@@ -493,15 +515,7 @@ class ReferenceController extends BaseController
                         'investor_3'=>(int)$product_bonusInvestor_3,
 
                         ];
-//                    if (isset($product_bonusStart)) {
-//                        $product->setAttribute('bonusMoneys.elementary', (int)$product_bonusStart);
-//                    }
-//
-//                    $product->setAttribute('bonusMoneys.standart', (int)$product_bonusStandart);
-//                    $product->setAttribute('bonusMoneys.vip', (int)$product_bonusVip);
-//                    $product->setAttribute('bonusMoneys.investor', (int)$product_bonusInvestor);
-//                    $product->setAttribute('bonusMoneys.investor_2', (int)$product_bonusInvestor_2);
-//                    $product->setAttribute('bonusMoneys.investor_3', (int)$product_bonusInvestor_3);
+
 
                     $product->expirationPeriod=['value'=>$product_expirationPeriodValue,'format'=>'month'];
 
@@ -515,6 +529,7 @@ class ReferenceController extends BaseController
 
                     $product->singlePurchase  =(int)$product_singlePurchase;
                     $product->productActive   =(int)$product_productActive;
+                    $product->bonusPoints     =(float)$product_bonusPoints;
                     $product->productTaxNds   =(int)$product_taxNds;
 
                     $product->save();

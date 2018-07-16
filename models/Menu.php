@@ -218,18 +218,18 @@ Class Menu
                         'url' => ['/business/reference/career'],
                         'action' => 'admin',
                     ],
-//                    [
-//                        'key'   =>  'sidebar_goods',
-//                        'label' => THelper::t('goods'),
-//                        'url' => ['/business/reference/goods'],
-//                        'action' => 'goods',
-//                    ],
-//                    [
-//                        'key'   =>  'sidebar_complects',
-//                        'label' => THelper::t('complects'),
-//                        'url' => ['/business/reference/complects'],
-//                        'action' => 'complects',
-//                    ],
+                    [
+                        'key'   =>  'sidebar_goods',
+                        'label' => THelper::t('goods'),
+                        'url' => ['/business/reference/goods'],
+                        'action' => 'goods',
+                    ],
+                    [
+                        'key'   =>  'sidebar_complects',
+                        'label' => THelper::t('complects'),
+                        'url' => ['/business/reference/complects'],
+                        'action' => 'complects',
+                    ],
                 ]
             ],
             [

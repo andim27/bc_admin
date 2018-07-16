@@ -59,6 +59,7 @@ class Products extends ActiveRecord
             'productDescription',
             'singlePurchase',
             'productActive',
+            'productNatural',
             'productTaxNds',
         ];
     }
