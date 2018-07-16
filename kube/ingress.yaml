@@ -1,14 +1,14 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: bpt-admin
+  name: bpt-admin-__CI_ENVIRONMENT_SLUG__
   namespace: bpt
 spec:
   rules:
-  - host: bpt-admin.ooo.ua
+  - host: __HOSTNAME__
     http:
       paths:
       - path: /
         backend:
-          serviceName: bpt-admin
+          serviceName: bpt-admin-__CI_ENVIRONMENT_SLUG__
           servicePort: 80

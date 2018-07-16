@@ -6,59 +6,41 @@ stages:
 
 variables:
   CONTAINER_REGISTRY: registry.ooo.ua
-  
+  STAGE_URL: admin-dev.bpt.ooo.ua
+
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
 
 build:
   stage: build
-  script:    
-    - ./pre-admin.sh  
-    - docker info   
+  script:
+    - ./pre-admin.sh
+    - docker info
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
     - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
     - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
     - ./post-admin.sh
 
-deploy_test:
+deploy_stage:
     image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
     stage: deploy
     environment:
-        name: test
-        url: "http://bpt-admin.ooo.ua/"
-    script:
-        - echo "${KUBE_CA_PEM}" > kube_ca.pem
-        - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
-        - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
-        - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
-        - kubectl config use-context default-system
-        - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" ./kube/deployment.yaml ./kube/ingress.yaml ./kube/service.yaml
-        - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" ./kube/deployment.yaml ./kube/ingress.yaml ./kube/service.yaml
-        - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" ./kube/deployment.yaml ./kube/ingress.yaml ./kube/service.yaml        
-        - kubectl apply -f ./kube/deployment.yaml 
-        - kubectl apply -f ./kube/service.yaml || true
-        - kubectl apply -f ./kube/ingress.yaml
-
-deploy_prod:
-    image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
-    stage: deploy
-    environment:
-        name: prod
-        url: "http://admin.businessprocess.biz/"
+        name: dev
     only:
-        - master
-    when: manual
+        - dev
     script:
         - echo "${KUBE_CA_PEM}" > kube_ca.pem
         - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
         - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
         - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
         - kubectl config use-context default-system
+        - cd kube
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml ingress.yaml service.yaml
-        - sed -i "s/__VERSION__/${CI_COMMIT_REF_NAME}/" deployment.yaml ingress.yaml service.yaml
-        - kubectl cluster-info
-        - kubectl get deployments -l app=${CI_ENVIRONMENT_SLUG}
-        - kubectl apply -f deployment.yaml
+        - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml ingress.yaml service.yaml
+        - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml ingress.yaml service.yaml
+        - sed -i "s/__HOSTNAME__/$STAGE_URL/" deployment.yaml ingress.yaml service.yaml
+        - kubectl get deployments -l name=bpt-api-${CI_ENVIRONMENT_SLUG}
+        - kubectl create -f deployment.yaml || (kubectl delete -f deployment.yaml && kubectl apply -f deployment.yaml)
         - kubectl create -f service.yaml || true
         - kubectl apply -f ingress.yaml
