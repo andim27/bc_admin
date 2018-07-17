@@ -7,7 +7,7 @@ COPY . /var/www/code/
 WORKDIR /var/www/code/
 RUN chown -hR www-data:www-data /var/www/code/
 RUN curl -sS https://getcomposer.org/installer -o composer-setup.php && php composer-setup.php --install-dir=/usr/local/bin --filename=composer && composer config --global github-oauth.github.com 441432e93de2b333409fb15853f84adffeb148fa
-RUN composer self-update && composer global require "fxp/composer-asset-plugin:~1.3" && composer install --ignore-platform-reqs && composer require codemix/yii2-streamlog
+RUN composer self-update && composer global require "fxp/composer-asset-plugin:~1.3" && composer install --ignore-platform-reqs
 
 CMD ["/run.sh"]
 
