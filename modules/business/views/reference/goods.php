@@ -146,7 +146,19 @@ GoodsAsset::register($this);
                             </td>
 
                             <td><?=empty($item['productName'])?'??':$item['productName'] ?></td>
-                            <td><?=empty($item['category_id'])?'??':$item['category_id'] ?></td>
+                            <td>
+                                <?php
+                                if (empty($item['category_id'])) {
+                                    echo '??';
+                                } else {
+                                foreach ($cat_items as $cat_item) {
+                                        if ($cat_item['rec_id'] ==(string)$item['category_id']) {
+                                            echo $cat_item['name'];
+                                            break;
+                                        }
+                                }} ?>
+
+                            </td>
                             <td><?=empty($item['price'])?'??':$item['price'] ?></td>
                             <td><?=empty($item['bonusMoney'])?'??':$item['bonusMoney']   ?></td>
                             <td><?=empty($item['bonusPoints'])?'??':$item['bonusPoints'] ?></td>
@@ -914,7 +926,7 @@ GoodsAsset::register($this);
                 //$(elem).addClass('categorySelected');
                 cur_category_id=rec_id;
                 cur_category_name=category_items[i].name;
-               // setGoodsByCategory(cur_category_id);
+                //setGoodsByCategory(cur_category_name);
             }
         }
         if (rec_id != 0) {
@@ -933,9 +945,9 @@ GoodsAsset::register($this);
                 .column( 3 )
                 .data()
                 .filter( function ( value, index ) {
-                    return value == cur_category_id ? true : false;
+                    return value == cur_category_name ? true : false;
                 } );
-            table.rows.clear();
+            //table.rows.clear();
             table.rows.add(filteredData);
             table.draw();
             console.log('filteredData ',filteredData);
@@ -1182,6 +1194,7 @@ GoodsAsset::register($this);
     })
     $(function() {
         $('#goods-table').DataTable({
+            "pageLength": 20,
             language: TRANSLATION,
             sDom: "<'row'<'col-sm-6'l><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
         });

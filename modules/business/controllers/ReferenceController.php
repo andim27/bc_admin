@@ -531,6 +531,7 @@ class ReferenceController extends BaseController
                         ];
 
                     $product->bonus=[
+                        'point'=>(float)$product_bonusPoints,
                         'money'=>[
                             'elementary'=>(int)$product_bonusStart,
                             'standart'=>(int)$product_bonusStandart,
@@ -539,10 +540,10 @@ class ReferenceController extends BaseController
                             'investor_2'=>(int)$product_bonusInvestor_2,
                             'investor_3'=>(int)$product_bonusInvestor_3,
                         ],
-                        'point'=>[
-
-                        ],
                         'stock'=>[
+                            'vipvip'=>100,
+                            'wellness'=>100,
+                            'vipcoin'=>100,
 
                         ]
                     ];
