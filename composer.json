@@ -28,7 +28,7 @@
         "yiisoft/yii2-mongodb": "dev-master",
         "yii2tech/embedded": "^1.0",
         "gomoob/php-pushwoosh": "~1.0",
-	"codemix/yii2-streamlog": "*",
+	"codemix/yii2-streamlog": "^1.2",
         "kartik-v/yii2-widgets": "*"
     },
     "require-dev": {
