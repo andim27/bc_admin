@@ -224,12 +224,12 @@ Class Menu
                         'url' => ['/business/reference/goods'],
                         'action' => 'goods',
                     ],
-                    [
-                        'key'   =>  'sidebar_complects',
-                        'label' => THelper::t('complects'),
-                        'url' => ['/business/reference/complects'],
-                        'action' => 'complects',
-                    ],
+//                    [
+//                        'key'   =>  'sidebar_complects',
+//                        'label' => THelper::t('complects'),
+//                        'url' => ['/business/reference/complects'],
+//                        'action' => 'complects',
+//                    ],
                 ]
             ],
             [
