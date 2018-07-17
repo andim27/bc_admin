@@ -961,25 +961,28 @@ GoodsAsset::register($this);
         $('#product-desc-lang').html(lang.toUpperCase());
         getNameDescLang(lang);
     }
-    function addComplectItem(item_name,item_cnt=0) {
+    function addComplectItem(rec_id,item_name,item_cnt=0) {
         //alert('add');
         var item_number=complect_items.length+1;
-        var del_item_html="<a href=\"#\" onclick=\"deleteComplectItem("+item_number+")\">\n" + "<span class=\"glyphicon glyphicon-remove\"></span>\n" + "</a>";
+        var del_item_html="<a href=\"#\" onclick=\"deleteComplectItem('"+rec_id+"')\">\n" + "<span class=\"glyphicon glyphicon-remove\"></span>\n" + "</a>";
         //var del_item_html="";
-        var item_html="<tr id='complect-item-"+item_number+"'><td>"+item_number+")</td><td>"+item_name+"</td><td>"+item_cnt+"</td><td>"+del_item_html+"</td></tr>";
+        var good_title=item_name;
+        var item_html="<tr id='complect-item-"+rec_id+"'><td><strong>"+item_number+")</strong></td><td title="+good_title+">"+item_name+"</td><td>"+item_cnt+"</td><td>"+del_item_html+"</td></tr>";
         //var item_html="<h2>hello</h2>";
         $('#complect-items').append(item_html);
-        complect_items.push({'id':item_number,'rec_id':0,'name':item_name,'cnt':item_cnt});
+        complect_items.push({'id':item_number,'rec_id':rec_id,'name':item_name,'cnt':item_cnt});
     }
-    function deleteComplectItem(item_id) {
-        console.log('delete '+item_id);
+    function deleteComplectItem(rec_id) {
+        console.log('delete '+rec_id);
         for (i=0;i<complect_items.length;i++) {
-            if (complect_items[i].id == item_id) {
-                delete complect_items[i];
+            if (complect_items[i].rec_id == rec_id) {
+                //delete complect_items[i];
+                complect_items.splice(i,1);
+                console.log('Deleted! '+rec_id);
                 break;
             }
         }
-        $("#complect-item-"+item_id).remove();
+        $("#complect-item-"+rec_id).remove();
 
     }
     function getNameDescLang(lang) {
@@ -1083,7 +1086,9 @@ GoodsAsset::register($this);
             'product-active':$('#product-active').is(':checked')?1:0,
             'product-bonus-points':$('#product-bonus-points').val(),
             'product-tax-nds':$('#product-tax-nds').val(),
+            'product-stock':$('#product-stock').val(),
             'product-description':$('#editor').html(),
+            'product-complect-goods':complect_items,
         };
         $.ajax( {
             url: url,

@@ -37,6 +37,7 @@ class Products extends ActiveRecord
             'price',
             'idInMarket',
             'sorting',
+            'bonus',
             'bonusMoney',
             'bonusMoneys',
             'bonusPoints',
@@ -60,7 +61,8 @@ class Products extends ActiveRecord
             'singlePurchase',
             'productActive',
             'productNatural',
-            'productTaxNds',
+            'productTax',
+            'stock'
         ];
     }
 

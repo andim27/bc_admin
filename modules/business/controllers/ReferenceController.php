@@ -428,18 +428,24 @@ class ReferenceController extends BaseController
             if (!Empty($complect_products)) {
                 $index=1;
                 foreach ($complect_products as $item) {
-                    array_push($complect_items,['id'=>$index,'rec_id'=>(string)$item['_id'],'name'=>$item->name,'cnt'=>$item->name]);
-                    $index=1;
+                    array_push($complect_items,['id'=>$index,'rec_id'=>$item['_id'],'name'=>$item['productName'],'cnt'=>$item['cnt']]);
+                    //array_push($complect_items,['id'=>$index,'rec_id'=>'asdf'.$index,'name'=>$item['productName'],'cnt'=>$item['cnt']]);
+                    $index++;
                 }
             }
 
-            $complect_items=[
-                ['id'=>1,'rec_id'=>'asdfg','name'=>'Goods -1','cnt'=>1],
-                ['id'=>2,'rec_id'=>'asdfg','name'=>'Goods -2','cnt'=>2],
-                ['id'=>3,'rec_id'=>'asdfg','name'=>'Goods -3','cnt'=>3],
-                ['id'=>4,'rec_id'=>'asdfg','name'=>'Goods -4','cnt'=>4],
-                ['id'=>5,'rec_id'=>'asdfg','name'=>'Goods -5','cnt'=>5]
-            ];
+//            $complect_items=[
+//                ['id'=>1,'rec_id'=>'asdfg1','name'=>'Goods -1','cnt'=>1],
+//                ['id'=>2,'rec_id'=>'asdfg2','name'=>'Goods -2','cnt'=>2],
+//                ['id'=>3,'rec_id'=>'asdfg3','name'=>'Goods -3','cnt'=>3],
+//                ['id'=>4,'rec_id'=>'asdfg4','name'=>'Goods -4','cnt'=>4],
+//                ['id'=>5,'rec_id'=>'asdfg5','name'=>'Goods -5','cnt'=>5]
+//            ];
+            $complect_goods_add_items=[];
+            $goods = Products::find()->asArray()->all();
+            foreach ($goods as $item) {
+                array_push($complect_goods_add_items,['id'=>$item['_id'],'name'=>$item['productName']]);
+            }
             $category_items = ProductsCategories::find()->all();
             $cat_items=[
                 ['id'=>0,'name'=>'??','rec_id'=>0],
@@ -453,6 +459,7 @@ class ReferenceController extends BaseController
                 'product' => $product,
                 'cat_items' => $cat_items,
                 'complect_items'=>$complect_items,
+                'complect_goods_add_items'=>$complect_goods_add_items,
                 'product_type_items' => $product_type_items
             ]);
         }
@@ -462,9 +469,9 @@ class ReferenceController extends BaseController
                 $product_lang    =$request->post('product-lang');
                 $product_name    =$request->post('product-name');
                 $product_natural    =$request->post('product-natural');
-                $product_category=$request->post('product-category');
+                $product_category   =$request->post('product-category');
                 $product_type=$request->post('product-type');
-                $product_id      =$request->post('product-id');
+                $product_id         =$request->post('product-id');
                 $product_idInMarket =$request->post('product-idInMarket');
                 $product_price      =$request->post('product-price');
                 $product_bonusMoney =$request->post('product-premia-direct') ?? 0;
@@ -483,6 +490,13 @@ class ReferenceController extends BaseController
                 $product_productActive  =$request->post('product-active');
                 $product_bonusPoints    =$request->post('product-bonus-points') ?? 0;
                 $product_taxNds         =$request->post('product-tax-nds') ?? 0;
+                $product_stock          =$request->post('product-stock') ?? 0;
+                $product_complect_goods =$request->post('product-complect-goods') ?? [];
+                $product_products=[];
+                foreach ($product_complect_goods as $item) {
+                    //array_push($product_products,['_id'=>new ObjectID($item['rec_id']),'productName'=>$item['name'],'cnt'=>$item['cnt']]);
+                    array_push($product_products,['_id'=>($item['rec_id']),'productName'=>$item['name'],'cnt'=>$item['cnt']]);
+                }
                 if ($cur_product_action =='add') {
                     $product = new Products();
                     //---check product_id
@@ -497,6 +511,8 @@ class ReferenceController extends BaseController
                 }
 
                 if ($product) {
+                    //$product->category_id =new ObjectID($product_category);
+                    //--error:Object of class MongoDB\BSON\ObjectId could not be converted to int
                     $product->category_id =$product_category;
                     $product->productType =(int)$product_type;
                     $product->productName =$product_name;
@@ -516,7 +532,22 @@ class ReferenceController extends BaseController
 
                         ];
 
+                    $product->bonus=[
+                        'point'=>[
+                            'elementary'=>(int)$product_bonusStart,
+                            'standart'=>(int)$product_bonusStandart,
+                            'vip'=>(int)$product_bonusVip,
+                            'investor'=>(int)$product_bonusInvestor,
+                            'investor_2'=>(int)$product_bonusInvestor_2,
+                            'investor_3'=>(int)$product_bonusInvestor_3,
+                        ],
+                        'money'=>[
 
+                        ],
+                        'stock'=>[
+
+                        ]
+                    ];
                     $product->expirationPeriod=['value'=>$product_expirationPeriodValue,'format'=>'month'];
 
                     $productDescription = !Empty($product->productDescription)?$product->productDescription:[];
@@ -530,8 +561,13 @@ class ReferenceController extends BaseController
                     $product->singlePurchase  =(int)$product_singlePurchase;
                     $product->productActive   =(int)$product_productActive;
                     $product->bonusPoints     =(float)$product_bonusPoints;
-                    $product->productTaxNds   =(int)$product_taxNds;
-
+                    $product->productTax      =(int)$product_taxNds;
+                    $product->stock           =(int)$product_stock;
+                    if (!Empty($product_complect_goods)) {
+                        $product->products=$product_products;
+                    } else {
+                        $product->products=[];
+                    }
                     $product->save();
                     $mes='Saved! product_category='.$product_category.'>> _id:'.$p_id;
                 } else {

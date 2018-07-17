@@ -95,11 +95,11 @@ use yii\widgets\ActiveForm;
                             <th></th>
                             <tbody id="complect-items">
                             <?php foreach ($complect_items as $item) { ?>
-                                <tr id="complect-item-<?=$item['id'] ?>">
-                                    <td><?=$item['id'] ?>)</td>
+                                <tr id="complect-item-<?=$item['rec_id'] ?>">
+                                    <td><strong><?=$item['id'] ?>)</strong></td>
                                     <td><?=$item['name'] ?></td>
                                     <td><?=$item['cnt'] ?></td>
-                                    <td> <a href="#" onclick="deleteComplectItem(<?=$item['id'] ?>)">
+                                    <td> <a href="#" onclick="deleteComplectItem(<?=$item['rec_id'] ?>)">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </a>
                                     </td>
@@ -111,16 +111,19 @@ use yii\widgets\ActiveForm;
                         <div class="row">
                             <div class="col-md-7">
                                 <select id="complect-new-name" class="form-control ">
+                                    <?php foreach ($complect_goods_add_items as $item) { ?>
+                                        <option value="<?=$item['id'] ?>"><?=$item['name'] ?></option>
+                                    <?php } ?>
                                     <option value="tt-1">Товар-1</option>
                                     <option>Товар-2</option>
                                     <option>Товар-3</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <input id="complect-new-cnt"  class="form-control " value="0" maxlength="2" type="text">
+                                <input id="complect-new-cnt"  class="form-control " value="1" maxlength="2" type="text">
                             </div>
                             <div class="col-md-2">
-                                <a href="#" class="btn btn-dark btn-sm btn-icon addItemSet" onclick="addComplectItem($('#complect-new-name').val(),$('#complect-new-cnt').val())">+</a>
+                                <a href="#" class="btn btn-dark btn-sm btn-icon addItemSet" onclick="addComplectItem($('#complect-new-name').val(),$('#complect-new-name option:selected').text(),$('#complect-new-cnt').val())">+</a>
                             </div>
                         </div>
                         <hr>
@@ -377,10 +380,15 @@ use yii\widgets\ActiveForm;
             </div>
 
             <div class="form-group col-sm-6 m-b plnone">
-
-                <label class="col-sm-7 control-label">НДС (%)</label>
+                <label class="col-sm-7 control-label">Акции</label>
                 <div class="col-sm-5">
-                    <input class="form-control" id="product-tax-nds" placeholder="НДС (%)" value="<?=$product->productTaxNds ?>" type="text">
+                    <input class="form-control" id="product-stock" placeholder="Акции" value="<?=$product->stock ?>" type="text">
+                </div>
+                <div>
+                    <label class="col-sm-7 control-label" style="margin-top: 15px" >НДС (%)</label>
+                    <div class="col-sm-5"  style="margin-top: 15px">
+                        <input class="form-control" id="product-tax-nds" placeholder="НДС (%)" value="<?=$product->productTax ?>" type="text">
+                    </div>
                 </div>
             </div>
         </div>
@@ -397,7 +405,7 @@ ActiveForm::end();
 ?>
 <script>
     complect_items=<?=json_encode($complect_items) ?>;
-
+    complect_goods_add_items=<?=json_encode($complect_goods_add_items) ?>;
     $(function() {
         $('#product-type').change(function() {
             if ($('#product-type').val()==2) {
