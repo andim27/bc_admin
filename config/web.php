@@ -67,16 +67,22 @@ $config = [
             // for the mailer to send real emails.
             'useFileTransport' => true,
         ],
-        'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
+	'log' => [
             'targets' => [
                 [
-                    'class' => 'yii\log\FileTarget',
+                    'class' => 'codemix\streamlog\Target',
+                    'url' => 'php://stdout',
+                    'levels' => ['info','trace'],
+                    'logVars' => [],
+                ],
+                [
+                    'class' => 'codemix\streamlog\Target',
+                    'url' => 'php://stderr',
                     'levels' => ['error', 'warning'],
+                    'logVars' => [],
                 ],
             ],
         ],
-
 //        'db' => require(__DIR__ . '/db.php'),
 
         // for mongodb
