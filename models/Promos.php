@@ -30,13 +30,19 @@ class Promos extends ActiveRecord
             'username',
             'date',
             'completed',
+            'completed2',
             'needSteps',
+            'needSteps2',
             'steps',
+            'steps2',
             'country',
             'city',
             'firstName',
             'secondName',
-            'salesSum'
+            'salesSum',
+            'salesSum2',
+            'needSaleSum',
+            'needSaleSum2',
         ];
     }
 
