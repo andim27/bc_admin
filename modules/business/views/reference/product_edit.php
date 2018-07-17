@@ -17,10 +17,8 @@ use yii\widgets\ActiveForm;
 <form id="formEditProduct" enctype="multipart/form-data" method="post">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title">Редактирование товара: id=<span id="p-id"><?=$product->_id; ?></span></h4>
-<!--<pre>-->
-<!--    --><?//= var_dump($product) ?>
-<!--</pre>-->
+        <h4 class="modal-title"><?=($product_action=="edit")?'Редактирование товара':'Добавление товара' ?>: id=<span id="p-id"><?=$product->_id; ?></span></h4>
+
     </div>
     <div class="modal-body">
         <p class="m-b text-center font-bold"><?=$product->productName; ?></p>
@@ -66,7 +64,7 @@ use yii\widgets\ActiveForm;
                 <label for="sel1">Категория товара:</label>
                 <select class="form-control" id="product-category">
                     <?php foreach ($cat_items as $item) { ?>
-                        <?php if ((!Empty($product->category_id))&&($item['rec_id'] == $product->category_id)) { ?>
+                        <?php if ((!Empty($product->category_id))&&($item['rec_id'] == (string)$product->category_id)) { ?>
                             <option selected value="<?=$item['rec_id'] ?>"><?=$item['name'] ?></option>
                         <?php } else { ?>
                             <option value="<?=$item['rec_id'] ?>"><?=$item['name'] ?></option>
@@ -99,7 +97,7 @@ use yii\widgets\ActiveForm;
                                     <td><strong><?=$item['id'] ?>)</strong></td>
                                     <td><?=$item['name'] ?></td>
                                     <td><?=$item['cnt'] ?></td>
-                                    <td> <a href="#" onclick="deleteComplectItem(<?=$item['rec_id'] ?>)">
+                                    <td> <a href="#" onclick="deleteComplectItem('<?=$item['rec_id'] ?>')">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </a>
                                     </td>

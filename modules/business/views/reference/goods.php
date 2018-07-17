@@ -28,13 +28,7 @@ GoodsAsset::register($this);
 </style>
 <div class="m-b-md">
     <h3 class="m-b-none"><?=THelper::t('goods') ?></h3>
-<!--    --><?php //foreach ($goods as $item) { ?>
-<!--    <p>-->
-<!--        <pre style="width:100%;overflow: auto">-->
-<!--        --><?//=json_encode($item); ?>
-<!--        </pre>-->
-<!--    </p>-->
-<!--    --><?php //}?>
+
 </div>
 <section class="hbox stretch">
     <aside class="aside-md bg-white b-r" id="subNav">
@@ -55,9 +49,7 @@ GoodsAsset::register($this);
             <?php }?>
 
         </ul>
-<!--        <pre>-->
-<!--            --><?//=json_encode($cat_items); ?>
-<!--        </pre>-->
+
     </aside>
     <aside>
         <section class="vbox">
@@ -73,17 +65,11 @@ GoodsAsset::register($this);
                                 <i class="fa fa-refresh"></i>
                             </button>
                         </div>
-<!--                        <a id="#createBtn" href="#" class="btn btn-sm btn-default">-->
-<!--                            <i class="fa fa-plus"></i> Create</a>-->
+
                         <button type="button" class="btn btn-default btn-sm" id="createBtn" > <i class="fa fa-plus"></i>Create</button>
                     </div>
                     <div class="col-sm-4 m-b-xs">
-<!--                        <div class="input-group">-->
-<!--                            <input class="input-sm form-control" placeholder="Search" type="text">-->
-<!--                            <span class="input-group-btn">-->
-<!--                                                    <button class="btn btn-sm btn-default" type="button">Go!</button>-->
-<!--                            </span>-->
-<!--                        </div>-->
+
                     </div>
                 </div>
             </header>
@@ -99,39 +85,39 @@ GoodsAsset::register($this);
                         <tr>
                             <th class="th-sortable" data-toggle="class" width="60">ID
                                 <span class="th-sort">
-                                                                <i class="fa fa-sort-down text"></i>
-                                                                <i class="fa fa-sort-up text-active"></i>
-                                                                <i class="fa fa-sort"></i>
+<!--                                                                <i class="fa fa-sort-down text"></i>-->
+<!--                                                                <i class="fa fa-sort-up text-active"></i>-->
+<!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
 
                             </th>
                             <th width="20"></th>
                             <th class="th-sortable" data-toggle="class">Название
                                 <span class="th-sort">
-                                                                <i class="fa fa-sort-down text"></i>
-                                                                <i class="fa fa-sort-up text-active"></i>
-                                                                <i class="fa fa-sort"></i>
+<!--                                                                <i class="fa fa-sort-down text"></i>-->
+<!--                                                                <i class="fa fa-sort-up text-active"></i>-->
+<!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
                             <th class="th-sortable" data-toggle="class">Категория
                                 <span class="th-sort">
-                                                                <i class="fa fa-sort-down text"></i>
-                                                                <i class="fa fa-sort-up text-active"></i>
-                                                                <i class="fa fa-sort"></i>
+<!--                                                                <i class="fa fa-sort-down text"></i>-->
+<!--                                                                <i class="fa fa-sort-up text-active"></i>-->
+<!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
                             <th class="th-sortable" data-toggle="class" width="80">Цена
                                 <span class="th-sort">
-                                                                <i class="fa fa-sort-down text"></i>
-                                                                <i class="fa fa-sort-up text-active"></i>
-                                                                <i class="fa fa-sort"></i>
+<!--                                                                <i class="fa fa-sort-down text"></i>-->
+<!--                                                                <i class="fa fa-sort-up text-active"></i>-->
+<!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
                             <th class="th-sortable" data-toggle="class" width="80">Бонус
                                 <span class="th-sort">
-                                                                <i class="fa fa-sort-down text"></i>
-                                                                <i class="fa fa-sort-up text-active"></i>
-                                                                <i class="fa fa-sort"></i>
+<!--                                                                <i class="fa fa-sort-down text"></i>-->
+<!--                                                                <i class="fa fa-sort-up text-active"></i>-->
+<!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
                             <th>Баллы</th>

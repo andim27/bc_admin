@@ -349,7 +349,8 @@ class ReferenceController extends BaseController
         ];
         $index=1;
         foreach ($category_items as $item) {
-            array_push($cat_items,['id'=>$index,'rec_id'=>(string)$item['_id'],'name'=>$item->name]);
+            //array_push($cat_items,['id'=>$index,'rec_id'=>(string)$item['_id'],'name'=>$item->name]);
+            array_push($cat_items,['id'=>$index,'rec_id'=>(string)($item->_id),'name'=>$item->name]);
             $index++;
         }
 
@@ -428,23 +429,20 @@ class ReferenceController extends BaseController
             if (!Empty($complect_products)) {
                 $index=1;
                 foreach ($complect_products as $item) {
-                    array_push($complect_items,['id'=>$index,'rec_id'=>$item['_id'],'name'=>$item['productName'],'cnt'=>$item['cnt']]);
+                    array_push($complect_items,['id'=>$index,'rec_id'=>(string)$item['_id'],'name'=>$item['productName'],'cnt'=>$item['cnt']]);
                     //array_push($complect_items,['id'=>$index,'rec_id'=>'asdf'.$index,'name'=>$item['productName'],'cnt'=>$item['cnt']]);
                     $index++;
                 }
             }
-
 //            $complect_items=[
 //                ['id'=>1,'rec_id'=>'asdfg1','name'=>'Goods -1','cnt'=>1],
 //                ['id'=>2,'rec_id'=>'asdfg2','name'=>'Goods -2','cnt'=>2],
-//                ['id'=>3,'rec_id'=>'asdfg3','name'=>'Goods -3','cnt'=>3],
-//                ['id'=>4,'rec_id'=>'asdfg4','name'=>'Goods -4','cnt'=>4],
-//                ['id'=>5,'rec_id'=>'asdfg5','name'=>'Goods -5','cnt'=>5]
 //            ];
             $complect_goods_add_items=[];
             $goods = Products::find()->asArray()->all();
             foreach ($goods as $item) {
-                array_push($complect_goods_add_items,['id'=>$item['_id'],'name'=>$item['productName']]);
+                //array_push($complect_goods_add_items,['id'=>$item['_id'],'name'=>$item['productName']]);
+                array_push($complect_goods_add_items,['id'=>(string)($item['_id']),'name'=>$item['productName']]);
             }
             $category_items = ProductsCategories::find()->all();
             $cat_items=[
@@ -456,11 +454,12 @@ class ReferenceController extends BaseController
                 $index++;
             }
             return $this->renderAjax('product_edit', [
-                'product' => $product,
-                'cat_items' => $cat_items,
+                'product_action'=>$product_action,
+                'product'       => $product,
+                'cat_items'     => $cat_items,
                 'complect_items'=>$complect_items,
                 'complect_goods_add_items'=>$complect_goods_add_items,
-                'product_type_items' => $product_type_items
+                'product_type_items'      => $product_type_items
             ]);
         }
         //----------------------PRODUCT SAVE------------------------------
@@ -494,8 +493,8 @@ class ReferenceController extends BaseController
                 $product_complect_goods =$request->post('product-complect-goods') ?? [];
                 $product_products=[];
                 foreach ($product_complect_goods as $item) {
-                    //array_push($product_products,['_id'=>new ObjectID($item['rec_id']),'productName'=>$item['name'],'cnt'=>$item['cnt']]);
-                    array_push($product_products,['_id'=>($item['rec_id']),'productName'=>$item['name'],'cnt'=>$item['cnt']]);
+                    array_push($product_products,['_id'=>new ObjectID($item['rec_id']),'productName'=>$item['name'],'cnt'=>$item['cnt']]);
+                    //array_push($product_products,['_id'=>($item['rec_id']),'productName'=>$item['name'],'cnt'=>$item['cnt']]);
                 }
                 if ($cur_product_action =='add') {
                     $product = new Products();
@@ -511,9 +510,8 @@ class ReferenceController extends BaseController
                 }
 
                 if ($product) {
-                    //$product->category_id =new ObjectID($product_category);
-                    //--error:Object of class MongoDB\BSON\ObjectId could not be converted to int
-                    $product->category_id =$product_category;
+                    $product->category_id =new ObjectID($product_category);
+                    //$product->category_id =$product_category;
                     $product->productType =(int)$product_type;
                     $product->productName =$product_name;
                     $product->productNatural =(int)$product_natural;
@@ -533,7 +531,7 @@ class ReferenceController extends BaseController
                         ];
 
                     $product->bonus=[
-                        'point'=>[
+                        'money'=>[
                             'elementary'=>(int)$product_bonusStart,
                             'standart'=>(int)$product_bonusStandart,
                             'vip'=>(int)$product_bonusVip,
@@ -541,7 +539,7 @@ class ReferenceController extends BaseController
                             'investor_2'=>(int)$product_bonusInvestor_2,
                             'investor_3'=>(int)$product_bonusInvestor_3,
                         ],
-                        'money'=>[
+                        'point'=>[
 
                         ],
                         'stock'=>[
@@ -568,18 +566,22 @@ class ReferenceController extends BaseController
                     } else {
                         $product->products=[];
                     }
+                    if ($product->productType==1) {
+                        $product->products=[];
+                    }
                     $product->save();
-                    $mes='Saved! product_category='.$product_category.'>> _id:'.$p_id;
+                    $mes='<strong>Saved!</strong> product_category='.$product_category.'>> _id:'.$p_id;
+                    $res=['success'=>true,'message'=>$mes];
                 } else {
-                    $mes='Error! product_id='.$p_id;
+                    $mes='<strong>Error!</strong> product_id='.$p_id;
+                    $res=['success'=>false,'message'=>$mes];
                 }
             } catch (\Exception $e) {
                 $mes='Error! product_id='.$p_id.' error mes:'.$e->getMessage().' line='.$e->getLine();
+                $res=['success'=>false,'message'=>$mes];
             }
 
-
-            $res=['success'=>true,'message'=>$mes];
-
+            //$res=['success'=>true,'message'=>$mes];
 
             return $res;
         }
