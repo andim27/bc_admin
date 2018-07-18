@@ -643,8 +643,12 @@ GoodsAsset::register($this);
         var url="/<?=Yii::$app->language?>/business/reference/product-check";
         $.post(url,{'product-id':$('#product-id').val()}).done(function(data){
             if (data.success==false) {
-                alert('Product with code:'+$('#product-id').val()+' exist!');
+                //alert('Product with code:'+$('#product-id').val()+' exist!');
+                $('#product-code-title').addClass('alert alert-danger').html('Код товара: '+$('#product-id').val()+' существут!<strong>Осторожно!</strong>');
+
                 $('#product-id').focus();
+            } else {
+                $('#product-code-title').removeClass('alert alert-danger').html('Код товара');
             }
         });
     }
@@ -693,7 +697,6 @@ GoodsAsset::register($this);
             'product-id':$('#product-id').val(),
             'product-idInMarket':$('#product-idInMarket').val(),
             'product-price':$('#product-price').val(),
-            'product-premia-direct':$('#product-premia-direct').val(),
             'product-bonus-start':$('#product-bonus-start').val(),
             'product-bonus-standart':$('#product-bonus-standart').val(),
             'product-bonus-vip':$('#product-bonus-vip').val(),
