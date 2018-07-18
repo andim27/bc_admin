@@ -800,6 +800,9 @@ GoodsAsset::register($this);
 
             //console.log('productid='+dataValue);
         });
+        $('#editProductModal').on('hide.bs.modal', function (e) {
+            window.location.reload();
+        });
 
     })
     $(function() {
