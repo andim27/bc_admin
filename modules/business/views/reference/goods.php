@@ -724,7 +724,7 @@ GoodsAsset::register($this);
             'product-active':$('#product-active').is(':checked')?1:0,
             'product-bonus-points':$('#product-bonus-points').val(),
             'product-tax-nds':$('#product-tax-nds').val(),
-            'product-stock':$('#product-stock').val(),
+            //'product-stock':$('#product-stock').val(),
             'product-description':$('#editor').html(),
             'product-complect-goods':complect_items,
         };

@@ -313,10 +313,10 @@ use yii\widgets\ActiveForm;
                 </div>
             </div>
             <div class="form-group col-sm-6 m-b plnone">
-                <label class="col-sm-7 control-label">Время/Дата<br> последней продажи</label>
-                <div class="col-sm-5">
-                    <p class="font-bold">14:15:18 15/05/2018</p>
-                </div>
+<!--                <label class="col-sm-7 control-label">Время/Дата<br> последней продажи</label>-->
+<!--                <div class="col-sm-5">-->
+<!--                    <p class="font-bold">14:15:18 15/05/2018</p>-->
+<!--                </div>-->
             </div>
         </div>
 
@@ -472,10 +472,11 @@ use yii\widgets\ActiveForm;
             </div>
 
             <div class="form-group col-sm-6 m-b plnone">
-                <label class="col-sm-7 control-label">Акции</label>
-                <div class="col-sm-5">
-                    <input class="form-control" id="product-stock" placeholder="Акции" value="<?=$product->stock ?>" type="text">
-                </div>
+<!--                <label class="col-sm-7 control-label">Акции</label>-->
+<!--                <div class="col-sm-5">-->
+<!--                     It was stock here-->
+
+<!--                </div>-->
                 <div>
                     <label class="col-sm-7 control-label" style="margin-top: 15px" >НДС (%)</label>
                     <div class="col-sm-5"  style="margin-top: 15px">

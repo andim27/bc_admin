@@ -503,7 +503,7 @@ class ReferenceController extends BaseController
                 $product_productActive  =$request->post('product-active');
                 $product_bonusPoints    =$request->post('product-bonus-points') ?? 0;
                 $product_taxNds         =$request->post('product-tax-nds') ?? 0;
-                $product_stock          =$request->post('product-stock') ?? 0;
+                //$product_stock          =$request->post('product-stock') ?? 0;
                 $product_complect_goods =$request->post('product-complect-goods') ?? [];
                 $product_products=[];
                 foreach ($product_complect_goods as $item) {
@@ -585,7 +585,7 @@ class ReferenceController extends BaseController
                     $product->productActive   =(int)$product_productActive;
                     $product->bonusPoints     =(float)$product_bonusPoints;
                     $product->productTax      =(int)$product_taxNds;
-                    $product->stock           =(int)$product_stock;
+                    //$product->stock           =(int)$product_stock;
                     if (!Empty($product_complect_goods)) {
                         $product->products=$product_products;
                     } else {
