@@ -2,7 +2,9 @@
 use app\components\THelper;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use kartik\file\FileInput;
 ?>
 
 <!--<form role="form">-->
@@ -146,7 +148,25 @@ use yii\widgets\ActiveForm;
 
                 <input class="filestyle hidden" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline input-s" id="filestyle-0" style="position: fixed; left: -500px;" type="file">
                 <div class="bootstrap-filestyle" style="display: inline;">
-                    <label for="filestyle-0" class="btn btn-default"><span>Выберите изображение</span></label>
+<!--                    <label for="filestyle-0" class="btn btn-default"><span>Выберите изображение</span></label>-->
+                    <?php
+                    // With model & without ActiveForm
+                    try {
+                        echo FileInput::widget([
+                            'model' => $upload_product_form,
+                            'attribute' => 'imageFile',
+                            'options' => ['multiple' => true],
+                            'pluginOptions' => [
+                                'uploadUrl' => 'product-image-upload',
+                            ]
+
+                        ]);
+                    } catch (\Exception $e) {
+                        echo '<span class="alert alert-danger">Изображение недоступно</span>';
+                    }
+
+
+                    ?>
                 </div>
 
             </div>

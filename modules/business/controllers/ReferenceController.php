@@ -15,6 +15,7 @@ use Yii;
 use app\models\api;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
+use app\modules\business\models\UploadProductImage;
 use yii\web\Response;
 use app\models\ProductCategories;
 
@@ -453,13 +454,16 @@ class ReferenceController extends BaseController
                 array_push($cat_items,['id'=>$index,'rec_id'=>(string)$item['_id'],'name'=>$item->name]);
                 $index++;
             }
+            $upload_product_form=new UploadProductImage();
+            //$upload_product_form->imageFile = UploadedFile::getInstance($upload_product_form, 'imageFile');
             return $this->renderAjax('product_edit', [
                 'product_action'=>$product_action,
                 'product'       => $product,
                 'cat_items'     => $cat_items,
                 'complect_items'=>$complect_items,
                 'complect_goods_add_items'=>$complect_goods_add_items,
-                'product_type_items'      => $product_type_items
+                'product_type_items'      => $product_type_items,
+                'upload_product_form'=>$upload_product_form
             ]);
         }
         //----------------------PRODUCT SAVE------------------------------
@@ -611,6 +615,12 @@ class ReferenceController extends BaseController
             return $res;
         }
       ;
+    }
+    public function actionProductImageUpload() {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $mes='done';
+        $res=['success'=>true,'filename'=>'','message'=>$mes];
+        return $res;
     }
     public function actionProductSaveImage() {
         $request = Yii::$app->request;
