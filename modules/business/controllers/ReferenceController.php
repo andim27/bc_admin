@@ -517,7 +517,7 @@ class ReferenceController extends BaseController
                     $product->productNatural =(int)$product_natural;
                     $product->product     =(int)$product_id;
                     $product->products     =[];//--depends on productType
-                    $product->idInMarket  =$product_idInMarket;
+                    $product->idInMarket  =(int)$product_idInMarket;
                     $product->price       =(float)round($product_price,2);
                     $product->bonusMoney  =(int)$product_bonusMoney;
                     $product->bonusMoneys=[
@@ -547,7 +547,7 @@ class ReferenceController extends BaseController
 
                         ]
                     ];
-                    $product->expirationPeriod=['value'=>$product_expirationPeriodValue,'format'=>'month'];
+                    $product->expirationPeriod=['value'=>(int)$product_expirationPeriodValue,'format'=>'months'];
 
                     $productDescription = !Empty($product->productDescription)?$product->productDescription:[];
                     $productDescription[$product_lang]=$product_description;
