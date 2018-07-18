@@ -127,17 +127,14 @@ use yii\widgets\ActiveForm;
                         <hr>
                     </div>
                 </div>
-                <label>Код товара</label>
-                <input class="form-control m-b" id="product-id" onblur="checkProduct()"  placeholder="Введите Код товара" value="<?=$product->product ?>" type="text">
+                <label id="product-code-title">Код товара</label>
+                <input class="form-control m-b" id="product-id" onchange="checkProduct()"  placeholder="Введите Код товара" value="<?=$product->product ?>" type="text">
 
 
                 <label>ID товара в магазине</label>
                 <input class="form-control m-b" id="product-idInMarket" placeholder="ID товара в магазине" value="<?=$product->idInMarket ?>" type="text">
                 <label>Розничная цена</label>
                 <input class="form-control m-b" id="product-price" placeholder="Введите розничную цену (Euro)" value="<?=$product->price ?>" type="text">
-                <label>Прямая премия</label>
-                <input class="form-control m-b" id="product-premia-direct" placeholder="Прямая премия" value="<?=$product->bonusMoney ?>" type="text">
-
 
             </div>
             <div class="form-group col-md-6 text-center">

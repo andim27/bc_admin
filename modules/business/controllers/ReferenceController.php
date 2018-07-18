@@ -473,7 +473,6 @@ class ReferenceController extends BaseController
                 $product_id         =$request->post('product-id');
                 $product_idInMarket =$request->post('product-idInMarket');
                 $product_price      =$request->post('product-price');
-                $product_bonusMoney =$request->post('product-premia-direct') ?? 0;
                 $product_bonusStart    =$request->post('product-bonus-start') ?? 0;
                 $product_bonusStandart =$request->post('product-bonus-standart') ?? 0;
                 $product_bonusVip        =$request->post('product-bonus-vip') ?? 0;
@@ -519,7 +518,7 @@ class ReferenceController extends BaseController
                     $product->products     =[];//--depends on productType
                     $product->idInMarket  =(int)$product_idInMarket;
                     $product->price       =(float)round($product_price,2);
-                    $product->bonusMoney  =(int)$product_bonusMoney;
+
                     $product->bonusMoneys=[
                         'elementary'=>(int)$product_bonusStart,
                         'standart'=>(int)$product_bonusStandart,
@@ -531,6 +530,7 @@ class ReferenceController extends BaseController
                         ];
 
                     $product->bonus=[
+                        'stock'=>(int)$product_stock,
                         'point'=>(float)$product_bonusPoints,
                         'money'=>[
                             'elementary'=>(int)$product_bonusStart,
@@ -539,13 +539,8 @@ class ReferenceController extends BaseController
                             'investor'=>(int)$product_bonusInvestor,
                             'investor_2'=>(int)$product_bonusInvestor_2,
                             'investor_3'=>(int)$product_bonusInvestor_3,
-                        ],
-                        'stock'=>[
-                            'vipvip'=>100,
-                            'wellness'=>100,
-                            'vipcoin'=>100,
-
                         ]
+
                     ];
                     $product->expirationPeriod=['value'=>(int)$product_expirationPeriodValue,'format'=>'months'];
 
