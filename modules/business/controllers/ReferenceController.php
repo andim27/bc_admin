@@ -473,13 +473,28 @@ class ReferenceController extends BaseController
                 $product_id         =$request->post('product-id');
                 $product_idInMarket =$request->post('product-idInMarket');
                 $product_price      =$request->post('product-price');
-                $product_bonusStart    =$request->post('product-bonus-start') ?? 0;
-                $product_bonusStandart =$request->post('product-bonus-standart') ?? 0;
+                //--------------------------------tab-money-----------------------------
+                $product_bonusStart      =$request->post('product-bonus-start') ?? 0;
+                $product_bonusStandart   =$request->post('product-bonus-standart') ?? 0;
                 $product_bonusVip        =$request->post('product-bonus-vip') ?? 0;
                 $product_bonusInvestor   =$request->post('product-bonus-investor') ?? 0;
                 $product_bonusInvestor_2 =$request->post('product-bonus-investor-2') ?? 0;
                 $product_bonusInvestor_3 =$request->post('product-bonus-investor-3') ?? 0;
-
+                //--------------------------------tab-point-----------------------------
+                $product_bonusPointStart      =$request->post('product-bonus-point-start') ?? 0;
+                $product_bonusPointStandart   =$request->post('product-bonus-point-standart') ?? 0;
+                $product_bonusPointVip        =$request->post('product-bonus-point-vip') ?? 0;
+                $product_bonusPointInvestor   =$request->post('product-bonus-point-investor') ?? 0;
+                $product_bonusPointInvestor_2 =$request->post('product-bonus-point-investor-2') ?? 0;
+                $product_bonusPointInvestor_3 =$request->post('product-bonus-point-investor-3') ?? 0;
+                //--------------------------------tab-stock-----------------------------
+                $product_bonusStockStart      =$request->post('product-bonus-stock-start') ?? 0;
+                $product_bonusStockStandart   =$request->post('product-bonus-stock-standart') ?? 0;
+                $product_bonusStockVip        =$request->post('product-bonus-stock-vip') ?? 0;
+                $product_bonusStockInvestor   =$request->post('product-bonus-stock-investor') ?? 0;
+                $product_bonusStockInvestor_2 =$request->post('product-bonus-stock-investor-2') ?? 0;
+                $product_bonusStockInvestor_3 =$request->post('product-bonus-stock-investor-3') ?? 0;
+                //--------------------------------end tabs-----------------------------
                 $product_expirationPeriodValue =$request->post('product-expirationPeriod-value');
 
                 $product_description =$request->post('product-description');
@@ -519,19 +534,33 @@ class ReferenceController extends BaseController
                     $product->idInMarket  =(int)$product_idInMarket;
                     $product->price       =(float)round($product_price,2);
 
-                    $product->bonusMoneys=[
-                        'elementary'=>(int)$product_bonusStart,
-                        'standart'=>(int)$product_bonusStandart,
-                        'vip'=>(int)$product_bonusVip,
-                        'investor'=>(int)$product_bonusInvestor,
-                        'investor_2'=>(int)$product_bonusInvestor_2,
-                        'investor_3'=>(int)$product_bonusInvestor_3,
-
-                        ];
+//                    $product->bonusMoneys=[
+//                        'elementary'=>(int)$product_bonusStart,
+//                        'standart'=>(int)$product_bonusStandart,
+//                        'vip'=>(int)$product_bonusVip,
+//                        'investor'=>(int)$product_bonusInvestor,
+//                        'investor_2'=>(int)$product_bonusInvestor_2,
+//                        'investor_3'=>(int)$product_bonusInvestor_3,
+//
+//                        ];
 
                     $product->bonus=[
-                        'stock'=>(int)$product_stock,
-                        'point'=>(float)$product_bonusPoints,
+                        'stock'=>[
+                            'elementary'=>(int)$product_bonusStockStart,
+                            'standart'=>(int)$product_bonusStockStandart,
+                            'vip'=>(int)$product_bonusStockVip,
+                            'investor'=>(int)$product_bonusStockInvestor,
+                            'investor_2'=>(int)$product_bonusStockInvestor_2,
+                            'investor_3'=>(int)$product_bonusStockInvestor_3,
+                        ],
+                        'point'=>[
+                            'elementary'=>(float)$product_bonusPointStart,
+                            'standart'=>(float)$product_bonusPointStandart,
+                            'vip'=>(float)$product_bonusPointVip,
+                            'investor'=>(float)$product_bonusPointInvestor,
+                            'investor_2'=>(float)$product_bonusPointInvestor_2,
+                            'investor_3'=>(float)$product_bonusPointInvestor_3,
+                        ],
                         'money'=>[
                             'elementary'=>(int)$product_bonusStart,
                             'standart'=>(int)$product_bonusStandart,

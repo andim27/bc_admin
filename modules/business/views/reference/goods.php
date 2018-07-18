@@ -697,12 +697,28 @@ GoodsAsset::register($this);
             'product-id':$('#product-id').val(),
             'product-idInMarket':$('#product-idInMarket').val(),
             'product-price':$('#product-price').val(),
+            //------------tab-money----------------------------------------
             'product-bonus-start':$('#product-bonus-start').val(),
             'product-bonus-standart':$('#product-bonus-standart').val(),
             'product-bonus-vip':$('#product-bonus-vip').val(),
             'product-bonus-investor':$('#product-bonus-investor').val(),
             'product-bonus-investor-2':$('#product-bonus-investor-2').val(),
             'product-bonus-investor-3':$('#product-bonus-investor-3').val(),
+            //-----------tab-points-----------------------------------------
+            'product-bonus-point-start':$('#product-bonus-point-start').val(),
+            'product-bonus-point-standart':$('#product-bonus-point-standart').val(),
+            'product-bonus-point-vip':$('#product-bonus-point-vip').val(),
+            'product-bonus-point-investor':$('#product-bonus-point-investor').val(),
+            'product-bonus-point-investor-2':$('#product-bonus-point-investor-2').val(),
+            'product-bonus-point-investor-3':$('#product-bonus-point-investor-3').val(),
+            //------------tab-stock----------------------------------------
+            'product-bonus-stock-start':$('#product-bonus-stock-start').val(),
+            'product-bonus-stock-standart':$('#product-bonus-stock-standart').val(),
+            'product-bonus-stock-vip':$('#product-bonus-stock-vip').val(),
+            'product-bonus-stock-investor':$('#product-bonus-stock-investor').val(),
+            'product-bonus-stock-investor-2':$('#product-bonus-stock-investor-2').val(),
+            'product-bonus-stock-investor-3':$('#product-bonus-stock-investor-3').val(),
+            //------------end tabs----------------------------------------------
             'product-expirationPeriod-value':$('#product-expirationPeriod-value').val(),
             'product-single-purchase':$('#product-single-purchase').is(':checked')?1:0,
             'product-active':$('#product-active').is(':checked')?1:0,
