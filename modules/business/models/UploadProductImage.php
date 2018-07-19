@@ -23,9 +23,9 @@ class UploadProductImage extends Model
     public function upload()
     {
         if ($this->validate()) {
-            $dir = 'uploads/products_images' ;
+            $dir = 'uploads' ;
 
-            $baseName = $this->imageFile->baseName . '_' . md5(rand(0, time()));
+            $baseName = 'p_img_'.$this->imageFile->baseName . '_' . md5(rand(0, time()));
 
             $filePath = $dir . '/' . $baseName . '.' . $this->imageFile->extension;
 

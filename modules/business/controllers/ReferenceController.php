@@ -618,8 +618,22 @@ class ReferenceController extends BaseController
     }
     public function actionProductImageUpload() {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $mes='done';
-        $res=['success'=>true,'filename'=>'','message'=>$mes];
+        $model = new UploadProductImage();
+
+        if (Yii::$app->request->isPost) {
+            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+            $uploaded_file=$model->upload();
+            if ($uploaded_file) {
+                // file is uploaded successfully
+                $mes='done';
+                $res=['success'=>true,'filename'=>$uploaded_file,'message'=>$mes];//--good--
+            } else {
+                $mes='error';
+                $res=['error'=>'Error from server','append'=>false,'filename'=>'','message'=>$mes];//--bad--
+            }
+        }
+
+
         return $res;
     }
     public function actionProductSaveImage() {

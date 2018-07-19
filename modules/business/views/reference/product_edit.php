@@ -141,24 +141,22 @@ use kartik\file\FileInput;
             </div>
             <div class="form-group col-md-6 text-center">
 
-                <label>Изображение</label><br>
+                <label>Изображение товара</label><br>
                 <div class="row">
                     <img class="col-md-6 m100 fnone" src="images/pribor.png" alt="">
                 </div>
 
-                <input class="filestyle hidden" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline input-s" id="filestyle-0" style="position: fixed; left: -500px;" type="file">
                 <div class="bootstrap-filestyle" style="display: inline;">
-<!--                    <label for="filestyle-0" class="btn btn-default"><span>Выберите изображение</span></label>-->
                     <?php
-                    // With model & without ActiveForm
                     try {
                         echo FileInput::widget([
                             'model' => $upload_product_form,
                             'attribute' => 'imageFile',
+                            'id'=>'input-id',
                             'options' => ['multiple' => true],
                             'pluginOptions' => [
                                 'uploadUrl' => 'product-image-upload',
-                            ]
+                            ],
 
                         ]);
                     } catch (\Exception $e) {
@@ -437,7 +435,7 @@ use kartik\file\FileInput;
                             <a class="btn btn-default btn-sm" title="" id="pictureBtn" data-original-title="Insert picture (or just drag &amp; drop)">
                                 <i class="fa fa-picture-o"></i>
                             </a>
-                            <input data-role="magic-overlay" data-target="#pictureBtn" data-edit="insertImage" style="opacity: 0; position: absolute; top: 0px; left: 0px; width: 0px; height: 0px;" type="file"> </div>
+<!--                            <input data-role="magic-overlay" data-target="#pictureBtn" data-edit="insertImage" style="opacity: 0; position: absolute; top: 0px; left: 0px; width: 0px; height: 0px;" type="file"> </div>-->
                         <div class="btn-group">
                             <a class="btn btn-default btn-sm" data-edit="undo" title="" data-original-title="Undo (Ctrl/Cmd+Z)">
                                 <i class="fa fa-undo"></i>
@@ -535,8 +533,15 @@ ActiveForm::end();
         $('#editor').wysiwyg({
 
         });
-        //-------------------
-
+        //----------------------------------------------------------------------------------
+        $('input[type="file"]').on('fileuploaded', function(event, data, previewId, index) {
+            var form = data.form, files = data.files, extra = data.extra,
+                response = data.response, reader = data.reader;
+            filename=response.filename;
+            console.log('File uploaded triggered:files',files);
+            console.log('File uploaded triggered:extra',extra);
+            console.log('File uploaded triggered:filename',filename);
+        });
 
     })
 </script>
