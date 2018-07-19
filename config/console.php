@@ -24,8 +24,8 @@ $config = [
         // for mongodb
         'mongodb' => [
             'class' => '\yii\mongodb\Connection',
-//            'dsn' => 'mongodb://localhost/gnc',
-	    'dsn' => 'mongodb://gnc:b41uHcdR@bpt-shard-00-00-ezdfa.mongodb.net:27017,bpt-shard-00-01-ezdfa.mongodb.net:27017,bpt-shard-00-02-ezdfa.mongodb.net:27017/gnc?ssl=true&sslWeakCertificateValidation=true&replicaSet=BPT-shard-0&authSource=admin',
+            'dsn' => 'mongodb://10.10.1.9/gnc',
+//	    'dsn' => 'mongodb://gnc:b41uHcdR@bpt-shard-00-00-ezdfa.mongodb.net:27017,bpt-shard-00-01-ezdfa.mongodb.net:27017,bpt-shard-00-02-ezdfa.mongodb.net:27017/gnc?ssl=true&sslWeakCertificateValidation=true&replicaSet=BPT-shard-0&authSource=admin',
 //            'dsn' => 'mongodb://gnc:b41uHcdR@bpt-shard-00-00-ezdfa.mongodb.net:27017/gnc',
         ],
     ],
