@@ -141,13 +141,21 @@ use kartik\file\FileInput;
             </div>
             <div class="form-group col-md-6 text-center">
 
-                <label>Изображение товара</label><br>
-                <div class="row">
-                    <img class="col-md-6 m100 fnone" src="images/pribor.png" alt="">
+                <label>Изображение товара</label>
+                <button id="edit-category-btn" type="button" class="btn btn-link" onclick="$('#product-image-choose').toggle();$('#product-image-base').toggle()" style="display:<?=($product_action=="edit")?'inline':'none' ?>;margin-top: 0px;margin-left:10px"><i class="fa fa-edit"></i></button><br>
+                <div id="product-image-base" class="row" style="margin-top: 25px">
+                    <?php
+                    if (($product_action=="edit")) {
+                        echo "<img class='col-md-6 center m100'  src='".$product->productImage."' width=200 height=200 />";
+                    }
+                    ?>
+
+
                 </div>
 
-                <div class="bootstrap-filestyle" style="display: inline;">
+                <div id="product-image-choose"  class="bootstrap-filestyle" style="display:<?=($product_action=="edit")?'none':'inline' ?>;margin-top: 25px">
                     <?php
+
                     try {
                         echo FileInput::widget([
                             'model' => $upload_product_form,
@@ -538,8 +546,8 @@ ActiveForm::end();
             var form = data.form, files = data.files, extra = data.extra,
                 response = data.response, reader = data.reader;
             filename=response.filename;
-            console.log('File uploaded triggered:files',files);
-            console.log('File uploaded triggered:extra',extra);
+            cur_product_image_file=filename;
+
             console.log('File uploaded triggered:filename',filename);
         });
 

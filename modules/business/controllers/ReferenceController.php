@@ -477,6 +477,7 @@ class ReferenceController extends BaseController
                 $product_id         =$request->post('product-id');
                 $product_idInMarket =$request->post('product-idInMarket');
                 $product_price      =$request->post('product-price');
+                $product_image_file =$request->post('product-image-file');
                 //--------------------------------tab-money-----------------------------
                 $product_bonusStart      =$request->post('product-bonus-start') ?? 0;
                 $product_bonusStandart   =$request->post('product-bonus-standart') ?? 0;
@@ -598,8 +599,17 @@ class ReferenceController extends BaseController
                     if ($product->productType==1) {
                         $product->products=[];
                     }
-                    $product->save();
                     $mes='<strong>Saved!</strong> product_category='.$product_category.'>> _id:'.$p_id;
+                    if (!Empty($product_image_file)) {
+                        if (file_exists($product_image_file)) {
+                            $product->productImage ="data:image/png;base64,".base64_encode(file_get_contents($product_image_file));
+                        } else {
+                           $mes="(Error)Product file image:". $product_image_file;
+                        }
+
+                    }
+                    $product->save();
+
                     $res=['success'=>true,'message'=>$mes];
                 } else {
                     $mes='<strong>Error!</strong> product_id='.$p_id;

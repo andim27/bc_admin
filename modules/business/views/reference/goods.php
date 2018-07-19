@@ -543,6 +543,7 @@ GoodsAsset::register($this);
     cur_category_id=0;
     cur_product_id=0;
     cur_category_name='all';
+    cur_product_image_file='';
     function categorySelect(elem,rec_id) {
         for (let i=0;i<category_items.length;i++) {
             var rec_id_str=category_items[i].rec_id;
@@ -697,6 +698,7 @@ GoodsAsset::register($this);
             'product-id':$('#product-id').val(),
             'product-idInMarket':$('#product-idInMarket').val(),
             'product-price':$('#product-price').val(),
+            'product-image-file':cur_product_image_file,
             //------------tab-money----------------------------------------
             'product-bonus-start':$('#product-bonus-start').val(),
             'product-bonus-standart':$('#product-bonus-standart').val(),
