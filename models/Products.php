@@ -62,7 +62,9 @@ class Products extends ActiveRecord
             'productActive',
             'productNatural',
             'productTax',
-            'stock'
+            'stock',
+            'productBalanceTopUp',
+            'balanceMoney'
         ];
     }
 

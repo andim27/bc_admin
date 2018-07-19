@@ -729,6 +729,9 @@ GoodsAsset::register($this);
             //'product-stock':$('#product-stock').val(),
             'product-description':$('#editor').html(),
             'product-complect-goods':complect_items,
+            //------------com balance--------------------------------------------
+            'product-balance-top-up':$('#product-balance-top-up').is(':checked')?1:0,
+            'product-balance-money' :$('#product-balance-money').val(),
         };
         $.ajax( {
             url: url,

@@ -202,7 +202,7 @@ use kartik\file\FileInput;
                                 <div class="form-group col-sm-6">
                                     <label class="col-sm-6 control-label">Начальный</label>
                                     <div class="col-sm-6">
-                                        <input class="form-control m-b" id="product-bonus-start" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['elementary'])?0:$product['bonus']['money']['elementary'];  ?>"> </div>
+                                        <input class="form-control m-b" id="product-bonus-start" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['beginner'])?0:$product['bonus']['money']['beginner'];  ?>"> </div>
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label class="col-sm-6 control-label">Стандартный</label>
@@ -215,19 +215,19 @@ use kartik\file\FileInput;
                                         <input class="form-control m-b" id="product-bonus-vip" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['vip'])?0:$product['bonus']['money']['vip'];  ?>" > </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label class="col-sm-6 control-label">VIP (Инвестор)</label>
+                                    <label class="col-sm-6 control-label">VIP (Инвестор-1)</label>
                                     <div class="col-sm-6">
-                                        <input class="form-control m-b" id="product-bonus-investor" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['investor'])?0:$product['bonus']['money']['investor'];  ?>" > </div>
+                                        <input class="form-control m-b" id="product-bonus-investor" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['vip_investor_1'])?0:$product['bonus']['money']['vip_investor_1'];  ?>" > </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label class="col-sm-6 control-label">VIP (Инвестор2)</label>
+                                    <label class="col-sm-6 control-label">VIP (Инвестор-2)</label>
                                     <div class="col-sm-6">
-                                        <input class="form-control m-b" id="product-bonus-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['investor_2'])?0:$product['bonus']['money']['investor_2'];  ?>" > </div>
+                                        <input class="form-control m-b" id="product-bonus-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['vip_investor_2'])?0:$product['bonus']['money']['vip_investor_2'];  ?>" > </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label class="col-sm-6 control-label">VIP (Инвестор3)</label>
+                                    <label class="col-sm-6 control-label">VIP (Инвестор-3)</label>
                                     <div class="col-sm-6">
-                                        <input class="form-control m-b" id="product-bonus-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['investor_3'])?0:$product['bonus']['money']['investor_3'];  ?>" > </div>
+                                        <input class="form-control m-b" id="product-bonus-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['vip_investor_3'])?0:$product['bonus']['money']['vip_investor_3'];  ?>" > </div>
                                 </div>
                         </div>
                     </div>
@@ -237,7 +237,7 @@ use kartik\file\FileInput;
                             <div class="form-group col-sm-6">
                                 <label class="col-sm-6 control-label">Начальный</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-point-start" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['elementary'])?0:$product['bonus']['point']['elementary'];  ?>"> </div>
+                                    <input class="form-control m-b" id="product-bonus-point-start" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['beginner'])?0:$product['bonus']['point']['beginner'];  ?>"> </div>
                             </div>
                             <div class="form-group col-sm-6">
                                 <label class="col-sm-6 control-label">Стандартный</label>
@@ -250,19 +250,19 @@ use kartik\file\FileInput;
                                     <input class="form-control m-b" id="product-bonus-point-vip" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['vip'])?0:$product['bonus']['point']['vip'];  ?>" > </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор)</label>
+                                <label class="col-sm-6 control-label">VIP (Инвестор-1)</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-point-investor" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['investor'])?0:$product['bonus']['point']['investor'];  ?>" > </div>
+                                    <input class="form-control m-b" id="product-bonus-point-investor" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['vip_investor_1'])?0:$product['bonus']['point']['vip_investor_1'];  ?>" > </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор2)</label>
+                                <label class="col-sm-6 control-label">VIP (Инвестор-2)</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-point-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['investor_2'])?0:$product['bonus']['point']['investor_2'];  ?>" > </div>
+                                    <input class="form-control m-b" id="product-bonus-point-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['vip_investor_2'])?0:$product['bonus']['point']['vip_investor_2'];  ?>" > </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор3)</label>
+                                <label class="col-sm-6 control-label">VIP (Инвестор-3)</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-point-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['investor_3'])?0:$product['bonus']['point']['investor_3'];  ?>" > </div>
+                                    <input class="form-control m-b" id="product-bonus-point-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['vip_investor_3'])?0:$product['bonus']['point']['vip_investor_3'];  ?>" > </div>
                             </div>
                         </div>
                     </div>
@@ -271,7 +271,7 @@ use kartik\file\FileInput;
                             <div class="form-group col-sm-6">
                                 <label class="col-sm-6 control-label">Начальный</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-start" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['elementary'])?0:$product['bonus']['stock']['elementary'];  ?>"> </div>
+                                    <input class="form-control m-b" id="product-bonus-stock-start" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['beginner'])?0:$product['bonus']['stock']['beginner'];  ?>"> </div>
                             </div>
                             <div class="form-group col-sm-6">
                                 <label class="col-sm-6 control-label">Стандартный</label>
@@ -284,19 +284,19 @@ use kartik\file\FileInput;
                                     <input class="form-control m-b" id="product-bonus-stock-vip" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['vip'])?0:$product['bonus']['stock']['vip'];  ?>" > </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор)</label>
+                                <label class="col-sm-6 control-label">VIP (Инвестор-1)</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-investor" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['investor'])?0:$product['bonus']['stock']['investor'];  ?>" > </div>
+                                    <input class="form-control m-b" id="product-bonus-stock-investor" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['vip_investor_1'])?0:$product['bonus']['stock']['vip_investor_1'];  ?>" > </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор2)</label>
+                                <label class="col-sm-6 control-label">VIP (Инвестор-2)</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['investor_2'])?0:$product['bonus']['stock']['investor_2'];  ?>" > </div>
+                                    <input class="form-control m-b" id="product-bonus-stock-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['vip_investor_2'])?0:$product['bonus']['stock']['vip_investor_2'];  ?>" > </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор3)</label>
+                                <label class="col-sm-6 control-label">VIP (Инвестор-3)</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['investor_3'])?0:$product['bonus']['stock']['investor_3'];  ?>" > </div>
+                                    <input class="form-control m-b" id="product-bonus-stock-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['vip_investor_3'])?0:$product['bonus']['stock']['vip_investor_3'];  ?>" > </div>
                             </div>
                         </div>
                     </div>
@@ -503,14 +503,33 @@ use kartik\file\FileInput;
 <!--                     It was stock here-->
 
 <!--                </div>-->
-                <div>
-                    <label class="col-sm-7 control-label" style="margin-top: 15px" >НДС (%)</label>
-                    <div class="col-sm-5"  style="margin-top: 15px">
+
+                    <label class="col-sm-7 control-label"  >НДС (%)</label>
+                    <div class="col-sm-5"  >
                         <input class="form-control" id="product-tax-nds" placeholder="НДС (%)" value="<?=$product->productTax ?>" type="text">
                     </div>
-                </div>
+            </div>
+          </div>
+        </div>
+
+
+    <div class="row m-b">
+        <div class="form-group col-sm-6 m-b plnone">
+            <label class="col-sm-7 control-label">Пополнение коммерческого счета</label>
+            <div class="col-sm-5">
+                <label class="switch">
+                    <input id="product-balance-top-up" <?=empty($product->productBalanceTopUp)?'':(($product->productBalanceTopUp)==1)?'checked':''  ?> type="checkbox">
+                    <span></span>
+                </label>
             </div>
         </div>
+        <div id="product-balance-money-block" class="form-group col-sm-6 m-b plnone " style="display:<?=Empty($product->balanceMoney)?'none':'block' ?>">
+            <label class="col-sm-7 control-label">Сумма пополнения</label>
+            <div class="col-sm-5"  >
+                <input class="form-control" id="product-balance-money" placeholder="Сумма" value="<?=$product->balanceMoney ?>" type="text">
+            </div>
+        </div>
+    </div>
         <div class="text-center" id="server-message"></div>
     </div>
     <div class="modal-footer">
@@ -540,6 +559,9 @@ ActiveForm::end();
         });
         $('#editor').wysiwyg({
 
+        });
+        $('#product-balance-top-up').change(function () {
+            $('#product-balance-money-block').toggle();
         });
         //----------------------------------------------------------------------------------
         $('input[type="file"]').on('fileuploaded', function(event, data, previewId, index) {

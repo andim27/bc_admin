@@ -510,6 +510,9 @@ class ReferenceController extends BaseController
                 $product_taxNds         =$request->post('product-tax-nds') ?? 0;
                 //$product_stock          =$request->post('product-stock') ?? 0;
                 $product_complect_goods =$request->post('product-complect-goods') ?? [];
+                $product_balance_top_up =$request->post('product-balance-top-up') ?? [];
+                $product_balance_money  =$request->post('product-balance-money') ?? [];
+
                 $product_products=[];
                 foreach ($product_complect_goods as $item) {
                     array_push($product_products,['_id'=>new ObjectID($item['rec_id']),'productName'=>$item['name'],'cnt'=>$item['cnt']]);
@@ -551,28 +554,28 @@ class ReferenceController extends BaseController
 
                     $product->bonus=[
                         'stock'=>[
-                            'elementary'=>(int)$product_bonusStockStart,
+                            'beginner'=>(int)$product_bonusStockStart,
                             'standart'=>(int)$product_bonusStockStandart,
                             'vip'=>(int)$product_bonusStockVip,
-                            'investor'=>(int)$product_bonusStockInvestor,
-                            'investor_2'=>(int)$product_bonusStockInvestor_2,
-                            'investor_3'=>(int)$product_bonusStockInvestor_3,
+                            'vip_investor_1'=>(int)$product_bonusStockInvestor,
+                            'vip_investor_2'=>(int)$product_bonusStockInvestor_2,
+                            'vip_investor_3'=>(int)$product_bonusStockInvestor_3,
                         ],
                         'point'=>[
-                            'elementary'=>(float)$product_bonusPointStart,
+                            'beginner'=>(float)$product_bonusPointStart,
                             'standart'=>(float)$product_bonusPointStandart,
                             'vip'=>(float)$product_bonusPointVip,
-                            'investor'=>(float)$product_bonusPointInvestor,
-                            'investor_2'=>(float)$product_bonusPointInvestor_2,
-                            'investor_3'=>(float)$product_bonusPointInvestor_3,
+                            'vip_investor_1'=>(float)$product_bonusPointInvestor,
+                            'vip_investor_2'=>(float)$product_bonusPointInvestor_2,
+                            'vip_investor_3'=>(float)$product_bonusPointInvestor_3,
                         ],
                         'money'=>[
-                            'elementary'=>(int)$product_bonusStart,
+                            'beginner'=>(int)$product_bonusStart,
                             'standart'=>(int)$product_bonusStandart,
                             'vip'=>(int)$product_bonusVip,
-                            'investor'=>(int)$product_bonusInvestor,
-                            'investor_2'=>(int)$product_bonusInvestor_2,
-                            'investor_3'=>(int)$product_bonusInvestor_3,
+                            'vip_investor_1'=>(int)$product_bonusInvestor,
+                            'vip_investor_2'=>(int)$product_bonusInvestor_2,
+                            'vip_investor_3'=>(int)$product_bonusInvestor_3,
                         ]
 
                     ];
@@ -590,7 +593,11 @@ class ReferenceController extends BaseController
                     $product->productActive   =(int)$product_productActive;
                     $product->bonusPoints     =(float)$product_bonusPoints;
                     $product->productTax      =(int)$product_taxNds;
+
+                    $product->productBalanceTopUp  =(int)$product_balance_top_up;
+                    $product->balanceMoney         =(float)$product_balance_money;
                     //$product->stock           =(int)$product_stock;
+
                     if (!Empty($product_complect_goods)) {
                         $product->products=$product_products;
                     } else {
