@@ -535,22 +535,14 @@ class ReferenceController extends BaseController
                     $product->category_id =new ObjectID($product_category);
                     //$product->category_id =$product_category;
                     $product->productType =(int)$product_type;
+                    $product->type        =(int)$product_type; //---delete in future
+                    $product->bonusMoney  =(int)$product_bonusStockStart; //---delete in future
                     $product->productName =$product_name;
                     $product->productNatural =(int)$product_natural;
                     $product->product     =(int)$product_id;
                     $product->products     =[];//--depends on productType
                     $product->idInMarket  =(int)$product_idInMarket;
                     $product->price       =(float)round($product_price,2);
-
-//                    $product->bonusMoneys=[
-//                        'elementary'=>(int)$product_bonusStart,
-//                        'standart'=>(int)$product_bonusStandart,
-//                        'vip'=>(int)$product_bonusVip,
-//                        'investor'=>(int)$product_bonusInvestor,
-//                        'investor_2'=>(int)$product_bonusInvestor_2,
-//                        'investor_3'=>(int)$product_bonusInvestor_3,
-//
-//                        ];
 
                     $product->bonus=[
                         'stock'=>[
