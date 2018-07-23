@@ -538,7 +538,7 @@ GoodsAsset::register($this);
 <!--E:Category modal-->
 <script>
     category_items=<?=json_encode($cat_items) ?>;
-
+    goods=<?=json_encode($goods) ?>;
     cur_product_action='edit';
     cur_category_id=0;
     cur_product_id=0;
@@ -552,7 +552,7 @@ GoodsAsset::register($this);
                 //$(elem).addClass('categorySelected');
                 cur_category_id=rec_id;
                 cur_category_name=category_items[i].name;
-                //setGoodsByCategory(cur_category_name);
+                setGoodsByCategory(cur_category_name);
             }
         }
         if (rec_id != 0) {
@@ -565,18 +565,10 @@ GoodsAsset::register($this);
     function setGoodsByCategory(i) {
         var table = $('#goods-table').DataTable();
         if (cur_category_id ==0) {
-            table.fnFilterClear();
+            //table.fnFilterClear();
+            table.column(3).search('').draw();
         } else {
-            var filteredData = table
-                .column( 3 )
-                .data()
-                .filter( function ( value, index ) {
-                    return value == cur_category_name ? true : false;
-                } );
-            //table.rows.clear();
-            table.rows.add(filteredData);
-            table.draw();
-            console.log('filteredData ',filteredData);
+            table.column(3).search(cur_category_name).draw();
         }
 
     }
