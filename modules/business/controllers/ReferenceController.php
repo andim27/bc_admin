@@ -533,6 +533,31 @@ class ReferenceController extends BaseController
                 }
 
                 if ($product) {
+                    $mes="";
+                    //-----------------------------b: history ---------------------------------
+                    $old_history=(array)$product->history;
+                    $new_history=[];
+                    if ($product->price != $product_price ) {
+                        array_push($new_history,
+                            ['field'=>'price','value'=>(float)round($product_price,2),'dateUpdate'=>new UTCDateTime(time()*1000)]
+                        );
+                    }
+                    $mes=$mes.' product->price='.$product->price.' product_price='.$product_price ;
+                    if ($product->productTax != $product_taxNds ) {
+                        array_push($new_history,
+                            ['field'=>'productTax','value'=>(int)$product_taxNds,'dateUpdate'=>new UTCDateTime(time()*1000)]                       );
+                    }
+                    //---------save always----
+                    //  $new_history=[
+                    //                  ['field'=>'price','value'=>(float)round($product_price,2),'dateUpdate'=>new UTCDateTime(time()*1000)],
+                    //                  ['field'=>'productTax','value'=>(int)$product_taxNds,'dateUpdate'=>new UTCDateTime(time()*1000)],
+                    //            ];
+                    foreach ($old_history as $item) {
+                        array_push($new_history,$item);
+                    }
+
+                    $product->history=$new_history;
+                    //-----------------------------e: history ---------------------------------
                     $product->category_id =new ObjectID($product_category);
                     //$product->category_id =$product_category;
                     $product->productType =(int)$product_type;
@@ -599,7 +624,7 @@ class ReferenceController extends BaseController
                     if ($product->productType==1) {
                         $product->products=[];
                     }
-                    $mes='<strong>Saved!</strong> product_category='.$product_category.'>> _id:'.$p_id;
+                    $mes.='<strong>Saved!</strong> product_category='.$product_category.'>> _id:'.$p_id;
                     if (!Empty($product_image_file)) {
                         if (file_exists($product_image_file)) {
                             $product->productImage ="data:image/png;base64,".base64_encode(file_get_contents($product_image_file));
@@ -608,11 +633,7 @@ class ReferenceController extends BaseController
                         }
 
                     }
-                    //----------------------------- history ---------------------------------
-                    $product->history =[
-                        ['field'=>'price','value'=>(float)round($product_price,2),'dateUpdate'=>new UTCDateTime(time()*1000)],
-                        ['field'=>'productTax','value'=>(int)$product_taxNds,'dateUpdate'=>new UTCDateTime(time()*1000)],
-                    ];
+
                     $product->save();
 
                     $res=['success'=>true,'message'=>$mes];
@@ -696,6 +717,54 @@ class ReferenceController extends BaseController
         }
         $mes='done';
         $res=['success'=>true,'message'=>$mes];
+        return $res;
+    }
+    public function actionProductShowHistory() {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $request = Yii::$app->request;
+        $p_id = $request->post('p_id');
+        $field_name = $request->post('field_name');
+        try {
+            $product = Products::findOne(['_id'=>new ObjectID($p_id)]);
+            $history=$product->history;
+            $history_arr=[];
+            if (!Empty($history)) {
+                foreach ($history as $item) {
+                    if ($item['field']==$field_name) {
+                        array_push($history_arr,$item);
+                    }
+                }
+            }
+
+            $mes='done!';
+            $history_html="<div>";
+            $history_html.="<span class='center-block text-center text-success'><strong>История изменения:</strong></span>";
+            $history_html.="<table class='table'  width='100%'>";
+            if (!Empty($history_arr)) {
+                foreach ($history_arr as $item) {
+                    $history_html .= "<tr>";
+                    $history_html .= "<td width='50%'>";
+                    $history_html .= "<span>" . $item['value'] . "</span>";
+                    $history_html .= "</td>";
+                    $history_html .= "<td>";
+                    $history_html .= "<span>" . $item['dateUpdate']->toDateTime()->format('d.m.Y  H:i') . "</span>";
+                    $history_html .= "</td>";
+                    $history_html .= "</tr>";
+                }
+            } else {
+                $history_html .= "<tr>";
+                $history_html .= "<td class='text-center' width='100%'>";
+                $history_html .= "<span class='text-center'>Без изменений</span>";
+                $history_html .= "</td>";
+                $history_html .= "</tr>";
+            }
+
+            $history_html.="</table>";
+            $res=['success'=>true,'message'=>$mes,'history_html'=>$history_html];
+        }  catch (\Exception $e) {
+            $mes='Error! product_id='.$p_id.' error mes:'.$e->getMessage().' line='.$e->getLine();
+            $res=['success'=>false,'message'=>$mes];
+        }
         return $res;
     }
     //---------------e:new Admin-------------

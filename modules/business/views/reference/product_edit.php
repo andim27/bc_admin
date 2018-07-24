@@ -16,6 +16,17 @@ use kartik\file\FileInput;
     'action' => '/' . Yii::$app->language . '/business/reference/product-edit',
     'options' => ['name' => 'formEditProduct', 'id'=>'formEditProduct', 'data-pjax' => '1','enctype' => 'multipart/form-data']
 ]); ?>
+<style>
+    .active {
+        background-color: lightcyan;
+    }
+    .bonus-row {
+        padding-top: 15px;
+    }
+    .sub-field {
+        background-color: lightcyan;padding-left: 5px;padding-right:5px;margin-right: 15px
+    }
+</style>
 <form id="formEditProduct" enctype="multipart/form-data" method="post">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -136,11 +147,14 @@ use kartik\file\FileInput;
                 <label>ID товара в магазине</label>
                 <input class="form-control m-b" id="product-idInMarket" placeholder="ID товара в магазине" value="<?=$product->idInMarket ?>" type="text">
                 <label>Розничная цена
-                    <a href="#">
+                    <a href="#" onclick="showHistory('price');">
                         <span class="glyphicon glyphicon-time"></span>
                     </a>
                 </label>
                 <input class="form-control m-b" id="product-price" placeholder="Введите розничную цену (Euro)" value="<?=$product->price ?>" type="text">
+                <div id="product-history-price" class="col-md-offset-1 sub-field"  style="display:none">
+
+                </div>
 
             </div>
             <div class="form-group col-md-6 text-center">
@@ -182,14 +196,7 @@ use kartik\file\FileInput;
             </div>
         </div>
         <div class="row">
-            <style>
-                .active {
-                    background-color: lightcyan;
-                }
-                .bonus-row {
-                    padding-top: 15px;
-                }
-            </style>
+
             <label class="col-sm-7 control-label m-b">Разные премии по статусам</label>
             <div class="col-sm-12">
 
@@ -480,7 +487,7 @@ use kartik\file\FileInput;
             </div>
             <div class="form-group col-sm-6 m-b plnone">
 
-                <label class="col-sm-7 control-label">Банусные балы</label>
+                <label class="col-sm-7 control-label">Бонусные балы</label>
                 <div class="col-sm-5">
                     <input class="form-control" id="product-bonus-points" placeholder="Балловая стоимость" value="<?=$product->bonusPoints ?>" type="text">
                 </div>
@@ -509,12 +516,15 @@ use kartik\file\FileInput;
 <!--                </div>-->
 
                     <label class="col-sm-7 control-label"  >НДС (%)
-                        <a href="#" style="float:right">
+                        <a href="#" style="float:right"  onclick="showHistory('productTax');">
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
                     </label>
                     <div class="col-sm-5"  >
                         <input class="form-control" id="product-tax-nds" placeholder="НДС (%)" value="<?=$product->productTax ?>" type="text">
+                    </div>
+                    <div id="product-history-productTax" class="col sub-field"  style="display:none">
+
                     </div>
             </div>
           </div>
@@ -582,4 +592,22 @@ ActiveForm::end();
         });
 
     })
+    function showHistory(field_name) {
+        var h_block='product-history-'+field_name;
+        if ($('#'+h_block).css('display') =='none' ) {
+
+
+            var url="/<?=Yii::$app->language?>/business/reference/product-show-history";
+            $.post(url,{'field_name':field_name,'p_id':cur_product_id}).done(function (data) {
+                if (data.success == true) {
+                    $('#product-history-'+field_name).html(data.history_html).show();
+                } else {
+                    console.log('Error:get history field '+field_name+':'+data.mes);
+                }
+
+            })
+        } else {
+            $('#'+h_block).hide();
+        }
+    }
 </script>
