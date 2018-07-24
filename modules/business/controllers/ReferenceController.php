@@ -11,6 +11,7 @@ use app\modules\business\models\Career;
 use app\modules\business\models\CareerAddForm;
 use MongoDB\BSON\Binary;
 use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDateTime;
 use Yii;
 use app\models\api;
 use yii\helpers\ArrayHelper;
@@ -607,6 +608,11 @@ class ReferenceController extends BaseController
                         }
 
                     }
+                    //----------------------------- history ---------------------------------
+                    $product->history =[
+                        ['field'=>'price','value'=>(float)round($product_price,2),'dateUpdate'=>new UTCDateTime(time()*1000)],
+                        ['field'=>'productTax','value'=>(int)$product_taxNds,'dateUpdate'=>new UTCDateTime(time()*1000)],
+                    ];
                     $product->save();
 
                     $res=['success'=>true,'message'=>$mes];

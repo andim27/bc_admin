@@ -135,7 +135,11 @@ use kartik\file\FileInput;
 
                 <label>ID товара в магазине</label>
                 <input class="form-control m-b" id="product-idInMarket" placeholder="ID товара в магазине" value="<?=$product->idInMarket ?>" type="text">
-                <label>Розничная цена</label>
+                <label>Розничная цена
+                    <a href="#">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </a>
+                </label>
                 <input class="form-control m-b" id="product-price" placeholder="Введите розничную цену (Euro)" value="<?=$product->price ?>" type="text">
 
             </div>
@@ -504,7 +508,11 @@ use kartik\file\FileInput;
 
 <!--                </div>-->
 
-                    <label class="col-sm-7 control-label"  >НДС (%)</label>
+                    <label class="col-sm-7 control-label"  >НДС (%)
+                        <a href="#" style="float:right">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </a>
+                    </label>
                     <div class="col-sm-5"  >
                         <input class="form-control" id="product-tax-nds" placeholder="НДС (%)" value="<?=$product->productTax ?>" type="text">
                     </div>
