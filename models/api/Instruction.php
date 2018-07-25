@@ -69,7 +69,7 @@ class Instruction {
                 $promotion->lang       = $object->lang;
                 $promotion->v          = isset($object->__v) ? $object->__v : 0;
                 $promotion->isDelete   = $object->isDelete;
-                $promotion->dateOfPublication = strtotime($object->dateOfPublication);
+                $promotion->dateOfPublication = isset($object->dateOfPublication)?strtotime($object->dateOfPublication):date('m-d-Y');
                 $promotion->dateUpdate = strtotime($object->dateUpdate);
                 $promotion->dateCreate = strtotime($object->dateCreate);
                 $promotion->body       = $object->body;
