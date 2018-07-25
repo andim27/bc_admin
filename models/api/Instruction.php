@@ -3,6 +3,7 @@
 namespace app\models\api;
 
 use app\components\ApiClient;
+use MongoDB\BSON\UTCDateTime;
 
 class Instruction {
 
@@ -43,8 +44,14 @@ class Instruction {
         $apiClient = new ApiClient('instructions');
 
         $response = $apiClient->post($data, false);
+        $response = json_decode($response);
+        if (isset($response->error)) {
+            return false;
+        } else {
+            return true;
+        }
 
-        return $response == 'OK';
+        //return $response == 'OK';
     }
 
     /**
@@ -69,7 +76,7 @@ class Instruction {
                 $promotion->lang       = $object->lang;
                 $promotion->v          = isset($object->__v) ? $object->__v : 0;
                 $promotion->isDelete   = $object->isDelete;
-                $promotion->dateOfPublication = isset($object->dateOfPublication)?strtotime($object->dateOfPublication):date('m-d-Y');
+                $promotion->dateOfPublication = isset($object->dateOfPublication)?strtotime($object->dateOfPublication):false;
                 $promotion->dateUpdate = strtotime($object->dateUpdate);
                 $promotion->dateCreate = strtotime($object->dateCreate);
                 $promotion->body       = $object->body;

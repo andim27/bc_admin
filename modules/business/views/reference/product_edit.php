@@ -152,6 +152,27 @@ use kartik\file\FileInput;
                     </a>
                 </label>
                 <input class="form-control m-b" id="product-price" placeholder="Введите розничную цену (Euro)" value="<?=$product->price ?>" type="text">
+                <div id="product-history-add-price" class="col-md-offset-1 sub-field" style="display:none">
+                    <span class="center-block  text-center text-info">Добавить на дату:</span>
+                    <table class="table" width="100%">
+                        <tr>
+                            <td width="33%">
+                                <input id="history-add-price" class="form-control" size=7 type="text" />
+                            </td>
+                            <td width="33%">
+                                <input id="history-add-date" class="form-control" style="width:140px" type="date" />
+                            </td>
+                            <td>
+                                <a  onclick="saveAddHistory('price');" title="Сохранить">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                </a>
+                                <a  onclick="clearAddHistory('price');" title="Закрыть" style="float:right;margin-left: 8px">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
                 <div id="product-history-price" class="col-md-offset-1 sub-field"  style="display:none">
 
                 </div>
@@ -608,6 +629,21 @@ ActiveForm::end();
             })
         } else {
             $('#'+h_block).hide();
+            $('#product-history-add-price').hide();
         }
+    }
+    function addHistory(field_name) {
+        var h_block='product-history-add-price';
+        if ($('#'+h_block).css('display') =='none') {
+            $('#'+h_block).show();
+        } else {
+            $('#'+h_block).hide();
+        }
+    }
+    function clearAddHistory(field_name) {
+        var h_block='product-history-add-'+field_name;
+        $('#history-add-price').val(0);
+        $('#history-add-date').val('');
+        $('#'+h_block).hide();
     }
 </script>

@@ -737,8 +737,11 @@ class ReferenceController extends BaseController
             }
 
             $mes='done!';
+            $history_add_html=" <a  style=\"float:right\" title='Добавить на дату:' onclick=\"addHistory('productTax');\">
+                            <span class=\"glyphicon glyphicon-plus\"></span>
+                        </a>";
             $history_html="<div>";
-            $history_html.="<span class='center-block text-center text-success'><strong>История изменения:</strong></span>";
+            $history_html.="<span class='center-block text-center text-success'><strong>История изменения:</strong>$history_add_html</span>";
             $history_html.="<table class='table'  width='100%'>";
             if (!Empty($history_arr)) {
                 foreach ($history_arr as $item) {
