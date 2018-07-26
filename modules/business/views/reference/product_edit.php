@@ -640,6 +640,19 @@ ActiveForm::end();
             $('#'+h_block).hide();
         }
     }
+    function saveAddHistory(field_name) {
+        var url="/<?=Yii::$app->language?>/business/reference/product-add-history";
+        var price=$('#history-add-price').val();
+        var date =$('#history-add-date').val();
+        $.post(url,{'field_name':field_name,'p_id':cur_product_id,'price':price,'date':date}).done(function (data) {
+                if (data.success == true) {
+                    $('#product-history-price').hide();
+                    showHistory('price');
+                } else {
+                    alert('Add history Error!');
+                }
+        });
+    }
     function clearAddHistory(field_name) {
         var h_block='product-history-add-'+field_name;
         $('#history-add-price').val(0);

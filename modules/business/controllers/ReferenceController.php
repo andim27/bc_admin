@@ -770,6 +770,28 @@ class ReferenceController extends BaseController
         }
         return $res;
     }
+    public function actionProductAddHistory() {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $request    = Yii::$app->request;
+        $p_id       = $request->post('p_id');
+        $field_name = $request->post('field_name');
+        $price = $request->post('price');
+        $date  = $request->post('date');
+        try {
+            $product     = Products::findOne(['_id'=>new ObjectID($p_id)]);
+            $history_arr = $product->history;
+            array_push($history_arr,['field'=>$field_name,'value'=>$price,'dateUpdate'=>new UTCDateTime(strtotime($date.' 00:00:01')*1000),'dateAdd'=>new UTCDateTime(time()*1000)]);
+            $product->history=$history_arr;
+            $product->save();
+            $mes='done!';
+            $res=['success'=>true,'message'=>$mes];
+        } catch (\Exception $e) {
+            $mes='Error! product_id='.$p_id.' error mes:'.$e->getMessage().' line='.$e->getLine();
+            $res=['success'=>false,'message'=>$mes];
+        }
+
+        return $res;
+    }
     //---------------e:new Admin-------------
     public function actionComplects() {
         $complects = [];
