@@ -231,6 +231,11 @@ use kartik\file\FileInput;
                     <div id="tab-money" class="tab-pane fade in active">
                         <!--               ---------- MONEY -------    -->
                         <div class="row bonus-row" >
+                                    <div class="form-group col-sm-6" style="margin-right: 100%">
+                                        <label class="col-sm-6 control-label">Клиент</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control m-b" id="product-bonus-client" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['client'])?0:$product['bonus']['money']['client'];  ?>"> </div>
+                                    </div>
                                 <div class="form-group col-sm-6">
                                     <label class="col-sm-6 control-label">Начальный</label>
                                     <div class="col-sm-6">
@@ -264,8 +269,13 @@ use kartik\file\FileInput;
                         </div>
                     </div>
                     <div id="tab-points" class="tab-pane fade">
-                        <!--                -------  POINTS----------- -->
+                        <!--     -----------------  POINTS----------- -->
                         <div class="row bonus-row" >
+                            <div class="form-group col-sm-6" style="margin-right: 100%">
+                                <label class="col-sm-6 control-label">Клиент</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control m-b" id="product-bonus-point-client" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['client'])?0:$product['bonus']['point']['client'];  ?>"> </div>
+                            </div>
                             <div class="form-group col-sm-6">
                                 <label class="col-sm-6 control-label">Начальный</label>
                                 <div class="col-sm-6">
@@ -298,8 +308,14 @@ use kartik\file\FileInput;
                             </div>
                         </div>
                     </div>
+                    <!--     -----------------  STOCKS-------------- -->
                     <div id="tab-stock" class="tab-pane fade">
                         <div class="row bonus-row" >
+                            <div class="form-group col-sm-6" style="margin-right: 100%">
+                                <label class="col-sm-6 control-label">Клиент</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control m-b" id="product-bonus-stock-client" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['client'])?0:$product['bonus']['stock']['client'];  ?>"> </div>
+                            </div>
                             <div class="form-group col-sm-6">
                                 <label class="col-sm-6 control-label">Начальный</label>
                                 <div class="col-sm-6">

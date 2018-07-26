@@ -480,6 +480,7 @@ class ReferenceController extends BaseController
                 $product_price      =$request->post('product-price');
                 $product_image_file =$request->post('product-image-file');
                 //--------------------------------tab-money-----------------------------
+                $product_bonusClient     =$request->post('product-bonus-client') ?? 0;
                 $product_bonusStart      =$request->post('product-bonus-start') ?? 0;
                 $product_bonusStandart   =$request->post('product-bonus-standart') ?? 0;
                 $product_bonusVip        =$request->post('product-bonus-vip') ?? 0;
@@ -487,6 +488,7 @@ class ReferenceController extends BaseController
                 $product_bonusInvestor_2 =$request->post('product-bonus-investor-2') ?? 0;
                 $product_bonusInvestor_3 =$request->post('product-bonus-investor-3') ?? 0;
                 //--------------------------------tab-point-----------------------------
+                $product_bonusPointClient     =$request->post('product-bonus-point-client') ?? 0;
                 $product_bonusPointStart      =$request->post('product-bonus-point-start') ?? 0;
                 $product_bonusPointStandart   =$request->post('product-bonus-point-standart') ?? 0;
                 $product_bonusPointVip        =$request->post('product-bonus-point-vip') ?? 0;
@@ -494,6 +496,7 @@ class ReferenceController extends BaseController
                 $product_bonusPointInvestor_2 =$request->post('product-bonus-point-investor-2') ?? 0;
                 $product_bonusPointInvestor_3 =$request->post('product-bonus-point-investor-3') ?? 0;
                 //--------------------------------tab-stock-----------------------------
+                $product_bonusStockClient     =$request->post('product-bonus-stock-client') ?? 0;
                 $product_bonusStockStart      =$request->post('product-bonus-stock-start') ?? 0;
                 $product_bonusStockStandart   =$request->post('product-bonus-stock-standart') ?? 0;
                 $product_bonusStockVip        =$request->post('product-bonus-stock-vip') ?? 0;
@@ -542,7 +545,7 @@ class ReferenceController extends BaseController
                             ['field'=>'price','value'=>(float)round($product_price,2),'dateUpdate'=>new UTCDateTime(time()*1000)]
                         );
                     }
-                    $mes=$mes.' product->price='.$product->price.' product_price='.$product_price ;
+                    //$mes=$mes.' product_price='.$product_price.' ' ;
                     if ($product->productTax != $product_taxNds ) {
                         array_push($new_history,
                             ['field'=>'productTax','value'=>(int)$product_taxNds,'dateUpdate'=>new UTCDateTime(time()*1000)]                       );
@@ -572,6 +575,7 @@ class ReferenceController extends BaseController
 
                     $product->bonus=[
                         'stock'=>[
+                            'client'=>(int)$product_bonusStockClient,
                             'beginner'=>(int)$product_bonusStockStart,
                             'standart'=>(int)$product_bonusStockStandart,
                             'vip'=>(int)$product_bonusStockVip,
@@ -580,6 +584,7 @@ class ReferenceController extends BaseController
                             'vip_investor_3'=>(int)$product_bonusStockInvestor_3,
                         ],
                         'point'=>[
+                            'client'  =>(float)$product_bonusPointClient,
                             'beginner'=>(float)$product_bonusPointStart,
                             'standart'=>(float)$product_bonusPointStandart,
                             'vip'=>(float)$product_bonusPointVip,
@@ -588,6 +593,7 @@ class ReferenceController extends BaseController
                             'vip_investor_3'=>(float)$product_bonusPointInvestor_3,
                         ],
                         'money'=>[
+                            'client'  =>(int)$product_bonusClient,
                             'beginner'=>(int)$product_bonusStart,
                             'standart'=>(int)$product_bonusStandart,
                             'vip'=>(int)$product_bonusVip,
@@ -624,7 +630,7 @@ class ReferenceController extends BaseController
                     if ($product->productType==1) {
                         $product->products=[];
                     }
-                    $mes.='<strong>Saved!</strong> product_category='.$product_category.'>> _id:'.$p_id;
+                    $mes.='<strong>Saved!</strong> product_category='.$product_category.' >> _id:'.$p_id;
                     if (!Empty($product_image_file)) {
                         if (file_exists($product_image_file)) {
                             $product->productImage ="data:image/png;base64,".base64_encode(file_get_contents($product_image_file));

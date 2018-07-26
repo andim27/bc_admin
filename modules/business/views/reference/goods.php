@@ -692,6 +692,7 @@ GoodsAsset::register($this);
             'product-price':$('#product-price').val(),
             'product-image-file':cur_product_image_file,
             //------------tab-money----------------------------------------
+            'product-bonus-client':$('#product-bonus-client').val(),
             'product-bonus-start':$('#product-bonus-start').val(),
             'product-bonus-standart':$('#product-bonus-standart').val(),
             'product-bonus-vip':$('#product-bonus-vip').val(),
@@ -699,6 +700,7 @@ GoodsAsset::register($this);
             'product-bonus-investor-2':$('#product-bonus-investor-2').val(),
             'product-bonus-investor-3':$('#product-bonus-investor-3').val(),
             //-----------tab-points-----------------------------------------
+            'product-bonus-point-client':$('#product-bonus-point-client').val(),
             'product-bonus-point-start':$('#product-bonus-point-start').val(),
             'product-bonus-point-standart':$('#product-bonus-point-standart').val(),
             'product-bonus-point-vip':$('#product-bonus-point-vip').val(),
@@ -706,6 +708,7 @@ GoodsAsset::register($this);
             'product-bonus-point-investor-2':$('#product-bonus-point-investor-2').val(),
             'product-bonus-point-investor-3':$('#product-bonus-point-investor-3').val(),
             //------------tab-stock----------------------------------------
+            'product-bonus-stock-client':$('#product-bonus-stock-client').val(),
             'product-bonus-stock-start':$('#product-bonus-stock-start').val(),
             'product-bonus-stock-standart':$('#product-bonus-stock-standart').val(),
             'product-bonus-stock-vip':$('#product-bonus-stock-vip').val(),
