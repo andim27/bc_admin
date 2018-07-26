@@ -779,7 +779,7 @@ class ReferenceController extends BaseController
         $date  = $request->post('date');
         try {
             $product     = Products::findOne(['_id'=>new ObjectID($p_id)]);
-            $history_arr = $product->history;
+            $history_arr = Empty($product->history) ?[]:$product->history;
             array_push($history_arr,['field'=>$field_name,'value'=>$price,'dateUpdate'=>new UTCDateTime(strtotime($date.' 00:00:01')*1000),'dateAdd'=>new UTCDateTime(time()*1000)]);
             $product->history=$history_arr;
             $product->save();
