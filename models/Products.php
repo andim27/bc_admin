@@ -51,7 +51,7 @@ class Products extends ActiveRecord
             'productType',
             'bonuses',
             'bonusMoneys.elementary',
-            'bonusMoneys.standart',
+            'bonusMoneys.standard',
             'bonusMoneys.vip',
             'bonusMoneys.investor',
             'bonusMoneys.investor_2',

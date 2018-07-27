@@ -694,7 +694,7 @@ GoodsAsset::register($this);
             //------------tab-money----------------------------------------
             'product-bonus-client':$('#product-bonus-client').val(),
             'product-bonus-start':$('#product-bonus-start').val(),
-            'product-bonus-standart':$('#product-bonus-standart').val(),
+            'product-bonus-standard':$('#product-bonus-standard').val(),
             'product-bonus-vip':$('#product-bonus-vip').val(),
             'product-bonus-investor':$('#product-bonus-investor').val(),
             'product-bonus-investor-2':$('#product-bonus-investor-2').val(),
@@ -702,7 +702,7 @@ GoodsAsset::register($this);
             //-----------tab-points-----------------------------------------
             'product-bonus-point-client':$('#product-bonus-point-client').val(),
             'product-bonus-point-start':$('#product-bonus-point-start').val(),
-            'product-bonus-point-standart':$('#product-bonus-point-standart').val(),
+            'product-bonus-point-standard':$('#product-bonus-point-standard').val(),
             'product-bonus-point-vip':$('#product-bonus-point-vip').val(),
             'product-bonus-point-investor':$('#product-bonus-point-investor').val(),
             'product-bonus-point-investor-2':$('#product-bonus-point-investor-2').val(),
@@ -710,7 +710,7 @@ GoodsAsset::register($this);
             //------------tab-stock----------------------------------------
             'product-bonus-stock-client':$('#product-bonus-stock-client').val(),
             'product-bonus-stock-start':$('#product-bonus-stock-start').val(),
-            'product-bonus-stock-standart':$('#product-bonus-stock-standart').val(),
+            'product-bonus-stock-standard':$('#product-bonus-stock-standard').val(),
             'product-bonus-stock-vip':$('#product-bonus-stock-vip').val(),
             'product-bonus-stock-investor':$('#product-bonus-stock-investor').val(),
             'product-bonus-stock-investor-2':$('#product-bonus-stock-investor-2').val(),

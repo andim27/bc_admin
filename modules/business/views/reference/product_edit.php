@@ -244,7 +244,7 @@ use kartik\file\FileInput;
                                 <div class="form-group col-sm-6">
                                     <label class="col-sm-6 control-label">Стандартный</label>
                                     <div class="col-sm-6">
-                                        <input class="form-control m-b" id="product-bonus-standart" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['standart'])?0:$product['bonus']['money']['standart'];  ?>"> </div>
+                                        <input class="form-control m-b" id="product-bonus-standard" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['standard'])?0:$product['bonus']['money']['standard'];  ?>"> </div>
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label class="col-sm-6 control-label">Vip</label>
@@ -284,7 +284,7 @@ use kartik\file\FileInput;
                             <div class="form-group col-sm-6">
                                 <label class="col-sm-6 control-label">Стандартный</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-point-standart" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['standart'])?0:$product['bonus']['point']['standart'];  ?>"> </div>
+                                    <input class="form-control m-b" id="product-bonus-point-standard" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['standard'])?0:$product['bonus']['point']['standard'];  ?>"> </div>
                             </div>
                             <div class="form-group col-sm-6">
                                 <label class="col-sm-6 control-label">Vip</label>
@@ -324,7 +324,7 @@ use kartik\file\FileInput;
                             <div class="form-group col-sm-6">
                                 <label class="col-sm-6 control-label">Стандартный</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-standart" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['standart'])?0:$product['bonus']['stock']['standart'];  ?>"> </div>
+                                    <input class="form-control m-b" id="product-bonus-stock-standard" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['standard'])?0:$product['bonus']['stock']['standard'];  ?>"> </div>
                             </div>
                             <div class="form-group col-sm-6">
                                 <label class="col-sm-6 control-label">Vip</label>
