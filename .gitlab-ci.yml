@@ -43,4 +43,3 @@ deploy_stage:
         - kubectl get deployments -l name=bpt-api-${CI_ENVIRONMENT_SLUG}
         - kubectl create -f deployment.yaml || (kubectl delete -f deployment.yaml && kubectl apply -f deployment.yaml)
         - kubectl create -f service.yaml || true
-        - kubectl apply -f ingress.yaml

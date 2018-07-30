@@ -16,3 +16,4 @@ spec:
       protocol: TCP    
   selector:
     name: bpt-admin-__CI_ENVIRONMENT_SLUG__ 
+  type: LoadBalancer
