@@ -1,4 +1,4 @@
-image: docker pull bulich/builder
+image: bulich/builder
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
