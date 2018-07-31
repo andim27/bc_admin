@@ -23,7 +23,6 @@ build:
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
     - ./pre-admin.sh
-    - docker info
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
     - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
     - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
