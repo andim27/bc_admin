@@ -14,13 +14,13 @@ variables:
   STAGE_URL: admin-dev.bpt.ooo.ua
 
 
-before_script:  
-  - composer install --ignore-platform-reqs
+before_script:    
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
 
 build:
   stage: build
   script:    
+    - composer install --ignore-platform-reqs
     - ./pre-admin.sh
     - docker info
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
