@@ -1,4 +1,4 @@
-image: composer:latest
+image: docker pull bulich/builder
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -16,12 +16,11 @@ variables:
 
 before_script:  
   - composer self-update && composer global require "fxp/composer-asset-plugin:~1.3" && composer install --ignore-platform-reqs
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
 
 build:
-  image: composer:latest
   stage: build
-  script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
+  script:    
     - ./pre-admin.sh
     - docker info
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
