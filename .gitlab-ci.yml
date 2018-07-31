@@ -1,10 +1,5 @@
 image: bulich/builder
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-  - vendor/
-
 stages:
 - build
 - deploy
@@ -19,6 +14,12 @@ before_script:
 
 build:
   stage: build
+  
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - vendor/
+
   script:    
     - composer install --ignore-platform-reqs
     - ./pre-admin.sh
