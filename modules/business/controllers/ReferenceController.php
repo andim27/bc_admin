@@ -565,7 +565,7 @@ class ReferenceController extends BaseController
                     //$product->category_id =$product_category;
                     $product->productType =(int)$product_type;
                     $product->type        =(int)$product_type; //---delete in future
-                    $product->bonusMoney  =(int)$product_bonusStockStart; //---delete in future
+                    $product->bonusMoney  =(int)$product_bonusStart; //---delete in future
                     $product->productName =$product_name;
                     $product->productNatural =(int)$product_natural;
                     $product->product     =(int)$product_id;
