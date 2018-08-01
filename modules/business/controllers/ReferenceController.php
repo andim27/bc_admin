@@ -575,13 +575,13 @@ class ReferenceController extends BaseController
 
                     $product->bonus=[
                         'stock'=>[
-                            'client'=>(int)$product_bonusStockClient,
-                            'beginner'=>(int)$product_bonusStockStart,
-                            'standard'=>(int)$product_bonusStockStandard,
-                            'vip'=>(int)$product_bonusStockVip,
-                            'vip_investor_1'=>(int)$product_bonusStockInvestor,
-                            'vip_investor_2'=>(int)$product_bonusStockInvestor_2,
-                            'vip_investor_3'=>(int)$product_bonusStockInvestor_3,
+                            'client'=>(float)$product_bonusStockClient,
+                            'beginner'=>(float)$product_bonusStockStart,
+                            'standard'=>(float)$product_bonusStockStandard,
+                            'vip'=>(float)$product_bonusStockVip,
+                            'vip_investor_1'=>(float)$product_bonusStockInvestor,
+                            'vip_investor_2'=>(float)$product_bonusStockInvestor_2,
+                            'vip_investor_3'=>(float)$product_bonusStockInvestor_3,
                         ],
                         'point'=>[
                             'client'  =>(float)$product_bonusPointClient,

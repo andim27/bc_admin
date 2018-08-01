@@ -134,7 +134,7 @@ GoodsAsset::register($this);
                         <tr>
                             <td>
                                 <span title="<?=$item['_id']; ?>">
-                                    <?=$index++; ?>
+                                    <?=Empty($item['idInMarket'])?'??':$item['idInMarket']; ?>
                                 </span>
 
                             </td>
