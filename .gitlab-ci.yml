@@ -22,6 +22,7 @@ build:
 
   script:    
     - composer install --ignore-platform-reqs
+    - mv ./vendor/bower-asset ./vendor/bower/
     - ./pre-admin.sh
     - docker info
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
