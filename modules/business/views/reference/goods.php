@@ -113,15 +113,15 @@ GoodsAsset::register($this);
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="th-sortable" data-toggle="class" width="80">Бонус
+                            <th class="th-sortable text-center" data-toggle="class" width="80">Бонус<br>(начальный)
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th>Баллы</th>
-                            <th>Акции</th>
+                            <th class="text-center">Баллы<br>(начальный)</th>
+                            <th class="text-center">Акции<br>(начальный)</th>
                             <th>Последняя продажа</th>
                             <th>Тип</th>
                             <th width="30"></th>
@@ -159,10 +159,10 @@ GoodsAsset::register($this);
                                 }} ?>
 
                             </td>
-                            <td><?=empty($item['price'])?'??':$item['price'] ?></td>
-                            <td><?=empty($item['bonusMoney'])?'??':$item['bonusMoney']   ?></td>
-                            <td><?=empty($item['bonusPoints'])?'??':$item['bonusPoints'] ?></td>
-                            <td><?=empty($item['bonusStocks'])?'??':$item['bonusStocks'] ?></td>
+                            <td><?=empty($item['price'])?0:$item['price'] ?></td>
+                            <td class="text-center"><?=empty($item['bonus']['money']['beginner'])?0:$item['bonus']['money']['beginner']  ?></td>
+                            <td class="text-center"><?=empty($item['bonus']['point']['beginner'])?0:$item['bonus']['point']['beginner'] ?></td>
+                            <td class="text-center"><?=empty($item['bonus']['stock']['beginner'])?0:$item['bonus']['stock']['beginner'] ?></td>
                             <td class="text-center">
                                 <?=@gmdate('d.m.Y', $item['updated_at']) ?>
 
