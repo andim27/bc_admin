@@ -442,7 +442,7 @@ class ReferenceController extends BaseController
 //                ['id'=>2,'rec_id'=>'asdfg2','name'=>'Goods -2','cnt'=>2],
 //            ];
             $complect_goods_add_items=[];
-            $goods = Products::find()->asArray()->all();
+            $goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
             foreach ($goods as $item) {
                 //array_push($complect_goods_add_items,['id'=>$item['_id'],'name'=>$item['productName']]);
                 array_push($complect_goods_add_items,['id'=>(string)($item['_id']),'name'=>$item['productName']]);
