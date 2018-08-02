@@ -356,7 +356,8 @@ class ReferenceController extends BaseController
             $index++;
         }
 
-        $goods = Products::find()->asArray()->all();
+        //$goods = Products::find()->asArray()->all();
+        $goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
         $request = Yii::$app->request;
         $requestLanguage = $request->get('l');
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
@@ -496,13 +497,17 @@ class ReferenceController extends BaseController
                 $product_bonusPointInvestor_2 =$request->post('product-bonus-point-investor-2') ?? 0;
                 $product_bonusPointInvestor_3 =$request->post('product-bonus-point-investor-3') ?? 0;
                 //--------------------------------tab-stock-----------------------------
-                $product_bonusStockClient     =$request->post('product-bonus-stock-client') ?? 0;
-                $product_bonusStockStart      =$request->post('product-bonus-stock-start') ?? 0;
-                $product_bonusStockStandard   =$request->post('product-bonus-stock-standard') ?? 0;
-                $product_bonusStockVip        =$request->post('product-bonus-stock-vip') ?? 0;
-                $product_bonusStockInvestor   =$request->post('product-bonus-stock-investor') ?? 0;
-                $product_bonusStockInvestor_2 =$request->post('product-bonus-stock-investor-2') ?? 0;
-                $product_bonusStockInvestor_3 =$request->post('product-bonus-stock-investor-3') ?? 0;
+                $product_bonusStockVipCoin     =$request->post('product-bonus-stock-vipcoin') ?? 0;
+                $product_bonusStockVipVip      =$request->post('product-bonus-stock-vipvip') ?? 0;
+                $product_bonusStockWellness    =$request->post('product-bonus-stock-wellness') ?? 0;
+
+//                $product_bonusStockClient     =$request->post('product-bonus-stock-client') ?? 0;
+//                $product_bonusStockStart      =$request->post('product-bonus-stock-start') ?? 0;
+//                $product_bonusStockStandard   =$request->post('product-bonus-stock-standard') ?? 0;
+//                $product_bonusStockVip        =$request->post('product-bonus-stock-vip') ?? 0;
+//                $product_bonusStockInvestor   =$request->post('product-bonus-stock-investor') ?? 0;
+//                $product_bonusStockInvestor_2 =$request->post('product-bonus-stock-investor-2') ?? 0;
+//                $product_bonusStockInvestor_3 =$request->post('product-bonus-stock-investor-3') ?? 0;
                 //--------------------------------end tabs-----------------------------
                 $product_expirationPeriodValue =$request->post('product-expirationPeriod-value');
 
@@ -575,13 +580,17 @@ class ReferenceController extends BaseController
 
                     $product->bonus=[
                         'stock'=>[
-                            'client'=>(float)$product_bonusStockClient,
-                            'beginner'=>(float)$product_bonusStockStart,
-                            'standard'=>(float)$product_bonusStockStandard,
-                            'vip'=>(float)$product_bonusStockVip,
-                            'vip_investor_1'=>(float)$product_bonusStockInvestor,
-                            'vip_investor_2'=>(float)$product_bonusStockInvestor_2,
-                            'vip_investor_3'=>(float)$product_bonusStockInvestor_3,
+                            'vipcoin' =>(float)$product_bonusStockVipCoin,
+                            'vipvip'  =>(float)$product_bonusStockVipVip,
+                            'wellness'=>(float)$product_bonusStockWellness,
+
+//                            'client'=>(float)$product_bonusStockClient,
+//                            'beginner'=>(float)$product_bonusStockStart,
+//                            'standard'=>(float)$product_bonusStockStandard,
+//                            'vip'=>(float)$product_bonusStockVip,
+//                            'vip_investor_1'=>(float)$product_bonusStockInvestor,
+//                            'vip_investor_2'=>(float)$product_bonusStockInvestor_2,
+//                            'vip_investor_3'=>(float)$product_bonusStockInvestor_3,
                         ],
                         'point'=>[
                             'client'  =>(float)$product_bonusPointClient,
