@@ -7,8 +7,7 @@ metadata:
     commit: __COMMIT__
     env: __CI_ENVIRONMENT_SLUG__
   namespace: bpt
-spec:
-  type: ClusterIP
+spec:  
   ports:
     - name: http
       port: 80

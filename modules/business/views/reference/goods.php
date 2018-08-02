@@ -113,16 +113,17 @@ GoodsAsset::register($this);
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="th-sortable" data-toggle="class" width="80">Бонус
+                            <th class="th-sortable text-center" data-toggle="class" width="80">Бонус<br>(начальный)
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th>Баллы</th>
-                            <th>Акции</th>
-                            <th>Последняя продажа</th>
+                            <th class="text-center">Баллы<br>(начальный)</th>
+                            <th class="text-center">Акции<br>(направления)</th>
+                            <th class="text-center">НДС<br>(%)</th>
+                            <th class="text-center">Акт<br>(Мес)</th>
                             <th>Тип</th>
                             <th width="30"></th>
                         </tr>
@@ -134,7 +135,7 @@ GoodsAsset::register($this);
                         <tr>
                             <td>
                                 <span title="<?=$item['_id']; ?>">
-                                    <?=$index++; ?>
+                                    <?=Empty($item['idInMarket'])?'??':$item['idInMarket']; ?>
                                 </span>
 
                             </td>
@@ -145,7 +146,20 @@ GoodsAsset::register($this);
                                 </a>
                             </td>
 
-                            <td><?=empty($item['productName'])?'??':$item['productName'] ?></td>
+                            <td>
+
+                                <?php
+                                if (empty($item['productName'])) {
+                                    echo "??";
+                                } else {
+                                    if (empty($item['products']) ) {
+                                        echo $item['productName'];
+                                    } else {
+                                        echo "<strong>".$item['productName']."</strong>";
+                                    }
+                                }
+                                ?>
+                            </td>
                             <td>
                                 <?php
                                 if (empty($item['category_id'])) {
@@ -159,12 +173,33 @@ GoodsAsset::register($this);
                                 }} ?>
 
                             </td>
-                            <td><?=empty($item['price'])?'??':$item['price'] ?></td>
-                            <td><?=empty($item['bonusMoney'])?'??':$item['bonusMoney']   ?></td>
-                            <td><?=empty($item['bonusPoints'])?'??':$item['bonusPoints'] ?></td>
-                            <td><?=empty($item['bonusStocks'])?'??':$item['bonusStocks'] ?></td>
+                            <td><?=empty($item['price'])?0:$item['price'] ?></td>
+                            <td class="text-center"><?=empty($item['bonus']['money']['beginner'])?0:$item['bonus']['money']['beginner']  ?></td>
+                            <td class="text-center"><?=empty($item['bonus']['point']['beginner'])?0:$item['bonus']['point']['beginner'] ?></td>
                             <td class="text-center">
-                                <?=@gmdate('d.m.Y', $item['updated_at']) ?>
+                                <?php
+                                    $stock_str='';
+                                    if (!empty($item['bonus']['stock']['vipcoin'])) {
+                                        $stock_str.='<span title="VipCoin">vc'.$item['bonus']['stock']['vipcoin'].'</span>';
+                                    }
+                                    if (!empty($item['bonus']['stock']['vipvip'])) {
+                                        $stock_str.=' <span title="VipVip">vv'.$item['bonus']['stock']['vipvip'].'</span>';
+                                    }
+                                    if (!empty($item['bonus']['stock']['wellness'])) {
+                                        $stock_str.=' <span title="WellNess">ww'.$item['bonus']['stock']['wellness'].'</span>';
+                                    }
+                                    echo $stock_str;
+
+                                ?>
+
+                            </td>
+                            <td class="text-center">
+                                <?=empty($item['productTax'])?0:$item['productTax'] ?>
+
+
+                            </td>
+                            <td class="text-center">
+                                <?=empty($item['expirationPeriod']['value'])?0:$item['expirationPeriod']['value'] ?>
 
                             </td>
                             <td>
@@ -172,14 +207,12 @@ GoodsAsset::register($this);
                             </td>
 
                             <td>
-                                <i class="fa fa-check text-success text"></i>
+                                <?php if (!empty($item['productActive'])) { ?>
+                                    <i class="fa fa-check text-success text"></i>
+                                <?php } ?>
                             </td>
                             <?php } ?>
                         </tr>
-
-
-
-
 
 
                         </tbody>
@@ -210,302 +243,7 @@ GoodsAsset::register($this);
 </div>
 
 <!--<div class="modal" id="ajaxModal" style="display: none;" aria-hidden="true" >-->
-<div class="modal" id="ajaxModal" style="display: none;" aria-hidden="true"  role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form role="form">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title">Добавление товара</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="form-group col-md-12">
-                            <label>Название</label>
-                            <input class="form-control" placeholder="Введите название" value="" type="text">
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label>Код товара</label>
-                            <input class="form-control m-b" id="id" placeholder="Введите Код товара" value="" type="text">
-                            <label>Розничная цена</label>
-                            <input class="form-control m-b" id="price" placeholder="Введите розничную цену (Euro)" value="" type="text">
-                            <label>Прямая премия</label>
-                            <input class="form-control m-b" id="premia" placeholder="Прямая премия" value="" type="text">
-
-                            <label class="col-sm-7 control-label m-b">Разные премии по статусам</label>
-                            <div class="col-sm-5 m-b">
-                                <label class="switch">
-                                    <input id="difPremia" checked="" type="checkbox">
-                                    <span></span>
-                                </label>
-                            </div>
-
-                            <div id="difShow">
-                                <div class="form-group">
-                                    <label class="col-sm-6 control-label">Новичок</label>
-                                    <div class="col-sm-6">
-                                        <input class="form-control m-b" placeholder="Премия" type="text"> </div>
-                                </div>
-                                <div class="form-group ">
-                                    <label class="col-sm-6 control-label">Боец</label>
-                                    <div class="col-sm-6">
-                                        <input class="form-control m-b" placeholder="Премия" type="text"> </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-6 control-label">Ветеран</label>
-                                    <div class="col-sm-6">
-                                        <input class="form-control m-b" placeholder="Премия" type="text"> </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="form-group col-md-6 text-center">
-
-                            <label>Изображение</label><br>
-                            <div class="row">
-                                <img class="col-md-6 m100 fnone" src="images/pribor.png" alt="">
-                            </div>
-
-                            <input class="filestyle" data-icon="false" data-classbutton="btn btn-default" data-classinput="form-control inline input-s" id="filestyle-0" style="position: fixed; left: -500px;" type="file">
-                            <div class="bootstrap-filestyle" style="display: inline;">
-                                <label for="filestyle-0" class="btn btn-default"><span>Выберите изображение</span></label>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-sm-6 m-b plnone">
-                            <label class="col-sm-7 control-label">Продлевает активность BS (месяцев)</label>
-                            <div class="col-sm-5">
-                                <div id="MySpinner" class="spinner input-group" data-min="0" data-max="12">
-                                    <input class="form-control spinner-input" value="0" name="spinner" maxlength="2" type="text">
-                                    <div class="btn-group btn-group-vertical input-group-btn">
-                                        <button type="button" class="btn btn-default spinner-up">
-                                            <i class="fa fa-chevron-up text-muted"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-default spinner-down">
-                                            <i class="fa fa-chevron-down text-muted"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row m-b">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Описание товара</label>
-                            <div class="col-sm-10">
-                                <div class="btn-toolbar m-b-sm btn-editor" data-role="editor-toolbar" data-target="#editor">
-                                    <div class="btn-group">
-                                        <a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="Font">
-                                            <i class="fa fa-font"></i>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="dropdown-menu"> </ul>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="Font Size">
-                                            <i class="fa fa-text-height"></i>&nbsp;
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a data-edit="fontSize 5">
-                                                    <font size="5">Huge</font>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a data-edit="fontSize 3">
-                                                    <font size="3">Normal</font>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a data-edit="fontSize 1">
-                                                    <font size="1">Small</font>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn btn-default btn-sm" data-edit="bold" title="Bold (Ctrl/Cmd+B)">
-                                            <i class="fa fa-bold"></i>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" data-edit="italic" title="Italic (Ctrl/Cmd+I)">
-                                            <i class="fa fa-italic"></i>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" data-edit="strikethrough" title="Strikethrough">
-                                            <i class="fa fa-strikethrough"></i>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" data-edit="underline" title="Underline (Ctrl/Cmd+U)">
-                                            <i class="fa fa-underline"></i>
-                                        </a>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn btn-default btn-sm" data-edit="insertunorderedlist" title="Bullet list">
-                                            <i class="fa fa-list-ul"></i>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" data-edit="insertorderedlist" title="Number list">
-                                            <i class="fa fa-list-ol"></i>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" data-edit="outdent" title="Reduce indent (Shift+Tab)">
-                                            <i class="fa fa-dedent"></i>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" data-edit="indent" title="Indent (Tab)">
-                                            <i class="fa fa-indent"></i>
-                                        </a>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn btn-default btn-sm" data-edit="justifyleft" title="Align Left (Ctrl/Cmd+L)">
-                                            <i class="fa fa-align-left"></i>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" data-edit="justifycenter" title="Center (Ctrl/Cmd+E)">
-                                            <i class="fa fa-align-center"></i>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" data-edit="justifyright" title="Align Right (Ctrl/Cmd+R)">
-                                            <i class="fa fa-align-right"></i>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" data-edit="justifyfull" title="Justify (Ctrl/Cmd+J)">
-                                            <i class="fa fa-align-justify"></i>
-                                        </a>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="Hyperlink">
-                                            <i class="fa fa-link"></i>
-                                        </a>
-                                        <div class="dropdown-menu">
-                                            <div class="input-group m-l-xs m-r-xs">
-                                                <input class="form-control input-sm" placeholder="URL" data-edit="createLink" type="text">
-                                                <div class="input-group-btn">
-                                                    <button class="btn btn-default btn-sm" type="button">Add</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <a class="btn btn-default btn-sm" data-edit="unlink" title="Remove Hyperlink">
-                                            <i class="fa fa-cut"></i>
-                                        </a>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn btn-default btn-sm" title="Insert picture (or just drag &amp; drop)" id="pictureBtn">
-                                            <i class="fa fa-picture-o"></i>
-                                        </a>
-                                        <input data-role="magic-overlay" data-target="#pictureBtn" data-edit="insertImage" type="file"> </div>
-                                    <div class="btn-group">
-                                        <a class="btn btn-default btn-sm" data-edit="undo" title="Undo (Ctrl/Cmd+Z)">
-                                            <i class="fa fa-undo"></i>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" data-edit="redo" title="Redo (Ctrl/Cmd+Y)">
-                                            <i class="fa fa-repeat"></i>
-                                        </a>
-                                    </div>
-                                    <input class="form-control-trans pull-left" data-edit="inserttext" id="voiceBtn" x-webkit-speech="" style="width:25px;height:28px;" type="text"> </div>
-                                <div id="editor" class="form-control" style="overflow:scroll;height:150px;max-height:150px">
-                                    Описание товара</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group col-sm-6 m-b plnone">
-
-                            <label class="col-sm-7 control-label">Однократная покупка</label>
-                            <div class="col-sm-5">
-                                <label class="switch">
-                                    <input id="loop" type="checkbox">
-                                    <span></span>
-                                </label>
-                            </div>
-
-                        </div>
-                        <div class="form-group col-sm-6 m-b plnone">
-
-                            <label class="col-sm-7 control-label">Балловая стоимость</label>
-                            <div class="col-sm-5">
-                                <input class="form-control" id="bPrice" placeholder="Балловая стоимость" value="" type="text">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row m-b">
-
-                        <div class="form-group col-sm-6 m-b">
-
-                            <div class="row form-group">
-                                <label class="col-sm-7 control-label">Составной товар</label>
-                                <div class="col-sm-5">
-                                    <label class="switch">
-                                        <input id="complex" type="checkbox">
-                                        <span></span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="row form-group">
-
-                                <div id="showComplex" class="hidden form-group col-sm-12">
-                                    <div class="form-group">
-                                        <div class="m-b col-sm-10 plnone">
-                                            <select id="select2-option" style="width:260px">
-                                                <optgroup label="Wellness">
-                                                    <option value="AK">Alaska</option>
-                                                    <option value="HI">Hawaii</option>
-                                                </optgroup>
-                                                <optgroup label="VipVip">
-                                                    <option value="CA">California</option>
-                                                    <option value="NV">Nevada</option>
-                                                    <option value="OR">Oregon</option>
-                                                    <option value="WA">Washington</option>
-                                                </optgroup>
-                                                <optgroup label="VipCoin">
-                                                    <option value="AZ">Arizona</option>
-                                                    <option value="CO">Colorado</option>
-                                                    <option value="ID">Idaho</option>
-                                                    <option value="MT">Montana</option>
-                                                    <option value="NE">Nebraska</option>
-                                                </optgroup>
-                                            </select>
-                                        </div>
-
-                                        <div class="m-b col-sm-2">
-                                            <a href="#" class="btn btn-danger btn-rounded" id="addComplex">+</a>
-                                        </div>
-                                        <div class="row">
-                                            <ul id="complexItems">
-
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="form-group col-sm-6 m-b plnone">
-
-                            <label class="col-sm-7 control-label">Активный товар</label>
-                            <div class="col-sm-5">
-                                <label class="switch">
-                                    <input id="active" checked="" type="checkbox">
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                    <button type="submit" class="btn btn-info" data-loading-text="Обновление...">Сохранить изменения</button>
-                </div>
-            </form>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog --></div>
 
 <!--B:Category modal-->
 <div id="categoryModal" class="modal fade pos-ask-modal" role="dialog" data-action="add">
@@ -708,13 +446,17 @@ GoodsAsset::register($this);
             'product-bonus-point-investor-2':$('#product-bonus-point-investor-2').val(),
             'product-bonus-point-investor-3':$('#product-bonus-point-investor-3').val(),
             //------------tab-stock----------------------------------------
-            'product-bonus-stock-client':$('#product-bonus-stock-client').val(),
-            'product-bonus-stock-start':$('#product-bonus-stock-start').val(),
-            'product-bonus-stock-standard':$('#product-bonus-stock-standard').val(),
-            'product-bonus-stock-vip':$('#product-bonus-stock-vip').val(),
-            'product-bonus-stock-investor':$('#product-bonus-stock-investor').val(),
-            'product-bonus-stock-investor-2':$('#product-bonus-stock-investor-2').val(),
-            'product-bonus-stock-investor-3':$('#product-bonus-stock-investor-3').val(),
+            'product-bonus-stock-vipcoin':$('#product-bonus-stock-vipcoin').val(),
+            'product-bonus-stock-vipvip':$('#product-bonus-stock-vipvip').val(),
+            'product-bonus-stock-wellness':$('#product-bonus-stock-wellness').val(),
+
+            // 'product-bonus-stock-client':$('#product-bonus-stock-client').val(),
+            // 'product-bonus-stock-start':$('#product-bonus-stock-start').val(),
+            // 'product-bonus-stock-standard':$('#product-bonus-stock-standard').val(),
+            // 'product-bonus-stock-vip':$('#product-bonus-stock-vip').val(),
+            // 'product-bonus-stock-investor':$('#product-bonus-stock-investor').val(),
+            // 'product-bonus-stock-investor-2':$('#product-bonus-stock-investor-2').val(),
+            // 'product-bonus-stock-investor-3':$('#product-bonus-stock-investor-3').val(),
             //------------end tabs----------------------------------------------
             'product-expirationPeriod-value':$('#product-expirationPeriod-value').val(),
             'product-single-purchase':$('#product-single-purchase').is(':checked')?1:0,
@@ -837,6 +579,7 @@ GoodsAsset::register($this);
     })
     $(function() {
         $('#goods-table').DataTable({
+            'order':[[0,"desc"]],
             "pageLength": 20,
             language: TRANSLATION,
             sDom: "<'row'<'col-sm-6'l><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",

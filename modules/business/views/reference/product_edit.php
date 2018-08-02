@@ -218,13 +218,14 @@ use kartik\file\FileInput;
         </div>
         <div class="row">
 
-            <label class="col-sm-7 control-label m-b">Разные премии по статусам</label>
+            <label class="col-sm-7 control-label m-b">Бонусы</label>
             <div class="col-sm-12">
 
                 <ul class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#tab-money">Деньги</a></li>
                     <li><a data-toggle="tab" href="#tab-points">Балы</a></li>
-                    <li><a data-toggle="tab" href="#tab-stock">Акции</a></li>
+<!--                    <li><a data-toggle="tab" href="#tab-stock">Акции</a></li>-->
+                    <li><a data-toggle="tab" href="#tab-stock-category">Акции-направления</a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -309,43 +310,63 @@ use kartik\file\FileInput;
                         </div>
                     </div>
                     <!--     -----------------  STOCKS-------------- -->
-                    <div id="tab-stock" class="tab-pane fade">
+<!--                    <div id="tab-stock" class="tab-pane fade">-->
+<!--                        <div class="row bonus-row" >-->
+<!--                            <div class="form-group col-sm-6" style="margin-right: 100%">-->
+<!--                                <label class="col-sm-6 control-label">Клиент</label>-->
+<!--                                <div class="col-sm-6">-->
+<!--                                    <input class="form-control m-b" id="product-bonus-stock-client" placeholder="Премия" type="text" value="--><?//=empty($product['bonus']['stock']['client'])?0:$product['bonus']['stock']['client'];  ?><!--"> </div>-->
+<!--                            </div>-->
+<!--                            <div class="form-group col-sm-6">-->
+<!--                                <label class="col-sm-6 control-label">Начальный</label>-->
+<!--                                <div class="col-sm-6">-->
+<!--                                    <input class="form-control m-b" id="product-bonus-stock-start" placeholder="Премия" type="text" value="--><?//=empty($product['bonus']['stock']['beginner'])?0:$product['bonus']['stock']['beginner'];  ?><!--"> </div>-->
+<!--                            </div>-->
+<!--                            <div class="form-group col-sm-6">-->
+<!--                                <label class="col-sm-6 control-label">Стандартный</label>-->
+<!--                                <div class="col-sm-6">-->
+<!--                                    <input class="form-control m-b" id="product-bonus-stock-standard" placeholder="Премия" type="text" value="--><?//=empty($product['bonus']['stock']['standard'])?0:$product['bonus']['stock']['standard'];  ?><!--"> </div>-->
+<!--                            </div>-->
+<!--                            <div class="form-group col-sm-6">-->
+<!--                                <label class="col-sm-6 control-label">Vip</label>-->
+<!--                                <div class="col-sm-6">-->
+<!--                                    <input class="form-control m-b" id="product-bonus-stock-vip" placeholder="Премия" type="text" value="--><?//=empty($product['bonus']['stock']['vip'])?0:$product['bonus']['stock']['vip'];  ?><!--" > </div>-->
+<!--                            </div>-->
+<!--                            <div class="form-group col-sm-6">-->
+<!--                                <label class="col-sm-6 control-label">VIP (Инвестор-1)</label>-->
+<!--                                <div class="col-sm-6">-->
+<!--                                    <input class="form-control m-b" id="product-bonus-stock-investor" placeholder="Премия" type="text" value="--><?//=empty($product['bonus']['stock']['vip_investor_1'])?0:$product['bonus']['stock']['vip_investor_1'];  ?><!--" > </div>-->
+<!--                            </div>-->
+<!--                            <div class="form-group col-sm-6">-->
+<!--                                <label class="col-sm-6 control-label">VIP (Инвестор-2)</label>-->
+<!--                                <div class="col-sm-6">-->
+<!--                                    <input class="form-control m-b" id="product-bonus-stock-investor-2" placeholder="Премия" type="text" value="--><?//=empty($product['bonus']['stock']['vip_investor_2'])?0:$product['bonus']['stock']['vip_investor_2'];  ?><!--" > </div>-->
+<!--                            </div>-->
+<!--                            <div class="form-group col-sm-6">-->
+<!--                                <label class="col-sm-6 control-label">VIP (Инвестор-3)</label>-->
+<!--                                <div class="col-sm-6">-->
+<!--                                    <input class="form-control m-b" id="product-bonus-stock-investor-3" placeholder="Премия" type="text" value="--><?//=empty($product['bonus']['stock']['vip_investor_3'])?0:$product['bonus']['stock']['vip_investor_3'];  ?><!--" > </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <div id="tab-stock-category" class="tab-pane fade">
                         <div class="row bonus-row" >
                             <div class="form-group col-sm-6" style="margin-right: 100%">
-                                <label class="col-sm-6 control-label">Клиент</label>
+                                <label class="col-sm-6 control-label">VipCoin</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-client" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['client'])?0:$product['bonus']['stock']['client'];  ?>"> </div>
+                                    <input class="form-control m-b" id="product-bonus-stock-vipcoin" placeholder="Акции" type="text" value="<?=empty($product['bonus']['stock']['vipcoin'])?0:$product['bonus']['stock']['vipcoin'];  ?>"> </div>
                             </div>
-                            <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">Начальный</label>
+                            <div class="form-group col-sm-6"style="margin-right: 100%">
+                                <label class="col-sm-6 control-label">VipVip</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-start" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['beginner'])?0:$product['bonus']['stock']['beginner'];  ?>"> </div>
+                                    <input class="form-control m-b" id="product-bonus-stock-vipvip" placeholder="Акции" type="text" value="<?=empty($product['bonus']['stock']['vipvip'])?0:$product['bonus']['stock']['vipvip'];  ?>"> </div>
                             </div>
-                            <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">Стандартный</label>
+                            <div class="form-group col-sm-6" style="margin-right: 100%">
+                                <label class="col-sm-6 control-label">Wellness</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-standard" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['standard'])?0:$product['bonus']['stock']['standard'];  ?>"> </div>
+                                    <input class="form-control m-b" id="product-bonus-stock-wellness" placeholder="Акции" type="text" value="<?=empty($product['bonus']['stock']['wellness'])?0:$product['bonus']['stock']['wellness'];  ?>"> </div>
                             </div>
-                            <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">Vip</label>
-                                <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-vip" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['vip'])?0:$product['bonus']['stock']['vip'];  ?>" > </div>
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор-1)</label>
-                                <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-investor" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['vip_investor_1'])?0:$product['bonus']['stock']['vip_investor_1'];  ?>" > </div>
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор-2)</label>
-                                <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['vip_investor_2'])?0:$product['bonus']['stock']['vip_investor_2'];  ?>" > </div>
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор-3)</label>
-                                <div class="col-sm-6">
-                                    <input class="form-control m-b" id="product-bonus-stock-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonus']['stock']['vip_investor_3'])?0:$product['bonus']['stock']['vip_investor_3'];  ?>" > </div>
-                            </div>
+
                         </div>
                     </div>
 

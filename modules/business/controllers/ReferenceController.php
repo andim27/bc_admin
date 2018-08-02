@@ -356,7 +356,8 @@ class ReferenceController extends BaseController
             $index++;
         }
 
-        $goods = Products::find()->asArray()->all();
+        //$goods = Products::find()->asArray()->all();
+        $goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
         $request = Yii::$app->request;
         $requestLanguage = $request->get('l');
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
@@ -441,7 +442,7 @@ class ReferenceController extends BaseController
 //                ['id'=>2,'rec_id'=>'asdfg2','name'=>'Goods -2','cnt'=>2],
 //            ];
             $complect_goods_add_items=[];
-            $goods = Products::find()->asArray()->all();
+            $goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
             foreach ($goods as $item) {
                 //array_push($complect_goods_add_items,['id'=>$item['_id'],'name'=>$item['productName']]);
                 array_push($complect_goods_add_items,['id'=>(string)($item['_id']),'name'=>$item['productName']]);
@@ -496,13 +497,17 @@ class ReferenceController extends BaseController
                 $product_bonusPointInvestor_2 =$request->post('product-bonus-point-investor-2') ?? 0;
                 $product_bonusPointInvestor_3 =$request->post('product-bonus-point-investor-3') ?? 0;
                 //--------------------------------tab-stock-----------------------------
-                $product_bonusStockClient     =$request->post('product-bonus-stock-client') ?? 0;
-                $product_bonusStockStart      =$request->post('product-bonus-stock-start') ?? 0;
-                $product_bonusStockStandard   =$request->post('product-bonus-stock-standard') ?? 0;
-                $product_bonusStockVip        =$request->post('product-bonus-stock-vip') ?? 0;
-                $product_bonusStockInvestor   =$request->post('product-bonus-stock-investor') ?? 0;
-                $product_bonusStockInvestor_2 =$request->post('product-bonus-stock-investor-2') ?? 0;
-                $product_bonusStockInvestor_3 =$request->post('product-bonus-stock-investor-3') ?? 0;
+                $product_bonusStockVipCoin     =$request->post('product-bonus-stock-vipcoin') ?? 0;
+                $product_bonusStockVipVip      =$request->post('product-bonus-stock-vipvip') ?? 0;
+                $product_bonusStockWellness    =$request->post('product-bonus-stock-wellness') ?? 0;
+
+//                $product_bonusStockClient     =$request->post('product-bonus-stock-client') ?? 0;
+//                $product_bonusStockStart      =$request->post('product-bonus-stock-start') ?? 0;
+//                $product_bonusStockStandard   =$request->post('product-bonus-stock-standard') ?? 0;
+//                $product_bonusStockVip        =$request->post('product-bonus-stock-vip') ?? 0;
+//                $product_bonusStockInvestor   =$request->post('product-bonus-stock-investor') ?? 0;
+//                $product_bonusStockInvestor_2 =$request->post('product-bonus-stock-investor-2') ?? 0;
+//                $product_bonusStockInvestor_3 =$request->post('product-bonus-stock-investor-3') ?? 0;
                 //--------------------------------end tabs-----------------------------
                 $product_expirationPeriodValue =$request->post('product-expirationPeriod-value');
 
@@ -565,7 +570,7 @@ class ReferenceController extends BaseController
                     //$product->category_id =$product_category;
                     $product->productType =(int)$product_type;
                     $product->type        =(int)$product_type; //---delete in future
-                    $product->bonusMoney  =(int)$product_bonusStockStart; //---delete in future
+                    $product->bonusMoney  =(int)$product_bonusStart; //---delete in future
                     $product->productName =$product_name;
                     $product->productNatural =(int)$product_natural;
                     $product->product     =(int)$product_id;
@@ -575,13 +580,17 @@ class ReferenceController extends BaseController
 
                     $product->bonus=[
                         'stock'=>[
-                            'client'=>(int)$product_bonusStockClient,
-                            'beginner'=>(int)$product_bonusStockStart,
-                            'standard'=>(int)$product_bonusStockStandard,
-                            'vip'=>(int)$product_bonusStockVip,
-                            'vip_investor_1'=>(int)$product_bonusStockInvestor,
-                            'vip_investor_2'=>(int)$product_bonusStockInvestor_2,
-                            'vip_investor_3'=>(int)$product_bonusStockInvestor_3,
+                            'vipcoin' =>(float)$product_bonusStockVipCoin,
+                            'vipvip'  =>(float)$product_bonusStockVipVip,
+                            'wellness'=>(float)$product_bonusStockWellness,
+
+//                            'client'=>(float)$product_bonusStockClient,
+//                            'beginner'=>(float)$product_bonusStockStart,
+//                            'standard'=>(float)$product_bonusStockStandard,
+//                            'vip'=>(float)$product_bonusStockVip,
+//                            'vip_investor_1'=>(float)$product_bonusStockInvestor,
+//                            'vip_investor_2'=>(float)$product_bonusStockInvestor_2,
+//                            'vip_investor_3'=>(float)$product_bonusStockInvestor_3,
                         ],
                         'point'=>[
                             'client'  =>(float)$product_bonusPointClient,
@@ -593,13 +602,13 @@ class ReferenceController extends BaseController
                             'vip_investor_3'=>(float)$product_bonusPointInvestor_3,
                         ],
                         'money'=>[
-                            'client'  =>(int)$product_bonusClient,
-                            'beginner'=>(int)$product_bonusStart,
-                            'standard'=>(int)$product_bonusStandard,
-                            'vip'=>(int)$product_bonusVip,
-                            'vip_investor_1'=>(int)$product_bonusInvestor,
-                            'vip_investor_2'=>(int)$product_bonusInvestor_2,
-                            'vip_investor_3'=>(int)$product_bonusInvestor_3,
+                            'client'  =>(float)$product_bonusClient,
+                            'beginner'=>(float)$product_bonusStart,
+                            'standard'=>(float)$product_bonusStandard,
+                            'vip'=>(float)$product_bonusVip,
+                            'vip_investor_1'=>(float)$product_bonusInvestor,
+                            'vip_investor_2'=>(float)$product_bonusInvestor_2,
+                            'vip_investor_3'=>(float)$product_bonusInvestor_3,
                         ]
 
                     ];
