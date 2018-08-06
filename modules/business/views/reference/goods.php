@@ -83,7 +83,7 @@ GoodsAsset::register($this);
                     <table id="goods-table" class="table table-striped m-b-none">
                         <thead>
                         <tr>
-                            <th class="th-sortable" data-toggle="class" width="60">ID
+                            <th class="th-sortable" data-toggle="class" width="60">Код
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
@@ -134,8 +134,8 @@ GoodsAsset::register($this);
                         foreach ($goods as $item) { ?>
                         <tr>
                             <td>
-                                <span title="<?=$item['_id']; ?>">
-                                    <?=Empty($item['idInMarket'])?'??':$item['idInMarket']; ?>
+                                <span title="<?='Код='.$item['product'].' ID магазина='.$item['idInMarket']; ?>">
+                                    <?=Empty($item['product'])?'??':$item['product']; ?>
                                 </span>
 
                             </td>
