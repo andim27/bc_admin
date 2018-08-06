@@ -355,11 +355,17 @@ class ReferenceController extends BaseController
             array_push($cat_items,['id'=>$index,'rec_id'=>(string)($item->_id),'name'=>$item->name]);
             $index++;
         }
+        $request = Yii::$app->request;
+        $active_ch =  $request->get('active');
+        if (isset($active_ch)&&($active_ch > 0)) {
+            $goods = Products::find()->where(['productActive'=>['$gt'=>0]])->asArray()->all();
+        } else {
+            $goods = Products::find()->asArray()->all();
+        }
 
-        $goods = Products::find()->asArray()->all();
         //$goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
         //$goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->andWhere(['idInMarket'=>['$gt'=>124]])->andWhere(['idInMarket'=>['$lt'=>200]])->asArray()->all();
-        $request = Yii::$app->request;
+
         $requestLanguage = $request->get('l');
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
         $languages = api\dictionary\Lang::all();

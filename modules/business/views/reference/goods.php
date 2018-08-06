@@ -80,6 +80,9 @@ GoodsAsset::register($this);
 
                 <!--                    Products table from BD-->
                  <div class="table-responsive">
+                     <div class="checkbox">
+                         <label> <input type="checkbox" id="goods-active" checked /> Активные товары</label>
+                     </div>
                     <table id="goods-table" class="table table-striped m-b-none">
                         <thead>
                         <tr>
@@ -523,7 +526,17 @@ GoodsAsset::register($this);
     })
 
     $(function() {
-
+        $('#goods-active').click(function(el){
+            var active_str='active=1';
+            var url="/<?=Yii::$app->language?>/business/reference/goods";
+            if ($(this).is(':checked')==true) {
+                active_str='?active=1';
+            } else {
+                active_str='?active=0';
+            }
+            console.log(active_str);
+            window.location.href=url+active_str;
+        });
         $('#add-category-btn').click(function () {
             //$('#categoryModal').attr('data-action','add');
             $('#category-action-title').html('Add');
@@ -577,6 +590,7 @@ GoodsAsset::register($this);
             showAddProduct();
         })
     })
+
     $(function() {
         $('#goods-table').DataTable({
             'order':[[0,"desc"]],
