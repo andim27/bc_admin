@@ -81,7 +81,7 @@ GoodsAsset::register($this);
                 <!--                    Products table from BD-->
                  <div class="table-responsive">
                      <div class="checkbox">
-                         <label> <input type="checkbox" id="goods-active" checked /> Активные товары</label>
+                         <label> <input type="checkbox" id="goods-active"  <?=($active_ch ==0)?'':'checked' ?> /> Активные товары</label>
                      </div>
                     <table id="goods-table" class="table table-striped m-b-none">
                         <thead>
@@ -526,16 +526,22 @@ GoodsAsset::register($this);
     })
 
     $(function() {
-        $('#goods-active').click(function(el){
+        function showGoodsPage() {
             var active_str='active=1';
             var url="/<?=Yii::$app->language?>/business/reference/goods";
-            if ($(this).is(':checked')==true) {
+            if ( $('#goods-active').is(':checked')==true) {
                 active_str='?active=1';
             } else {
                 active_str='?active=0';
             }
             console.log(active_str);
             window.location.href=url+active_str;
+        }
+        $('#refresh-btn').click(function () {
+            showGoodsPage();
+        })
+        $('#goods-active').click(function(el){
+            showGoodsPage();
         });
         $('#add-category-btn').click(function () {
             //$('#categoryModal').attr('data-action','add');
@@ -575,14 +581,12 @@ GoodsAsset::register($this);
             //console.log('productid='+dataValue);
         });
         $('#editProductModal').on('hide.bs.modal', function (e) {
-            window.location.reload();
+            showGoodsPage();
         });
 
     })
     $(function() {
-        $('#refresh-btn').click(function () {
-            window.location.reload();
-        })
+
     })
 
     $(function() {
