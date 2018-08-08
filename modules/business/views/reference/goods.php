@@ -123,7 +123,7 @@ GoodsAsset::register($this);
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="text-center"><?= THelper::t('users_purchase_point') ?><br>(<?= THelper::t('pack_type_1') ?>)</th>
+                            <th class="text-center"><?= THelper::t('points') ?><br>(<?= THelper::t('pack_type_1') ?>)</th>
                             <th class="text-center"><?= THelper::t('stocks') ?><br>(<?= THelper::t('pack_type_1') ?>)</th>
                             <th class="text-center"><?= THelper::t('nds') ?><br>(%)</th>
                             <th class="text-center"><?= THelper::t('act') ?><br>(<?= THelper::t('month') ?>)</th>

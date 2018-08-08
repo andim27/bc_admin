@@ -38,7 +38,7 @@ use kartik\file\FileInput;
         <div class="row">
             <div class="form-group col-md-12">
 
-                <label id='label-product-name' >Название</label>
+                <label id='label-product-name' ><?= THelper::t('name_product') ?></label>
                 <div class="input-group">
                     <input type="hidden" id="product-action" value="save">
                     <input id="product-name-main" class="form-control" style='display:none' value="<?=htmlspecialchars($product->productName); ?>" size=80 type="text">
@@ -73,9 +73,9 @@ use kartik\file\FileInput;
         <div class="row">
             <div class="form-group col-md-6">
                 <div class="checkbox" style="padding-left:0px">
-                    <label><input id="product-natural"  type="checkbox" <?=(!(empty($product->productNatural))&&($product->productNatural ==1))?'checked':'' ?> value="0">Физический товар</label>
+                    <label><input id="product-natural"  type="checkbox" <?=(!(empty($product->productNatural))&&($product->productNatural ==1))?'checked':'' ?> value="0"><?= THelper::t('product_physical') ?></label>
                 </div>
-                <label for="sel1">Категория товара:</label>
+                <label for="sel1"><?= THelper::t('good_category') ?>:</label>
                 <select class="form-control" id="product-category">
                     <?php foreach ($cat_items as $item) { ?>
                         <?php if ((!Empty($product->category_id))&&($item['rec_id'] == (string)$product->category_id)) { ?>
@@ -86,7 +86,7 @@ use kartik\file\FileInput;
                     <?php } ?>
 
                 </select>
-                <label for="sel1">Тип товара:</label>
+                <label for="sel1"><?= THelper::t('good_type') ?>:</label>
 
                     <select class="form-control" id="product-type">
                         <?php foreach ($product_type_items as $item) { ?>
@@ -126,9 +126,7 @@ use kartik\file\FileInput;
                                     <?php foreach ($complect_goods_add_items as $item) { ?>
                                         <option value="<?=$item['id'] ?>"><?=$item['name'] ?></option>
                                     <?php } ?>
-                                    <option value="tt-1">Товар-1</option>
-                                    <option>Товар-2</option>
-                                    <option>Товар-3</option>
+
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -141,11 +139,11 @@ use kartik\file\FileInput;
                         <hr>
                     </div>
                 </div>
-                <label id="product-code-title">Код товара</label>
+                <label id="product-code-title"><?= THelper::t('good_code') ?></label>
                 <input class="form-control m-b" id="product-id" onchange="checkProduct()"  placeholder="Введите Код товара" value="<?=$product->product ?>" type="text">
 
 
-                <label>ID товара в магазине</label>
+                <label><?= THelper::t('good_id_in_shop') ?></label>
                 <input class="form-control m-b" id="product-idInMarket" placeholder="ID товара в магазине" value="<?=$product->idInMarket ?>" type="text">
                 <label>Розничная цена
                     <a href="#" onclick="showHistory('price');">
@@ -181,7 +179,7 @@ use kartik\file\FileInput;
             </div>
             <div class="form-group col-md-6 text-center">
 
-                <label>Изображение товара</label>
+                <label><?= THelper::t('good_image') ?></label>
                 <button id="edit-category-btn" type="button" class="btn btn-link" onclick="$('#product-image-choose').toggle();$('#product-image-base').toggle()" style="display:<?=($product_action=="edit")?'inline':'none' ?>;margin-top: 0px;margin-left:10px"><i class="fa fa-edit"></i></button><br>
                 <div id="product-image-base" class="row" style="margin-top: 25px">
                     <?php
@@ -219,14 +217,14 @@ use kartik\file\FileInput;
         </div>
         <div class="row">
 
-            <label class="col-sm-7 control-label m-b">Бонусы</label>
+            <label class="col-sm-7 control-label m-b"><?= THelper::t('bonuses') ?></label>
             <div class="col-sm-12">
 
                 <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#tab-money">Деньги</a></li>
-                    <li><a data-toggle="tab" href="#tab-points">Балы</a></li>
+                    <li class="active"><a data-toggle="tab" href="#tab-money"><?= THelper::t('money') ?></a></li>
+                    <li><a data-toggle="tab" href="#tab-points"><?= THelper::t('points') ?></a></li>
 <!--                    <li><a data-toggle="tab" href="#tab-stock">Акции</a></li>-->
-                    <li><a data-toggle="tab" href="#tab-stock-category">Акции-направления</a></li>
+                    <li><a data-toggle="tab" href="#tab-stock-category"><?= THelper::t('stock_direction') ?></a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -234,17 +232,17 @@ use kartik\file\FileInput;
                         <!--               ---------- MONEY -------    -->
                         <div class="row bonus-row" >
                                     <div class="form-group col-sm-6" style="margin-right: 100%">
-                                        <label class="col-sm-6 control-label">Клиент</label>
+                                        <label class="col-sm-6 control-label"><?= THelper::t('client') ?></label>
                                         <div class="col-sm-6">
                                             <input class="form-control m-b" id="product-bonus-client" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['client'])?0:$product['bonus']['money']['client'];  ?>"> </div>
                                     </div>
                                 <div class="form-group col-sm-6">
-                                    <label class="col-sm-6 control-label">Начальный</label>
+                                    <label class="col-sm-6 control-label"><?= THelper::t('pack_type_1') ?></label>
                                     <div class="col-sm-6">
                                         <input class="form-control m-b" id="product-bonus-start" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['beginner'])?0:$product['bonus']['money']['beginner'];  ?>"> </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label class="col-sm-6 control-label">Стандартный</label>
+                                    <label class="col-sm-6 control-label"><?= THelper::t('standart') ?></label>
                                     <div class="col-sm-6">
                                         <input class="form-control m-b" id="product-bonus-standard" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['standard'])?0:$product['bonus']['money']['standard'];  ?>"> </div>
                                 </div>
@@ -254,17 +252,17 @@ use kartik\file\FileInput;
                                         <input class="form-control m-b" id="product-bonus-vip" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['vip'])?0:$product['bonus']['money']['vip'];  ?>" > </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label class="col-sm-6 control-label">VIP (Инвестор-1)</label>
+                                    <label class="col-sm-6 control-label">VIP (<?= THelper::t('investor') ?>-1)</label>
                                     <div class="col-sm-6">
                                         <input class="form-control m-b" id="product-bonus-investor" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['vip_investor_1'])?0:$product['bonus']['money']['vip_investor_1'];  ?>" > </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label class="col-sm-6 control-label">VIP (Инвестор-2)</label>
+                                    <label class="col-sm-6 control-label">VIP (<?= THelper::t('investor') ?>-2)</label>
                                     <div class="col-sm-6">
                                         <input class="form-control m-b" id="product-bonus-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['vip_investor_2'])?0:$product['bonus']['money']['vip_investor_2'];  ?>" > </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label class="col-sm-6 control-label">VIP (Инвестор-3)</label>
+                                    <label class="col-sm-6 control-label">VIP (<?= THelper::t('investor') ?>-3)</label>
                                     <div class="col-sm-6">
                                         <input class="form-control m-b" id="product-bonus-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonus']['money']['vip_investor_3'])?0:$product['bonus']['money']['vip_investor_3'];  ?>" > </div>
                                 </div>
@@ -274,17 +272,17 @@ use kartik\file\FileInput;
                         <!--     -----------------  POINTS----------- -->
                         <div class="row bonus-row" >
                             <div class="form-group col-sm-6" style="margin-right: 100%">
-                                <label class="col-sm-6 control-label">Клиент</label>
+                                <label class="col-sm-6 control-label"><?= THelper::t('client') ?></label>
                                 <div class="col-sm-6">
                                     <input class="form-control m-b" id="product-bonus-point-client" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['client'])?0:$product['bonus']['point']['client'];  ?>"> </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">Начальный</label>
+                                <label class="col-sm-6 control-label"><?= THelper::t('pack_type_1') ?></label>
                                 <div class="col-sm-6">
                                     <input class="form-control m-b" id="product-bonus-point-start" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['beginner'])?0:$product['bonus']['point']['beginner'];  ?>"> </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">Стандартный</label>
+                                <label class="col-sm-6 control-label"><?= THelper::t('standart') ?></label>
                                 <div class="col-sm-6">
                                     <input class="form-control m-b" id="product-bonus-point-standard" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['standard'])?0:$product['bonus']['point']['standard'];  ?>"> </div>
                             </div>
@@ -294,17 +292,17 @@ use kartik\file\FileInput;
                                     <input class="form-control m-b" id="product-bonus-point-vip" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['vip'])?0:$product['bonus']['point']['vip'];  ?>" > </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор-1)</label>
+                                <label class="col-sm-6 control-label">VIP (<?= THelper::t('investor') ?>-1)</label>
                                 <div class="col-sm-6">
                                     <input class="form-control m-b" id="product-bonus-point-investor" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['vip_investor_1'])?0:$product['bonus']['point']['vip_investor_1'];  ?>" > </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор-2)</label>
+                                <label class="col-sm-6 control-label">VIP (<?= THelper::t('investor') ?>-2)</label>
                                 <div class="col-sm-6">
                                     <input class="form-control m-b" id="product-bonus-point-investor-2" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['vip_investor_2'])?0:$product['bonus']['point']['vip_investor_2'];  ?>" > </div>
                             </div>
                             <div class="form-group col-sm-6">
-                                <label class="col-sm-6 control-label">VIP (Инвестор-3)</label>
+                                <label class="col-sm-6 control-label">VIP (<?= THelper::t('investor') ?>-3)</label>
                                 <div class="col-sm-6">
                                     <input class="form-control m-b" id="product-bonus-point-investor-3" placeholder="Премия" type="text" value="<?=empty($product['bonus']['point']['vip_investor_3'])?0:$product['bonus']['point']['vip_investor_3'];  ?>" > </div>
                             </div>
@@ -393,7 +391,7 @@ use kartik\file\FileInput;
 
         <div class="row">
             <div class="form-group col-sm-6 m-b plnone">
-                <label class="col-sm-7 control-label">Продлевает активность BS (месяцев)</label>
+                <label class="col-sm-7 control-label"><?= THelper::t('prolong_act_month') ?></label>
                 <div class="col-sm-5">
                     <div id="MySpinner" class="spinner input-group" data-min="0" data-max="12">
                         <input class="form-control spinner-input" id="product-expirationPeriod-value" value="<?=$product['expirationPeriod']['value'] ?>" name="spinner" maxlength="2" type="text">
@@ -418,7 +416,7 @@ use kartik\file\FileInput;
 
         <div class="row m-b">
             <div class="form-group">
-                <label class="col-sm-2 control-label">Описание товара (<span id="product-desc-lang" ><?=strtoupper(Yii::$app->language);?></span>)</label>
+                <label class="col-sm-2 control-label"><?= THelper::t('product_description') ?> (<span id="product-desc-lang" ><?=strtoupper(Yii::$app->language);?></span>)</label>
                 <div class="col-sm-10">
                     <div class="btn-toolbar m-b-sm btn-editor" id="editorButtons" data-role="editor-toolbar" data-target="#editor">
                         <div class="btn-group">
@@ -535,7 +533,7 @@ use kartik\file\FileInput;
         <div class="row">
             <div class="form-group col-sm-6 m-b plnone">
 
-                <label class="col-sm-7 control-label">Однократная покупка</label>
+                <label class="col-sm-7 control-label"><?= THelper::t('buy_once') ?></label>
                 <div class="col-sm-5">
                     <label class="switch">
                         <input id="product-single-purchase" <?=empty($product->singlePurchase)?'':(($product->singlePurchase)==1)?'checked':''  ?> type="checkbox">
@@ -546,7 +544,7 @@ use kartik\file\FileInput;
             </div>
             <div class="form-group col-sm-6 m-b plnone">
 
-                <label class="col-sm-7 control-label">Бонусные балы</label>
+                <label class="col-sm-7 control-label"><?= THelper::t('bonus_points') ?></label>
                 <div class="col-sm-5">
                     <input class="form-control" id="product-bonus-points" placeholder="Балловая стоимость" value="<?=$product->bonusPoints ?>" type="text">
                 </div>
@@ -558,7 +556,7 @@ use kartik\file\FileInput;
 
             <div class="form-group col-sm-6 m-b plnone">
 
-                <label class="col-sm-7 control-label">Активный товар</label>
+                <label class="col-sm-7 control-label"><?= THelper::t('product_active') ?></label>
                 <div class="col-sm-5">
                     <label class="switch">
                         <input id="product-active" <?=empty($product->productActive)?'':(($product->productActive)==1)?'checked':''  ?> type="checkbox">
@@ -574,7 +572,7 @@ use kartik\file\FileInput;
 
 <!--                </div>-->
 
-                    <label class="col-sm-7 control-label"  >НДС (%)
+                    <label class="col-sm-7 control-label"  ><?= THelper::t('nds') ?> (%)
                         <a href="#" style="float:right"  onclick="showHistory('productTax');">
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
@@ -592,7 +590,7 @@ use kartik\file\FileInput;
 
     <div class="row m-b">
         <div class="form-group col-sm-6 m-b plnone">
-            <label class="col-sm-7 control-label">Пополнение коммерческого счета</label>
+            <label class="col-sm-7 control-label"> <?= THelper::t('replenishment_com_account') ?></label>
             <div class="col-sm-5">
                 <label class="switch">
                     <input id="product-balance-top-up" <?=empty($product->productBalanceTopUp)?'':(($product->productBalanceTopUp)==1)?'checked':''  ?> type="checkbox">
@@ -601,7 +599,7 @@ use kartik\file\FileInput;
             </div>
         </div>
         <div id="product-balance-money-block" class="form-group col-sm-6 m-b plnone " style="display:<?=Empty($product->balanceMoney)?'none':'block' ?>">
-            <label class="col-sm-7 control-label">Сумма пополнения</label>
+            <label class="col-sm-7 control-label"><?= THelper::t('replenishment_sum') ?></label>
             <div class="col-sm-5"  >
                 <input class="form-control" id="product-balance-money" placeholder="Сумма" value="<?=$product->balanceMoney ?>" type="text">
             </div>
@@ -610,8 +608,8 @@ use kartik\file\FileInput;
         <div class="text-center" id="server-message"></div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-info" id="save-product-btn" onclick="saveProduct();" data-loading-text="Обновление...">Сохранить изменения</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+        <button type="button" class="btn btn-info" id="save-product-btn" onclick="saveProduct();" data-loading-text="Обновление..."><?= THelper::t('save_change') ?></button>
+        <button type="button" class="btn btn-default" data-dismiss="modal"><?= THelper::t('close') ?></button>
     </div>
 <!--</form>-->
 <?php
