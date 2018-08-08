@@ -30,7 +30,7 @@ use kartik\file\FileInput;
 <form id="formEditProduct" enctype="multipart/form-data" method="post">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title"><?=($product_action=="edit")?'Редактирование товара':'Добавление товара' ?>: id=<span id="p-id"><?=$product->_id; ?></span></h4>
+        <h4 class="modal-title"><?=($product_action=="edit")?THelper::t('product_edit'):THelper::t('product_add') ?>: id=<span id="p-id"><?=$product->_id; ?></span></h4>
 
     </div>
     <div class="modal-body">
@@ -75,7 +75,7 @@ use kartik\file\FileInput;
                 <div class="checkbox" style="padding-left:0px">
                     <label><input id="product-natural"  type="checkbox" <?=(!(empty($product->productNatural))&&($product->productNatural ==1))?'checked':'' ?> value="0"><?= THelper::t('product_physical') ?></label>
                 </div>
-                <label for="sel1"><?= THelper::t('good_category') ?>:</label>
+                <label for="sel1"><?= THelper::t('product_category') ?>:</label>
                 <select class="form-control" id="product-category">
                     <?php foreach ($cat_items as $item) { ?>
                         <?php if ((!Empty($product->category_id))&&($item['rec_id'] == (string)$product->category_id)) { ?>
@@ -86,7 +86,7 @@ use kartik\file\FileInput;
                     <?php } ?>
 
                 </select>
-                <label for="sel1"><?= THelper::t('good_type') ?>:</label>
+                <label for="sel1"><?= THelper::t('product_type') ?>:</label>
 
                     <select class="form-control" id="product-type">
                         <?php foreach ($product_type_items as $item) { ?>
@@ -139,20 +139,20 @@ use kartik\file\FileInput;
                         <hr>
                     </div>
                 </div>
-                <label id="product-code-title"><?= THelper::t('good_code') ?></label>
+                <label id="product-code-title"><?= THelper::t('product_code') ?></label>
                 <input class="form-control m-b" id="product-id" onchange="checkProduct()"  placeholder="Введите Код товара" value="<?=$product->product ?>" type="text">
 
 
-                <label><?= THelper::t('good_id_in_shop') ?></label>
+                <label><?= THelper::t('product_id_in_shop') ?></label>
                 <input class="form-control m-b" id="product-idInMarket" placeholder="ID товара в магазине" value="<?=$product->idInMarket ?>" type="text">
-                <label>Розничная цена
+                <label><?= THelper::t('shop_product_price') ?>
                     <a href="#" onclick="showHistory('price');">
                         <span class="glyphicon glyphicon-time"></span>
                     </a>
                 </label>
                 <input class="form-control m-b" id="product-price" placeholder="Введите розничную цену (Euro)" value="<?=$product->price ?>" type="text">
                 <div id="product-history-add-price" class="col-md-offset-1 sub-field" style="display:none">
-                    <span class="center-block  text-center text-info">Добавить на дату:</span>
+                    <span class="center-block  text-center text-info"><?= THelper::t('add_on_date') ?>:</span>
                     <table class="table" width="100%">
                         <tr>
                             <td width="33%">
@@ -179,7 +179,7 @@ use kartik\file\FileInput;
             </div>
             <div class="form-group col-md-6 text-center">
 
-                <label><?= THelper::t('good_image') ?></label>
+                <label><?= THelper::t('product_image') ?></label>
                 <button id="edit-category-btn" type="button" class="btn btn-link" onclick="$('#product-image-choose').toggle();$('#product-image-base').toggle()" style="display:<?=($product_action=="edit")?'inline':'none' ?>;margin-top: 0px;margin-left:10px"><i class="fa fa-edit"></i></button><br>
                 <div id="product-image-base" class="row" style="margin-top: 25px">
                     <?php
@@ -374,12 +374,7 @@ use kartik\file\FileInput;
             </div>
             <hr>
         </div>
-<!--            <div class="col-sm-5 m-b">-->
-<!--                <label class="switch">-->
-<!--                    <input id="difPremia" type="checkbox" checked>-->
-<!--                    <span></span>-->
-<!--                </label>-->
-<!--            </div>-->
+
 
             <div id="difShow" class="">
 
