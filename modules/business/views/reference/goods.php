@@ -33,7 +33,7 @@ GoodsAsset::register($this);
 <section class="hbox stretch">
     <aside class="aside-md bg-white b-r" id="subNav">
         <div class="wrapper b-b header">
-            Категории
+            <?= THelper::t('category_goods') ?>
             <button id="add-category-btn" type="button" class="btn btn-link" style="margin-top: 0px;"><i class="fa fa-plus"></i></button>
             <button id="edit-category-btn" type="button" class="btn btn-link" style="display:none;margin-top: 0px;margin-left:10px"><i class="fa fa-edit"></i></button>
 <!--            <button type="button" class="btn btn-default btn-sm" id="createBtn"> <i class="fa fa-plus"></i></button>-->
@@ -66,7 +66,7 @@ GoodsAsset::register($this);
                             </button>
                         </div>
 
-                        <button type="button" class="btn btn-default btn-sm" id="createBtn" > <i class="fa fa-plus"></i>Create</button>
+                        <button type="button" class="btn btn-default btn-sm" id="createBtn" > <i class="fa fa-plus"></i><?= THelper::t('create') ?></button>
                     </div>
                     <div class="col-sm-4 m-b-xs">
 
@@ -81,12 +81,12 @@ GoodsAsset::register($this);
                 <!--                    Products table from BD-->
                  <div class="table-responsive">
                      <div class="checkbox">
-                         <label> <input type="checkbox" id="goods-active"  <?=($active_ch ==0)?'':'checked' ?> /> Активные товары</label>
+                         <label> <input type="checkbox" id="goods-active"  <?=($active_ch ==0)?'':'checked' ?> /> <?= THelper::t('active_goods') ?></label>
                      </div>
                     <table id="goods-table" class="table table-striped m-b-none">
                         <thead>
                         <tr>
-                            <th class="th-sortable" data-toggle="class" width="60">Код
+                            <th class="th-sortable" data-toggle="class" width="60"><?= THelper::t('kod') ?>
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
@@ -95,39 +95,39 @@ GoodsAsset::register($this);
 
                             </th>
                             <th width="20"></th>
-                            <th class="th-sortable" data-toggle="class">Название
+                            <th class="th-sortable" data-toggle="class"><?= THelper::t('name_product') ?>
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="th-sortable" data-toggle="class">Категория
+                            <th class="th-sortable" data-toggle="class"><?= THelper::t('category') ?>
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="th-sortable" data-toggle="class" width="80">Цена
+                            <th class="th-sortable" data-toggle="class" width="80"><?= THelper::t('Price') ?>
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="th-sortable text-center" data-toggle="class" width="80">Бонус<br>(начальный)
+                            <th class="th-sortable text-center" data-toggle="class" width="80"><?= THelper::t('Bonus') ?><br>(<?= THelper::t('pack_type_1') ?>)
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="text-center">Баллы<br>(начальный)</th>
-                            <th class="text-center">Акции<br>(направления)</th>
-                            <th class="text-center">НДС<br>(%)</th>
-                            <th class="text-center">Акт<br>(Мес)</th>
-                            <th>Тип</th>
+                            <th class="text-center"><?= THelper::t('users_purchase_point') ?><br>(<?= THelper::t('pack_type_1') ?>)</th>
+                            <th class="text-center"><?= THelper::t('stocks') ?><br>(<?= THelper::t('pack_type_1') ?>)</th>
+                            <th class="text-center"><?= THelper::t('nds') ?><br>(%)</th>
+                            <th class="text-center"><?= THelper::t('act') ?><br>(<?= THelper::t('month') ?>)</th>
+                            <th><?= THelper::t('type') ?></th>
                             <th width="30"></th>
                         </tr>
                         </thead>
@@ -152,13 +152,13 @@ GoodsAsset::register($this);
                             <td>
 
                                 <?php
-                                if (empty($item['productName'])) {
-                                    echo "??";
+                                if (empty($item['productNameLangs'][Yii::$app->language])) {
+                                    echo "???";
                                 } else {
                                     if (empty($item['products']) ) {
-                                        echo $item['productName'];
+                                        echo (empty($item['productNameLangs'][Yii::$app->language])?'??':$item['productNameLangs'][Yii::$app->language]);
                                     } else {
-                                        echo "<strong>".$item['productName']."</strong>";
+                                        echo "<strong>".(empty($item['productNameLangs'][Yii::$app->language])?'??':$item['productNameLangs'][Yii::$app->language])."</strong>";
                                     }
                                 }
                                 ?>
@@ -256,7 +256,7 @@ GoodsAsset::register($this);
         <div class="modal-content">
             <div class="modal-header modal-head">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Категории</h4>
+                <h4 class="modal-title"><?= THelper::t('category_goods') ?></h4>
             </div>
             <div class="modal-body">
                 <p><strong id="category-action-title"></strong></p>

@@ -38,13 +38,14 @@ use kartik\file\FileInput;
         <div class="row">
             <div class="form-group col-md-12">
 
-                <label>Название</label>
+                <label id='label-product-name' >Название</label>
                 <div class="input-group">
                     <input type="hidden" id="product-action" value="save">
-                    <input id="product-name" class="form-control" value="<?=htmlspecialchars($product->productName); ?>" size=80 type="text">
+                    <input id="product-name-main" class="form-control" style='display:none' value="<?=htmlspecialchars($product->productName); ?>" size=80 type="text">
+                    <input id="product-name" class="form-control" value="<?=htmlspecialchars(empty($product['productNameLangs'][Yii::$app->language])?'???':$product['productNameLangs'][Yii::$app->language]); ?>" size=80 type="text">
                     <div class="input-group-btn">
                        <!-- <button type="button" class="btn btn-default" id="product-name-save" >Save</button>-->
-                        <button type="button" class="btn btn-default" id="product-lang" cur-lang="ru" tabindex="-1">RU</button>
+                        <button type="button" class="btn btn-default" id="product-lang" cur-lang="ru" tabindex="-1"><?=strtoupper(Yii::$app->language); ?></button>
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                             <span class="caret"></span>
                         </button>
@@ -417,7 +418,7 @@ use kartik\file\FileInput;
 
         <div class="row m-b">
             <div class="form-group">
-                <label class="col-sm-2 control-label">Описание товара (<span id="product-desc-lang" >RU</span>)</label>
+                <label class="col-sm-2 control-label">Описание товара (<span id="product-desc-lang" ><?=strtoupper(Yii::$app->language);?></span>)</label>
                 <div class="col-sm-10">
                     <div class="btn-toolbar m-b-sm btn-editor" id="editorButtons" data-role="editor-toolbar" data-target="#editor">
                         <div class="btn-group">
@@ -525,7 +526,7 @@ use kartik\file\FileInput;
 
 
                     <div id="editor" class="form-control" style="overflow:scroll;height:150px;max-height:150px" contenteditable="true">
-                        <?=@$product['productDescription']['ru']; ?>
+                        <?=@(empty($product['productDescription'][Yii::$app->language])?"???":$product['productDescription'][Yii::$app->language]); ?>
                     </div>
                 </div>
             </div>
@@ -621,6 +622,7 @@ ActiveForm::end();
     complect_items=<?=json_encode($complect_items) ?>;
     complect_goods_add_items=<?=json_encode($complect_goods_add_items) ?>;
     $(function() {
+
         $('#product-type').change(function() {
             if ($('#product-type').val()==2) {
                 $('#product-complect-block').show();
@@ -669,6 +671,11 @@ ActiveForm::end();
             $('#product-history-add-price').hide();
         }
     }
+    $('#label-product-name').click(function(e) {
+        if (e.ctrlKey) {
+            $('#product-name-main').toggle();
+        }
+    });
     function addHistory(field_name) {
         var h_block='product-history-add-price';
         if ($('#'+h_block).css('display') =='none') {
