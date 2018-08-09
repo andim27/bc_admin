@@ -65,7 +65,9 @@ class Products extends ActiveRecord
             'stock',
             'productBalanceTopUp',
             'balanceMoney',
-            'history'
+            'history',
+            'paymentsToRepresentive',
+            'paymentsToStock'
         ];
     }
 

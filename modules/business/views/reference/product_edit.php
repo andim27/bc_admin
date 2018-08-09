@@ -580,6 +580,21 @@ use kartik\file\FileInput;
                     </div>
             </div>
           </div>
+        <!--     ------------------------ Выплаты -----------------------------     -->
+        <div class="row m-b">
+            <div class="form-group col-sm-6 m-b plnone">
+                <label class="col-sm-7 control-label"><?= THelper::t('payments_to_representative') ?></label>
+                <div class="col-sm-5"  >
+                    <input class="form-control" id="product-payments-rep" placeholder="Сумма" value="<?=empty($product->paymentsToRepresentive)?0:$product->paymentsToRepresentive ?>" type="text">
+                </div>
+            </div>
+            <div class="form-group col-sm-6 m-b plnone">
+                <label class="col-sm-7 control-label"><?= THelper::t('payments_to_stock') ?></label>
+                <div class="col-sm-5"  >
+                    <input class="form-control" id="product-payments-stock" placeholder="Сумма" value="<?=empty($product->paymentsToStock)?0:$product->paymentsToStock; ?>" type="text">
+                </div>
+            </div>
+        </div>
         </div>
 
 

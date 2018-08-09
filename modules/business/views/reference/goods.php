@@ -472,6 +472,9 @@ GoodsAsset::register($this);
             //------------com balance--------------------------------------------
             'product-balance-top-up':$('#product-balance-top-up').is(':checked')?1:0,
             'product-balance-money' :$('#product-balance-money').val(),
+            //-------------payments----------------------------------------------
+            'product-payments-rep':  $('#product-payments-rep').val(),
+            'product-payments-stock':$('#product-payments-stock').val(),
         };
         $.ajax( {
             url: url,

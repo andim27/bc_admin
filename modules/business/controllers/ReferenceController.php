@@ -520,7 +520,7 @@ class ReferenceController extends BaseController
 //                $product_bonusStockInvestor   =$request->post('product-bonus-stock-investor') ?? 0;
 //                $product_bonusStockInvestor_2 =$request->post('product-bonus-stock-investor-2') ?? 0;
 //                $product_bonusStockInvestor_3 =$request->post('product-bonus-stock-investor-3') ?? 0;
-                //--------------------------------end tabs-----------------------------
+                //--------------------------------end tabs------------------------------------------
                 $product_expirationPeriodValue =$request->post('product-expirationPeriod-value');
 
                 $product_description =$request->post('product-description');
@@ -533,6 +533,9 @@ class ReferenceController extends BaseController
                 $product_complect_goods =$request->post('product-complect-goods') ?? [];
                 $product_balance_top_up =$request->post('product-balance-top-up') ?? [];
                 $product_balance_money  =$request->post('product-balance-money') ?? [];
+                //--------------------------------------payments-------------------------------------
+                $product_payments_rep   =$request->post('product-payments-rep') ?? 0;
+                $product_payments_stock =$request->post('product-payments-stock') ?? 0;
 
                 $product_products=[];
                 foreach ($product_complect_goods as $item) {
@@ -642,6 +645,9 @@ class ReferenceController extends BaseController
                     $product->productBalanceTopUp  =(int)$product_balance_top_up;
                     $product->balanceMoney         =(float)$product_balance_money;
                     //$product->stock           =(int)$product_stock;
+
+                    $product->paymentsToRepresentive =(float)$product_payments_rep;
+                    $product->paymentsToStock        =(float)$product_payments_stock;
 
                     if (!Empty($product_complect_goods)) {
                         $product->products=$product_products;
