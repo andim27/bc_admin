@@ -41,7 +41,7 @@ use MongoDB\BSON\UTCDatetime;
 class UserController extends BaseController
 {
     const LIMIT = 500;
-    const DEFAULT_PRODUCT = 14;
+    const DEFAULT_PRODUCT = 9001;
 
     /**
      *
