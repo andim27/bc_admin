@@ -487,6 +487,7 @@ class ReferenceController extends BaseController
                 $product_name    =$request->post('product-name');
                 $product_natural    =$request->post('product-natural');
                 $product_category   =$request->post('product-category');
+                $product_categories =$request->post('product-categories');
                 $product_type=$request->post('product-type');
                 $product_id         =$request->post('product-id');
                 $product_idInMarket =$request->post('product-idInMarket');
@@ -583,6 +584,7 @@ class ReferenceController extends BaseController
                     //-----------------------------e: history ---------------------------------
                     $product->category_id =new ObjectID($product_category);
                     //$product->category_id =$product_category;
+                    $product->categories = $product_categories;
                     $product->productType =(int)$product_type;
                     $product->type        =(int)$product_type; //---delete in future
                     $product->bonusMoney  =(int)$product_bonusStart; //---delete in future

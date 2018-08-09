@@ -48,6 +48,7 @@ class Products extends ActiveRecord
             'delovod_id',
             'expirationPeriod',
             'category_id',
+            'categories',
             'productType',
             'bonuses',
             'bonusMoneys.elementary',

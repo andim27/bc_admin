@@ -86,6 +86,19 @@ use kartik\file\FileInput;
                     <?php } ?>
 
                 </select>
+                <!--  ------- b:multy category -------->
+                <div id="product-categories-wraper" style="width:100%">
+                    <label for="product-multy-category"><?= THelper::t('product_categories') ?>:</label><br>
+                    <select class="form-control"  id="product-categories" multiple="multiple" >
+                        <?php foreach ($cat_items as $item) { ?>
+                            <?php if ($item['name'] != '??') { ?>
+                                <option <?= (in_array($item['rec_id'], $product['categories']))?'selected':'' ?> value="<?=$item['rec_id'] ?>"><?=$item['name'] ?></option>
+                            <?php } ?>
+                        <?php } ?>
+
+                    </select><br>
+                </div>
+                <!--  ------- e:multy category -------->
                 <label for="sel1"><?= THelper::t('product_type') ?>:</label>
 
                     <select class="form-control" id="product-type">
@@ -630,7 +643,7 @@ ActiveForm::end();
     complect_items=<?=json_encode($complect_items) ?>;
     complect_goods_add_items=<?=json_encode($complect_goods_add_items) ?>;
     $(function() {
-
+        $('#product-categories').multiselect();
         $('#product-type').change(function() {
             if ($('#product-type').val()==2) {
                 $('#product-complect-block').show();

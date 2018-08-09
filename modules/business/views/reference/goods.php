@@ -170,6 +170,11 @@ GoodsAsset::register($this);
                                 } else {
                                 foreach ($cat_items as $cat_item) {
                                         if ($cat_item['rec_id'] ==(string)$item['category_id']) {
+//                                            if ($item['product'] > 10000) {
+//                                                echo $cat_item['name'].('<br> VipVip');
+//                                            } else {
+//                                                echo $cat_item['name'];
+//                                            }
                                             echo $cat_item['name'];
                                             break;
                                         }
@@ -427,6 +432,7 @@ GoodsAsset::register($this);
             'product-name':$('#product-name').val(),
             'product-natural':$('#product-natural').is(':checked')?1:0,
             'product-category':$('#product-category').val(),
+            'product-categories':$('#product-categories').val(),
             'product-type':$('#product-type').val(),
             'product-id':$('#product-id').val(),
             'product-idInMarket':$('#product-idInMarket').val(),
