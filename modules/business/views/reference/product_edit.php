@@ -75,24 +75,28 @@ use kartik\file\FileInput;
                 <div class="checkbox" style="padding-left:0px">
                     <label><input id="product-natural"  type="checkbox" <?=(!(empty($product->productNatural))&&($product->productNatural ==1))?'checked':'' ?> value="0"><?= THelper::t('product_physical') ?></label>
                 </div>
-                <label for="sel1"><?= THelper::t('product_category') ?>:</label>
-                <select class="form-control" id="product-category">
-                    <?php foreach ($cat_items as $item) { ?>
-                        <?php if ((!Empty($product->category_id))&&($item['rec_id'] == (string)$product->category_id)) { ?>
-                            <option selected value="<?=$item['rec_id'] ?>"><?=$item['name'] ?></option>
-                        <?php } else { ?>
-                            <option value="<?=$item['rec_id'] ?>"><?=$item['name'] ?></option>
-                            <?php } ?>
-                    <?php } ?>
-
-                </select>
+<!--                <label for="sel1">--><?//= THelper::t('product_category') ?><!--:</label>-->
+<!--                <select class="form-control" id="product-category">-->
+<!--                    --><?php //foreach ($cat_items as $item) { ?>
+<!--                        --><?php //if ((!Empty($product->category_id))&&($item['rec_id'] == (string)$product->category_id)) { ?>
+<!--                            <option selected value="--><?//=$item['rec_id'] ?><!--">--><?//=$item['name'] ?><!--</option>-->
+<!--                        --><?php //} else { ?>
+<!--                            <option value="--><?//=$item['rec_id'] ?><!--">--><?//=$item['name'] ?><!--</option>-->
+<!--                            --><?php //} ?>
+<!--                    --><?php //} ?>
+<!---->
+<!--                </select>-->
                 <!--  ------- b:multy category -------->
                 <div id="product-categories-wraper" style="width:100%">
                     <label for="product-multy-category"><?= THelper::t('product_categories') ?>:</label><br>
                     <select class="form-control"  id="product-categories" multiple="multiple" >
                         <?php foreach ($cat_items as $item) { ?>
                             <?php if ($item['name'] != '??') { ?>
-                                <option <?= (in_array($item['rec_id'], $product['categories']))?'selected':'' ?> value="<?=$item['rec_id'] ?>"><?=$item['name'] ?></option>
+                                <?php if (!empty($product['categories']))  {?>
+                                     <option <?= (in_array($item['rec_id'], $product['categories']))?'selected':'' ?> value="<?=$item['rec_id'] ?>"><?=$item['name'] ?></option>
+                                 <?php } else {?>
+                                     <option  value="<?=$item['rec_id'] ?>"><?=$item['name'] ?></option>
+                                <?php } ?>
                             <?php } ?>
                         <?php } ?>
 

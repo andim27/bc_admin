@@ -165,20 +165,19 @@ GoodsAsset::register($this);
                             </td>
                             <td>
                                 <?php
-                                if (empty($item['category_id'])) {
+                                if (empty($item['categories'])) {
                                     echo '??';
                                 } else {
+                                    $cats_str='';
                                 foreach ($cat_items as $cat_item) {
-                                        if ($cat_item['rec_id'] ==(string)$item['category_id']) {
-//                                            if ($item['product'] > 10000) {
-//                                                echo $cat_item['name'].('<br> VipVip');
-//                                            } else {
-//                                                echo $cat_item['name'];
-//                                            }
-                                            echo $cat_item['name'];
-                                            break;
+                                        //if ($cat_item['rec_id'] ==(string)$item['category_id']) {
+                                        if (in_array($cat_item['rec_id'], $item['categories'])) {
+                                            $cats_str.=$cat_item['name'].'<br>';
+
                                         }
-                                }} ?>
+                                }
+                                echo $cats_str;
+                                } ?>
 
                             </td>
                             <td><?=empty($item['price'])?0:$item['price'] ?></td>
