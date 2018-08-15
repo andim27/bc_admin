@@ -69,9 +69,9 @@ class Marketing
                 $promotion->id         = $object->_id;
                 $promotion->author     = $object->author;
                 $promotion->lang       = $object->lang;
-                $promotion->v          = $object->__v;
+                $promotion->v          = $object->__v ?? 0;
                 $promotion->isDelete   = $object->isDelete;
-                $promotion->dateOfPublication = strtotime($object->dateOfPublication);
+                $promotion->dateOfPublication = isset($object->dateOfPublication)?strtotime($object->dateOfPublication):strtotime($object->dateCreate);//     strtotime($object->dateOfPublication);
                 $promotion->dateUpdate = strtotime($object->dateUpdate);
                 $promotion->dateCreate = strtotime($object->dateCreate);
                 $promotion->body       = $object->body;
