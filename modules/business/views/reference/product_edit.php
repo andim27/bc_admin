@@ -631,6 +631,18 @@ use kartik\file\FileInput;
                 <input class="form-control" id="product-balance-money" placeholder="Сумма" value="<?=$product->balanceMoney ?>" type="text">
             </div>
         </div>
+
+    </div>
+    <div class="row m-b">
+        <div class="form-group col-sm-6 mb plone">
+            <label class="col-sm-7 control-label"><?= THelper::t('buy_after_end') ?></label>
+            <div class="col-sm-5">
+                <label class="switch">
+                    <input id="product-buy-after-end" <?=empty($product->buyAfterEnd)?'':(($product->buyAfterEnd)==1)?'checked':''  ?> type="checkbox">
+                    <span></span>
+                </label>
+            </div>
+        </div>
     </div>
         <div class="text-center" id="server-message"></div>
     </div>

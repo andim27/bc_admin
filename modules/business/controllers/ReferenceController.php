@@ -537,7 +537,8 @@ class ReferenceController extends BaseController
                 //--------------------------------------payments-------------------------------------
                 $product_payments_rep   =$request->post('product-payments-rep') ?? 0;
                 $product_payments_stock =$request->post('product-payments-stock') ?? 0;
-
+                //--------------------------------------buy after end--------------------------------
+                $product_buy_after_end  =$request->post('product-buy-after-end') ?? 0;
                 $product_products=[];
                 foreach ($product_complect_goods as $item) {
                     array_push($product_products,['_id'=>new ObjectID($item['rec_id']),'productName'=>$item['name'],'cnt'=>$item['cnt']]);
@@ -650,6 +651,8 @@ class ReferenceController extends BaseController
 
                     $product->paymentsToRepresentive =(float)$product_payments_rep;
                     $product->paymentsToStock        =(float)$product_payments_stock;
+
+                    $product->buyAfterEnd            =(int)$product_buy_after_end ;
 
                     if (!Empty($product_complect_goods)) {
                         $product->products=$product_products;

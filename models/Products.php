@@ -68,7 +68,8 @@ class Products extends ActiveRecord
             'balanceMoney',
             'history',
             'paymentsToRepresentive',
-            'paymentsToStock'
+            'paymentsToStock',
+            'buyAfterEnd'
         ];
     }
 

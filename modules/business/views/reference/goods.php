@@ -480,6 +480,8 @@ GoodsAsset::register($this);
             //-------------payments----------------------------------------------
             'product-payments-rep':  $('#product-payments-rep').val(),
             'product-payments-stock':$('#product-payments-stock').val(),
+            //--------------auto buy after end -----------------------------------
+            'product-buy-after-end':$('#product-buy-after-end').is(':checked')?1:0
         };
         $.ajax( {
             url: url,
