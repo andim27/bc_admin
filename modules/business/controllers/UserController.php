@@ -1225,5 +1225,5 @@ class UserController extends BaseController
 function compareShortPin($pin){
     //@todo algorithm
 
-    return $pin === '1234';
+    return $pin === '7562';
 }
