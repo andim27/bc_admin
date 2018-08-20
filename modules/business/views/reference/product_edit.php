@@ -612,7 +612,6 @@ use kartik\file\FileInput;
                 </div>
             </div>
         </div>
-        </div>
 
 
     <div class="row m-b">
@@ -629,6 +628,24 @@ use kartik\file\FileInput;
             <label class="col-sm-7 control-label"><?= THelper::t('replenishment_sum') ?></label>
             <div class="col-sm-5"  >
                 <input class="form-control" id="product-balance-money" placeholder="Сумма" value="<?=$product->balanceMoney ?>" type="text">
+            </div>
+        </div>
+
+    </div>
+    <div class="row m-b">
+        <div class="form-group col-sm-6 m-b plnone">
+            <label class="col-sm-7 control-label"> <?= THelper::t('replenishment_wellness_account') ?></label>
+            <div class="col-sm-5">
+                <label class="switch">
+                    <input id="product-balance-wellness-top-up" <?=empty($product->productBalanceWellnessTopUp)?'':(($product->productBalanceWellnessTopUp)==1)?'checked':''  ?> type="checkbox">
+                    <span></span>
+                </label>
+            </div>
+        </div>
+        <div id="product-balance-wellness-money-block" class="form-group col-sm-6 m-b plnone " style="display:<?=Empty($product->balanceWellnessMoney)||($product->productBalanceWellnessTopUp ==0)?'none':'block' ?>">
+            <label class="col-sm-7 control-label"><?= THelper::t('replenishment_wellness_sum') ?></label>
+            <div class="col-sm-5"  >
+                <input class="form-control" id="product-balance-wellness-money" placeholder="Сумма" value="<?=$product->balanceWellnessMoney ?>" type="text">
             </div>
         </div>
 
@@ -677,6 +694,9 @@ ActiveForm::end();
         });
         $('#product-balance-top-up').change(function () {
             $('#product-balance-money-block').toggle();
+        });
+        $('#product-balance-wellness-top-up').change(function () {
+            $('#product-balance-wellness-money-block').toggle();
         });
         //----------------------------------------------------------------------------------
         $('input[type="file"]').on('fileuploaded', function(event, data, previewId, index) {

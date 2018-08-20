@@ -477,6 +477,9 @@ GoodsAsset::register($this);
             //------------com balance--------------------------------------------
             'product-balance-top-up':$('#product-balance-top-up').is(':checked')?1:0,
             'product-balance-money' :$('#product-balance-money').val(),
+            //------------wellness balance--------------------------------------------
+            'product-balance-wellness-top-up':$('#product-balance-wellness-top-up').is(':checked')?1:0,
+            'product-balance-wellness-money' :$('#product-balance-wellness-money').val(),
             //-------------payments----------------------------------------------
             'product-payments-rep':  $('#product-payments-rep').val(),
             'product-payments-stock':$('#product-payments-stock').val(),

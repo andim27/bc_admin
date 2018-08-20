@@ -544,6 +544,9 @@ class ReferenceController extends BaseController
                 $product_complect_goods =$request->post('product-complect-goods') ?? [];
                 $product_balance_top_up =$request->post('product-balance-top-up') ?? [];
                 $product_balance_money  =$request->post('product-balance-money') ?? [];
+                //-----------------------------balance webwellness-----------------------------------
+                $product_balance_wellness_top_up =$request->post('product-balance-wellness-top-up') ?? [];
+                $product_balance_wellness_money  =$request->post('product-balance-wellness-money') ?? [];
                 //--------------------------------------payments-------------------------------------
                 $product_payments_rep   =$request->post('product-payments-rep') ?? 0;
                 $product_payments_stock =$request->post('product-payments-stock') ?? 0;
@@ -657,6 +660,9 @@ class ReferenceController extends BaseController
 
                     $product->productBalanceTopUp  =(int)$product_balance_top_up;
                     $product->balanceMoney         =(float)$product_balance_money;
+
+                    $product->productBalanceWellnessTopUp  =(int)$product_balance_wellness_top_up;
+                    $product->balanceWellnessMoney         =(float)$product_balance_wellness_money;
                     //$product->stock           =(int)$product_stock;
 
                     $product->paymentsToRepresentive =(float)$product_payments_rep;
