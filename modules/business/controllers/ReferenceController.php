@@ -419,7 +419,8 @@ class ReferenceController extends BaseController
     }
     public function actionProductEdit() {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $request = Yii::$app->request;
+        $request   = Yii::$app->request;
+        $active_ch =  $request->get('active');
         $p_id = $request->post('p_id');
         $product_action     = $request->post('product-action');
         $cur_product_action = $request->post('cur-product-action');
@@ -452,8 +453,17 @@ class ReferenceController extends BaseController
 //                ['id'=>2,'rec_id'=>'asdfg2','name'=>'Goods -2','cnt'=>2],
 //            ];
             $complect_goods_add_items=[];
-            $goods = Products::find()->asArray()->all();
+            //$goods = Products::find()->asArray()->all();
             //$goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
+            if (!isset($active_ch) || (($active_ch > 0))) {
+                $goods = Products::find()->where(['productActive'=>['$gt'=>0]])->asArray()->all();
+            } else {
+                $goods = Products::find()->asArray()->all();
+            }
+
+            //            if ((isset($active_ch)&&($active_ch == 0))) {
+            //                $goods = Products::find()->asArray()->all();
+            //            }
 
             foreach ($goods as $item) {
                 //array_push($complect_goods_add_items,['id'=>$item['_id'],'name'=>$item['productName']]);
