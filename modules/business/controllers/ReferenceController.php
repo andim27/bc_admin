@@ -668,7 +668,7 @@ class ReferenceController extends BaseController
                     $product->paymentsToRepresentive =(float)$product_payments_rep;
                     $product->paymentsToStock        =(float)$product_payments_stock;
 
-                    $product->buyAfterEnd            =(int)$product_buy_after_end ;
+                    $product->autoExtensionBS        =((int)$product_buy_after_end ==1)? true:false ;
 
                     if (!Empty($product_complect_goods)) {
                         $product->products=$product_products;

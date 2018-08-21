@@ -655,7 +655,7 @@ use kartik\file\FileInput;
             <label class="col-sm-7 control-label"><?= THelper::t('buy_after_end') ?></label>
             <div class="col-sm-5">
                 <label class="switch">
-                    <input id="product-buy-after-end" <?=empty($product->buyAfterEnd)?'':(($product->buyAfterEnd)==1)?'checked':''  ?> type="checkbox">
+                    <input id="product-buy-after-end" <?=empty($product->autoExtensionBS)?'':(($product->autoExtensionBS)==true)?'checked':''  ?> type="checkbox">
                     <span></span>
                 </label>
             </div>

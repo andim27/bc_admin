@@ -71,7 +71,7 @@ class Products extends ActiveRecord
             'history',
             'paymentsToRepresentive',
             'paymentsToStock',
-            'buyAfterEnd'
+            'autoExtensionBS'
         ];
     }
 
