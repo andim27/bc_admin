@@ -5,6 +5,7 @@ namespace app\modules\business\controllers;
 use app\components\GoodException;
 use app\components\THelper;
 use app\models\api\transactions\Charity;
+use app\models\api\User;
 use app\models\PartsAccessories;
 use app\models\PercentForRepaymentAmounts;
 use app\models\Products;
@@ -14,11 +15,13 @@ use app\models\RepaymentAmounts;
 use app\models\Sales;
 use app\models\Settings;
 use app\models\StatusSales;
+use app\models\Users;
 use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
 use app\controllers\BaseController;
+use yii\base\Object;
 use yii\helpers\ArrayHelper;
 
 class OffsetsWithWarehousesController extends BaseController
@@ -971,6 +974,7 @@ class OffsetsWithWarehousesController extends BaseController
                 // calculate count warehouses
                 if (empty($info[(string)$item->headUser]['warehouses'][(string)$item->_id])) {
                     $info[(string)$item->headUser]['warehouses'][(string)$item->_id] = [
+                        'title'=>$item->title,
                         'packs' => 0,
                         'other_sale' => 0,
                         'listProducts' => PartsAccessories::getIdArrayForSaLe(),
@@ -1036,7 +1040,6 @@ class OffsetsWithWarehousesController extends BaseController
                                 $info[$representativeId]['warehouses'][$warehouseId]['listProducts'][$productID] += $listGoodsWithPriceForPack[$item->sales->product][$productID];
                                 $info[$representativeId]['warehouses'][$warehouseId]['numberProducts'][$productID]++;
                                 $info[$representativeId]['listProducts'][$productID] += $listGoodsWithPriceForPack[$item->sales->product][$productID];
-
                             }
                         }
                     }
@@ -1044,6 +1047,7 @@ class OffsetsWithWarehousesController extends BaseController
 
             }
         }
+
         unset($model);
 
         //get turnover
@@ -1078,6 +1082,7 @@ class OffsetsWithWarehousesController extends BaseController
                 $representativeId = $infoUserWarehouseCountry[$idUser]['head_admin_id'];
                 $warehouseId = $infoUserWarehouseCountry[$idUser]['warehouse_id'];
 
+                $info[$representativeId]['titleRepresentative'] = Users::findOne(['_id'=>new ObjectId($representativeId)])->username;
                 $info[$representativeId]['warehouses'][$warehouseId]['packs'] += $item->price;
                 $info[$representativeId]['totalAmount'] += $item->price;
                 $info[$representativeId]['listOrderId'][] = (string)$item->_id;

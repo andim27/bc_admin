@@ -24,6 +24,7 @@ use app\models\Products;
 use app\models\Sales;
 use app\models\Settings;
 use app\models\Warehouse;
+use app\modules\business\models\WellnessClubMembers;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDateTime;
 use Yii;
@@ -1327,6 +1328,20 @@ class TestController extends BaseController
         die();
     }
 
+
+    public function actionGetListUsersClub()
+    {
+        $model = WellnessClubMembers::find()->all();
+
+
+        foreach ($model as $item) {
+            $loginUser = \app\models\Users::findOne(['_id'=>$item->userId])->username;
+
+            echo "'".$loginUser ."',";
+        }
+
+        die();
+    }
 
 
 
