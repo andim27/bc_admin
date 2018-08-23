@@ -586,7 +586,17 @@ class UserController extends BaseController
 
         return false;
     }
+    //-------------------------------------cancel user sale-----------------------------
+    public function actionCancelSale() {
+        $result=['success'=>true,'message'=>THelper::t('confirmed_canceled')];
 
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $request = Yii::$app->request;
+        $sale_id  = $request->post('sale_id');
+        $comment  = $request->post('comment');
+        $comment_user_id  = $request->post('comment_user_id');
+        return $result;
+    }
     public function actionSentWriteOff()
     {
         $request = Yii::$app->request;
