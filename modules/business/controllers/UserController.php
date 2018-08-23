@@ -579,7 +579,8 @@ class UserController extends BaseController
                 'selfPoints' => $selfPoints,
                 'operations' => isset($operations) ? $operations : null,
                 'points' => isset($points) ? $points : null,
-                'writeOffs' => isset($writeOffs) ? $writeOffs : null
+                'writeOffs' => isset($writeOffs) ? $writeOffs : null,
+                'sales' =>isset($sales) ? $sales: null
             ]);
         }
 

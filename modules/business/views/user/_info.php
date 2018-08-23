@@ -21,6 +21,8 @@ use yii\helpers\Html;
                    data-toggle="tab"><?= THelper::t('history_of_scoring_points') ?></a></li>
             <li><a href="#write-offs" aria-controls="write-offs" role="tab"
                    data-toggle="tab"><?= THelper::t('write-offs') ?></a></li>
+            <li><a href="#user-sales" aria-controls="user-sales" role="tab"
+                   data-toggle="tab"><?= THelper::t('sale') ?></a></li>
         </ul>
 
         <!-- Содержимое вкладок -->
@@ -709,6 +711,13 @@ use yii\helpers\Html;
             <div role="tabpanel" class="tab-pane" id="write-offs">
                 <?= $this->render('/finance/write-offs', [
                     'user' => $writeOffs,
+                    'u' => $user,
+                ]); ?>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="user-sales">
+                <?= $this->render('/finance/user-sales', [
+                    'sales' => $sales,
                     'u' => $user,
                 ]); ?>
             </div>
