@@ -482,7 +482,7 @@ class StatusSalesController extends BaseController {
         if(empty($request)){
             $request['infoWarehouse'] = 'for_me';
             $request['to'] = date("Y-m-d");
-            $request['from'] = date("Y-01-01");
+            $request['from'] = date('Y-m-d',strtotime('-3 month', strtotime($request['to'])));
             $request['infoTypeDate'] = 'create';
             $request['infoStatus'] = 'all';
             $request['infoTypePayment'] = 'all';
