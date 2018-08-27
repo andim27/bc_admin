@@ -719,6 +719,8 @@ use yii\helpers\Html;
                 <?= $this->render('/finance/user-sales', [
                     'sales' => $sales,
                     'u' => $user,
+                    'admin_user'=>$admin_user
+
                 ]); ?>
             </div>
         </div>

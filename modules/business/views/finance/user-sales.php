@@ -3,7 +3,7 @@ use app\components\THelper;
 $this->title = THelper::t('sale');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<!----------------------B:ask pin cancel------------------>
+<!----------------------B:ask sell cancel------------------>
 <script>
     function cancelUserSale(id,date,name,price) {
         $('#cancel-product-id').val(id);
@@ -12,15 +12,22 @@ $this->params['breadcrumbs'][] = $this->title;
         $('#cancel-product-price').html('Price='+price);
         $('#askCancelSaleModal').modal('show')
     }
+    function setResCancel(sale_id) {
+        var res_html='Canceled<br>';
+        var res_html=res_html+$('#cancel-reason').val()+'<br>';
+        $('#cell-cancel-'+sale_id).html(res_html);
+        console.log('SetResCancel id='+sale_id);
 
+    }
     function doCancelSale() {
         var url="/<?=Yii::$app->language?>/business/user/cancel-sale";
         //   /business/user/cancelSale/?sale_id="
+        var comment_user_name='<?=$admin_user->username; ?>';
         $('#server-message').removeClass('bg-danger');
         $.post(url,{
             sale_id:$('#cancel-product-id').val(),
             comment:$('#cancel-reason').val(),
-            comment_user_id:''}).done(function(data) {
+            comment_user_name:comment_user_name}).done(function(data) {
             if (data.success == true) {
                 mes=data.message;
                 mes_canceled='<?= THelper::t('canceled') ?>';
@@ -35,7 +42,8 @@ $this->params['breadcrumbs'][] = $this->title;
             $('#server-message').show().html(mes);
             setTimeout(function(){
                 $('#server-message').hide();
-                $('#askCancelPinModal').modal('hide');
+                $('#askCancelSaleModal').modal('hide');
+                setResCancel($('#cancel-product-id').val());
 
             },2500)
 
@@ -81,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     </div>
 </div>
-<!----------------------E:ask pin cancel------------------>
+<!----------------------E:ask sell cancel------------------>
 <section class="panel panel-default">
     <div class="panel-body">
         <section class="panel panel-default">
@@ -100,7 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php foreach ($sales as $sale) { ?>
                         <tr>
                             <td><?= $sale->dateCreate ? gmdate('d.m.Y', $sale->dateCreate) : '' ?></td>
-                            <td><?= $sale->product ?></td>
+                            <td title="Cancel id=<?=$sale->id ?>"><?= $sale->product ?></td>
                             <td>
                                 <?php
                                 $language = Yii::$app->language;
@@ -109,9 +117,16 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ?>
                             </td>
                             <td><?= $sale->price ?></td>
-                            <td>
+                            <td id="cell-cancel-<?=$sale->id ?>">
                                 <?php if ($sale->type == -1) { ?>
-                                    <?= THelper::t('sale_canceled') ?>
+                                    <strong><?= THelper::t('sale_canceled') ?></strong><br>
+                                    <?php if (isset($sale->comment)) {?>
+                                            <?=$sale->comment; ?><br>
+                                        <?php }  ?>
+
+                                        <?=(isset($sale->comment_user_name)?'Admin:'.$sale->comment_user_name:'??') ?>
+
+
                                 <?php } else { ?>
                                     <a class="btn btn-danger" href="#"   data-target="#askCancelSaleModal" onclick="cancelUserSale('<?= $sale->id; ?>','<?=$sale->dateCreate ? gmdate('d.m.Y', $sale->dateCreate) : '' ?>','<?=$sale->productName ?>','<?= $sale->price ?>');">
                                         <i class="fa fa-trash-o fa-lg"></i> <?= THelper::t('sale_canceled') ?>

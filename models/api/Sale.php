@@ -79,6 +79,8 @@ class Sale {
                 $sale->dateCreate = strtotime($object->dateCreate);
                 $sale->productName = $object->productName;
                 $sale->username = $object->username;
+                $sale->comment = (isset($object->comment)?$object->comment:'');
+                $sale->comment_user_name = (isset($object->comment_user_name)?$object->comment_user_name:'');
 
                 if (isset($object->type)) {
                     $sale->type = $object->type;

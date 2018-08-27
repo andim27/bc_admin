@@ -567,6 +567,7 @@ class UserController extends BaseController
                 $writeOffs = WriteOffs::find()->where(['uid' => $user->id])->all();
             }
             return $this->renderAjax('_info', [
+                'admin_user'=>$this->user,
                 'user' => isset($user) && $user ? $user : '',
                 'product' => isset($product) ? $product : false,
                 'registrationsStatisticsPerMoths' => isset($registrationsStatisticsPerMoths) ? $registrationsStatisticsPerMoths : '',
@@ -592,9 +593,23 @@ class UserController extends BaseController
 
         Yii::$app->response->format = Response::FORMAT_JSON;
         $request = Yii::$app->request;
-        $sale_id  = $request->post('sale_id');
-        $comment  = $request->post('comment');
-        $comment_user_id  = $request->post('comment_user_id');
+        try {
+            $sale_id  = $request->post('sale_id');
+            $comment  = $request->post('comment');
+            $comment_user_name  = $request->post('comment_user_name');
+            //---save comment---
+            $sale = Sales::findOne(['_id' => new ObjectId($sale_id)]);
+            $sale->comment = $comment;
+            $sale->comment_user_name = $comment_user_name;
+            $sale->save();
+            $sales_res = api\Sale::cancel($sale_id);
+            if ($sales_res == false) {
+                $result=['success'=>false,'message'=>$sales_res['error']];
+            }
+        } catch (\Exception $e) {
+            $result=['success'=>false,'message' =>(isset($sales_res['error'])?$sales_res['error']:'').':'.$e->getMessage().' code='.$e->getLine()];
+        }
+
         return $result;
     }
     public function actionSentWriteOff()
