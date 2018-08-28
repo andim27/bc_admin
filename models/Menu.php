@@ -251,6 +251,12 @@ Class Menu
                         'action' => 'money-transfer-log',
                     ],
                     [
+                        'key'   =>  'sidebar_users_cancel_sale_log',
+                        'label' => THelper::t('sidebar_users_cancel_sale_log'),
+                        'url' => ['/business/user/cancel-sale-log'],
+                        'action' => 'cancel-sale-log',
+                    ],
+                    [
                         'key'   =>  'sidebar_users_pincode_cancel',
                         'label' => THelper::t('sidebar_users_pincode_cancel'),
                         'url' => ['/business/user/pincode-cancel'],

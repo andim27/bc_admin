@@ -1109,6 +1109,31 @@ class UserController extends BaseController
         ]);
     }
 
+    public function actionCancelSaleLog()
+    {
+        return $this->render('cancel_sale_log', [
+            'cancelSales' => Sales::find()->where(['type'=>-1])->orderBy('updated_at desc')->all()
+        ]);
+    }
+
+    public function actionGetUserData()
+    {
+        $result = ['success' => false, 'message' => THelper::t('user_not_found')];
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $login =Yii::$app->request->post('login');
+        $user = api\User::get($login, false);
+        if ($user) {
+            $data=[];
+            $data['fio']=$user->firstName.' '.$user->secondName;
+            $data['email']=$user->email;
+            if (isset($user->skype)&&($user->skype !='')) {
+                $data['skype']=$user->skype;
+            }
+
+            $result = ['success' => true, 'message' => THelper::t('ok'),'data'=>$data];
+        }
+        return $result;
+    }
     public function actionPincodeCancel()
     {
         $status = '';

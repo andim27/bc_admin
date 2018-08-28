@@ -52,6 +52,7 @@ class Sales extends ActiveRecord
             'formPayment',
             'comment',
             'comment_user_name',
+            'updated_at',
             ''
         ];
     }
