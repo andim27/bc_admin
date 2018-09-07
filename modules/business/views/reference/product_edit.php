@@ -619,12 +619,12 @@ use kartik\file\FileInput;
             <label class="col-sm-7 control-label"> <?= THelper::t('replenishment_com_account') ?></label>
             <div class="col-sm-5">
                 <label class="switch">
-                    <input id="product-balance-top-up" <?=empty($product->productBalanceTopUp)?'':(($product->productBalanceTopUp)==1)?'checked':''  ?> type="checkbox">
+                    <input id="product-balance-top-up" checked  type="checkbox">
                     <span></span>
                 </label>
             </div>
         </div>
-        <div id="product-balance-money-block" class="form-group col-sm-6 m-b plnone " style="display:<?=Empty($product->balanceMoney)?'none':'block' ?>">
+        <div id="product-balance-money-block" class="form-group col-sm-6 m-b plnone " style="display:block ?>">
             <label class="col-sm-7 control-label"><?= THelper::t('replenishment_sum') ?></label>
             <div class="col-sm-5"  >
                 <input class="form-control" id="product-balance-money" placeholder="Сумма" value="<?=$product->balanceMoney ?>" type="text">
