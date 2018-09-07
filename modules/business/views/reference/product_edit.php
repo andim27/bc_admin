@@ -627,7 +627,7 @@ use kartik\file\FileInput;
         <div id="product-balance-money-block" class="form-group col-sm-6 m-b plnone " style="display:block ?>">
             <label class="col-sm-7 control-label"><?= THelper::t('replenishment_sum') ?></label>
             <div class="col-sm-5"  >
-                <input class="form-control" id="product-balance-money" placeholder="Сумма" value="<?=$product->balanceMoney ?>" type="text">
+                <input class="form-control" id="product-balance-money" placeholder="Сумма" value="<?=empty($product->balanceMoney)?0:$product->balanceMoney ?>" type="text">
             </div>
         </div>
 
