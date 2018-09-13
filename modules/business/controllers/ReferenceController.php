@@ -453,19 +453,16 @@ class ReferenceController extends BaseController
 //                ['id'=>2,'rec_id'=>'asdfg2','name'=>'Goods -2','cnt'=>2],
 //            ];
             $complect_goods_add_items=[];
-            //$goods = Products::find()->asArray()->all();
             //$goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
-            if (!isset($active_ch) || (($active_ch > 0))) {
-                $goods = Products::find()->where(['productActive'=>['$gt'=>0]])->asArray()->all();
-            } else {
-                $goods = Products::find()->asArray()->all();
-            }
+//            if (!isset($active_ch) || (($active_ch > 0))) {
+//                $goods = Products::find()->where(['productActive'=>['$gt'=>0]])->asArray()->all();
+//            } else {
+//                $goods = Products::find()->asArray()->all();
+//            }
 
-            //            if ((isset($active_ch)&&($active_ch == 0))) {
-            //                $goods = Products::find()->asArray()->all();
-            //            }
 
-            foreach ($goods as $item) {
+            $goods_comp = Products::find()->where(['product'=>['$gt'=>999]])->asArray()->all();
+            foreach ($goods_comp as $item) {
                 //array_push($complect_goods_add_items,['id'=>$item['_id'],'name'=>$item['productName']]);
                 array_push($complect_goods_add_items,['id'=>(string)($item['_id']),'name'=>$item['productName']]);
             }
