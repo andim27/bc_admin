@@ -9,11 +9,8 @@
                 <nav class="nav-primary hidden-xs">
                     <ul class="nav">
                         <?php foreach ($items as $item) { ?>
-
                             <?php if(Users::checkRule('showMenu',$item['key']) === true ){ ?>
-
                             <li <?= (!empty($item['controller']) && $currentController == $item['controller']) ? $class_a : '' ?>>
-
                                 <?=Html::a(
                                     (!empty($item['items']) ?
                                     '<span class="pull-right">
@@ -25,13 +22,10 @@
                                         ((!empty($item['controller']) && $currentModule == $item['controller']) ? $class_a : '')
                                     ]
                                 )?>
-
                                 <?php if(!empty($item['items'])){ ?>
                                 <ul class="nav lt">
                                     <?php foreach ($item['items'] as $subitem) {?>
-
-                                        <?php if(Users::checkRule('showMenu',$subitem['key']) === true ){ ?>
-                                        
+                                        <?php if(Users::checkRule('showMenu', $subitem['key']) === true ){ ?>
                                         <li <?=((!empty($subitem['action']) && $currentAction == $subitem['action']) ? $class_a : '')?> >
                                         <?=Html::a(
                                             '<b class="badge bg-info pull-right non_seen_promo"></b>
@@ -42,14 +36,11 @@
                                                 ((!empty($subitem['action']) && $currentAction == $subitem['action']) ? $class_a : '')
                                             ])?>
                                         </li>
-
                                         <?php } ?>
-
                                     <?php } ?>
                                 </ul>
                                 <?php } ?>
                             </li>
-
                             <?php } ?>
                         <?php } ?>
 
