@@ -2,7 +2,7 @@
     use yii\helpers\Html;
     use app\models\Users;
 ?>
-<aside class="bg-dark ?> lter b-r aside-md hidden-print hidden-xs" id="nav">
+<aside class="bg-dark  lter b-r aside-md hidden-print hidden-xs" id="nav">
     <section class="vbox">
         <section id="menu_primary" class="w-f scrollable">
             <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="5px" data-color="#333333">

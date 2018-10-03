@@ -1,4 +1,4 @@
-image: docker:git
+image: bulich/builder
 
 stages:
 - build
@@ -10,14 +10,21 @@ variables:
   STAGE_URL: admin.bpt.ooo.ua
   
 
-before_script:
+before_script:    
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
 
 build:
-  stage: build
+  stage: build  
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - vendor/
+
   script:    
-    - ./pre-admin.sh  
-    - docker info   
+    - composer install --ignore-platform-reqs
+    - mv ./vendor/bower-asset ./vendor/bower/ || true
+    - ./pre-admin.sh
+    - docker info
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
     - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
     - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
@@ -37,14 +44,13 @@ deploy_stage:
         - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
         - kubectl config use-context default-system        
         - cd kube
-        - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml ingress.yaml service.yaml
-        - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml ingress.yaml service.yaml
-        - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml ingress.yaml service.yaml               
-        - sed -i "s/__HOSTNAME__/$STAGE_URL/" deployment.yaml ingress.yaml service.yaml
-        - kubectl get deployments -l name=bpt-api-${CI_ENVIRONMENT_SLUG}
+        - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml
+        - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
+        - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml               
+        - sed -i "s/__HOSTNAME__/$STAGE_URL/" deployment.yaml service.yaml
+        - kubectl get deployments -l name=bpt-admin-${CI_ENVIRONMENT_SLUG}
         - kubectl create -f deployment.yaml || (kubectl delete -f deployment.yaml && kubectl apply -f deployment.yaml)
-        - kubectl create -f service.yaml || true
-        - kubectl apply -f ingress.yaml
+        - kubectl create -f service.yaml || true        
        
 deploy_prod:
     image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
@@ -61,13 +67,13 @@ deploy_prod:
         - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
         - kubectl config use-context default-system
         - cd kube
-        - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml ingress.yaml service.yaml
-        - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml ingress.yaml service.yaml
-        - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml ingress.yaml service.yaml
-        - sed -i "s/__HOSTNAME__/$PROD_URL/" deployment.yaml ingress.yaml service.yaml
+        - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml
+        - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
+        - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
+        - sed -i "s/__HOSTNAME__/$PROD_URL/" deployment.yaml service.yaml
         - kubectl cluster-info
-        - kubectl get deployments -l name=bpt-api-${CI_ENVIRONMENT_SLUG}
+        - kubectl get deployments -l name=bpt-admin-${CI_ENVIRONMENT_SLUG}
         - kubectl apply -f deployment.yaml
         - kubectl apply -f service.yaml || true
-        - kubectl apply -f ingress.yaml
         
+    

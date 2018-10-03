@@ -2,7 +2,9 @@
 
 return [
     'adminEmail' => 'admin@example.com',
-    'apiAddress' => 'https://api.businessprocess.biz/api/',
+
+    'apiAddress' => 'http://104.155.23.186/api/',
+
 //    'apiAddress' => 'gnc_api/api/',
     'defaultCountry' => 'RU',
     'useCache' => false,
