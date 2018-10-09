@@ -75,5 +75,3 @@ deploy_prod:
         - kubectl get deployments -l name=bpt-admin-${CI_ENVIRONMENT_SLUG}
         - kubectl apply -f deployment.yaml
         - kubectl apply -f service.yaml || true
-        
-    
