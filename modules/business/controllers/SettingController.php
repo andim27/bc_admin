@@ -56,6 +56,7 @@ class SettingController extends BaseController {
     public function actionTranslation()
     {
         $request = Yii::$app->request;
+
         $translationForm = new TranslationForm();
 
         if ($request->isPost && $translationForm->load($request->post())) {
@@ -144,7 +145,9 @@ class SettingController extends BaseController {
             }]);
 
             if ($request->get('empty_only') === 'true') {
-                $translationQuery->andWhere(['stringValue' => '']);
+                //$translationQuery->andWhere(['stringValue' => '']);
+                $translationQuery->andWhere(['stringValue' =>['$regex'=>'^[a-z]']]);
+
             }
 
             $translations = $translationQuery
