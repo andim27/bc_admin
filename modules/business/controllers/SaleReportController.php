@@ -1352,7 +1352,12 @@ class SaleReportController extends BaseController
             ])
             ->andWhere([
                 'productType' => [
-                    '$in' => [9,10]
+                    '$in' => [1,9,10]
+                ]
+            ])
+            ->andWhere([
+                'productData.categories' => [
+                    '$elemMatch' => ['$eq'=>'5b4c46469ed4eb002a683891']
                 ]
             ])
             ->all();
@@ -1444,7 +1449,12 @@ class SaleReportController extends BaseController
             ])
             ->andWhere([
                 'productType' => [
-                    '$in' => [9,10]
+                    '$in' => [1,9,10]
+                ]
+            ])
+            ->andWhere([
+                'productData.categories' => [
+                    '$elemMatch' => ['$eq'=>'5b4c46469ed4eb002a683891']
                 ]
             ])
             ->all();

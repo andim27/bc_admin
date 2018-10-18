@@ -85,7 +85,7 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
                 ->where(['warehouse_id'=>new ObjectID($idMyWarehouse)])
                 ->andWhere([
                     'number' => [
-                        '$gte' => 1
+                        '$gte' => 0
                     ]
                 ])
                 ->all();

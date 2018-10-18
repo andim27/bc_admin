@@ -48,6 +48,7 @@ class Products extends ActiveRecord
             'delovod_id',
             'expirationPeriod',
             'category_id',
+            'categories',
             'productType',
             'bonuses',
             'bonusMoneys.elementary',
@@ -65,7 +66,12 @@ class Products extends ActiveRecord
             'stock',
             'productBalanceTopUp',
             'balanceMoney',
-            'history'
+            'productBalanceWellnessTopUp',
+            'balanceWellnessMoney',
+            'history',
+            'paymentsToRepresentive',
+            'paymentsToStock',
+            'autoExtensionBS'
         ];
     }
 

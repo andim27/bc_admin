@@ -42,13 +42,25 @@ class Withdrawal {
         return $apiClient->post($data, false) == 'OK';
     }
 
+    /**
+     * Confirm withdrawal
+     *
+     * @param $data
+     * @return bool
+     */
     public static function confirm($data)
     {
         $apiClient = new ApiClient('transactions/withdrawal');
 
         return $apiClient->put($data, false) == 'OK';
     }
-    
+
+    /**
+     * Cancel withdrawal
+     *
+     * @param $data
+     * @return bool
+     */
     public static function remove($data)
     {
         $apiClient = new ApiClient('transactions/withdrawal');

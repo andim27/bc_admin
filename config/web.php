@@ -67,31 +67,23 @@ $config = [
             // for the mailer to send real emails.
             'useFileTransport' => true,
         ],
-	'log' => [
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
-                    'class' => 'codemix\streamlog\Target',
-                    'url' => 'php://stdout',
-                    'levels' => ['info','trace'],
-                    'logVars' => [],
-                ],
-                [
-                    'class' => 'codemix\streamlog\Target',
-                    'url' => 'php://stderr',
+                    'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
-                    'logVars' => [],
                 ],
             ],
         ],
+
 //        'db' => require(__DIR__ . '/db.php'),
 
         // for mongodb
         'mongodb' => [
             'class' => '\yii\mongodb\Connection',
-
             'dsn' => 'mongodb://gnc:b41uHcdR@bpt-shard-00-00-ezdfa.mongodb.net:27017,bpt-shard-00-01-ezdfa.mongodb.net:27017,bpt-shard-00-02-ezdfa.mongodb.net:27017/gnc?ssl=true&sslWeakCertificateValidation=true&replicaSet=BPT-shard-0&authSource=admin',
 //            'dsn' => 'mongodb://mongo/gnc',
-
         ],
 
         'urlManager' => [

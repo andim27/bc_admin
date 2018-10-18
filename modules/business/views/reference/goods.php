@@ -33,7 +33,7 @@ GoodsAsset::register($this);
 <section class="hbox stretch">
     <aside class="aside-md bg-white b-r" id="subNav">
         <div class="wrapper b-b header">
-            Категории
+            <?= THelper::t('category_goods') ?>
             <button id="add-category-btn" type="button" class="btn btn-link" style="margin-top: 0px;"><i class="fa fa-plus"></i></button>
             <button id="edit-category-btn" type="button" class="btn btn-link" style="display:none;margin-top: 0px;margin-left:10px"><i class="fa fa-edit"></i></button>
 <!--            <button type="button" class="btn btn-default btn-sm" id="createBtn"> <i class="fa fa-plus"></i></button>-->
@@ -66,7 +66,7 @@ GoodsAsset::register($this);
                             </button>
                         </div>
 
-                        <button type="button" class="btn btn-default btn-sm" id="createBtn" > <i class="fa fa-plus"></i>Create</button>
+                        <button type="button" class="btn btn-default btn-sm" id="createBtn" > <i class="fa fa-plus"></i><?= THelper::t('create') ?></button>
                     </div>
                     <div class="col-sm-4 m-b-xs">
 
@@ -80,10 +80,13 @@ GoodsAsset::register($this);
 
                 <!--                    Products table from BD-->
                  <div class="table-responsive">
+                     <div class="checkbox">
+                         <label> <input type="checkbox" id="goods-active"  <?=($active_ch ==0)?'':'checked' ?> /> <?= THelper::t('active_goods') ?></label>
+                     </div>
                     <table id="goods-table" class="table table-striped m-b-none">
                         <thead>
                         <tr>
-                            <th class="th-sortable" data-toggle="class" width="60">ID
+                            <th class="th-sortable" data-toggle="class" width="60"><?= THelper::t('kod') ?>
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
@@ -92,39 +95,39 @@ GoodsAsset::register($this);
 
                             </th>
                             <th width="20"></th>
-                            <th class="th-sortable" data-toggle="class">Название
+                            <th class="th-sortable" data-toggle="class"><?= THelper::t('name_product') ?>
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="th-sortable" data-toggle="class">Категория
+                            <th class="th-sortable" data-toggle="class"><?= THelper::t('category') ?>
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="th-sortable" data-toggle="class" width="80">Цена
+                            <th class="th-sortable" data-toggle="class" width="80"><?= THelper::t('Price') ?>
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="th-sortable text-center" data-toggle="class" width="80">Бонус<br>(начальный)
+                            <th class="th-sortable text-center" data-toggle="class" width="80"><?= THelper::t('Bonus') ?><br>(<?= THelper::t('pack_type_1') ?>)
                                 <span class="th-sort">
 <!--                                                                <i class="fa fa-sort-down text"></i>-->
 <!--                                                                <i class="fa fa-sort-up text-active"></i>-->
 <!--                                                                <i class="fa fa-sort"></i>-->
                                     </span>
                             </th>
-                            <th class="text-center">Баллы<br>(начальный)</th>
-                            <th class="text-center">Акции<br>(направления)</th>
-                            <th class="text-center">НДС<br>(%)</th>
-                            <th class="text-center">Акт<br>(Мес)</th>
-                            <th>Тип</th>
+                            <th class="text-center"><?= THelper::t('points') ?><br>(<?= THelper::t('pack_type_1') ?>)</th>
+                            <th class="text-center"><?= THelper::t('stocks') ?><br>(<?= THelper::t('pack_type_1') ?>)</th>
+                            <th class="text-center"><?= THelper::t('nds') ?><br>(%)</th>
+                            <th class="text-center"><?= THelper::t('act') ?><br>(<?= THelper::t('month') ?>)</th>
+                            <th><?= THelper::t('type') ?></th>
                             <th width="30"></th>
                         </tr>
                         </thead>
@@ -134,8 +137,8 @@ GoodsAsset::register($this);
                         foreach ($goods as $item) { ?>
                         <tr>
                             <td>
-                                <span title="<?=$item['_id']; ?>">
-                                    <?=Empty($item['idInMarket'])?'??':$item['idInMarket']; ?>
+                                <span title="<?='Код='.$item['product'].' ID магазина='.$item['idInMarket']; ?>">
+                                    <?=Empty($item['product'])?'??':$item['product']; ?>
                                 </span>
 
                             </td>
@@ -149,28 +152,32 @@ GoodsAsset::register($this);
                             <td>
 
                                 <?php
-                                if (empty($item['productName'])) {
-                                    echo "??";
+                                if (empty($item['productNameLangs'][Yii::$app->language])) {
+                                    echo "???";
                                 } else {
                                     if (empty($item['products']) ) {
-                                        echo $item['productName'];
+                                        echo (empty($item['productNameLangs'][Yii::$app->language])?'??':$item['productNameLangs'][Yii::$app->language]);
                                     } else {
-                                        echo "<strong>".$item['productName']."</strong>";
+                                        echo "<strong>".(empty($item['productNameLangs'][Yii::$app->language])?'??':$item['productNameLangs'][Yii::$app->language])."</strong>";
                                     }
                                 }
                                 ?>
                             </td>
                             <td>
                                 <?php
-                                if (empty($item['category_id'])) {
+                                if (empty($item['categories'])) {
                                     echo '??';
                                 } else {
+                                    $cats_str='';
                                 foreach ($cat_items as $cat_item) {
-                                        if ($cat_item['rec_id'] ==(string)$item['category_id']) {
-                                            echo $cat_item['name'];
-                                            break;
+                                        //if ($cat_item['rec_id'] ==(string)$item['category_id']) {
+                                        if (in_array($cat_item['rec_id'], $item['categories'])) {
+                                            $cats_str.=$cat_item['name'].'<br>';
+
                                         }
-                                }} ?>
+                                }
+                                echo $cats_str;
+                                } ?>
 
                             </td>
                             <td><?=empty($item['price'])?0:$item['price'] ?></td>
@@ -253,7 +260,7 @@ GoodsAsset::register($this);
         <div class="modal-content">
             <div class="modal-header modal-head">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Категории</h4>
+                <h4 class="modal-title"><?= THelper::t('category_goods') ?></h4>
             </div>
             <div class="modal-body">
                 <p><strong id="category-action-title"></strong></p>
@@ -424,6 +431,7 @@ GoodsAsset::register($this);
             'product-name':$('#product-name').val(),
             'product-natural':$('#product-natural').is(':checked')?1:0,
             'product-category':$('#product-category').val(),
+            'product-categories':$('#product-categories').val(),
             'product-type':$('#product-type').val(),
             'product-id':$('#product-id').val(),
             'product-idInMarket':$('#product-idInMarket').val(),
@@ -469,6 +477,14 @@ GoodsAsset::register($this);
             //------------com balance--------------------------------------------
             'product-balance-top-up':$('#product-balance-top-up').is(':checked')?1:0,
             'product-balance-money' :$('#product-balance-money').val(),
+            //------------wellness balance--------------------------------------------
+            'product-balance-wellness-top-up':$('#product-balance-wellness-top-up').is(':checked')?1:0,
+            'product-balance-wellness-money' :$('#product-balance-wellness-money').val(),
+            //-------------payments----------------------------------------------
+            'product-payments-rep':  $('#product-payments-rep').val(),
+            'product-payments-stock':$('#product-payments-stock').val(),
+            //--------------auto buy after end -----------------------------------
+            'product-buy-after-end':$('#product-buy-after-end').is(':checked')?1:0
         };
         $.ajax( {
             url: url,
@@ -523,7 +539,23 @@ GoodsAsset::register($this);
     })
 
     $(function() {
-
+        function showGoodsPage() {
+            var active_str='active=1';
+            var url="/<?=Yii::$app->language?>/business/reference/goods";
+            if ( $('#goods-active').is(':checked')==true) {
+                active_str='?active=1';
+            } else {
+                active_str='?active=0';
+            }
+            console.log(active_str);
+            window.location.href=url+active_str;
+        }
+        $('#refresh-btn').click(function () {
+            showGoodsPage();
+        })
+        $('#goods-active').click(function(el){
+            showGoodsPage();
+        });
         $('#add-category-btn').click(function () {
             //$('#categoryModal').attr('data-action','add');
             $('#category-action-title').html('Add');
@@ -562,14 +594,12 @@ GoodsAsset::register($this);
             //console.log('productid='+dataValue);
         });
         $('#editProductModal').on('hide.bs.modal', function (e) {
-            window.location.reload();
+            showGoodsPage();
         });
 
     })
     $(function() {
-        $('#refresh-btn').click(function () {
-            window.location.reload();
-        })
+
     })
 
     $(function() {
@@ -577,6 +607,7 @@ GoodsAsset::register($this);
             showAddProduct();
         })
     })
+
     $(function() {
         $('#goods-table').DataTable({
             'order':[[0,"desc"]],

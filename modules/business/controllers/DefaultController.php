@@ -252,8 +252,18 @@ class DefaultController extends BaseController
                 $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] += $item['price'];
                 $statisticInfo['generalReceiptMoney'] += $item['price'];
 
-                if (!empty($typeProject[$listProductsType[$item['product']]])) {
-                    $statisticInfo['generalReceiptMoney_' . $typeProject[$listProductsType[$item['product']]]] += $item['price'];
+                //if (!empty($typeProject[$listProductsType[$item['product']]])) {
+
+                if (array_key_exists($item['product'],$listProductsType)) {
+                    try {
+                        $statisticInfo['generalReceiptMoney_' . $typeProject[$listProductsType[$item['product']]]] += $item['price'];
+                    } catch (\Exception $e) {
+                        $statisticInfo['generalReceiptMoney_VipCoin' ]= 0;
+                        $statisticInfo['generalReceiptMoney_Wellness' ]= 0;
+                        $statisticInfo['generalReceiptMoney_VipVip' ]= 0;
+
+                    }
+
 
                     //debag
 //                    if($typeProject[$listProductsType[$item['product']]]=='VipCoin'){
@@ -268,16 +278,25 @@ class DefaultController extends BaseController
 //                    }
 
                 }
-
-                // собираем информацию по товарам для товарооборота
-                if (empty($statisticInfo['tradeTurnover']['listProduct'][$item['product']])) {
+                try {
+                    // собираем информацию по товарам для товарооборота
+                    if (empty($statisticInfo['tradeTurnover']['listProduct'][$item['product']])) {
+                        $statisticInfo['tradeTurnover']['listProduct'][$item['product']] = [
+                            'title' => $listProductsTitle[$item['product']],
+                            'price' => 0,
+                            'count' => 0,
+                            'amount'=> 0
+                        ];
+                    }
+                } catch (\Exception $e) { //---ERROR in $listProductsTitle
                     $statisticInfo['tradeTurnover']['listProduct'][$item['product']] = [
-                        'title' => $listProductsTitle[$item['product']],
+                        'title' => '??',
                         'price' => 0,
                         'count' => 0,
                         'amount'=> 0
                     ];
                 }
+
                 $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['price'] = $item['price'];
                 $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['count']++;
                 $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['amount'] += $item['price'];

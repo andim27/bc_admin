@@ -257,7 +257,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 wantUse = parseFloat($(this).val());
                 needForOne = parseFloat($(this).closest('.row').find('.needForOne').val());
 
-                if(wantUse > (wasSend-alreadyUse)){
+                if(wantUse >  (wasSend-alreadyUse).toFixed(2)){
                     answer = 0;
                     $(this).closest('.blInterchangeable').find(".infoDangerExecution").html(
                         '<div class="alert alert-danger fade in">' +

@@ -56,6 +56,7 @@ class SettingController extends BaseController {
     public function actionTranslation()
     {
         $request = Yii::$app->request;
+
         $translationForm = new TranslationForm();
 
         if ($request->isPost && $translationForm->load($request->post())) {
@@ -144,7 +145,9 @@ class SettingController extends BaseController {
             }]);
 
             if ($request->get('empty_only') === 'true') {
-                $translationQuery->andWhere(['stringValue' => '']);
+                //$translationQuery->andWhere(['stringValue' => '']);
+                $translationQuery->andWhere(['stringValue' =>['$regex'=>'^[a-z]']]);
+
             }
 
             $translations = $translationQuery
@@ -475,7 +478,11 @@ class SettingController extends BaseController {
             ]);
         } elseif(!empty($request)){
             $model = Users::findOne(['_id'=>new ObjectID($request['id'])]);
-            $model->warehouseName = $request['warehouseName'];
+            $warehouseNameTotal = [];
+            foreach ($request['warehouseName'] as $lang => $warehouseName) {
+                $warehouseNameTotal[$lang] = trim($warehouseName);
+            }
+            $model->warehouseName = $warehouseNameTotal;
             if($model->save()){
                 return $this->redirect('/' . Yii::$app->language .'/business/setting/admin');
             }

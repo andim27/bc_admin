@@ -7,7 +7,7 @@ use yii\widgets\LinkPager;
 
 <div class="m-b-md">
     <h3 class="m-b-none"><?= THelper::t('settings_translation_title'); ?></h3>
-    <h3 class="m-b-none"><?= THelper::t('sidebar_stock_warehouses'); ?></h3>
+    <h3 class="m-b-none"><?= THelper::t('settings_translation_languages'); ?></h3>
 </div>
 <div class="row">
     <div class="col-md-2 m-b">

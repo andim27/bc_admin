@@ -124,7 +124,7 @@ class Resource {
                 $resource->author            = $object->author;
                 $resource->lang              = $object->lang;
                 $resource->isDelete          = $object->isDelete;
-                $resource->dateOfPublication = strtotime($object->dateOfPublication);
+                $resource->dateOfPublication = isset($object->dateOfPublication)?strtotime($object->dateOfPublication):strtotime($object->dateCreate);//strtotime($object->dateOfPublication);
                 $resource->dateUpdate        = strtotime($object->dateUpdate);
                 $resource->dateCreate        = strtotime($object->dateCreate);
                 $resource->url               = $object->url;
