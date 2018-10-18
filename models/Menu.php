@@ -39,6 +39,12 @@ Class Menu
                         'action' => 'purchase',
                     ],
                     [
+                        'key'   =>  'sidebar_users_shop_orders',
+                        'label' => THelper::t('sidebar_users_shop_orders'),
+                        'url' => ['/business/shop/orders'],
+                        'action' => 'orders',
+                    ],
+                    [
                         'key'   =>  'sidebar_users_info',
                         'label' => THelper::t('sidebar_users_info'),
                         'url' => ['/business/user/info'],
