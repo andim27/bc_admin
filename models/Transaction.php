@@ -7,7 +7,8 @@ use MongoDB\BSON\ObjectID;
  * @inheritdoc
  * @property Users $infoUser
  * @property Users $infoUserTo
- * 
+ * @property Users $infoAdmin
+ *
  * Class Transaction
  *
  * @package app\models
@@ -49,7 +50,8 @@ class Transaction extends \yii2tech\embedded\mongodb\ActiveRecord
             'dateConfirm',
             'confirmed',
             '__v',
-            'card'
+            'card',
+            'adminId'
         ];
     }
 
@@ -60,6 +62,15 @@ class Transaction extends \yii2tech\embedded\mongodb\ActiveRecord
     public function getInfoUser()
     {        
         return $this->hasOne(Users::className(),['_id'=>'idFrom']);
+    }
+
+    /**
+     * get info about adminId
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getInfoAdmin()
+    {
+        return $this->hasOne(Users::className(), ['_id' => 'adminId']);
     }
 
     /**

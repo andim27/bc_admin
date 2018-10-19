@@ -41,7 +41,7 @@ use MongoDB\BSON\UTCDatetime;
 class UserController extends BaseController
 {
     const LIMIT = 500;
-    const DEFAULT_PRODUCT = 14;
+    const DEFAULT_PRODUCT = 9001;
 
     /**
      *
@@ -567,6 +567,7 @@ class UserController extends BaseController
                 $writeOffs = WriteOffs::find()->where(['uid' => $user->id])->all();
             }
             return $this->renderAjax('_info', [
+                'admin_user'=>$this->user,
                 'user' => isset($user) && $user ? $user : '',
                 'product' => isset($product) ? $product : false,
                 'registrationsStatisticsPerMoths' => isset($registrationsStatisticsPerMoths) ? $registrationsStatisticsPerMoths : '',
@@ -579,13 +580,38 @@ class UserController extends BaseController
                 'selfPoints' => $selfPoints,
                 'operations' => isset($operations) ? $operations : null,
                 'points' => isset($points) ? $points : null,
-                'writeOffs' => isset($writeOffs) ? $writeOffs : null
+                'writeOffs' => isset($writeOffs) ? $writeOffs : null,
+                'sales' =>isset($sales) ? $sales: null
             ]);
         }
 
         return false;
     }
+    //-------------------------------------cancel user sale-----------------------------
+    public function actionCancelSale() {
+        $result=['success'=>true,'message'=>THelper::t('confirmed_canceled')];
 
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $request = Yii::$app->request;
+        try {
+            $sale_id  = $request->post('sale_id');
+            $comment  = $request->post('comment');
+            $comment_user_name  = $request->post('comment_user_name');
+            //---save comment---
+            $sale = Sales::findOne(['_id' => new ObjectId($sale_id)]);
+            $sale->comment = $comment;
+            $sale->comment_user_name = $comment_user_name;
+            $sale->save();
+            $sales_res = api\Sale::cancel($sale_id);
+            if ($sales_res == false) {
+                $result=['success'=>false,'message'=>$sales_res['error']];
+            }
+        } catch (\Exception $e) {
+            $result=['success'=>false,'message' =>(isset($sales_res['error'])?$sales_res['error']:'').':'.$e->getMessage().' code='.$e->getLine()];
+        }
+
+        return $result;
+    }
     public function actionSentWriteOff()
     {
         $request = Yii::$app->request;
@@ -1083,6 +1109,31 @@ class UserController extends BaseController
         ]);
     }
 
+    public function actionCancelSaleLog()
+    {
+        return $this->render('cancel_sale_log', [
+            'cancelSales' => Sales::find()->where(['type'=>-1])->orderBy('updated_at desc')->all()
+        ]);
+    }
+
+    public function actionGetUserData()
+    {
+        $result = ['success' => false, 'message' => THelper::t('user_not_found')];
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $login =Yii::$app->request->post('login');
+        $user = api\User::get($login, false);
+        if ($user) {
+            $data=[];
+            $data['fio']=$user->firstName.' '.$user->secondName;
+            $data['email']=$user->email;
+            if (isset($user->skype)&&($user->skype !='')) {
+                $data['skype']=$user->skype;
+            }
+
+            $result = ['success' => true, 'message' => THelper::t('ok'),'data'=>$data];
+        }
+        return $result;
+    }
     public function actionPincodeCancel()
     {
         $status = '';
@@ -1225,5 +1276,5 @@ class UserController extends BaseController
 function compareShortPin($pin){
     //@todo algorithm
 
-    return $pin === '1234';
+    return $pin === '7562';
 }

@@ -39,6 +39,12 @@ Class Menu
                         'action' => 'purchase',
                     ],
                     [
+                        'key'   =>  'sidebar_users_shop_orders',
+                        'label' => THelper::t('sidebar_users_shop_orders'),
+                        'url' => ['/business/shop/orders'],
+                        'action' => 'orders',
+                    ],
+                    [
                         'key'   =>  'sidebar_users_info',
                         'label' => THelper::t('sidebar_users_info'),
                         'url' => ['/business/user/info'],
@@ -249,6 +255,12 @@ Class Menu
                         'label' => THelper::t('sidebar_users_money_transfer_log'),
                         'url' => ['/business/user/money-transfer-log'],
                         'action' => 'money-transfer-log',
+                    ],
+                    [
+                        'key'   =>  'sidebar_users_cancel_sale_log',
+                        'label' => THelper::t('sidebar_users_cancel_sale_log'),
+                        'url' => ['/business/user/cancel-sale-log'],
+                        'action' => 'cancel-sale-log',
                     ],
                     [
                         'key'   =>  'sidebar_users_pincode_cancel',

@@ -53,7 +53,7 @@
                         <th><?= THelper::t('settings_lottery_rules_table_country') ?></th>
                         <th><?= THelper::t('settings_lottery_rules_table_city') ?></th>
                         <th><?= THelper::t('settings_lottery_rules_table_tickets') ?></th>
-                        <th><?= THelper::t('settings_lottery_rules_table_actions') ?></th>
+                        <?php /* <th><?= THelper::t('settings_lottery_rules_table_actions') ?></th>*/ ?>
                     </tr>
                     </thead>
                     <tbody>
@@ -78,18 +78,19 @@
                                 <?= $user['city'] ?>
                             </td>
                             <td class="tickets" data-id="<?= strval($userId) ?>">
-                                <?php $x2 = false; foreach ($user['tickets'] as $ticket) {
-                                    if ($x2 == false) {
-                                        $x2 = $ticket->x2 == true;
-                                    } ?>
-                                    <p><span class="text-<?= $ticket->x2 ? 'success' : 'danger'?>"><b><?= $ticket->ticket ?></b></span></p>
+                                <?php foreach ($user['tickets'] as $ticket) { ?>
+                                    <p>
+                                        <span class="text-success"><b><?= $ticket->ticket ?></b></span>
+                                    </p>
                                 <?php } ?>
                             </td>
+                            <?php /*
                             <td>
                                 <?php if (!$x2) { ?>
                                     <?= Html::a('<i class="fa fa-times"></i> <b>2</b>', 'javascript:void(0);', ['class' => 'btn btn-success x2-tickets', 'data-id' => strval($userId)]) ?>
                                 <?php } ?>
                             </td>
+                            */ ?>
                         </tr>
                         <?php $m--; } ?>
                     </tbody>

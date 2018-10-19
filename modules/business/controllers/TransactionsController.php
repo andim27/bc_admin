@@ -99,16 +99,19 @@ class TransactionsController extends BaseController
     {
         $model = Transaction::find()
             ->where([
-                'forWhat'=> [
+                'forWhat' => [
                     '$regex' => 'Withdrawal',
                     '$ne' => 'Withdrawal (Rollback)'
                 ],
-                'reduced' => ['$ne'=>false],
+                'reduced' => ['$ne' => false],
             ])
-            ->orderBy(['confirmed' => SORT_DESC, 'dateCreate' => SORT_DESC])
+            ->orderBy([
+                'confirmed' => SORT_DESC,
+                'dateCreate' => SORT_DESC
+            ])
             ->all();
 
-        return $this->render('withdrawal',[
+        return $this->render('withdrawal', [
             'model' => $model,
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
@@ -204,16 +207,18 @@ class TransactionsController extends BaseController
 
         $request = Yii::$app->request->post();
 
-        if(!empty($request['Transaction']['_id'])){
+        if (!empty($request['Transaction']['_id'])) {
 
-            $answer = Withdrawal::confirm(['id'=>$request['Transaction']['_id']]);
+            $answer = Withdrawal::confirm([
+                'id' => $request['Transaction']['_id'],
+                'admin' => $this->user->id
+            ]);
 
-            if($answer=='OK'){
-                Yii::$app->session->setFlash('alert' ,[
-                        'typeAlert' => 'success',
-                        'message' => THelper::t('save_applied')
-                    ]
-                );
+            if($answer == 'OK') {
+                Yii::$app->session->setFlash('alert', [
+                    'typeAlert' => 'success',
+                    'message' => THelper::t('save_applied')
+                ]);
             }
 
         }
@@ -228,20 +233,21 @@ class TransactionsController extends BaseController
      */
     public function actionCanceledWithdrawal($id)
     {
-        Yii::$app->session->setFlash('alert' ,[
-                'typeAlert' => 'danger',
-                'message' => THelper::t('save_did_not_applied')
-            ]
-        );
+        Yii::$app->session->setFlash('alert', [
+            'typeAlert' => 'danger',
+            'message' => THelper::t('save_did_not_applied')
+        ]);
 
-        $answer = Withdrawal::remove(['id'=>$id]);
+        $answer = Withdrawal::remove([
+            'id' => $id,
+            'admin' => $this->user->id
+        ]);
 
-        if($answer == 'OK'){
-            Yii::$app->session->setFlash('alert' ,[
-                    'typeAlert' => 'success',
-                    'message' => THelper::t('save_applied')
-                ]
-            );
+        if ($answer == 'OK') {
+            Yii::$app->session->setFlash('alert', [
+                'typeAlert' => 'success',
+                'message' => THelper::t('save_applied')
+            ]);
         }
 
         return $this->redirect('/' . Yii::$app->language .'/business/transactions/withdrawal');

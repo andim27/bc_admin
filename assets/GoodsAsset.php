@@ -23,7 +23,7 @@ class GoodsAsset extends AssetBundle
         //'/css/font.css',
         '/js/fuelux/fuelux.css',
         '/js/datatables/datatables.css',
-        //'/js/select2/select2.css',
+        '/js/multiselect/css/bootstrap-multiselect.css',
         //'/js/select2/theme.css',
 
     ];
@@ -36,6 +36,7 @@ class GoodsAsset extends AssetBundle
         '/js/wysiwyg/demo.js',
         'js/select2/select2.min.js',
         '/js/datatables/jquery.dataTables.min.js',
+        '/js/multiselect/js/bootstrap-multiselect.js'
     ];
     public $jsOptions = ['position' => yii\web\View::POS_HEAD];
     public $depends = [

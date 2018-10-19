@@ -355,14 +355,24 @@ class ReferenceController extends BaseController
             array_push($cat_items,['id'=>$index,'rec_id'=>(string)($item->_id),'name'=>$item->name]);
             $index++;
         }
-
-        //$goods = Products::find()->asArray()->all();
-        $goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
         $request = Yii::$app->request;
+        $active_ch =  $request->get('active');
+        if (!isset($active_ch) || (isset($active_ch)&&($active_ch > 0))) {
+            $goods = Products::find()->where(['productActive'=>['$gt'=>0]])->asArray()->all();
+        } else {
+            $goods = Products::find()->asArray()->all();
+        }
+        if (count($request->get())==0) {
+            $active_ch=1;
+        }
+        //$goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
+        //$goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->andWhere(['idInMarket'=>['$gt'=>124]])->andWhere(['idInMarket'=>['$lt'=>200]])->asArray()->all();
+
         $requestLanguage = $request->get('l');
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
         $languages = api\dictionary\Lang::all();
         return $this->render('goods', [
+            'active_ch'=>$active_ch,
             'category_items'=>$category_items,
             'cat_items' => $cat_items,
             'goods' => $goods,
@@ -409,7 +419,8 @@ class ReferenceController extends BaseController
     }
     public function actionProductEdit() {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $request = Yii::$app->request;
+        $request   = Yii::$app->request;
+        $active_ch =  $request->get('active');
         $p_id = $request->post('p_id');
         $product_action     = $request->post('product-action');
         $cur_product_action = $request->post('cur-product-action');
@@ -442,8 +453,16 @@ class ReferenceController extends BaseController
 //                ['id'=>2,'rec_id'=>'asdfg2','name'=>'Goods -2','cnt'=>2],
 //            ];
             $complect_goods_add_items=[];
-            $goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
-            foreach ($goods as $item) {
+            //$goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
+//            if (!isset($active_ch) || (($active_ch > 0))) {
+//                $goods = Products::find()->where(['productActive'=>['$gt'=>0]])->asArray()->all();
+//            } else {
+//                $goods = Products::find()->asArray()->all();
+//            }
+
+
+            $goods_comp = Products::find()->where(['product'=>['$gt'=>999]])->asArray()->all();
+            foreach ($goods_comp as $item) {
                 //array_push($complect_goods_add_items,['id'=>$item['_id'],'name'=>$item['productName']]);
                 array_push($complect_goods_add_items,['id'=>(string)($item['_id']),'name'=>$item['productName']]);
             }
@@ -475,6 +494,7 @@ class ReferenceController extends BaseController
                 $product_name    =$request->post('product-name');
                 $product_natural    =$request->post('product-natural');
                 $product_category   =$request->post('product-category');
+                $product_categories =$request->post('product-categories');
                 $product_type=$request->post('product-type');
                 $product_id         =$request->post('product-id');
                 $product_idInMarket =$request->post('product-idInMarket');
@@ -508,7 +528,7 @@ class ReferenceController extends BaseController
 //                $product_bonusStockInvestor   =$request->post('product-bonus-stock-investor') ?? 0;
 //                $product_bonusStockInvestor_2 =$request->post('product-bonus-stock-investor-2') ?? 0;
 //                $product_bonusStockInvestor_3 =$request->post('product-bonus-stock-investor-3') ?? 0;
-                //--------------------------------end tabs-----------------------------
+                //--------------------------------end tabs------------------------------------------
                 $product_expirationPeriodValue =$request->post('product-expirationPeriod-value');
 
                 $product_description =$request->post('product-description');
@@ -521,7 +541,14 @@ class ReferenceController extends BaseController
                 $product_complect_goods =$request->post('product-complect-goods') ?? [];
                 $product_balance_top_up =$request->post('product-balance-top-up') ?? [];
                 $product_balance_money  =$request->post('product-balance-money') ?? [];
-
+                //-----------------------------balance webwellness-----------------------------------
+                $product_balance_wellness_top_up =$request->post('product-balance-wellness-top-up') ?? [];
+                $product_balance_wellness_money  =$request->post('product-balance-wellness-money') ?? [];
+                //--------------------------------------payments-------------------------------------
+                $product_payments_rep   =$request->post('product-payments-rep') ?? 0;
+                $product_payments_stock =$request->post('product-payments-stock') ?? 0;
+                //--------------------------------------buy after end--------------------------------
+                $product_buy_after_end  =$request->post('product-buy-after-end') ?? 0;
                 $product_products=[];
                 foreach ($product_complect_goods as $item) {
                     array_push($product_products,['_id'=>new ObjectID($item['rec_id']),'productName'=>$item['name'],'cnt'=>$item['cnt']]);
@@ -568,6 +595,7 @@ class ReferenceController extends BaseController
                     //-----------------------------e: history ---------------------------------
                     $product->category_id =new ObjectID($product_category);
                     //$product->category_id =$product_category;
+                    $product->categories = $product_categories;
                     $product->productType =(int)$product_type;
                     $product->type        =(int)$product_type; //---delete in future
                     $product->bonusMoney  =(int)$product_bonusStart; //---delete in future
@@ -629,7 +657,15 @@ class ReferenceController extends BaseController
 
                     $product->productBalanceTopUp  =(int)$product_balance_top_up;
                     $product->balanceMoney         =(float)$product_balance_money;
+
+                    $product->productBalanceWellnessTopUp  =(int)$product_balance_wellness_top_up;
+                    $product->balanceWellnessMoney         =(float)$product_balance_wellness_money;
                     //$product->stock           =(int)$product_stock;
+
+                    $product->paymentsToRepresentive =(float)$product_payments_rep;
+                    $product->paymentsToStock        =(float)$product_payments_stock;
+
+                    $product->autoExtensionBS        =((int)$product_buy_after_end ==1)? true:false ;
 
                     if (!Empty($product_complect_goods)) {
                         $product->products=$product_products;

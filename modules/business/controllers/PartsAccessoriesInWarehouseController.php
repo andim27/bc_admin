@@ -153,16 +153,19 @@ class PartsAccessoriesInWarehouseController extends BaseController {
                 'warehouse_id'          =>  new ObjectID($myWarehouse)
             ]);
 
-            if(!empty($model->number) && $model->number < $request['number']){
+            $inWarehouse = round($model->number,3);
+
+            if($inWarehouse >= $request['number']){
+                $model->number = round(($model->number - $request['number']),3);
+            } else {
                 Yii::$app->session->setFlash('alert' ,[
                         'typeAlert'=>'danger',
                         'message'=>'На складе меньше чем хотят списать!!!'
                     ]
                 );
 
-                return $this->redirect(['parts-accessories']);
-            } else {
-                $model->number -= $request['number'];
+                return $this->redirect('in-warehouse');
+
             }
 
             if($model->save()){
@@ -181,12 +184,18 @@ class PartsAccessoriesInWarehouseController extends BaseController {
                     'comment'                   =>  $request['comment'],
                 ]);
 
+            } else {
+//                header('Content-Type: text/html; charset=utf-8');
+//                echo '<xmp>';
+//                print_r($model->getErrors());
+//                echo '</xmp>';
+//                die();
             }
 
 
         }
 
-        return $this->redirect(['in-warehouse']);
+        return $this->redirect('in-warehouse');
     }
 
     /**

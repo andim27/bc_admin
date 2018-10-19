@@ -22,9 +22,9 @@ Class LotteryTicket extends ActiveRecord
         return [
             '_id',
             'userId',
+            'forUserId',
             'ticket',
-            'saleId',
-            'x2',
+            'pack',
             'date'
         ];
     }
@@ -35,6 +35,14 @@ Class LotteryTicket extends ActiveRecord
     public function user()
     {
         return $this->hasOne(Users::className(), ['_id' => 'userId'])->one();
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function forUser()
+    {
+        return $this->hasOne(Users::className(), ['_id' => 'forUserId'])->one();
     }
 
 }

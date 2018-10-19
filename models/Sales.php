@@ -50,6 +50,9 @@ class Sales extends ActiveRecord
             'dateReduce',
             'dateCreate',
             'formPayment',
+            'comment',
+            'comment_user_name',
+            'updated_at',
             ''
         ];
     }
