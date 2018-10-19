@@ -8,7 +8,7 @@ metadata:
     env: __CI_ENVIRONMENT_SLUG__
   namespace: bpt
 spec:
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
