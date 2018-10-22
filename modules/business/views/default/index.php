@@ -18,82 +18,28 @@ $layoutDate = <<< HTML
     </a>
 HTML;
 ?>
-    <div class="m-b-md">
-        <h3 class="m-b-none"><?= THelper::t('main_title'); ?></h3>
-    </div>
+<style>
+    .pm-2 {
+        margin-bottom:2px !important;
+    }
+</style>
 
-<?php if(Users::checkRule('show_statistic','sidebar_home') === true){?>
-    <section class="panel panel-default">
-        <div class="row">
-            <div class="col-md-12">
-                <form action="" method="POST" class="formStatistic">
-                    <?= DatePicker::widget([
-                        'name' => 'from',
-                        'value' => $statisticInfo['request']['from'],
-                        'type' => DatePicker::TYPE_RANGE,
-                        'name2' => 'to',
-                        'value2' => $statisticInfo['request']['to'],
-                        'separator' => 'по',
-                        'layout' => $layoutDate,
-                        'pluginOptions' => [
-                            'autoclose' => true,
-                            'format' => 'yyyy-mm',
-                            'startView'=>'year',
-                            'minViewMode'=>'months',
-                        ]
-                    ]); ?>
-                </form>
-            </div>
-        </div>
-    </section>
-
-
-    <section class="panel panel-default">
-        <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-4c6cc1"></i>
-                    <i class="fa fa-users fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['newRegistration'];?></strong></span>
-                    <small class="text-muted text-uc capsLock">Новых партнеров за период</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-4cc0c1"></i>
-                    <i class="fa fa-male fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['ofThemPaid'];?></strong></span>
-                    <small class="text-muted text-uc capsLock">Из низ оплаченных</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-c14cba"></i>
-                    <i class="fa fa-sign-out fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['removeUsers']?></strong></span>
-                    <small class="text-muted text-uc capsLock">Исключенно</small>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section class="panel panel-default">
-        <header class="panel-heading font-bold">
-            График подключения партнеров по заданному времени / из них проплаченных
-        </header>
-        <div class="panel-body">
-            <div id="flot-connect-partners" class="height250"></div>
-        </div>
-    </section>
-    <script type="text/javascript">
+<script>
+    function BlockDetails(id_str) {
+        if ($("#"+id_str).css('display') == 'none') {
+            $("#"+id_str).css('display','block');
+        } else {
+            $("#"+id_str).css('display','none');
+        }
+        if (id_str == 'partners') {
+            DrawPartners();
+        }
+        if (id_str == 'checks') {
+            window.scrollBy(0, 200);
+        }
+    }
+    //-------------------------------
+    function DrawPartners() {
         var labelPaid = "<?= THelper::t('paid') ?>";
         var labelRegistrations = "<?= THelper::t('registrations') ?>";
 
@@ -103,7 +49,7 @@ HTML;
 
         var dateLabel = <?=json_encode($statisticInfo['dateInterval'])?>;
 
-        $("#flot-connect-partners").length && $.plot($("#flot-connect-partners"), [
+        $.plot($("#flot-connect-partners"), [
                 {
                     data: arrayPaidPartners,
                     label: labelPaid
@@ -156,11 +102,104 @@ HTML;
                 }
             }
         );
-    </script>
+    }
+</script>
+    <div class="m-b-md">
+        <h3 class="m-b-none"><?= THelper::t('date'); ?></h3>
+    </div>
+
+<?php if(Users::checkRule('show_statistic','sidebar_home') === true){?>
+    <section class="panel panel-default">
+        <div class="row">
+            <div class="col-md-12">
+                <form action="" method="POST" class="formStatistic">
+                    <?= DatePicker::widget([
+                        'name' => 'from',
+                        'value' => $statisticInfo['request']['from'],
+                        'type' => DatePicker::TYPE_RANGE,
+                        'name2' => 'to',
+                        'value2' => $statisticInfo['request']['to'],
+                        'separator' => 'по',
+                        'layout' => $layoutDate,
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'format' => 'yyyy-mm',
+                            'startView'=>'year',
+                            'minViewMode'=>'months',
+                        ]
+                    ]); ?>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="m-b-md">
+            <h3 class="m-b-none"><?= THelper::t('tree_partners'); ?></h3>
+        </div>
+    </section>
 
     <section class="panel panel-default">
+
         <div class="row m-l-none m-r-none bg-light lter">
             <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-4c6cc1"></i>
+                    <i class="fa fa-users fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['newRegistration'];?></strong></span>
+                    <small class="text-muted text-uc capsLock">Новых партнеров за период</small>
+                </a>
+            </div>
+
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-4cc0c1"></i>
+                    <i class="fa fa-male fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['ofThemPaid'];?></strong></span>
+                    <small class="text-muted text-uc capsLock">Из низ оплаченных</small>
+                </a>
+            </div>
+
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-c14cba"></i>
+                    <i class="fa fa-sign-out fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['removeUsers']?></strong></span>
+                    <small class="text-muted text-uc capsLock">Исключенно</small>
+                </a>
+            </div>
+            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
+                  <a class="btn btn-success " title="График подключения" onclick="BlockDetails('partners')">
+                      <span class="glyphicon glyphicon-stats"></span> График
+                  </a>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="partners" class="panel panel-default" style="display:none">
+        <header class="panel-heading font-bold">
+            График подключения партнеров по заданному времени / из них проплаченных
+        </header>
+        <div class="panel-body">
+            <div id="flot-connect-partners" class="height250"></div>
+        </div>
+    </section>
+
+    <section>
+        <div class="m-b-md">
+            <h3 class="m-b-none"><?= THelper::t('money'); ?></h3>
+        </div>
+    </section>
+    <section class="panel panel-default">
+        <div class="row m-l-none m-r-none bg-light lter">
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
@@ -171,7 +210,7 @@ HTML;
                 </a>
             </div>
 
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
                     <i class="fa fa-money fa-stack-1x text-white"></i>
@@ -181,8 +220,19 @@ HTML;
                     <small class="text-muted text-uc capsLock">Приход деньгами</small>
                 </a>
             </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+            <!--  --------  b:Перенос --------->
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Пополненно</small>
+                </a>
+            </div>
+            <!--  -------   e:Перенос  -------->
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
@@ -192,275 +242,217 @@ HTML;
                     <small class="text-muted text-uc capsLock">Приход ваучерами</small>
                 </a>
             </div>
+            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
+                <a class="btn btn-success " title="Детализиция по проектам" onclick="BlockDetails('projects')">
+                    <span class="glyphicon glyphicon-stats"></span> Проекты
+                </a>
+            </div>
         </div>
     </section>
+    <section id="projects" style="display:none;margin-bottom: 2px">
+        <!-- приход по проекту Wellness -->
+        <section  class="panel panel-default pm-2" >
+            <div class="row m-l-none m-r-none bg-light lter">
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                        <i class="fa fa-usd fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_Wellness']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Общий приход по проекту Wellness</small>
+                    </a>
+                </div>
 
-    <!-- приход по проекту Wellness -->
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
+                        <i class="fa fa-money fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_Wellness']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Приход деньгами по проекту Wellness</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                        <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_Wellness']-$statisticInfo['cancellationVoucher_Wellness']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Приход ваучерами по проекту Wellness</small>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- приход по проекту VipVip -->
+        <section class="panel panel-default pm-2">
+            <div class="row m-l-none m-r-none bg-light lter">
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                        <i class="fa fa-usd fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_VipVip']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Общий приход по проекту VipVip</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
+                        <i class="fa fa-money fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_VipVip']), 0, ',', ' ');?>  <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Приход деньгами по проекту VipVip</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                        <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_VipVip']-$statisticInfo['cancellationVoucher_VipVip']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Приход ваучерами по проекту VipVip</small>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- приход по проекту BPT -->
+        <section class="panel panel-default pm-2">
+            <div class="row m-l-none m-r-none bg-light lter">
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                        <i class="fa fa-usd fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_VipCoin']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Общий приход по проекту VipCoin</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
+                        <i class="fa fa-money fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_VipCoin']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Приход деньгами по проекту VipCoin</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                        <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_VipCoin']-$statisticInfo['cancellationVoucher_VipCoin']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Приход ваучерами по проекту VipCoin</small>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- приход по проекту BusinessSupport -->
+        <section class="panel panel-default pm-2">
+            <div class="row m-l-none m-r-none bg-light lter">
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                        <i class="fa fa-usd fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_BusinessSupport']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Общий приход по проекту BusinessSupport</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
+                        <i class="fa fa-money fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_BusinessSupport']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Приход деньгами по проекту BusinessSupport</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                        <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_BusinessSupport']-$statisticInfo['cancellationVoucher_BusinessSupport']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Приход ваучерами по проекту BusinessSupport</small>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- приход по проекту BalanceTopUp -->
+        <section class="panel panel-default pm-2">
+            <div class="row m-l-none m-r-none bg-light lter">
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                        <i class="fa fa-usd fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_BalanceTopUp']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Общий приход по проекту BalanceTopUp</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
+                        <i class="fa fa-money fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_BalanceTopUp']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Приход деньгами по проекту BalanceTopUp</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                        <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_BalanceTopUp']-$statisticInfo['cancellationVoucher_BalanceTopUp']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                        <small class="text-muted text-uc capsLock">Приход ваучерами по проекту BalanceTopUp</small>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </section>
+
+
+    <section>
+        <div class="m-b-md">
+            <h3 class="m-b-none"><?= THelper::t('user_commission_title'); ?></h3>
+        </div>
+    </section>
     <section class="panel panel-default">
         <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_Wellness']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Общий приход по проекту Wellness</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
-                    <i class="fa fa-money fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_Wellness']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход деньгами по проекту Wellness</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
-                    <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_Wellness']-$statisticInfo['cancellationVoucher_Wellness']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход ваучерами по проекту Wellness</small>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- приход по проекту VipVip -->
-    <section class="panel panel-default">
-        <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_VipVip']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Общий приход по проекту VipVip</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
-                    <i class="fa fa-money fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_VipVip']), 0, ',', ' ');?>  <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход деньгами по проекту VipVip</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
-                    <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_VipVip']-$statisticInfo['cancellationVoucher_VipVip']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход ваучерами по проекту VipVip</small>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- приход по проекту BPT -->
-    <section class="panel panel-default">
-        <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_VipCoin']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Общий приход по проекту VipCoin</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
-                    <i class="fa fa-money fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_VipCoin']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход деньгами по проекту VipCoin</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
-                    <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_VipCoin']-$statisticInfo['cancellationVoucher_VipCoin']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход ваучерами по проекту VipCoin</small>
-                </a>
-            </div>
-        </div>
-    </section>
 
 
-    <!-- приход по проекту BusinessSupport -->
-    <section class="panel panel-default">
-        <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_BusinessSupport']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Общий приход по проекту BusinessSupport</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
-                    <i class="fa fa-money fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_BusinessSupport']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход деньгами по проекту BusinessSupport</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
-                    <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_BusinessSupport']-$statisticInfo['cancellationVoucher_BusinessSupport']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход ваучерами по проекту BusinessSupport</small>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- приход по проекту BalanceTopUp -->
-    <section class="panel panel-default">
-        <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_BalanceTopUp']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Общий приход по проекту BalanceTopUp</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
-                    <i class="fa fa-money fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney_BalanceTopUp']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход деньгами по проекту BalanceTopUp</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
-                    <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher_BalanceTopUp']-$statisticInfo['cancellationVoucher_BalanceTopUp']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход ваучерами по проекту BalanceTopUp</small>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section class="panel panel-default">
-        <header class="panel-heading font-bold">
-            График оборота по заданному критерию
-        </header>
-        <div class="panel-body">
-            <div id="flot-profit" class="height250"></div>
-        </div>
-    </section>
-    <script type="text/javascript">
-        var arrayProfit = <?=json_encode(array_values($statisticInfo['generalReceiptMoneyMonth']))?>;
-
-        $("#flot-profit").length && $.plot($("#flot-profit"), [{
-                data: arrayProfit
-            }],
-            {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 1,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.2
-                            }, {
-                                opacity: 0.1
-                            }]
-                        }
-                    },
-                    points: {
-                        show: true
-                    },
-                    shadowSize: 2
-                },
-                grid: {
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "#f0f0f0",
-                    borderWidth: 0
-                },
-                colors: ["#65bc76"],
-                xaxis: {
-                    ticks:dateLabel
-                },
-                yaxis: {
-                    ticks: 10,
-                    tickDecimals: 0
-                },
-                tooltip: true,
-                tooltipOpts: {
-                    content: "%y.4 euro",
-                    defaultTheme: false,
-                    shifts: {
-                        x: 0,
-                        y: 20
-                    }
-                }
-            }
-        );
-    </script>
-
-
-    <section class="panel panel-default">
-        <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['onPersonalAccounts']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">На лицевых счетах на  текущий момент</small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
@@ -471,16 +463,27 @@ HTML;
                 </a>
             </div>
 
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                    <i class="fa fa-circle fa-stack-2x text-color-4c6cc1"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Пополненно</small>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['feesCommission']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Начисленно комиссионных</small>
                 </a>
             </div>
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['issuedCommission']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Выданно комиссионных</small>
+                </a>
+            </div>
+
         </div>
     </section>
 
@@ -560,210 +563,314 @@ HTML;
     <!--            }-->
     <!--        );-->
     <!--    </script>-->
-
+    <section>
+        <div class="m-b-md">
+            <h3 class="m-b-none"><?= THelper::t('goods_turnover'); ?></h3>
+        </div>
+    </section>
     <section class="panel panel-default">
         <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+
+
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-4c6cc1"></i>
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['feesCommission']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Начисленно комиссионных</small>
+                    <span class="h3 block m-t-xs"><strong><?='123456789';//number_format(round($statisticInfo['onPersonalAccounts']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">Товарооборот</small>
                 </a>
             </div>
 
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+               <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['issuedCommission']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Выданно комиссионных</small>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['onPersonalAccounts']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock">На лицевых счетах на  текущий момент</small>
                 </a>
             </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-<!--                <span class="fa-stack fa-2x pull-left m-r-sm">-->
-<!--                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>-->
-<!--                    <i class="fa fa-usd fa-stack-1x text-white"></i>-->
-<!--                </span>-->
-<!--                <a class="clear" href="#">-->
-<!--                    <span class="h3 block m-t-xs"><strong>-->
-                            <?php//=number_format(round(($statisticInfo['feesCommission']-$statisticInfo['issuedCommission']-$statisticInfo['onPersonalAccounts'])),0,',',' ')?>
-<!--                            <i class="fa fa-eur"></i></strong></span>-->
-<!--                    <small class="text-muted text-uc capsLock">Выдано паками и товарами</small>-->
-<!--                </a>-->
+            <div class="col-sm-5 col-md-5 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">&nbsp;</span>
+                <a class="clear" href="#"></a>
+            </div>
+            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
+                <a class="btn btn-success " title="Товарооборот- графики" onclick="BlockDetails('turnover')">
+                    <span class="glyphicon glyphicon-stats"></span>Таблица
+                </a>
             </div>
         </div>
     </section>
+    <section id="turnover" style="display:none">
+        <section class="panel panel-default">
+            <header class="panel-heading font-bold">
+                Список товаров с товарооборотом по каждому товару
+            </header>
+            <div class="table-responsive panel-body">
+                <table class="table table-translations table-striped datagrid m-b-sm tableTradeTurnover">
+                    <thead>
+                    <tr>
+                        <th>код товара</th>
+                        <th><?=THelper::t('name_product')?></th>
+                        <th><?=THelper::t('Price')?></th>
+                        <th><?=THelper::t('sold_PCs')?></th>
+                        <th><?=THelper::t('turnover')?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if(!empty($statisticInfo['tradeTurnover']['listProduct'])){?>
+                        <?php foreach ($statisticInfo['tradeTurnover']['listProduct'] as $k=>$item) {?>
+                            <tr>
+                                <td><?=$k;?></td>
+                                <td><?=$item['title'];?></td>
+                                <td><?=$item['price'];?></td>
+                                <td><?=$item['count'];?></td>
+                                <td><?=($item['amount']);?></td>
+                            </tr>
+                        <?php } ?>
+                    <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <script type="text/javascript">
+            $('.tableTradeTurnover').dataTable({
+                language: TRANSLATION,
+                lengthMenu: [ 25, 50, 75, 100 ],
+                "order": [[ 4, "desc" ]]
+            });
+        </script>
+        <section class="panel panel-default">
+            <header class="panel-heading font-bold">
+                График оборота по заданному критерию
+            </header>
+            <div class="panel-body">
+                <div id="flot-profit" class="height250"></div>
+            </div>
+        </section>
+        <script type="text/javascript">
+            var arrayProfit = <?=json_encode(array_values($statisticInfo['generalReceiptMoneyMonth']))?>;
 
-    <section class="panel panel-default">
-        <header class="panel-heading font-bold">
-            График товарооборотов / выданных комиссионных
-        </header>
-        <div class="panel-body">
-            <div id="flot-trade-turnover" class="height250"></div>
-        </div>
-    </section>
-    <script type="text/javascript">
-        var arrayProfit = <?=json_encode(array_values($statisticInfo['generalReceiptMoneyMonth']))?>;
-
-        var arrayFeesCommission = <?=json_encode(array_values($statisticInfo['feesCommissionMonth']))?>;
-
-        $("#flot-trade-turnover").length && $.plot($("#flot-trade-turnover"), [{
-                data: arrayProfit,
-                label: 'Товарооборотов'
-            }, {
-                data: arrayFeesCommission,
-                label: 'Начисленных комиссионных'
-            }],
-            {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 1,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.2
-                            }, {
-                                opacity: 0.1
-                            }]
+            $("#flot-profit").length && $.plot($("#flot-profit"), [{
+                    data: arrayProfit
+                }],
+                {
+                    series: {
+                        lines: {
+                            show: true,
+                            lineWidth: 1,
+                            fill: true,
+                            fillColor: {
+                                colors: [{
+                                    opacity: 0.2
+                                }, {
+                                    opacity: 0.1
+                                }]
+                            }
+                        },
+                        points: {
+                            show: true
+                        },
+                        shadowSize: 2
+                    },
+                    grid: {
+                        hoverable: true,
+                        clickable: true,
+                        tickColor: "#f0f0f0",
+                        borderWidth: 0
+                    },
+                    colors: ["#65bc76"],
+                    xaxis: {
+                        ticks:dateLabel
+                    },
+                    yaxis: {
+                        ticks: 10,
+                        tickDecimals: 0
+                    },
+                    tooltip: true,
+                    tooltipOpts: {
+                        content: "%y.4 euro",
+                        defaultTheme: false,
+                        shifts: {
+                            x: 0,
+                            y: 20
                         }
+                    }
+                }
+            );
+        </script>
+        <section class="panel panel-default">
+            <header class="panel-heading font-bold">
+                График товарооборотов / выданных комиссионных
+            </header>
+            <div class="panel-body">
+                <div id="flot-trade-turnover" class="height250"></div>
+            </div>
+        </section>
+        <script type="text/javascript">
+            var arrayProfit = <?=json_encode(array_values($statisticInfo['generalReceiptMoneyMonth']))?>;
+
+            var arrayFeesCommission = <?=json_encode(array_values($statisticInfo['feesCommissionMonth']))?>;
+
+            $("#flot-trade-turnover").length && $.plot($("#flot-trade-turnover"), [{
+                    data: arrayProfit,
+                    label: 'Товарооборотов'
+                }, {
+                    data: arrayFeesCommission,
+                    label: 'Начисленных комиссионных'
+                }],
+                {
+                    series: {
+                        lines: {
+                            show: true,
+                            lineWidth: 1,
+                            fill: true,
+                            fillColor: {
+                                colors: [{
+                                    opacity: 0.2
+                                }, {
+                                    opacity: 0.1
+                                }]
+                            }
+                        },
+                        points: {
+                            show: true
+                        },
+                        shadowSize: 2
                     },
-                    points: {
+                    grid: {
+                        hoverable: true,
+                        clickable: true,
+                        tickColor: "#f0f0f0",
+                        borderWidth: 0
+                    },
+                    colors: ["#dddddd","#ff6b3f"],
+                    xaxis: {
+                        ticks:dateLabel
+                    },
+                    yaxis: {
+                        ticks: 10,
+                        tickDecimals: 0
+                    },
+                    tooltip: true,
+                    tooltipOpts: {
+                        content: "%s - %y.4 euro",
+                        defaultTheme: false,
+                        shifts: {
+                            x: 0,
+                            y: 20
+                        }
+                    }
+                }
+            );
+        </script>
+
+
+        <section  class="panel panel-default">
+            <div class="row m-l-none m-r-none bg-light lter">
+                <div class="col-sm-6 col-md-6 padder-v">
+                    <div class="panel panel-default">
+                        <header class="panel-heading font-bold">
+                            Отношение товарооборота к живым деньгам
+                        </header>
+                        <div class="panel-body">
+                            <div id="flot-pie" class="height400"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6 padder-v">
+                    <div class="panel panel-default">
+                        <header class="panel-heading font-bold">
+                            Отношение товарооборота к комиссионым
+                        </header>
+                        <div class="panel-body">
+                            <div id="flot-pie2" class="height400"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script type="text/javascript">
+
+            var da = [
+                {
+                    label: 'Живых денег',
+                    data: <?=($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']+$statisticInfo['cancellationVoucher'])?>
+                },
+                {
+                    label: '',
+                    data: <?=($statisticInfo['generalReceiptMoney']-($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']+$statisticInfo['cancellationVoucher']))?>
+                }
+            ];
+
+            $("#flot-pie").length && $.plot($("#flot-pie"), da, {
+                series: {
+                    pie: {
+                        combine: {
+                            color: "#999",
+                            threshold: 0.05
+                        },
                         show: true
-                    },
-                    shadowSize: 2
+                    }
+                },
+                colors: ["#99c7ce","#999999","#bbbbbb","#dddddd","#f0f0f0"],
+                legend: {
+                    show: false
                 },
                 grid: {
                     hoverable: true,
-                    clickable: true,
-                    tickColor: "#f0f0f0",
-                    borderWidth: 0
-                },
-                colors: ["#dddddd","#ff6b3f"],
-                xaxis: {
-                    ticks:dateLabel
-                },
-                yaxis: {
-                    ticks: 10,
-                    tickDecimals: 0
+                    clickable: false
                 },
                 tooltip: true,
                 tooltipOpts: {
-                    content: "%s - %y.4 euro",
-                    defaultTheme: false,
-                    shifts: {
-                        x: 0,
-                        y: 20
-                    }
+                    content: "%s: %p.0%"
                 }
-            }
-        );
-    </script>
+            });
 
-
-    <section  class="panel panel-default">
-        <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-6 col-md-6 padder-v">
-                <div class="panel panel-default">
-                    <header class="panel-heading font-bold">
-                        Отношение товарооборота к живым деньгам
-                    </header>
-                    <div class="panel-body">
-                        <div id="flot-pie" class="height400"></div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-6 padder-v">
-                <div class="panel panel-default">
-                    <header class="panel-heading font-bold">
-                        Отношение товарооборота к комиссионым
-                    </header>
-                    <div class="panel-body">
-                        <div id="flot-pie2" class="height400"></div>
-                    </div>
-                </div>
-            </div>
+            var da2 = [
+                {
+                    label: 'Комиссионых',
+                    data: <?=$statisticInfo['feesCommission']?>
+                },
+                {
+                    label: '',
+                    data: <?=($statisticInfo['generalReceiptMoney']-$statisticInfo['feesCommission'])?>
+                }
+            ];
+            $("#flot-pie2").length && $.plot($("#flot-pie2"), da2, {
+                series: {
+                    pie: {
+                        combine: {
+                            color: "#999",
+                            threshold: 0.05
+                        },
+                        show: true
+                    }
+                },
+                colors: ["#99c7ce","#999999","#bbbbbb","#dddddd","#f0f0f0"],
+                legend: {
+                    show: false
+                },
+                grid: {
+                    hoverable: true,
+                    clickable: false
+                },
+                tooltip: true,
+                tooltipOpts: {
+                    content: "%s: %p.0%"
+                }
+            });
+        </script>
+    </section>
+    <section>
+        <div class="m-b-md">
+            <h3 class="m-b-none"><?= THelper::t('bonuses'); ?></h3>
         </div>
     </section>
-    <script type="text/javascript">
-
-        var da = [
-            {
-                label: 'Живых денег',
-                data: <?=($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']+$statisticInfo['cancellationVoucher'])?>
-            },
-            {
-                label: '',
-                data: <?=($statisticInfo['generalReceiptMoney']-($statisticInfo['generalReceiptMoney']-$statisticInfo['receiptVoucher']+$statisticInfo['cancellationVoucher']))?>
-            }
-        ];
-
-        $("#flot-pie").length && $.plot($("#flot-pie"), da, {
-            series: {
-                pie: {
-                    combine: {
-                        color: "#999",
-                        threshold: 0.05
-                    },
-                    show: true
-                }
-            },
-            colors: ["#99c7ce","#999999","#bbbbbb","#dddddd","#f0f0f0"],
-            legend: {
-                show: false
-            },
-            grid: {
-                hoverable: true,
-                clickable: false
-            },
-            tooltip: true,
-            tooltipOpts: {
-                content: "%s: %p.0%"
-            }
-        });
-
-        var da2 = [
-            {
-                label: 'Комиссионых',
-                data: <?=$statisticInfo['feesCommission']?>
-            },
-            {
-                label: '',
-                data: <?=($statisticInfo['generalReceiptMoney']-$statisticInfo['feesCommission'])?>
-            }
-        ];
-        $("#flot-pie2").length && $.plot($("#flot-pie2"), da2, {
-            series: {
-                pie: {
-                    combine: {
-                        color: "#999",
-                        threshold: 0.05
-                    },
-                    show: true
-                }
-            },
-            colors: ["#99c7ce","#999999","#bbbbbb","#dddddd","#f0f0f0"],
-            legend: {
-                show: false
-            },
-            grid: {
-                hoverable: true,
-                clickable: false
-            },
-            tooltip: true,
-            tooltipOpts: {
-                content: "%s: %p.0%"
-            }
-        });
-    </script>
-
     <div class="row">
         <div class="col-md-4">
             <ul class="list-group no-radius">
@@ -823,87 +930,110 @@ HTML;
         </div>
     </div>
 
-    <section class="panel panel-default">
-        <header class="panel-heading font-bold">
-            Список товаров с товарооборотом по каждому товару
-        </header>
-        <div class="table-responsive panel-body">
-            <table class="table table-translations table-striped datagrid m-b-sm tableTradeTurnover">
-                <thead>
-                <tr>
-                    <th>код товара</th>
-                    <th><?=THelper::t('name_product')?></th>
-                    <th><?=THelper::t('Price')?></th>
-                    <th><?=THelper::t('sold_PCs')?></th>
-                    <th><?=THelper::t('turnover')?></th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php if(!empty($statisticInfo['tradeTurnover']['listProduct'])){?>
-                    <?php foreach ($statisticInfo['tradeTurnover']['listProduct'] as $k=>$item) {?>
-                        <tr>
-                            <td><?=$k;?></td>
-                            <td><?=$item['title'];?></td>
-                            <td><?=$item['price'];?></td>
-                            <td><?=$item['count'];?></td>
-                            <td><?=($item['amount']);?></td>
-                        </tr>
-                    <?php } ?>
-                <?php } ?>
-                </tbody>
-            </table>
-        </div>
-    </section>
-    <script type="text/javascript">
-        $('.tableTradeTurnover').dataTable({
-            language: TRANSLATION,
-            lengthMenu: [ 25, 50, 75, 100 ],
-            "order": [[ 4, "desc" ]]
-        });
-    </script>
 
 
-    <section class="panel panel-default">
-        <header class="panel-heading font-bold">
-            Таблица максимальных чеков за заданный перод
-        </header>
-        <div class="table-responsive panel-body">
-            <table class="table table-translations table-striped datagrid m-b-sm tableMaxCheck">
-                <thead>
-                <tr>
-                    <th><?=THelper::t('login')?></th>
-                    <th><?=THelper::t('user_firstname_secondname')?></th>
-                    <th>email</th>
-                    <th><?=THelper::t('phone')?></th>
-                    <th><?=THelper::t('amount')?></th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php if(!empty($statisticInfo['tradeTurnover']['forUser'])){?>
-                    <?php foreach ($statisticInfo['tradeTurnover']['forUser'] as $k=>$item) {?>
-                        <?php $infoUser = Users::findOne(['_id'=>new \MongoDB\BSON\ObjectID($k)]);?>
-                        <tr>
-                            <td><?=(!empty($infoUser->username) ? $infoUser->username : $k)?></td>
-                            <td>
-                                <?=(!empty($infoUser->secondName) ? $infoUser->secondName : ''); ?>
-                                <?=(!empty($infoUser->firstName) ? $infoUser->firstName : ''); ?>
-                            </td>
-                            <td><?=(!empty($infoUser->email) ? $infoUser->email : '')?></td>
-                            <td><?=(!empty($infoUser->phoneNumber) ? $infoUser->phoneNumber : '')?></td>
-                            <td><?=$item?></td>
-                        </tr>
-                    <?php } ?>
-                <?php } ?>
-                </tbody>
-            </table>
+    <section>
+        <div class="m-b-md">
+            <h3 class="m-b-none"><?="Чеки" ?></h3>
         </div>
     </section>
-    <script type="text/javascript">
-        $('.tableMaxCheck').dataTable({
-            language: TRANSLATION,
-            lengthMenu: [ 25, 50, 75, 100 ],
-            "order": [[ 4, "desc" ]]
-        });
-    </script>
+
+    <div class="row m-l-none m-r-none bg-light lter">
+        <!-- Максимальный чек - 1 за период -->
+        <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-male fa-stack-1x text-white"></i>
+                </span>
+            <a class="clear" href="#">
+                <span class="h3 block m-t-xs"><strong><?='24363.45';number_format(round($statisticInfo['generalReceiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock">Dorodnevy Aleksandr i Almira</small>
+            </a>
+        </div>
+        <!-- Максимальный чек - 2 за период -->
+        <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-male fa-stack-1x text-white"></i>
+                </span>
+            <a class="clear" href="#">
+                <span class="h3 block m-t-xs"><strong><?='10682.54';//number_format(round($statisticInfo['receiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock">Trayno MaksimiElena </small>
+            </a>
+        </div>
+        <!-- Максимальный чек - 3 за период -->
+        <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-male fa-stack-1x text-white"></i>
+                </span>
+            <a class="clear" href="#">
+                <span class="h3 block m-t-xs"><strong><?='8655.82';//number_format(round($statisticInfo['refill']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock">Abdyldaeva Zhanna </small>
+            </a>
+        </div>
+        <!-- Максимальный чек - 4 за период -->
+        <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-male fa-stack-1x text-white"></i>
+                </span>
+            <a class="clear" href="#">
+                <span class="h3 block m-t-xs"><strong><?='6422.25';//number_format(round($statisticInfo['receiptVoucher']-$statisticInfo['cancellationVoucher']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"> Namazbekova Mariya </small>
+            </a>
+        </div>
+        <div class="col-sm-1 col-md-1 padder-v b-r b-light">
+            <a class="btn btn-success " title="Детализиция по проектам" onclick="BlockDetails('checks')">
+                <span class="glyphicon glyphicon-stats"></span>Таблица
+            </a>
+        </div>
+    </div>
+    <br>
+    <section id="checks" class="panel panel-default" style="display:none">
+
+        <section class="panel panel-default">
+            <header class="panel-heading font-bold">
+                Таблица максимальных чеков за заданный перод
+            </header>
+            <div class="table-responsive panel-body">
+                <table class="table table-translations table-striped datagrid m-b-sm tableMaxCheck">
+                    <thead>
+                    <tr>
+                        <th><?=THelper::t('login')?></th>
+                        <th><?=THelper::t('user_firstname_secondname')?></th>
+                        <th>email</th>
+                        <th><?=THelper::t('phone')?></th>
+                        <th><?=THelper::t('amount')?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if(!empty($statisticInfo['tradeTurnover']['forUser'])){?>
+                        <?php foreach ($statisticInfo['tradeTurnover']['forUser'] as $k=>$item) {?>
+                            <?php $infoUser = Users::findOne(['_id'=>new \MongoDB\BSON\ObjectID($k)]);?>
+                            <tr>
+                                <td><?=(!empty($infoUser->username) ? $infoUser->username : $k)?></td>
+                                <td>
+                                    <?=(!empty($infoUser->secondName) ? $infoUser->secondName : ''); ?>
+                                    <?=(!empty($infoUser->firstName) ? $infoUser->firstName : ''); ?>
+                                </td>
+                                <td><?=(!empty($infoUser->email) ? $infoUser->email : '')?></td>
+                                <td><?=(!empty($infoUser->phoneNumber) ? $infoUser->phoneNumber : '')?></td>
+                                <td><?=$item?></td>
+                            </tr>
+                        <?php } ?>
+                    <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <script type="text/javascript">
+            $('.tableMaxCheck').dataTable({
+                language: TRANSLATION,
+                lengthMenu: [ 25, 50, 75, 100 ],
+                "order": [[ 4, "desc" ]]
+            });
+        </script>
+    </section>
 
 <?php } ?>

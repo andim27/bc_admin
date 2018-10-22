@@ -148,7 +148,8 @@ class DefaultController extends BaseController
         if(empty($request)){
             $statisticInfo['request']['to'] = date("Y-m");
             $date = strtotime('-3 month', strtotime($statisticInfo['request']['to']));
-            $statisticInfo['request']['from'] = date('Y-m', $date);
+            //$statisticInfo['request']['from'] = date('Y-m', $date);//--old definition
+            $statisticInfo['request']['from'] = date('Y-m', strtotime('2018-09'));//--start new accounting firm period
         } else {
             $statisticInfo['request']['from'] = $request['from'];
             $statisticInfo['request']['to'] = $request['to'];
@@ -865,6 +866,7 @@ class DefaultController extends BaseController
 
     protected function getProductBuyForMoney($date_from,$date_to)
     {
+        return false;
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL,"http://vipsite.biz/admin/statistic.php");
