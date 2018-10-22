@@ -82,7 +82,7 @@ $config = [
         // for mongodb
         'mongodb' => [
             'class' => '\yii\mongodb\Connection',
-            'dsn' => 'mongodb://gnc:b41uHcdR@bpt-shard-00-00-ezdfa.mongodb.net:27017,bpt-shard-00-01-ezdfa.mongodb.net:27017,bpt-shard-00-02-ezdfa.mongodb.net:27017/gnc?ssl=true&sslWeakCertificateValidation=true&replicaSet=BPT-shard-0&authSource=admin',
+            'dsn' => 'mongodb://gnc:b41uHcdR@bpt-gke-shard-00-00-ezdfa.gcp.mongodb.net:27017,bpt-gke-shard-00-01-ezdfa.gcp.mongodb.net:27017,bpt-gke-shard-00-02-ezdfa.gcp.mongodb.net:27017/gnc?ssl=true&sslWeakCertificateValidation=true&replicaSet=BPT-GKE-shard-0&authSource=admin',
 //            'dsn' => 'mongodb://mongo/gnc',
         ],
 
