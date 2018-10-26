@@ -46,11 +46,7 @@ class DefaultController extends BaseController
             $statisticInfo=['newRegistrationForMonth'=>[],'newRegistration'=>0,'ofThemPaidForMonth'=>[]];
             $statisticInfo['request']['from']=Yii::$app->request->post('d_from');
             $statisticInfo['request']['to']  =Yii::$app->request->post('d_to');
-            $i = 0;
-            for ($iDate=$statisticInfo['request']['from'];$iDate<=$statisticInfo['request']['to'];$iDate=date('Y-m',strtotime('+1 month', strtotime($iDate)))) {
-                $statisticInfo['dateInterval'][] = [$i,$iDate];
-                $i++;
-            }
+
 
             $infoDateTo = explode("-",$statisticInfo['request']['to']);
             $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
@@ -80,6 +76,18 @@ class DefaultController extends BaseController
                 }
             }
             unset($model);
+            $i = 0;
+            for ($iDate=$statisticInfo['request']['from'];$iDate<=$statisticInfo['request']['to'];$iDate=date('Y-m',strtotime('+1 month', strtotime($iDate)))) {
+                if(empty($statisticInfo['newRegistrationForMonth'][$iDate])){
+                    $statisticInfo['newRegistrationForMonth'][$iDate] = [$i,0];
+                }else{
+                    $statisticInfo['newRegistrationForMonth'][$iDate] = [$i,$statisticInfo['newRegistrationForMonth'][$iDate]];
+                }
+                $statisticInfo['dateInterval'][] = [$i,$iDate];
+                $i++;
+            }
+            ksort($statisticInfo['newRegistrationForMonth']);
+            ksort($statisticInfo['ofThemPaidForMonth']);
 
         }
         //--------------------------------B:PROJECTS--------------------------------------------------
