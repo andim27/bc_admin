@@ -31,6 +31,32 @@ class DefaultController extends BaseController
         ]);
     }
 
+    public function actionStatDetails() {
+        $part_name =Yii::$app->request->post('part_name');
+        $view_name='';
+        $statisticInfo=[];
+        if ($part_name =='partners') {
+            $view_name ='_partners';
+        }
+        if ($part_name =='money') {
+            $view_name ='_money';
+        }
+        if ($part_name =='commission') {
+            $view_name ='_commission';
+        }
+        if ($part_name =='turnover') {
+            $view_name ='_turnover';
+        }
+        if ($part_name =='checks') {
+            $view_name ='_checks';
+        }
+        if (!Empty($view_name)) {
+            return $this->render('index', [
+                'user' => $this->user,
+                'statisticInfo' => $statisticInfo,
+            ]);
+        }
+    }
 
     protected function getStatisticInfo(){
 
