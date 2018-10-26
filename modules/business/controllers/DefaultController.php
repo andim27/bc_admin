@@ -32,30 +32,81 @@ class DefaultController extends BaseController
     }
 
     public function actionStatDetails() {
-        $part_name =Yii::$app->request->post('part_name');
+        $result=['success'=>false,'details_html'=>''];
+        $block_name =Yii::$app->request->post('block_name');
         $view_name='';
         $statisticInfo=[];
-        if ($part_name =='partners') {
+        $statisticInfo['request']['from']=Yii::$app->request->post('d_from');
+        $statisticInfo['request']['to']  =Yii::$app->request->post('d_to');
+
+
+        //--------------------------------B:PARTNERS--------------------------------------------------
+        if ($block_name =='partners') {
             $view_name ='_partners';
+            $statisticInfo=['newRegistrationForMonth'=>[],'newRegistration'=>0,'ofThemPaidForMonth'=>[]];
+            $statisticInfo['request']['from']=Yii::$app->request->post('d_from');
+            $statisticInfo['request']['to']  =Yii::$app->request->post('d_to');
+            $i = 0;
+            for ($iDate=$statisticInfo['request']['from'];$iDate<=$statisticInfo['request']['to'];$iDate=date('Y-m',strtotime('+1 month', strtotime($iDate)))) {
+                $statisticInfo['dateInterval'][] = [$i,$iDate];
+                $i++;
+            }
+
+            $infoDateTo = explode("-",$statisticInfo['request']['to']);
+            $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+            $queryDateFrom = strtotime($statisticInfo['request']['from'].'-01 00:00:00') * 1000;
+            $queryDateTo = strtotime($statisticInfo['request']['to'].'-'.$countDay.' 23:59:59') * 1000;
+
+            // зарегистрировалось за выбранный период
+            $model = (new \yii\mongodb\Query())
+                ->select(['created'])
+                ->from('users')
+                ->where([
+                    'created' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ]
+                ])
+                ->all();
+            if(!empty($model)) {
+                foreach ($model as $item) {
+                    $dateRegitration = $item['created']->toDateTime()->format('Y-m');
+
+                    if (empty($statisticInfo['newRegistrationForMonth'][$dateRegitration])) {
+                        $statisticInfo['newRegistrationForMonth'][$dateRegitration] = 0;
+                    }
+                    $statisticInfo['newRegistrationForMonth'][$dateRegitration]++;
+                    $statisticInfo['newRegistration']++;
+                }
+            }
+            unset($model);
+
         }
-        if ($part_name =='money') {
-            $view_name ='_money';
+        //--------------------------------B:PROJECTS--------------------------------------------------
+        if ($block_name =='projects') {
+            $view_name ='_projects';
         }
-        if ($part_name =='commission') {
-            $view_name ='_commission';
-        }
-        if ($part_name =='turnover') {
+        //        if ($block_name =='commission') {
+        //            $view_name ='_commission';
+        //
+        //        }
+        //--------------------------------B:TURNOVER--------------------------------------------------
+        if ($block_name =='turnover') {
             $view_name ='_turnover';
         }
-        if ($part_name =='checks') {
+        //--------------------------------B:CHECKS--------------------------------------------------
+        if ($block_name =='checks') {
             $view_name ='_checks';
         }
         if (!Empty($view_name)) {
-            return $this->render('index', [
+            $result=['success'=>true,'details_html'=>$this->renderPartial($view_name, [
                 'user' => $this->user,
                 'statisticInfo' => $statisticInfo,
-            ]);
+            ])];
+
         }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return $result;
     }
 
     protected function getStatisticInfo(){
@@ -208,6 +259,7 @@ class DefaultController extends BaseController
                 $statisticInfo['newRegistrationForMonth'][$dateRegitration]++;
                 $statisticInfo['newRegistration']++;
             }
+            ksort($statisticInfo['newRegistrationForMonth']);
         }
         unset($model);
 

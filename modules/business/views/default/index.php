@@ -25,6 +25,23 @@ HTML;
 </style>
 
 <script>
+    function getDetailsBlock(block_name) {
+        if ($("#block-place-"+block_name).css('display') == 'none') {
+            $("#block-place-"+block_name).css('display','block');
+        } else {
+            $("#block-place-"+block_name).css('display','none');
+            return;
+        }
+        var url ="/<?=Yii::$app->language?>/business/default/stat-details";
+        $.post(url,{'d_from':$('#d_from').val(),'d_to':$('#d_to').val(),'block_name':block_name}).done(function (data) {
+            if (data.success == true) {
+                $('#block-place-'+block_name).html(data.details_html).show();
+            } else {
+                console.log('Error:get block_name  '+block_name);
+            }
+
+        })
+    }
     function BlockDetails(id_str) {
         if ($("#"+id_str).css('display') == 'none') {
             $("#"+id_str).css('display','block');
@@ -117,6 +134,8 @@ HTML;
                         'name' => 'from',
                         'value' => $statisticInfo['request']['from'],
                         'type' => DatePicker::TYPE_RANGE,
+                        'options' =>['id'=>'d_from'],
+                        'options2' =>['id'=>'d_to'],
                         'name2' => 'to',
                         'value2' => $statisticInfo['request']['to'],
                         'separator' => 'по',
@@ -175,7 +194,7 @@ HTML;
                 </a>
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                  <a class="btn btn-success " title="График подключения" onclick="BlockDetails('partners')">
+                  <a class="btn btn-success " title="График подключения" onclick="getDetailsBlock('partners')">
                       <span class="glyphicon glyphicon-stats"></span> График
                   </a>
             </div>
@@ -183,7 +202,7 @@ HTML;
         </div>
     </section>
 
-    <section id="partners" class="panel panel-default" style="display:none">
+    <section id="block-place-partners" class="panel panel-default" style="display:none">
         <header class="panel-heading font-bold">
             График подключения партнеров по заданному времени / из них проплаченных
         </header>
@@ -243,13 +262,13 @@ HTML;
                 </a>
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                <a class="btn btn-success " title="Детализиция по проектам" onclick="BlockDetails('projects')">
+                <a class="btn btn-success " title="Детализиция по проектам" onclick="getDetailsBlock('projects')">
                     <span class="glyphicon glyphicon-stats"></span> Проекты
                 </a>
             </div>
         </div>
     </section>
-    <section id="projects" style="display:none;margin-bottom: 2px">
+    <section id="block-place-projects" class="panel panel-default" style="display:none;margin-bottom: 2px">
         <!-- приход по проекту Wellness -->
         <section  class="panel panel-default pm-2" >
             <div class="row m-l-none m-r-none bg-light lter">
@@ -598,13 +617,13 @@ HTML;
                 <a class="clear" href="#"></a>
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                <a class="btn btn-success " title="Товарооборот- графики" onclick="BlockDetails('turnover')">
+                <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('turnover')">
                     <span class="glyphicon glyphicon-stats"></span>Таблица
                 </a>
             </div>
         </div>
     </section>
-    <section id="turnover" style="display:none">
+    <section id="block-place-turnover" class="panel panel-default" style="display:none">
         <section class="panel panel-default">
             <header class="panel-heading font-bold">
                 Список товаров с товарооборотом по каждому товару
@@ -984,13 +1003,13 @@ HTML;
             </a>
         </div>
         <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-            <a class="btn btn-success " title="Детализиция по проектам" onclick="BlockDetails('checks')">
+            <a class="btn btn-success " title="Детализиция по проектам" onclick="getDetailsBlock('checks')">
                 <span class="glyphicon glyphicon-stats"></span>Таблица
             </a>
         </div>
     </div>
-    <br>
-    <section id="checks" class="panel panel-default" style="display:none">
+    <br> <br>
+    <section id="block-place-checks" class="panel panel-default" style="display:none">
 
         <section class="panel panel-default">
             <header class="panel-heading font-bold">
@@ -1033,6 +1052,7 @@ HTML;
                 lengthMenu: [ 25, 50, 75, 100 ],
                 "order": [[ 4, "desc" ]]
             });
+            $('#')
         </script>
     </section>
 
