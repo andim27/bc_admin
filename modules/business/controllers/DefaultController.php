@@ -35,11 +35,29 @@ class DefaultController extends BaseController
         $result=['success'=>false,'details_html'=>''];
         $block_name =Yii::$app->request->post('block_name');
         $view_name='';
+        $listProducts = Products::find()->where(['product'=>['$gt'=>999]])->all();
+        $typeProject = [
+            '1'     => 'VipVip',
+            '2'     => 'BusinessSupport',
+            '3'     => 'VipVip',
+            '4'     => 'BalanceTopUp',
+            '5'     => 'Wellness',
+            '7'     => 'Wellness',
+            '8'     => 'Wellness',
+            '9'     => 'VipCoin',
+            '10'    => 'VipCoin',
+        ];
+        $listProductsType = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','type');
         $statisticInfo=[];
+
+
         $statisticInfo['request']['from']=Yii::$app->request->post('d_from');
         $statisticInfo['request']['to']  =Yii::$app->request->post('d_to');
 
-
+        $infoDateTo = explode("-",$statisticInfo['request']['to']);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+        $queryDateFrom = strtotime($statisticInfo['request']['from'].'-01 00:00:00') * 1000;
+        $queryDateTo   = strtotime($statisticInfo['request']['to'].'-'.$countDay.' 23:59:59') * 1000;
         //--------------------------------B:PARTNERS--------------------------------------------------
         if ($block_name =='partners') {
             $view_name ='_partners';
@@ -48,10 +66,10 @@ class DefaultController extends BaseController
             $statisticInfo['request']['to']  =Yii::$app->request->post('d_to');
 
 
-            $infoDateTo = explode("-",$statisticInfo['request']['to']);
-            $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+
+            //$countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
             $queryDateFrom = strtotime($statisticInfo['request']['from'].'-01 00:00:00') * 1000;
-            $queryDateTo = strtotime($statisticInfo['request']['to'].'-'.$countDay.' 23:59:59') * 1000;
+            $queryDateTo   = strtotime($statisticInfo['request']['to'].'-'.$countDay.' 23:59:59') * 1000;
 
             // зарегистрировалось за выбранный период
             $model = (new \yii\mongodb\Query())
@@ -92,12 +110,77 @@ class DefaultController extends BaseController
         }
         //--------------------------------B:PROJECTS--------------------------------------------------
         if ($block_name =='projects') {
-            $view_name ='_projects';
+            $view_name = '_projects';
+            $statisticInfo = [
+                // общий приход
+                'generalReceiptMoney' => 0,
+                'generalReceiptMoneyMonth' => [],
+                //Приход по программе vipcoin
+                'generalReceiptMoney_VipCoin' => 0,
+                //Приход по программе Wellness
+                'generalReceiptMoney_Wellness' => 0,
+                //Приход по программе VipVip
+                'generalReceiptMoney_VipVip' => 0,
+
+                'generalReceiptMoney_BalanceTopUp' => 0,
+                'generalReceiptMoney_BusinessSupport' => 0,
+                //Приход за деньги по программе vipcoin
+                'receiptMoney_VipCoin'          => 0,
+                //Приход за деньги по программе Wellness
+                'receiptMoney_Wellness'         => 0,
+                //Приход за деньги по программе VipVip
+                'receiptMoney_VipVip'           => 0,
+
+                'receiptMoney_BalanceTopUp'     => 0,
+                'receiptMoney_BusinessSupport'  => 0,
+            ];
+            $model = (new \yii\mongodb\Query())
+                ->select(['dateCreate', 'price', 'product', 'username', 'project'])
+                ->from('sales')
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'type' => [
+                        '$ne' => -1
+                    ],
+                    'productType' => ['$nin' => [0, 4]],
+                    'product' => ['$gt' => 999],
+                    'username' => [
+                        '$ne' => 'main'
+                    ]
+                ])
+                ->all();
+
+            if (!empty($model)) {
+                foreach ($model as $item) {
+                    $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
+
+                    if (empty($statisticInfo['generalReceiptMoneyMonth'][$dateCreate])) {
+                        $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] = 0;
+                    }
+                    $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] += $item['price'];
+                    //$statisticInfo['generalReceiptMoney'] += $item['price'];
+
+                    //if (!empty($typeProject[$listProductsType[$item['product']]])) {
+
+                    if (array_key_exists($item['product'], $listProductsType)) {
+                        try {
+                            $statisticInfo['generalReceiptMoney_' . $typeProject[$listProductsType[$item['product']]]] += $item['price'];
+                        } catch (\Exception $e) {
+                            $statisticInfo['generalReceiptMoney_VipCoin'] = 0;
+                            $statisticInfo['generalReceiptMoney_Wellness'] = 0;
+                            $statisticInfo['generalReceiptMoney_VipVip'] = 0;
+
+                        }
+
+
+                    }
+                }//--foreach--
+            }//---model--
+            //var_dump($statisticInfo);die();
         }
-        //        if ($block_name =='commission') {
-        //            $view_name ='_commission';
-        //
-        //        }
         //--------------------------------B:TURNOVER--------------------------------------------------
         if ($block_name =='turnover') {
             $view_name ='_turnover';
