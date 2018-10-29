@@ -739,8 +739,8 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?='24363.45';number_format(round($statisticInfo['generalReceiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock">Dorodnevy Aleksandr i Almira</small>
+                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][0]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][0]['fio'] ?></small>
             </a>
         </div>
         <!-- Максимальный чек - 2 за период -->
@@ -750,8 +750,8 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?='10682.54';//number_format(round($statisticInfo['receiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock">Trayno MaksimiElena </small>
+                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][1]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][1]['fio'] ?></small>
             </a>
         </div>
         <!-- Максимальный чек - 3 за период -->
@@ -761,8 +761,8 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?='8655.82';//number_format(round($statisticInfo['refill']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock">Abdyldaeva Zhanna </small>
+                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][2]['sum']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][2]['fio'] ?> </small>
             </a>
         </div>
         <!-- Максимальный чек - 4 за период -->
@@ -772,8 +772,8 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?='6422.25';//number_format(round($statisticInfo['receiptVoucher']-$statisticInfo['cancellationVoucher']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock"> Namazbekova Mariya </small>
+                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][3]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][3]['fio'] ?></small>
             </a>
         </div>
         <div class="col-sm-1 col-md-1 padder-v b-r b-light">
@@ -785,49 +785,7 @@ HTML;
     <br> <br>
     <section id="block-place-checks" class="panel panel-default" style="display:none">
 
-        <section class="panel panel-default">
-            <header class="panel-heading font-bold">
-                Таблица максимальных чеков за заданный перод
-            </header>
-            <div class="table-responsive panel-body">
-                <table class="table table-translations table-striped datagrid m-b-sm tableMaxCheck">
-                    <thead>
-                    <tr>
-                        <th><?=THelper::t('login')?></th>
-                        <th><?=THelper::t('user_firstname_secondname')?></th>
-                        <th>email</th>
-                        <th><?=THelper::t('phone')?></th>
-                        <th><?=THelper::t('amount')?></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php if(!empty($statisticInfo['tradeTurnover']['forUser'])){?>
-                        <?php foreach ($statisticInfo['tradeTurnover']['forUser'] as $k=>$item) {?>
-                            <?php $infoUser = Users::findOne(['_id'=>new \MongoDB\BSON\ObjectID($k)]);?>
-                            <tr>
-                                <td><?=(!empty($infoUser->username) ? $infoUser->username : $k)?></td>
-                                <td>
-                                    <?=(!empty($infoUser->secondName) ? $infoUser->secondName : ''); ?>
-                                    <?=(!empty($infoUser->firstName) ? $infoUser->firstName : ''); ?>
-                                </td>
-                                <td><?=(!empty($infoUser->email) ? $infoUser->email : '')?></td>
-                                <td><?=(!empty($infoUser->phoneNumber) ? $infoUser->phoneNumber : '')?></td>
-                                <td><?=$item?></td>
-                            </tr>
-                        <?php } ?>
-                    <?php } ?>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-        <script type="text/javascript">
-            $('.tableMaxCheck').dataTable({
-                language: TRANSLATION,
-                lengthMenu: [ 25, 50, 75, 100 ],
-                "order": [[ 4, "desc" ]]
-            });
-            $('#')
-        </script>
+
     </section>
 
 <?php } ?>

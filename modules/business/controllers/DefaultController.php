@@ -235,6 +235,78 @@ class DefaultController extends BaseController
         //--------------------------------B:CHECKS--------------------------------------------------
         if ($block_name =='checks') {
             $view_name ='_checks';
+            $statisticInfo = [
+                'tradeTurnover'=>[]
+            ];
+            //-----------b:transaction +
+            //'forWhat' =>['$in'=>['/Purchase for/','/Closing steps/','/Mentor bonus/','/For stocks/','/Executive bonus/','/Bonus per the achievement/']]
+            $model = (new \yii\mongodb\Query())
+                ->select(['amount','dateCreate', 'forWhat', 'idTo'])
+                ->from('transactions')
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'idTo' => [
+                        '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                    ],
+                    'type'=>1,
+                    'forWhat'=>['$regex'=>'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement']
+
+                ])
+                ->all();
+            if(!empty($model)) {
+                foreach ($model as $item) {
+                    // собираем информацию для формирования максимального чека
+                    if(empty($statisticInfo['tradeTurnover']['forUser'][(string)$item['idTo']])){
+                        $statisticInfo['tradeTurnover']['forUser'][(string)$item['idTo']] = 0;
+                    }
+                    $statisticInfo['tradeTurnover']['forUser'][(string)$item['idTo']] += $item['amount'];
+                }
+            }
+            //-----------e:transaction +
+
+            //-----------b:transaction (-)
+            // отмены транзакций
+            $model = (new \yii\mongodb\Query())
+                ->select(['amount','dateCreate', 'forWhat', 'idTo','idFrom'])
+                ->from('transactions')
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'idTo' => [
+                        '$ne' => new ObjectID('000000000000000000000001')
+                    ],
+                    'type'=>1,
+                ])
+                ->andWhere([
+                    '$or' =>[
+                        [
+                            'forWhat' => [
+                                '$regex' => 'Cancellation purchase for a partner'
+                            ]
+                        ]
+                    ]
+                ])
+                ->all();
+            if(!empty($model)) {
+                foreach ($model as $item) {
+                    // собираем информацию для формирования максимального чека
+                    if(empty($statisticInfo['tradeTurnover']['forUser'][(string)$item['idFrom']])){
+                        $statisticInfo['tradeTurnover']['forUser'][(string)$item['idFrom']] = 0;
+                    }
+                    $statisticInfo['tradeTurnover']['forUser'][(string)$item['idFrom']] -= $item['amount'];
+                }
+            }
+            if(!empty($statisticInfo['tradeTurnover']['forUser'])){
+                arsort($statisticInfo['tradeTurnover']['forUser']);
+                $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,20);
+
+            }
+            //-----------e:transaction (-)
         }
         if (!Empty($view_name)) {
             $result=['success'=>true,'details_html'=>$this->renderPartial($view_name, [
@@ -829,6 +901,16 @@ class DefaultController extends BaseController
             $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,20);
 
         }
+        //---b:best checks---
+        $statisticInfo['tradeTurnover']['bestChecksUser']=[];
+        foreach ($statisticInfo['tradeTurnover']['forUser'] as $k=>$item) {
+            $infoUser = Users::findOne(['_id'=>new \MongoDB\BSON\ObjectID($k)]);
+            $statisticInfo['tradeTurnover']['bestChecksUser'][] = [
+                'sum'=>$item,
+                'fio'=>(!empty($infoUser->secondName) ? $infoUser->secondName : '').' '.(!empty($infoUser->firstName) ? $infoUser->firstName : '')
+            ];
+        }
+        //---e:best checks---
 
         // выдача комиссионных
         $model = (new \yii\mongodb\Query())
