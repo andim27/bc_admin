@@ -48,6 +48,7 @@ class DefaultController extends BaseController
             '10'    => 'VipCoin',
         ];
         $listProductsType = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','type');
+        $listProductsTitle = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','productName');
         $statisticInfo=[];
 
 
@@ -184,6 +185,52 @@ class DefaultController extends BaseController
         //--------------------------------B:TURNOVER--------------------------------------------------
         if ($block_name =='turnover') {
             $view_name ='_turnover';
+            $statisticInfo = [
+               'tradeTurnover'=>[]
+            ];
+            $model = (new \yii\mongodb\Query())
+                ->select(['dateCreate','price','product','username','project'])
+                ->from('sales')
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'type'=>[
+                        '$ne'=>-1
+                    ],
+                    'productType'=>['$nin'=>[0,4]],
+                    'product'=>['$ne'=>'0'],
+                    'username' =>[
+                        '$ne'=>'main'
+                    ]
+                ])
+                ->all();
+            if(!empty($model)) {
+                foreach ($model as $item) {
+                    try {
+                        // собираем информацию по товарам для товарооборота
+                        if (empty($statisticInfo['tradeTurnover']['listProduct'][$item['product']])) {
+                            $statisticInfo['tradeTurnover']['listProduct'][$item['product']] = [
+                                'title' => $listProductsTitle[$item['product']],
+                                'price' => 0,
+                                'count' => 0,
+                                'amount'=> 0
+                            ];
+                        }
+                    } catch (\Exception $e) { //---ERROR in $listProductsTitle
+                        $statisticInfo['tradeTurnover']['listProduct'][$item['product']] = [
+                            'title' => '??',
+                            'price' => 0,
+                            'count' => 0,
+                            'amount'=> 0
+                        ];
+                    }
+                    $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['price'] = $item['price'];
+                    $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['count']++;
+                    $statisticInfo['tradeTurnover']['listProduct'][$item['product']]['amount'] += $item['price'];
+                }
+            }
         }
         //--------------------------------B:CHECKS--------------------------------------------------
         if ($block_name =='checks') {
@@ -1029,7 +1076,25 @@ class DefaultController extends BaseController
 //        print_r($statisticInfo);
 //        echo "</xmp>";
 //        die();
-
+        //--b:salesTurnover
+        $statisticInfo['salesTurnover'] = (new \yii\mongodb\Query())
+            ->select(['dateCreate','price'])
+            ->from('sales')
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'type'=>[
+                    '$ne'=>-1
+                ],
+                'product'=>['$ne'=>'0'],
+                'username' =>[
+                    '$ne'=>'main'
+                ]
+            ])
+            ->sum('price');
+        //--e:salesTurnover
         return $statisticInfo;
     }
 

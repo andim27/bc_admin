@@ -408,7 +408,7 @@ HTML;
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?='123456789';//number_format(round($statisticInfo['onPersonalAccounts']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesTurnover']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock">Товарооборот</small>
                 </a>
             </div>
@@ -435,44 +435,7 @@ HTML;
         </div>
     </section>
     <section id="block-place-turnover" class="panel panel-default" style="display:none">
-        <section class="panel panel-default">
-            <header class="panel-heading font-bold">
-                Список товаров с товарооборотом по каждому товару
-            </header>
-            <div class="table-responsive panel-body">
-                <table class="table table-translations table-striped datagrid m-b-sm tableTradeTurnover">
-                    <thead>
-                    <tr>
-                        <th>код товара</th>
-                        <th><?=THelper::t('name_product')?></th>
-                        <th><?=THelper::t('Price')?></th>
-                        <th><?=THelper::t('sold_PCs')?></th>
-                        <th><?=THelper::t('turnover')?></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php if(!empty($statisticInfo['tradeTurnover']['listProduct'])){?>
-                        <?php foreach ($statisticInfo['tradeTurnover']['listProduct'] as $k=>$item) {?>
-                            <tr>
-                                <td><?=$k;?></td>
-                                <td><?=$item['title'];?></td>
-                                <td><?=$item['price'];?></td>
-                                <td><?=$item['count'];?></td>
-                                <td><?=($item['amount']);?></td>
-                            </tr>
-                        <?php } ?>
-                    <?php } ?>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-        <script type="text/javascript">
-            $('.tableTradeTurnover').dataTable({
-                language: TRANSLATION,
-                lengthMenu: [ 25, 50, 75, 100 ],
-                "order": [[ 4, "desc" ]]
-            });
-        </script>
+
         <section class="panel panel-default">
             <header class="panel-heading font-bold">
                 График оборота по заданному критерию
