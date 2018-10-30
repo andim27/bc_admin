@@ -423,9 +423,14 @@ HTML;
                     <small class="text-muted text-uc capsLock">На лицевых счетах на  текущий момент</small>
                 </a>
             </div>
-            <div class="col-sm-5 col-md-5 padder-v b-r b-light">
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">&nbsp;</span>
                 <a class="clear" href="#"></a>
+            </div>
+            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
+                <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('turnover-graph')">
+                    <span class="glyphicon glyphicon-stats"></span>График
+                </a>
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
                 <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('turnover')">
@@ -434,67 +439,11 @@ HTML;
             </div>
         </div>
     </section>
+    <section id="block-place-turnover-graph" class="panel panel-default" style="display:none">
+    </section>
     <section id="block-place-turnover" class="panel panel-default" style="display:none">
 
-        <section class="panel panel-default">
-            <header class="panel-heading font-bold">
-                График оборота по заданному критерию
-            </header>
-            <div class="panel-body">
-                <div id="flot-profit" class="height250"></div>
-            </div>
-        </section>
-        <script type="text/javascript">
-            var arrayProfit = <?=json_encode(array_values($statisticInfo['generalReceiptMoneyMonth']))?>;
 
-            $("#flot-profit").length && $.plot($("#flot-profit"), [{
-                    data: arrayProfit
-                }],
-                {
-                    series: {
-                        lines: {
-                            show: true,
-                            lineWidth: 1,
-                            fill: true,
-                            fillColor: {
-                                colors: [{
-                                    opacity: 0.2
-                                }, {
-                                    opacity: 0.1
-                                }]
-                            }
-                        },
-                        points: {
-                            show: true
-                        },
-                        shadowSize: 2
-                    },
-                    grid: {
-                        hoverable: true,
-                        clickable: true,
-                        tickColor: "#f0f0f0",
-                        borderWidth: 0
-                    },
-                    colors: ["#65bc76"],
-                    xaxis: {
-                        ticks:dateLabel
-                    },
-                    yaxis: {
-                        ticks: 10,
-                        tickDecimals: 0
-                    },
-                    tooltip: true,
-                    tooltipOpts: {
-                        content: "%y.4 euro",
-                        defaultTheme: false,
-                        shifts: {
-                            x: 0,
-                            y: 20
-                        }
-                    }
-                }
-            );
-        </script>
         <section class="panel panel-default">
             <header class="panel-heading font-bold">
                 График товарооборотов / выданных комиссионных

@@ -52,8 +52,8 @@ class DefaultController extends BaseController
         $statisticInfo=[];
 
 
-        $statisticInfo['request']['from']=Yii::$app->request->post('d_from');
-        $statisticInfo['request']['to']  =Yii::$app->request->post('d_to');
+        $statisticInfo['request']['from']=$d_from=Yii::$app->request->post('d_from');
+        $statisticInfo['request']['to']  =$d_to=Yii::$app->request->post('d_to');
 
         $infoDateTo = explode("-",$statisticInfo['request']['to']);
         $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
@@ -232,6 +232,57 @@ class DefaultController extends BaseController
                 }
             }
         }
+        //--------------------------------B:TURNOVER GRAPH--------------------------------------------------
+        if ($block_name =='turnover-graph') {
+            $view_name = '_turnover_graph';
+            $statisticInfo = [
+                'generalReceiptMoneyMonth' => [],
+                'dateInterval'=>[]
+            ];
+            $model = (new \yii\mongodb\Query())
+                ->select(['dateCreate', 'price', 'product', 'username', 'project'])
+                ->from('sales')
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'type' => [
+                        '$ne' => -1
+                    ],
+                    'product' => ['$ne' => '0'],
+                    'username' => [
+                        '$ne' => 'main'
+                    ]
+                ])
+                ->all();
+
+            if (!empty($model)) {
+                foreach ($model as $item) {
+                    $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
+
+                    if (empty($statisticInfo['generalReceiptMoneyMonth'][$dateCreate])) {
+                        $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] = 0;
+                    }
+                    $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] += $item['price'];
+                    //$statisticInfo['generalReceiptMoney'] += $item['price'];
+                }
+            }
+            //-------dates----------
+            $i = 0;
+            for ($iDate = $d_from; $iDate <= $d_to; $iDate = date('Y-m', strtotime('+1 month', strtotime($iDate)))) {
+                if (empty($statisticInfo['generalReceiptMoneyMonth'][$iDate])) {
+                    $statisticInfo['generalReceiptMoneyMonth'][$iDate] = [$i, 0];
+                } else {
+                    $statisticInfo['generalReceiptMoneyMonth'][$iDate] = [$i, round($statisticInfo['generalReceiptMoneyMonth'][$iDate])];
+                }
+                $statisticInfo['dateInterval'][] = [$i,$iDate];
+                $i++;
+            }
+            ksort($statisticInfo['generalReceiptMoneyMonth']);
+        }
+        //--------------------------------E:TURNOVER GRAPH--------------------------------------------------
+
         //--------------------------------B:CHECKS--------------------------------------------------
         if ($block_name =='checks') {
             $view_name ='_checks';
