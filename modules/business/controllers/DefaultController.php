@@ -232,6 +232,68 @@ class DefaultController extends BaseController
                 }
             }
         }
+        //--------------------------------B:COMMISSION GRAPH--------------------------------------------------
+        if ($block_name =='commission-graph') {
+            $view_name = '_commission_graph';
+            $statisticInfo = [
+                'generalReceiptMoneyMonth' => [],
+                'feesCommissionMonth' => [],
+                'dateInterval' => []
+            ];
+            $model = (new \yii\mongodb\Query())
+                ->select(['amount', 'dateCreate', 'forWhat', 'idTo'])
+                ->from('transactions')
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'idTo' => [
+                        '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                    ],
+                    'type' => 1,
+                    'forWhat' => [
+                        '$regex' => 'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement|Cancellation purchase for a partner'
+                    ]
+                ])
+                ->all();
+            if (!empty($model)) {
+                foreach ($model as $item) {
+                    $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
+                    if (empty($statisticInfo['generalReceiptMoneyMonth'][$dateCreate])) {
+                        $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] = 0;
+                    }
+                    $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] += $item['amount'];
+
+                    if (empty($statisticInfo['feesCommissionMonth'][$dateCreate])) {
+                        $statisticInfo['feesCommissionMonth'][$dateCreate] = 0;
+                    }
+                    if (preg_match('/Cancellation purchase/',$item['forWhat'] ) ) {
+                        $statisticInfo['feesCommissionMonth'][$dateCreate] -= abs($item['amount']);
+                    } else {
+                        $statisticInfo['feesCommissionMonth'][$dateCreate] += $item['amount'];
+                    }
+
+                    //$statisticInfo['feesCommission'] += $item['amount'];
+                }
+            }
+            $i = 0;
+            for ($iDate = $d_from; $iDate <= $d_to; $iDate = date('Y-m', strtotime('+1 month', strtotime($iDate)))) {
+                if(empty($statisticInfo['generalReceiptMoneyMonth'][$iDate])){
+                    $statisticInfo['generalReceiptMoneyMonth'][$iDate] = [$i,0];
+                }else{
+                    $statisticInfo['generalReceiptMoneyMonth'][$iDate] = [$i,round($statisticInfo['generalReceiptMoneyMonth'][$iDate])];
+                }
+                if(empty($statisticInfo['feesCommissionMonth'][$iDate])){
+                    $statisticInfo['feesCommissionMonth'][$iDate] = [$i,0];
+                }else{
+                    $statisticInfo['feesCommissionMonth'][$iDate] = [$i,round($statisticInfo['feesCommissionMonth'][$iDate])];
+                }
+
+                $statisticInfo['dateInterval'][] = [$i,$iDate];
+                $i++;
+            }
+        }
         //--------------------------------B:TURNOVER GRAPH--------------------------------------------------
         if ($block_name =='turnover-graph') {
             $view_name = '_turnover_graph';

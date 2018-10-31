@@ -42,84 +42,7 @@ HTML;
 
         })
     }
-    function BlockDetails(id_str) {
-        if ($("#"+id_str).css('display') == 'none') {
-            $("#"+id_str).css('display','block');
-        } else {
-            $("#"+id_str).css('display','none');
-        }
-        if (id_str == 'partners') {
-            DrawPartners();
-        }
-        if (id_str == 'checks') {
-            window.scrollBy(0, 200);
-        }
-    }
-    //-------------------------------
-    function DrawPartners() {
-        var labelPaid = "<?= THelper::t('paid') ?>";
-        var labelRegistrations = "<?= THelper::t('registrations') ?>";
 
-        var arrayConnectPartners = <?=json_encode(array_values($statisticInfo['newRegistrationForMonth']))?>;
-
-        var arrayPaidPartners =  <?=json_encode(array_values($statisticInfo['ofThemPaidForMonth']))?>;
-
-        var dateLabel = <?=json_encode($statisticInfo['dateInterval'])?>;
-
-        $.plot($("#flot-connect-partners"), [
-                {
-                    data: arrayPaidPartners,
-                    label: labelPaid
-                },{
-                    data: arrayConnectPartners,
-                    label: labelRegistrations
-                }
-            ],
-            {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 1,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.2
-                            }, {
-                                opacity: 0.1
-                            }]
-                        }
-                    },
-                    points: {
-                        show: true
-                    },
-                    shadowSize: 2
-                },
-                grid: {
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "#f0f0f0",
-                    borderWidth: 0
-                },
-                colors: ["#dddddd","#89cb4e"],
-                xaxis: {
-                    ticks:dateLabel
-                },
-                yaxis: {
-                    ticks: 10,
-                    tickDecimals: 0
-                },
-                tooltip: true,
-                tooltipOpts: {
-                    content: "'%s' - %y.4 чел",
-                    defaultTheme: false,
-                    shifts: {
-                        x: 0,
-                        y: 20
-                    }
-                }
-            }
-        );
-    }
 </script>
     <div class="m-b-md">
         <h3 class="m-b-none"><?= THelper::t('date'); ?></h3>
@@ -303,7 +226,7 @@ HTML;
                     <small class="text-muted text-uc capsLock">Начисленно комиссионных</small>
                 </a>
             </div>
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+            <div class="col-sm-5 col-md-5 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
@@ -313,10 +236,16 @@ HTML;
                     <small class="text-muted text-uc capsLock">Выданно комиссионных</small>
                 </a>
             </div>
+            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
+                <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('commission-graph')">
+                    <span class="glyphicon glyphicon-stats"></span>График
+                </a>
+            </div>
 
         </div>
     </section>
-
+    <section id="block-place-commission-graph" class="panel panel-default" style="display:none">
+    </section>
 
     <!--    <section class="panel panel-default">-->
     <!--        <header class="panel-heading font-bold">-->
@@ -442,74 +371,6 @@ HTML;
     <section id="block-place-turnover-graph" class="panel panel-default" style="display:none">
     </section>
     <section id="block-place-turnover" class="panel panel-default" style="display:none">
-
-
-        <section class="panel panel-default">
-            <header class="panel-heading font-bold">
-                График товарооборотов / выданных комиссионных
-            </header>
-            <div class="panel-body">
-                <div id="flot-trade-turnover" class="height250"></div>
-            </div>
-        </section>
-        <script type="text/javascript">
-            var arrayProfit = <?=json_encode(array_values($statisticInfo['generalReceiptMoneyMonth']))?>;
-
-            var arrayFeesCommission = <?=json_encode(array_values($statisticInfo['feesCommissionMonth']))?>;
-
-            $("#flot-trade-turnover").length && $.plot($("#flot-trade-turnover"), [{
-                    data: arrayProfit,
-                    label: 'Товарооборотов'
-                }, {
-                    data: arrayFeesCommission,
-                    label: 'Начисленных комиссионных'
-                }],
-                {
-                    series: {
-                        lines: {
-                            show: true,
-                            lineWidth: 1,
-                            fill: true,
-                            fillColor: {
-                                colors: [{
-                                    opacity: 0.2
-                                }, {
-                                    opacity: 0.1
-                                }]
-                            }
-                        },
-                        points: {
-                            show: true
-                        },
-                        shadowSize: 2
-                    },
-                    grid: {
-                        hoverable: true,
-                        clickable: true,
-                        tickColor: "#f0f0f0",
-                        borderWidth: 0
-                    },
-                    colors: ["#dddddd","#ff6b3f"],
-                    xaxis: {
-                        ticks:dateLabel
-                    },
-                    yaxis: {
-                        ticks: 10,
-                        tickDecimals: 0
-                    },
-                    tooltip: true,
-                    tooltipOpts: {
-                        content: "%s - %y.4 euro",
-                        defaultTheme: false,
-                        shifts: {
-                            x: 0,
-                            y: 20
-                        }
-                    }
-                }
-            );
-        </script>
-
 
         <section  class="panel panel-default">
             <div class="row m-l-none m-r-none bg-light lter">
