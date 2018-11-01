@@ -122,11 +122,10 @@ deploy_prod:
         - kubectl config use-context default-system
         - cd kube
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml
-        - sed -i "s/__ADMIN-REPLICA__/10/" deployment.yaml
-        - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml cronjob.yaml
+        - sed -i "s/__ADMIN-REPLICA__/3/" deployment.yaml
+        - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - kubectl cluster-info
         - kubectl get deployments -l name=bpt-admin-${CI_ENVIRONMENT_SLUG}
         - kubectl apply -f deployment.yaml
-        - kubectl apply -f cronjob.yaml
         - kubectl apply -f service.yaml || true
