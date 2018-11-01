@@ -136,5 +136,7 @@ clear_cache:
     stage: cache
     environment:
         name: prod
+    only:
+        - master
     script:
         - ./clear-cache.sh
