@@ -148,7 +148,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Общий приход</small>
+                    <small class="text-muted text-uc capsLock">Общий приход:</small>
                 </a>
             </div>
 

@@ -636,7 +636,7 @@ class DefaultController extends BaseController
                 'type'=>[
                     '$ne'=>-1
                 ],
-                'productType'=>['$nin'=>[0,4]],
+                //'productType'=>['$nin'=>[0,4]],
                 'product'=>['$ne'=>'0'],
                 'username' =>[
                     '$ne'=>'main'
@@ -667,17 +667,6 @@ class DefaultController extends BaseController
                     }
 
 
-                    //debag
-//                    if($typeProject[$listProductsType[$item['product']]]=='VipCoin'){
-//                        if(empty($debag['generalReceiptMoney_VipCoin_pack'][$item['product']])){
-//                            $debag['generalReceiptMoney_VipCoin_pack'][$item['product']] = 0;
-//                        }
-//                        $debag['generalReceiptMoney_VipCoin_pack'][$item['product']]++;
-//
-//                        if($item['product'] == '42'){
-//                            $debag['pack_42_date_buy'][] = $item['dateCreate']->toDateTime()->format('Y-m-d H:i:s');
-//                        }
-//                    }
 
                 }
                 try {
@@ -715,29 +704,6 @@ class DefaultController extends BaseController
             }
         }
 
-        //debag
-//        foreach ($arrayQuery['VipCoin'] as $k=>$item){
-//            $info = Transaction::find()
-//                ->select(['amount','dateCreate','idFrom'])
-//                ->where([
-//                    'dateCreate' => [
-//                        '$gte' => new UTCDatetime($queryDateFrom),
-//                        '$lte' => new UTCDateTime($queryDateTo)
-//                    ]
-//                ])
-//                ->andWhere(['IN','forWhat',$item])
-//                ->all();
-//
-//
-//            $debag['create_pin_vipcoin'][] = $item.'-'.count($info);
-//
-//            foreach($info as $itemI){
-//
-//                $infoUser = Users::findOne(['_id'=>$itemI['idFrom']]);
-//
-//                $debag['date_create_pin_vipcoin'][$item][$itemI['dateCreate']->toDateTime()->format('Y-m-d H:i:s')] = $infoUser->username;
-//            }
-//        }
 
 
 
@@ -843,10 +809,7 @@ class DefaultController extends BaseController
                 if(!empty($type->type) && !empty($typeProject[$type->type])){
                     $statisticInfo['receiptMoney_'.$typeProject[$type->type]] += $item;
 
-                    //debag
-//                    if($typeProject[$type->type] == 'VipCoin'){
-//                        $debag['live_money'][] = $k;
-//                    }
+
                 }
             }
         }
@@ -861,12 +824,30 @@ class DefaultController extends BaseController
             $i++;
         }
 
-//
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo "<xmp>";
-//        print_r($debag);
-//        echo "</xmp>";
-//        die();
+        //----b:new calculation---
+        $loanRep=0;
+        $loanRep = (new \yii\mongodb\Query())
+            ->select(['amount'])
+            ->from('loan_repayment')
+            ->where([
+                'date_create' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ]
+            ])
+            ->sum('amount');
+        $statisticInfo['receiptMoney']= $loanRep + (new \yii\mongodb\Query())
+            ->select(['amount'])
+            ->from('orders')
+            ->where([
+                'paymentDate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'paymentStatus' =>'paid'
+            ])
+            ->sum('amount');
+        //----e:new calculation---
 
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['firstPurchase'])
@@ -1266,11 +1247,7 @@ class DefaultController extends BaseController
         ksort($statisticInfo['issuedCommissionMonth']);
         ksort($statisticInfo['feesCommissionMonth']);
 
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo "<xmp>";
-//        print_r($statisticInfo);
-//        echo "</xmp>";
-//        die();
+
         //--b:salesTurnover
         $statisticInfo['salesTurnover'] = (new \yii\mongodb\Query())
             ->select(['dateCreate','price'])
