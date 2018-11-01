@@ -2,10 +2,14 @@
 
 namespace app\modules\business\controllers;
 use app\controllers\BaseController;
+use app\models\PromoRequest;
 use app\models\Promos;
 
 class PromotionController extends BaseController
 {
+    /**
+     * @return string
+     */
     public function actionCurrent()
     {
         return $this->render('current', [
@@ -18,4 +22,15 @@ class PromotionController extends BaseController
             'promos42' => Promos::find()->where(['type' => 'TYPE_DUBAI_010418', 'category' => 4, 'completed' => true])->orderBy(['date' => SORT_DESC])->all(),
         ]);
     }
+
+    /**
+     * @return string
+     */
+    public function actionRequests()
+    {
+        return $this->render('requests', [
+            'requests' => PromoRequest::find()->orderBy(['created_at' => SORT_DESC])->all()
+        ]);
+    }
+
 }

@@ -333,6 +333,12 @@ Class Menu
                         'url' => ['/business/promotion/current'],
                         'action' => 'current',
                     ],
+                    [
+                        'key'   =>  'sidebar_promotion_requests',
+                        'label' => THelper::t('sidebar_promotion_requests'),
+                        'url' => ['/business/promotion/requests'],
+                        'action' => 'requests',
+                    ],
                 ]
             ],
             [
