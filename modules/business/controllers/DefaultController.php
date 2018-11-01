@@ -146,7 +146,7 @@ class DefaultController extends BaseController
                     'type' => [
                         '$ne' => -1
                     ],
-                    'productType' => ['$nin' => [0, 4]],
+                    //'productType' => ['$nin' => [0, 4]],
                     'product' => ['$gt' => 999],
                     'username' => [
                         '$ne' => 'main'
@@ -436,7 +436,7 @@ class DefaultController extends BaseController
 
         $debag = [];
 
-        $listProducts = Products::find()->all();
+        $listProducts = Products::find()->where(['product'=>['$gt'=>999]])->all();
         $listProductsTitle = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','productName');
         $listProductsType = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','type');
 
@@ -725,37 +725,6 @@ class DefaultController extends BaseController
 
 
 
-        //debag
-//        $debag['pinsSum']=0;
-//        $model = Pins::find()->where([
-//            'dateCreate' => [
-//                '$gte' => new UTCDatetime($queryDateFrom),
-//                '$lte' => new UTCDateTime($queryDateTo)
-//            ],
-//            'userId'=>['$ne' =>new ObjectId('573a0d76965dd0fb16f60bfe')],
-//            //'isDelete' => false
-//        ])->all();
-//        if(!empty($model)){
-//            foreach ($model as $item) {
-//                $infoPin = api\Pin::checkPin($item->pin);
-//
-//                if(!empty($infoPin->product) && in_array($infoPin->product,[40,41,42,43])){
-//
-//                    if(empty($debag['pins'][$infoPin->product])){
-//                        $debag['pins'][$infoPin->product] = 0;
-//                    }
-//
-//
-//
-//                    $debag['pins'][$infoPin->product]++;
-//
-//                    $debag['pinsSum']+= $infoPin->price;
-//                }
-//
-//            }
-//        }
-
-
 
         // отмены по pin
         $model = Pins::find()->where([
@@ -800,7 +769,7 @@ class DefaultController extends BaseController
 //            }
 //        }
         
-        // приход живыми деньгами
+        // приход живыми деньгами -отключен
         $infoBuyForMoney = $this->getProductBuyForMoney($statisticInfo['request']['from'].'-01',$statisticInfo['request']['to'].'-'.$countDay);
         if(!empty($infoBuyForMoney)){
             foreach ($infoBuyForMoney as $k=>$item){
@@ -824,7 +793,7 @@ class DefaultController extends BaseController
             $i++;
         }
 
-        //----b:new calculation---
+        //----b:new calculation for income money---
         $loanRep=0;
         $loanRep = (new \yii\mongodb\Query())
             ->select(['amount'])
@@ -884,40 +853,7 @@ class DefaultController extends BaseController
                     '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                 ],
                 'type'=>1,
-            ])
-            ->andWhere([
-                '$or' =>[
-                    [
-                        'forWhat' => [
-                            '$regex' => 'Purchase for'
-                        ]
-                    ],
-                    [
-                        'forWhat' => [
-                            '$regex' => 'Closing steps'
-                        ]
-                    ],
-                    [
-                        'forWhat' => [
-                            '$regex' => 'Mentor bonus'
-                        ]
-                    ],
-                    [
-                        'forWhat' => [
-                            '$regex' => 'For stocks'
-                        ]
-                    ],
-                    [
-                        'forWhat' => [
-                            '$regex' => 'Executive bonus'
-                        ]
-                    ],
-                    [
-                        'forWhat' => [
-                            '$regex' => 'Bonus per the achievement'
-                        ]
-                    ]
-                ]
+                'forWhat'=>['$regex'=>'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement']
             ])
             ->all();
 
