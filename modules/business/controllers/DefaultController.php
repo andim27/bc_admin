@@ -819,7 +819,7 @@ class DefaultController extends BaseController
         //----e:new calculation---
 
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
-            ->select(['firstPurchase'])
+            ->select(['moneys'])
             ->from('users')
             ->where(['username' => ['$ne'=>'main']])
             ->sum('moneys');
