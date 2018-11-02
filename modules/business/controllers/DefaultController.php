@@ -817,12 +817,21 @@ class DefaultController extends BaseController
             ])
             ->sum('amount');
         //----e:new calculation---
+        //--b:calc right sum--
+        $users = api\User::spilover('573b8a83507cba1c091c1b51', 200);//--test user
+        $r_sum=0;
+        foreach ($users as $user) {
+            $r_sum+=$user->moneys;
+        }
+        //--e:calc right sum--
 
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['moneys'])
             ->from('users')
             ->where(['username' => ['$ne'=>'main']])
             ->sum('moneys');
+
+        $statisticInfo['onPersonalAccounts']= abs($statisticInfo['onPersonalAccounts'])-$r_sum;
 
         $statisticInfo['orderedForWithdrawal'] = (new \yii\mongodb\Query())
             ->select(['amount'])
