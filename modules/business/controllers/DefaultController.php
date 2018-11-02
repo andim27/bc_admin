@@ -973,7 +973,7 @@ class DefaultController extends BaseController
 
 
         // infoBonus
-        $listBonus = ['worldBonus','autoBonus','propertyBonus'];
+        $listBonus = ['worldBonus','propertyBonus'];
         foreach ($listBonus as $itemBonus) {
             $statisticInfo['bonus'][$itemBonus] = (new \yii\mongodb\Query())
                 ->select(['statistics.'.$itemBonus])
@@ -985,10 +985,29 @@ class DefaultController extends BaseController
                 ])
                 ->sum('statistics.'.$itemBonus);
         }
-
+        $statisticInfo['bonus']['autoBonus'] = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'forWhat' => [
+                    '$regex' => 'Auto bonus'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>4,
+            ])
+            ->sum('amount');
         $statisticInfo['bonus']['executiveBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
                 'forWhat' => [
                     '$regex' => 'Executive bonus'
                 ],
@@ -1002,6 +1021,10 @@ class DefaultController extends BaseController
         $statisticInfo['bonus']['careerBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
                 'forWhat' => [
                     '$regex' => 'Bonus per the achievement'
                 ],
@@ -1015,6 +1038,10 @@ class DefaultController extends BaseController
         $statisticInfo['bonus']['mentorBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
                 'forWhat' => [
                     '$regex' => 'Mentor bonus'
                 ],
@@ -1029,6 +1056,10 @@ class DefaultController extends BaseController
         $statisticInfo['bonus']['equityBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
                 'forWhat' => [
                     '$regex' => 'For stocks'
                 ],
@@ -1042,6 +1073,10 @@ class DefaultController extends BaseController
         $statisticInfo['bonus']['teamBonus'] = Transaction::find()
             ->select(['amount'])
             ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
                 'forWhat' => [
                     '$regex' => 'Closing steps'
                 ],
@@ -1055,6 +1090,10 @@ class DefaultController extends BaseController
         $connectingBonusAdd = Transaction::find()
             ->select(['amount'])
             ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
                 'forWhat' => [
                     '$regex' => 'Purchase for a partner'
                 ],
@@ -1068,6 +1107,10 @@ class DefaultController extends BaseController
         $connectingBonusCancellation = Transaction::find()
             ->select(['amount'])
             ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
                 'forWhat' => [
                     '$regex' => 'Cancellation purchase for a partner'
                 ],
