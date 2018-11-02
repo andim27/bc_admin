@@ -118,7 +118,7 @@ HTML;
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
                   <a class="btn btn-success " title="График подключения" onclick="getDetailsBlock('partners')">
-                      <span class="glyphicon glyphicon-stats"></span> График
+                      <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
                   </a>
             </div>
 
@@ -238,7 +238,7 @@ HTML;
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
                 <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('commission-graph')">
-                    <span class="glyphicon glyphicon-stats"></span>График
+                    <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
                 </a>
             </div>
 
@@ -247,81 +247,7 @@ HTML;
     <section id="block-place-commission-graph" class="panel panel-default" style="display:none">
     </section>
 
-    <!--    <section class="panel panel-default">-->
-    <!--        <header class="panel-heading font-bold">-->
-    <!--            График остатков на лицевых счетах за заданный период !!!!!!!!!!!!!!!-->
-    <!--        </header>-->
-    <!--        <div class="panel-body">-->
-    <!--            <div id="flot-balances-personal-accounts" class="height250"></div>-->
-    <!--        </div>-->
-    <!--    </section>-->
-    <!--    <script type="text/javascript">-->
-    <!---->
-    <!--        var arrayBalancesPersonalAccounts = [-->
-    <!--            [0, 2.4],-->
-    <!--            [1, 3.4 ],-->
-    <!--            [2, 4.5 ]-->
-    <!---->
-    <!--        ];-->
-    <!--        var arrayOrderedForWithdrawal = [-->
-    <!--            [0, 1.5],-->
-    <!--            [1, 1 ],-->
-    <!--            [2, 2.5 ]-->
-    <!---->
-    <!--        ];-->
-    <!---->
-    <!--        $("#flot-balances-personal-accounts").length && $.plot($("#flot-balances-personal-accounts"), [{-->
-    <!--                data: arrayBalancesPersonalAccounts,-->
-    <!--                label: 'На балансе'-->
-    <!--            }, {-->
-    <!--                data: arrayOrderedForWithdrawal,-->
-    <!--                label: 'Заказано на вывод'-->
-    <!--            }],-->
-    <!--            {-->
-    <!--                series: {-->
-    <!--                    lines: {-->
-    <!--                        show: true,-->
-    <!--                        lineWidth: 1,-->
-    <!--                        fill: true,-->
-    <!--                        fillColor: {-->
-    <!--                            colors: [{-->
-    <!--                                opacity: 0.2-->
-    <!--                            }, {-->
-    <!--                                opacity: 0.1-->
-    <!--                            }]-->
-    <!--                        }-->
-    <!--                    },-->
-    <!--                    points: {-->
-    <!--                        show: true-->
-    <!--                    },-->
-    <!--                    shadowSize: 2-->
-    <!--                },-->
-    <!--                grid: {-->
-    <!--                    hoverable: true,-->
-    <!--                    clickable: true,-->
-    <!--                    tickColor: "#f0f0f0",-->
-    <!--                    borderWidth: 0-->
-    <!--                },-->
-    <!--                colors: ["#dddddd","#ff6b3f"],-->
-    <!--                xaxis: {-->
-    <!--                    ticks:dateLabel-->
-    <!--                },-->
-    <!--                yaxis: {-->
-    <!--                    ticks: 10,-->
-    <!--                    tickDecimals: 0-->
-    <!--                },-->
-    <!--                tooltip: true,-->
-    <!--                tooltipOpts: {-->
-    <!--                    content: "'%s' of %x.1 is %y.4",-->
-    <!--                    defaultTheme: false,-->
-    <!--                    shifts: {-->
-    <!--                        x: 0,-->
-    <!--                        y: 20-->
-    <!--                    }-->
-    <!--                }-->
-    <!--            }-->
-    <!--        );-->
-    <!--    </script>-->
+
     <section>
         <div class="m-b-md">
             <h3 class="m-b-none"><?= THelper::t('goods_turnover'); ?></h3>
@@ -358,12 +284,12 @@ HTML;
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
                 <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('turnover-graph')">
-                    <span class="glyphicon glyphicon-stats"></span>График
+                    <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
                 </a>
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
                 <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('turnover')">
-                    <span class="glyphicon glyphicon-stats"></span>Таблица
+                    <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('table'); ?>
                 </a>
             </div>
         </div>
@@ -588,7 +514,7 @@ HTML;
         </div>
         <div class="col-sm-1 col-md-1 padder-v b-r b-light">
             <a class="btn btn-success " title="Детализиция по проектам" onclick="getDetailsBlock('checks')">
-                <span class="glyphicon glyphicon-stats"></span>Таблица
+                <span class="glyphicon glyphicon-stats"></span><?= THelper::t('table'); ?>
             </a>
         </div>
     </div>
