@@ -9,11 +9,11 @@ use app\components\THelper;
 use app\models\Users;
 ?>
 <div class="row">
-<h3 style="padding-left: 40%">Чеки - детализация</h3>
+<h3 style="padding-left: 40%"> <?= THelper::t('checks_details'); ?></h3>
 </div>
 <section class="panel panel-default">
     <header class="panel-heading font-bold">
-        Таблица максимальных чеков за заданный перод
+        <?= THelper::t('checks_max_table'); ?>
     </header>
     <div class="table-responsive panel-body">
         <table class="table table-translations table-striped datagrid m-b-sm tableMaxCheck">

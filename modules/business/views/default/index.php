@@ -7,14 +7,14 @@ use kartik\widgets\DatePicker;
 use app\models\Users;
 
 $hideStatistic = 0;
-
+$apply=THelper::t('apply');
 $layoutDate = <<< HTML
     <span class="input-group-addon">c</span>
     {input1}
     {separator}
     {input2}
     <a class="input-group-addon" href="javascript:$('.formStatistic').submit();">
-        Применить
+        {$apply}
     </a>
 HTML;
 ?>
@@ -91,7 +91,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=$statisticInfo['newRegistration'];?></strong></span>
-                    <small class="text-muted text-uc capsLock">Новых партнеров за период</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('new_partners_for_period'); ?></small>
                 </a>
             </div>
 
@@ -102,7 +102,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=$statisticInfo['ofThemPaid'];?></strong></span>
-                    <small class="text-muted text-uc capsLock">Из низ оплаченных</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('which_paid'); ?></small>
                 </a>
             </div>
 
@@ -113,7 +113,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=$statisticInfo['removeUsers']?></strong></span>
-                    <small class="text-muted text-uc capsLock">Исключенно</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('main_partners_excluded'); ?></small>
                 </a>
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
@@ -127,7 +127,7 @@ HTML;
 
     <section id="block-place-partners" class="panel panel-default" style="display:none">
         <header class="panel-heading font-bold">
-            График подключения партнеров по заданному времени / из них проплаченных
+            <?= THelper::t('partners_graph_by_time'); ?>
         </header>
         <div class="panel-body">
             <div id="flot-connect-partners" class="height250"></div>
@@ -148,7 +148,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Общий приход:</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('general_arrival'); ?>:</small>
                 </a>
             </div>
 
@@ -159,7 +159,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход деньгами</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('money_income'); ?></small>
                 </a>
             </div>
             <!--  --------  b:Перенос --------->
@@ -170,7 +170,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Пополненно</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?></small>
                 </a>
             </div>
             <!--  -------   e:Перенос  -------->
@@ -181,12 +181,12 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher']-$statisticInfo['cancellationVoucher']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Приход ваучерами</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('vaucher_income'); ?></small>
                 </a>
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
                 <a class="btn btn-success " title="Детализиция по проектам" onclick="getDetailsBlock('projects')">
-                    <span class="glyphicon glyphicon-stats"></span> Проекты
+                    <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('projects'); ?>
                 </a>
             </div>
         </div>
@@ -212,7 +212,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['orderedForWithdrawal']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Заказано на вывод</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('ordered_for_withdrawal'); ?></small>
                 </a>
             </div>
 
@@ -223,7 +223,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['feesCommission']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Начисленно комиссионных</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('accrued_commissions'); ?></small>
                 </a>
             </div>
             <div class="col-sm-5 col-md-5 padder-v b-r b-light">
@@ -233,7 +233,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['issuedCommission']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Выданно комиссионных</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('issued_commissions'); ?></small>
                 </a>
             </div>
             <div class="col-sm-1 col-md-1 padder-v b-r b-light">
@@ -264,7 +264,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesTurnover']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">Товарооборот</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('goods_turnover'); ?></small>
                 </a>
             </div>
 
@@ -275,7 +275,7 @@ HTML;
                 </span>
                 <a class="clear" href="#">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['onPersonalAccounts']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock">На лицевых счетах на  текущий момент</small>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('on_personal_accounts'); ?></small>
                 </a>
             </div>
             <div class="col-sm-4 col-md-4 padder-v b-r b-light">

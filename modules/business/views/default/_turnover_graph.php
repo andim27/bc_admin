@@ -10,7 +10,7 @@ use app\components\THelper;
 
 <section class="panel panel-default">
     <header class="panel-heading font-bold">
-        График оборота по месяцам
+        <?= THelper::t('turnover_schedule'); ?>
     </header>
     <div class="panel-body">
         <div id="flot-profit" class="height250"></div>

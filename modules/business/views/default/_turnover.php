@@ -7,16 +7,16 @@
  */
 use app\components\THelper;
 ?>
-<h3 style="margin-left: 40%">Товарооборот - детализация</h3>
+<h3 style="margin-left: 40%"><?= THelper::t('turnover_details'); ?></h3>
 <section class="panel panel-default">
     <header class="panel-heading font-bold">
-        Список товаров с товарооборотом по каждому товару
+        <?= THelper::t('turnover_goods_list'); ?>
     </header>
     <div class="table-responsive panel-body">
         <table class="table table-translations table-striped datagrid m-b-sm tableTradeTurnover">
             <thead>
             <tr>
-                <th>код товара</th>
+                <th><?= THelper::t('product_code'); ?></th>
                 <th><?=THelper::t('name_product')?></th>
                 <th><?=THelper::t('Price')?></th>
                 <th><?=THelper::t('sold_PCs')?></th>

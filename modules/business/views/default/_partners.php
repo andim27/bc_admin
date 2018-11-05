@@ -9,7 +9,7 @@ use app\components\THelper;
 ?>
 
 <header class="panel-heading font-bold">
-    График подключения партнеров по заданному времени / из них проплаченных
+    <?= THelper::t('main_partners_graph_1'); ?>
 </header>
 <div class="panel-body">
     <div id="flot-connect-partners" class="height250"></div>

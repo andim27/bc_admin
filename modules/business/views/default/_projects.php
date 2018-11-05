@@ -5,9 +5,10 @@
  * Date: 26.10.18
  * Time: 15:38
  */
+use app\components\THelper;
 ?>
 <div class="row">
-    <h3 style="padding-left: 50%">Projects</h3>
+    <h3 style="padding-left: 50%"><?= THelper::t('projects'); ?></h3>
 </div>
 
 <!-- приход по проекту Wellness -->
@@ -20,7 +21,7 @@
                     </span>
             <a class="clear" href="#">
                 <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_Wellness']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock">Общий приход по проекту <strong>Wellness</strong></small>
+                <small class="text-muted text-uc capsLock"><?= THelper::t('project_common_income'); ?> <strong>Wellness</strong></small>
             </a>
         </div>
 
@@ -60,7 +61,7 @@
                     </span>
             <a class="clear" href="#">
                 <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_VipVip']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock">Общий приход по проекту <strong>VipVip</strong></small>
+                <small class="text-muted text-uc capsLock"><?= THelper::t('project_common_income'); ?>  <strong>VipVip</strong></small>
             </a>
         </div>
 
@@ -98,7 +99,7 @@
                     </span>
             <a class="clear" href="#">
                 <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_VipCoin']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock">Общий приход по проекту <strong>VipCoin</strong></small>
+                <small class="text-muted text-uc capsLock"><?= THelper::t('project_common_income'); ?>  <strong>VipCoin</strong></small>
             </a>
         </div>
 
@@ -137,7 +138,7 @@
                     </span>
             <a class="clear" href="#">
                 <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_BusinessSupport']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock">Общий приход по проекту <strong>BusinessSupport</strong></small>
+                <small class="text-muted text-uc capsLock"><?= THelper::t('project_common_income'); ?>  <strong>BusinessSupport</strong></small>
             </a>
         </div>
 
@@ -175,7 +176,7 @@
                     </span>
             <a class="clear" href="#">
                 <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney_BalanceTopUp']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock">Общий приход по проекту <strong>BalanceTopUp</strong></small>
+                <small class="text-muted text-uc capsLock"><?= THelper::t('project_common_income'); ?>  <strong>BalanceTopUp</strong></small>
             </a>
         </div>
 
