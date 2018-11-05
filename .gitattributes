@@ -1,2 +1,7 @@
 /config/params.php merge=ours
-/dockerfiles/config/vhost.conf merge=ours
+/dockerfiles/config/vhost.conf merge=ours* text=auto
+*.css linguist-vendored
+*.scss linguist-vendored
+.env merge=ours
+.gitlab-ci.yml merge=ours
+/kube/* merge=ours
