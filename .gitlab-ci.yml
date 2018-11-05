@@ -24,6 +24,7 @@ build_dev:
     - vendor/
   script:    
     - composer install --ignore-platform-reqs
+    - mv ./vendor/bower-asset ./vendor/bower/
     - ./pre-admin.sh
     - docker info
     - cp config/params.dev config/params.php
