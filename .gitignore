@@ -36,3 +36,4 @@ phpunit.phar
 
 config/params.php
 config/web.php
+composer.lock
