@@ -84,7 +84,7 @@ HTML;
     <section class="panel panel-default">
 
         <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-4c6cc1"></i>
                     <i class="fa fa-users fa-stack-1x text-white"></i>
@@ -95,7 +95,7 @@ HTML;
                 </a>
             </div>
 
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-4cc0c1"></i>
                     <i class="fa fa-male fa-stack-1x text-white"></i>
@@ -106,7 +106,7 @@ HTML;
                 </a>
             </div>
 
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-c14cba"></i>
                     <i class="fa fa-sign-out fa-stack-1x text-white"></i>
@@ -116,8 +116,8 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('main_partners_excluded'); ?></small>
                 </a>
             </div>
-            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                  <a class="btn btn-success " title="График подключения" onclick="getDetailsBlock('partners')">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light ">
+                  <a class="btn btn-success center-block" title="График подключения" onclick="getDetailsBlock('partners')">
                       <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
                   </a>
             </div>
@@ -174,7 +174,7 @@ HTML;
                 </a>
             </div>
             <!--  -------   e:Перенос  -------->
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
@@ -184,8 +184,8 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('vaucher_income'); ?></small>
                 </a>
             </div>
-            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                <a class="btn btn-success " title="Детализиция по проектам" onclick="getDetailsBlock('projects')">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <a class="btn btn-success center-block" title="Детализиция по проектам" onclick="getDetailsBlock('projects')">
                     <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('projects'); ?>
                 </a>
             </div>
@@ -226,7 +226,7 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('accrued_commissions'); ?></small>
                 </a>
             </div>
-            <div class="col-sm-5 col-md-5 padder-v b-r b-light">
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
@@ -236,8 +236,8 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('issued_commissions'); ?></small>
                 </a>
             </div>
-            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('commission-graph')">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <a class="btn btn-success center-block" title="Товарооборот- графики" onclick="getDetailsBlock('commission-graph')">
                     <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
                 </a>
             </div>
@@ -278,17 +278,17 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('on_personal_accounts'); ?></small>
                 </a>
             </div>
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">&nbsp;</span>
                 <a class="clear" href="#"></a>
             </div>
-            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('turnover-graph')">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <a class="btn btn-success center-block" title="Товарооборот- графики" onclick="getDetailsBlock('turnover-graph')">
                     <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
                 </a>
             </div>
-            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('turnover')">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <a class="btn btn-success center-block" title="Товарооборот- графики" onclick="getDetailsBlock('turnover')">
                     <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('table'); ?>
                 </a>
             </div>
@@ -298,31 +298,31 @@ HTML;
     </section>
     <section id="block-place-turnover" class="panel panel-default" style="display:none">
 
-        <section  class="panel panel-default">
-            <div class="row m-l-none m-r-none bg-light lter">
-                <div class="col-sm-6 col-md-6 padder-v">
-                    <div class="panel panel-default">
-                        <header class="panel-heading font-bold">
-                            Отношение товарооборота к живым деньгам
-                        </header>
-                        <div class="panel-body">
-                            <div id="flot-pie" class="height400"></div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-6 padder-v">
-                    <div class="panel panel-default">
-                        <header class="panel-heading font-bold">
-                            Отношение товарооборота к комиссионым
-                        </header>
-                        <div class="panel-body">
-                            <div id="flot-pie2" class="height400"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<!--        <section  class="panel panel-default">-->
+<!--            <div class="row m-l-none m-r-none bg-light lter">-->
+<!--                <div class="col-sm-6 col-md-6 padder-v">-->
+<!--                    <div class="panel panel-default">-->
+<!--                        <header class="panel-heading font-bold">-->
+<!--                            Отношение товарооборота к живым деньгам-->
+<!--                        </header>-->
+<!--                        <div class="panel-body">-->
+<!--                            <div id="flot-pie" class="height400"></div>-->
+<!--                        </div>-->
+<!---->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-sm-6 col-md-6 padder-v">-->
+<!--                    <div class="panel panel-default">-->
+<!--                        <header class="panel-heading font-bold">-->
+<!--                            Отношение товарооборота к комиссионым-->
+<!--                        </header>-->
+<!--                        <div class="panel-body">-->
+<!--                            <div id="flot-pie2" class="height400"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </section>-->
         <script type="text/javascript">
 
             var da = [
@@ -394,6 +394,7 @@ HTML;
                 }
             });
         </script>
+
     </section>
     <section>
         <div class="m-b-md">
@@ -502,7 +503,7 @@ HTML;
             </a>
         </div>
         <!-- Максимальный чек - 4 за период -->
-        <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+        <div class="col-sm-2 col-md-2 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-male fa-stack-1x text-white"></i>
@@ -512,8 +513,8 @@ HTML;
                 <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][3]['fio'] ?></small>
             </a>
         </div>
-        <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-            <a class="btn btn-success " title="Детализиция по проектам" onclick="getDetailsBlock('checks')">
+        <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+            <a class="btn btn-success center-block" title="Детализиция по проектам" onclick="getDetailsBlock('checks')">
                 <span class="glyphicon glyphicon-stats"></span><?= THelper::t('table'); ?>
             </a>
         </div>
