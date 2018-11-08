@@ -1572,7 +1572,7 @@ class SaleReportController extends BaseController
                 $report[$representativeId]['goods'][(string)$item->product_id]['price'] += $item->prices_representative[$request['date']]['price'];
                 $report[$representativeId]['goods'][(string)$item->product_id]['count'] += $item->prices_representative[$request['date']]['count'];
 
-                $report[$representativeId]['issued_for_amount'] += round(($item->prices_representative[$request['date']]['price']/$report[$representativeId]['percent']*100),2);
+                @$report[$representativeId]['issued_for_amount'] += round(($item->prices_representative[$request['date']]['price']/$report[$representativeId]['percent']*100),2);
 
             }
 //            else {
