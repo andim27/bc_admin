@@ -853,7 +853,7 @@ class StatusSalesController extends BaseController {
             $dateInterval['from'] =  $request['from'];
         } else {
             $dateInterval['to'] = date("Y-m-d");
-            $dateInterval['from'] = date("Y-01-01");
+            $dateInterval['from'] = date("Y-09-01");
         }
         
         $listAdmin = [];
@@ -867,6 +867,8 @@ class StatusSalesController extends BaseController {
         } else {
             $request['listWarehouse'] = 'all';
         }
+        $p_set_arr = Products::productIDWithSet();
+        $p_not_set_arr = Products::productNOTIDWithSet();
 
         $model = Sales::find()
             ->where([
@@ -875,13 +877,26 @@ class StatusSalesController extends BaseController {
                     '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
                 ]
             ])
-            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->andWhere(['in','product',$p_set_arr])
             ->andWhere([
                 'type' => ['$ne' => -1]
             ])
             ->all();
 
-        $infoGoods = $infoSetGoods = [];
+        $model_rest = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($dateInterval['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere(['in','product',$p_not_set_arr])
+            ->andWhere([
+                'type' => ['$ne' => -1]
+            ])
+            ->all();
+
+        $infoGoods = $infoRestGoods = $infoSetGoods = [];
         if(!empty($model)){
             foreach ($model as $item){
                 // info pack
@@ -926,6 +941,21 @@ class StatusSalesController extends BaseController {
                         }
 
                     }
+                }
+            }
+        }
+        $infoRestGoods = [];
+        if(!empty($model_rest)) {
+            foreach ($model_rest as $item) {
+                if(empty($listAdmin) || $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {
+                    if (empty($infoRestGoods[$item->product]['count'])) {
+                        $infoRestGoods[$item->product]['title'] = $item->productName;
+                        $infoRestGoods[$item->product]['count'] = 0;
+                        $infoRestGoods[$item->product]['amount'] = 0;
+                    }
+                    $infoRestGoods[$item->product]['username'] = $item->username;
+                    $infoRestGoods[$item->product]['count']++;
+                    $infoRestGoods[$item->product]['amount'] += $item->price;
                 }
             }
         }
@@ -1036,6 +1066,7 @@ class StatusSalesController extends BaseController {
             'language' => Yii::$app->language,
             'dateInterval' => $dateInterval,
             'infoGoods' => $infoGoods,
+            'infoRestGoods' => $infoRestGoods,
             'infoSetGoods' => $infoSetGoods,
 
             'request' => $request,

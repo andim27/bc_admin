@@ -14,7 +14,10 @@ $amountPack = [
     'count'     =>  0,
     'amount'    =>  0,
 ];
-
+$amountRestPack = [
+    'count'     =>  0,
+    'amount'    =>  0,
+];
 $layoutDate = <<< HTML
     {input1}
     {separator}
@@ -129,6 +132,9 @@ HTML;
                         <li class="">
                             <a href="#by-goods" class="tab-by-goods" data-toggle="tab"><?= THelper::t('business_product') ?></a>
                         </li>
+                        <li class="">
+                            <a href="#by-rest" class="tab-by-goods" data-toggle="tab"><?= THelper::t('rest') ?></a>
+                        </li>
                     </ul>
                 </header>
                 <div class="panel-body">
@@ -226,6 +232,61 @@ HTML;
                                                 <th></th>
                                                 <th><?=$amountPack['count']?></th>
                                                 <th><?=$amountPack['amount']?></th>
+                                            </tr>
+                                        </tfooter>
+                                    </table>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="tab-pane" id="by-rest">
+                            <section class="panel panel-default">
+                                <div class="table-responsive">
+                                    <table class="table table-translations table-striped datagrid m-b-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                №
+                                            </th>
+                                            <th>
+                                                <?=THelper::t('sale_product_name')?>
+                                            </th>
+                                            <th>
+                                                <?=THelper::t('user_title')?>
+                                            </th>
+                                            <th>
+                                                <?=THelper::t('number_booked')?>
+                                            </th>
+                                            <th>
+                                                <?=THelper::t('amount')?>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php if(!empty($infoRestGoods)) {?>
+                                        <?php foreach($infoRestGoods as $k=>$item) {?>
+                                                <?php
+                                                $amountRestPack['count'] += $item['count'];
+                                                $amountRestPack['amount'] += $item['amount'];
+                                                ?>
+                                        <tr>
+                                            <td><?=$k?></td>
+                                            <td><?=$item['title'] ?? '??'?></td>
+                                            <td><?=$item['username'] ?? '??'?></td>
+                                            <td>
+                                                <?=$item['count']?>
+                                            <td>
+                                                <?=$item['amount']?>
+                                            </td>
+                                            <?php } ?>
+                                            <?php } ?>
+                                        </tbody>
+                                        <tfooter>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th><?=$amountRestPack['count']?></th>
+                                                <th><?=$amountRestPack['amount']?></th>
                                             </tr>
                                         </tfooter>
                                     </table>
