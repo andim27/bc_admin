@@ -120,7 +120,17 @@ HTML;
             <?= Html::a('Export <i class="fa fa-file-text"></i>', 'javascript:void(0);', ['class' => 'btn btn-success exportReport']) ?>
         </div>
     </div>
+    <?php
+        if (!empty($error)) {
+    ?>
+            <div class="row padder">
+                <div class="alert alert-danger center-block">
+                    <p><strong>Error!</strong></p>
+                    <p><?= $error; ?></p>
+                </div>
+            </div>
 
+    <?php } ?>
     <div class="row">
         <div class="col-md-12">
             <section class="panel panel-default">
