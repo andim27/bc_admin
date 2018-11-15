@@ -58,16 +58,19 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <?php foreach ($user as $value) { ?>
+                                            <?php
+                                            if (!empty($user)) {
+                                                foreach ($user as $value) {
+                                            ?>
                                                 <tr>
-                                                    <th width="20%"><?= $value->usernameFrom ?></th>
-                                                    <th width="20%"><?= $value->usernameTo ?></th>
-                                                    <th width="20%"><?= $value->amount ?></th>
-                                                    <th width="20%"><?= $value->saldoFrom ?></th>
-                                                    <th width="20%"><?= $value->forWhat ?></th>
+                                                    <th width="20%"><?= $value->usernameFrom ?? '??'  ?></th>
+                                                    <th width="20%"><?= $value->usernameTo ?? '??' ?></th>
+                                                    <th width="20%"><?= $value->amount ?? '??' ?></th>
+                                                    <th width="20%"><?= $value->saldoFrom ?? '??' ?></th>
+                                                    <th width="20%"><?= $value->forWhat ?? '??' ?></th>
                                                     <th width="20%"><?= !empty($value->dateReduce) ? gmdate('d.m.Y', date('U', strtotime($value->dateReduce))) : '' ?></th>
                                                 </tr>
-                                            <?php } ?>
+                                            <?php }} ?>
                                             </tbody>
                                         </table>
                                     </div>
