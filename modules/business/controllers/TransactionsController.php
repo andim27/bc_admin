@@ -109,6 +109,7 @@ class TransactionsController extends BaseController
                 'confirmed' => SORT_DESC,
                 'dateCreate' => SORT_DESC
             ])
+            ->limit(100)
             ->all();
 
         return $this->render('withdrawal', [
