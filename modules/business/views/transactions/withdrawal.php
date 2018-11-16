@@ -63,8 +63,7 @@
 <script>
     $('.table-translations').dataTable({
         language: TRANSLATION,
-        lengthMenu: [ 25, 50, 75, 100 ],
-        order: [[ 8, "desc" ]]
+        order: [[ 5, 'desc' ], [8, 'desc']]
     });
 </script>
 

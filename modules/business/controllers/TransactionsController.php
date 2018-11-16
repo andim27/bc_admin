@@ -90,7 +90,6 @@ class TransactionsController extends BaseController
         return $this->redirect('/' . Yii::$app->language .'/business/transactions/payment-card');
     }
 
-
     /**
      * get info all withdrawal
      * @return string
@@ -98,18 +97,8 @@ class TransactionsController extends BaseController
     public function actionWithdrawal()
     {
         $model = Transaction::find()
-            ->where([
-                'forWhat' => [
-                    '$regex' => 'Withdrawal',
-                    '$ne' => 'Withdrawal (Rollback)'
-                ],
-                'reduced' => ['$ne' => false],
-            ])
-            ->orderBy([
-                'confirmed' => SORT_DESC,
-                'dateCreate' => SORT_DESC
-            ])
-            ->limit(100)
+            ->where(['forWhat' => 'Withdrawal', 'reduced' => true])
+            ->select(['idFrom', 'amount', 'card', 'dateCreate', 'dateConfirm', 'confirmed', 'adminId'])
             ->all();
 
         return $this->render('withdrawal', [
@@ -117,7 +106,6 @@ class TransactionsController extends BaseController
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
-
     
     public function actionWithdrawalExcel()
     {
