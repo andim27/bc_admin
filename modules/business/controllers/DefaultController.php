@@ -545,6 +545,7 @@ class DefaultController extends BaseController
 
             // общий приход
             'generalReceiptMoney'           => 0,
+            'generalReceiptMoneyDetails'    => [],
             'generalReceiptMoneyMonth'      => [],
             //Приход по программе vipcoin
             'generalReceiptMoney_VipCoin'        => 0,
@@ -609,6 +610,7 @@ class DefaultController extends BaseController
             // выданно коммисионных
             'issuedCommission'                => 0,
             'issuedCommissionMonth'           => [],
+
         ];
 
         $request = Yii::$app->request->post();
@@ -762,7 +764,34 @@ class DefaultController extends BaseController
             }
         }
         unset($model);
-
+        //--b:vipcoin--
+        $sum_vipcoin = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere([
+                'productType' => [
+                    '$in' => [1,9,10]
+                ]
+            ])
+            ->andWhere([
+                'productData.categories' => [
+                    '$elemMatch' => ['$eq'=>'5b4c46469ed4eb002a683891']
+                ]
+            ])
+            ->sum('price');
+        $statisticInfo['generalReceiptMoneyDetails']['all']=$statisticInfo['generalReceiptMoney'];
+        $statisticInfo['generalReceiptMoneyDetails']['vipcoin']=$sum_vipcoin;
+        $statisticInfo['generalReceiptMoney']+=$sum_vipcoin;
+        //--e:vipcoin--
 
         $arrayQuery=[];
         foreach ($listProducts as $listProduct) {
@@ -1322,6 +1351,25 @@ class DefaultController extends BaseController
             ])
             ->sum('price');
         //--e:salesTurnover
+        //--b:p_pack--
+        $p_set_arr     = Products::productIDWithSet();
+
+
+        $statisticInfo['salesTurnoverDetails']['packs']  = Sales::find()
+            ->select(['price'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ]
+            ])
+            ->andWhere(['in','product',$p_set_arr])
+            ->andWhere([
+                'type' => ['$ne' => -1]
+            ])
+            ->sum('price');
+        $statisticInfo['salesTurnoverDetails']['rest']=0;
+        //--e:p_pack--
         return $statisticInfo;
     }
 
