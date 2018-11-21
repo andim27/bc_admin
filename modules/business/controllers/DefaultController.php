@@ -933,15 +933,13 @@ class DefaultController extends BaseController
             ->select(['amount'])
             ->from('transactions')
             ->where([
+                'forWhat' => 'Withdrawal',
+                'reduced' => true,
+                'confirmed' => 0,
                 'dateCreate' => [
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'forWhat'=> [
-                    '$regex' => 'Withdrawal',
-                ],
-                'reduced' => ['$ne'=>false],
-                'confirmed' => 0
             ])
             ->sum('amount');
 
@@ -1052,15 +1050,13 @@ class DefaultController extends BaseController
             ->select(['amount','dateConfirm'])
             ->from('transactions')
             ->where([
+                'forWhat' => 'Withdrawal',
+                'reduced' => true,
+                'confirmed' => 1,
                 'dateConfirm' => [
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
-                ],
-                'forWhat'=> [
-                    '$regex' => 'Withdrawal',
-                ],
-                'reduced' => ['$ne'=>false],
-                'confirmed'=>1
+                ]
             ])
             ->all();
         if(!empty($model)) {
