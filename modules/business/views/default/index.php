@@ -25,6 +25,12 @@ HTML;
 </style>
 
 <script>
+    function moneyAllDetails() {
+        $('#m_all_details').toggle();
+    }
+    function tOverDetails() {
+        $('#t_over_details').toggle();
+    }
     function getDetailsBlock(block_name) {
         if ($("#block-place-"+block_name).css('display') == 'none') {
             $("#block-place-"+block_name).css('display','block');
@@ -146,10 +152,14 @@ HTML;
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
-                <a class="clear" href="#">
+                <a class="clear" href="#" onclick="moneyAllDetails()">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock"><?= THelper::t('general_arrival'); ?>:</small>
                 </a>
+                <table id="m_all_details" style="display: none">
+                    <tr><td  width="25%"><span>General:</span></td><td align="right"><span class="h4 m-t-xs"> <?=number_format(round($statisticInfo['generalReceiptMoneyDetails']['all']), 0, ',', ' ');?> </span></td></tr>
+                    <tr><td  width="25%"><span>VipCoin:</span></td><td align="right"><span class="h4 m-t-xs"><?=number_format(round($statisticInfo['generalReceiptMoneyDetails']['vipcoin']), 0, ',', ' ');?></span></td></tr>
+                </table>
             </div>
 
             <div class="col-sm-3 col-md-3 padder-v b-r b-light">
@@ -262,10 +272,14 @@ HTML;
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesTurnover']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('goods_turnover'); ?></small>
+                <a class="clear" href="#" onclick="tOverDetails();">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesTurnoverDetails']['packs']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('goods_turnover'); ?> (packs)</small>
                 </a>
+                <table id="t_over_details" style="display: none">
+                    <tr><td  width="25%"><span>General:</span></td><td align="right"><span class="h4 m-t-xs"> <?=number_format(round($statisticInfo['salesTurnover']), 0, ',', ' ');?> </span><span>   (<?=@number_format(round(($statisticInfo['salesTurnoverDetails']['packs']*100)/$statisticInfo['salesTurnover']),2, ',', ' ');?>)%</span></td></tr>
+<!--                    <tr><td  width="25%"><span>Rest:</span></td><td align="right"><span class="h4 m-t-xs">--><?//=//number_format(round($statisticInfo['salesTurnoverDetails']['rest']), 0, ',', ' ');?><!--</span></td></tr>-->
+                </table>
             </div>
 
             <div class="col-sm-3 col-md-3 padder-v b-r b-light">
