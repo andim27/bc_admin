@@ -157,8 +157,8 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('general_arrival'); ?>:</small>
                 </a>
                 <table id="m_all_details" style="display: none">
-                    <tr><td  width="25%"><span>General:</span></td><td align="right"><span class="h4 m-t-xs"> <?=number_format(round($statisticInfo['generalReceiptMoneyDetails']['all']), 0, ',', ' ');?> </span></td></tr>
-                    <tr><td  width="25%"><span>VipCoin:</span></td><td align="right"><span class="h4 m-t-xs"><?=number_format(round($statisticInfo['generalReceiptMoneyDetails']['vipcoin']), 0, ',', ' ');?></span></td></tr>
+                    <tr><td  width="25%"><span>General:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['generalReceiptMoneyDetails']['all']) ? (number_format(round($statisticInfo['generalReceiptMoneyDetails']['all']), 0, ',', ' ')) : 0 ?> </span></td></tr>
+                    <tr><td  width="25%"><span>VipCoin:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['generalReceiptMoneyDetails']['vipcoin']) ? (number_format(round($statisticInfo['generalReceiptMoneyDetails']['vipcoin']), 0, ',', ' ')) : 0 ?></span></td></tr>
                 </table>
             </div>
 
