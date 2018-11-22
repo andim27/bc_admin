@@ -465,9 +465,8 @@ class DefaultController extends BaseController
                 ->andWhere([
                     '$or' =>[
                         [
-                            'forWhat' => [
-                                '$regex' => 'Cancellation purchase for a partner'
-                            ]
+                            'forWhat' => 'Cancellation purchase for a partner'
+
                         ]
                     ]
                 ])
@@ -616,9 +615,9 @@ class DefaultController extends BaseController
         $request = Yii::$app->request->post();
         if(empty($request)){
             $statisticInfo['request']['to'] = date("Y-m");
-            $date = strtotime('-3 month', strtotime($statisticInfo['request']['to']));
-            //$statisticInfo['request']['from'] = date('Y-m', $date);//--old definition
-            $statisticInfo['request']['from'] = date('Y-m', strtotime('2018-09'));//--start new accounting firm period
+            $date = strtotime('-1 month', strtotime($statisticInfo['request']['to']));
+            $statisticInfo['request']['from'] = date('Y-m', $date);//--old definition
+            //$statisticInfo['request']['from'] = date('Y-m', strtotime('2018-09'));//--start new accounting firm period
         } else {
             $statisticInfo['request']['from'] = $request['from'];
             $statisticInfo['request']['to'] = $request['to'];
@@ -998,15 +997,16 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1,
             ])
-            ->andWhere([
-                '$or' =>[
-                    [
-                        'forWhat' => [
-                            '$regex' => 'Cancellation purchase for a partner'
-                        ]
-                    ]
-                ]
-            ])
+            //->andWhere(['forWhat' =>'Cancellation purchase for a partner'])
+            ->andWhere(['forWhat' => ['$regex'=>'Cancellation purchase for a partner']])
+//            ->andWhere([
+//                '$or' =>[
+//                    [
+//                        'forWhat' => ['$regex'=>'Cancellation purchase for a partner']
+//
+//                    ]
+//                ]
+//            ])
             ->all();
 
 
@@ -1027,6 +1027,26 @@ class DefaultController extends BaseController
                 $statisticInfo['tradeTurnover']['forUser'][(string)$item['idFrom']] -= $item['amount'];
 
             }
+            //---b:best checks---
+            $statisticInfo['tradeTurnover']['bestChecksUser']=[];
+
+            if(!empty($statisticInfo['tradeTurnover']['forUser'])) {
+                foreach ($statisticInfo['tradeTurnover']['forUser'] as $k => $item) {
+                    $infoUser = Users::findOne(['_id' => new \MongoDB\BSON\ObjectID($k)]);
+                    $statisticInfo['tradeTurnover']['bestChecksUser'][] = [
+                        'sum' => $item,
+                        'fio' => (!empty($infoUser->secondName) ? $infoUser->secondName : '') . ' ' . (!empty($infoUser->firstName) ? $infoUser->firstName : '')
+                    ];
+                }
+            }
+            //---e:best checks---
+        } else {
+            if(empty($statisticInfo['tradeTurnover']['forUser'])) {
+                for ($i = 0; $i <= 3; $i++) {
+                    //$statisticInfo['tradeTurnover']['forUser'][$i]['sum'] = 0;
+                    //$statisticInfo['tradeTurnover']['forUser'][$i]['fio'] = '??';
+                }
+            }
         }
 
         if(!empty($statisticInfo['tradeTurnover']['forUser'])){
@@ -1034,16 +1054,7 @@ class DefaultController extends BaseController
             $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,20);
 
         }
-        //---b:best checks---
-        $statisticInfo['tradeTurnover']['bestChecksUser']=[];
-        foreach ($statisticInfo['tradeTurnover']['forUser'] as $k=>$item) {
-            $infoUser = Users::findOne(['_id'=>new \MongoDB\BSON\ObjectID($k)]);
-            $statisticInfo['tradeTurnover']['bestChecksUser'][] = [
-                'sum'=>$item,
-                'fio'=>(!empty($infoUser->secondName) ? $infoUser->secondName : '').' '.(!empty($infoUser->firstName) ? $infoUser->firstName : '')
-            ];
-        }
-        //---e:best checks---
+
 
         // выдача комиссионных
         $model = (new \yii\mongodb\Query())
