@@ -44,6 +44,8 @@ HTML;
                 $('#block-place-'+block_name).html(data.details_html).show();
             } else {
                 console.log('Error:get block_name  '+block_name);
+                error_html ='<div class="alert alert-danger"><strong>'+data.details_html+'</strong></div>';
+                $('#block-place-'+block_name).html(error_html).show();
             }
 
         })

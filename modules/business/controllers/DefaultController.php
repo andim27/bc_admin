@@ -33,6 +33,7 @@ class DefaultController extends BaseController
 
     public function actionStatDetails() {
         $result=['success'=>false,'details_html'=>''];
+        try {
         $block_name =Yii::$app->request->post('block_name');
         $view_name='';
         $listProducts = Products::find()->where(['product'=>['$gt'=>999]])->all();
@@ -173,7 +174,7 @@ class DefaultController extends BaseController
                     //if (!empty($typeProject[$listProductsType[$item['product']]])) {
                     //--WebWellness--
                     if (preg_match('/WebWellness/',$item['productName'] ) ) {
-                        if (count($item['productData']['categories']) <=1) {//cat len=1
+                        if ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
                             $statisticInfo['receiptMoney_Wellness']+=$item['price'];
                         } else {
                             if (preg_match('/150/',$item['productName'] )){
@@ -204,7 +205,7 @@ class DefaultController extends BaseController
                     }
                     //--VIPVIP-----------------------------------------------------
                     if (preg_match('/VIPVIP/',$item['productName'] ) ) {
-                        if (count($item['productData']['categories']) <=1) {//cat len=1
+                        if  ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
                             $statisticInfo['receiptMoney_VipVip']+=$item['price'];
                         } else {
                             if (preg_match('/100/',$item['productName'] )){
@@ -220,7 +221,7 @@ class DefaultController extends BaseController
                     }
                     //--VIPCOIN-------------------------------------------------------
                     if (preg_match('/VipCoin/',$item['productName'] ) ) {
-                        if (count($item['productData']['categories']) <=1) {//cat len=1
+                        if ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
                             $statisticInfo['receiptMoney_VipCoin']+=$item['price'];
                         } else {
                             if (preg_match('/VIPCOIN (стандарт)/',$item['productName'] )){
@@ -493,6 +494,9 @@ class DefaultController extends BaseController
                 'statisticInfo' => $statisticInfo,
             ])];
 
+        }
+        } catch (\Exception $e) {
+            $result =['success'=>false,'details_html'=>'Error!'.$e->getMessage().' line:'.$e->getLine()];
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return $result;
@@ -1002,7 +1006,8 @@ class DefaultController extends BaseController
             ->andWhere([
                 '$or' =>[
                     [
-                        'forWhat' => ['$regex'=>'Cancellation purchase for a partner']
+                        // 'forWhat' => ['$regex'=>'Cancellation purchase for a partner']
+                        'forWhat' =>'Cancellation purchase for a partner'
 
                     ]
                 ]
@@ -1036,6 +1041,11 @@ class DefaultController extends BaseController
                 }
             }
         }
+        if(!empty($statisticInfo['tradeTurnover']['forUser'])){
+            arsort($statisticInfo['tradeTurnover']['forUser']);
+            $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,20);
+
+        }
         //---b:best checks---
         $statisticInfo['tradeTurnover']['bestChecksUser']=[];
 
@@ -1049,11 +1059,7 @@ class DefaultController extends BaseController
             }
         }
         //---e:best checks---
-        if(!empty($statisticInfo['tradeTurnover']['forUser'])){
-            arsort($statisticInfo['tradeTurnover']['forUser']);
-            $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,20);
 
-        }
 
 
         // выдача комиссионных
@@ -1206,9 +1212,10 @@ class DefaultController extends BaseController
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'forWhat' => [
-                    '$regex' => 'Purchase for a partner'
-                ],
+//                'forWhat' => [
+//                    '$regex' => 'Purchase for a partner'
+//                ],
+                'forWhat' => 'Purchase for a partner',
                 'idTo' => [
                     '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                 ],
@@ -1223,9 +1230,10 @@ class DefaultController extends BaseController
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'forWhat' => [
-                    '$regex' => 'Cancellation purchase for a partner'
-                ],
+//                'forWhat' => [
+//                    '$regex' => 'Cancellation purchase for a partner'
+//                ],
+                'forWhat'=>'Cancellation purchase for a partner',
                 'idTo' => [
                     '$ne' => new ObjectID('000000000000000000000001')
                 ],
@@ -1264,9 +1272,10 @@ class DefaultController extends BaseController
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'forWhat' => [
-                    '$regex' => 'Entering the money'
-                ],
+//                'forWhat' => [
+//                    '$regex' => 'Entering the money'
+//                ],
+                'forWhat' =>'Entering the money',
                 'idTo' => [
                     '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                 ],
@@ -1282,9 +1291,10 @@ class DefaultController extends BaseController
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'forWhat' => [
-                    '$regex' => 'Entering the money \\(Rollback'
-                ],
+//                'forWhat' => [
+//                    '$regex' => 'Entering the money \\(Rollback'
+//                ],
+                'forWhat' =>'Entering the money \\(Rollback',
                 'idTo' => [
                     '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                 ],
