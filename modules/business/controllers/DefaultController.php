@@ -998,15 +998,15 @@ class DefaultController extends BaseController
                 'type'=>1,
             ])
             //->andWhere(['forWhat' =>'Cancellation purchase for a partner'])
-            ->andWhere(['forWhat' => ['$regex'=>'Cancellation purchase for a partner']])
-//            ->andWhere([
-//                '$or' =>[
-//                    [
-//                        'forWhat' => ['$regex'=>'Cancellation purchase for a partner']
-//
-//                    ]
-//                ]
-//            ])
+            //->andWhere(['forWhat' => ['$regex'=>'Cancellation purchase for a partner']])
+            ->andWhere([
+                '$or' =>[
+                    [
+                        'forWhat' => ['$regex'=>'Cancellation purchase for a partner']
+
+                    ]
+                ]
+            ])
             ->all();
 
 
@@ -1027,19 +1027,7 @@ class DefaultController extends BaseController
                 $statisticInfo['tradeTurnover']['forUser'][(string)$item['idFrom']] -= $item['amount'];
 
             }
-            //---b:best checks---
-            $statisticInfo['tradeTurnover']['bestChecksUser']=[];
 
-            if(!empty($statisticInfo['tradeTurnover']['forUser'])) {
-                foreach ($statisticInfo['tradeTurnover']['forUser'] as $k => $item) {
-                    $infoUser = Users::findOne(['_id' => new \MongoDB\BSON\ObjectID($k)]);
-                    $statisticInfo['tradeTurnover']['bestChecksUser'][] = [
-                        'sum' => $item,
-                        'fio' => (!empty($infoUser->secondName) ? $infoUser->secondName : '') . ' ' . (!empty($infoUser->firstName) ? $infoUser->firstName : '')
-                    ];
-                }
-            }
-            //---e:best checks---
         } else {
             if(empty($statisticInfo['tradeTurnover']['forUser'])) {
                 for ($i = 0; $i <= 3; $i++) {
@@ -1048,7 +1036,19 @@ class DefaultController extends BaseController
                 }
             }
         }
+        //---b:best checks---
+        $statisticInfo['tradeTurnover']['bestChecksUser']=[];
 
+        if(!empty($statisticInfo['tradeTurnover']['forUser'])) {
+            foreach ($statisticInfo['tradeTurnover']['forUser'] as $k => $item) {
+                $infoUser = Users::findOne(['_id' => new \MongoDB\BSON\ObjectID($k)]);
+                $statisticInfo['tradeTurnover']['bestChecksUser'][] = [
+                    'sum' => $item,
+                    'fio' => (!empty($infoUser->secondName) ? $infoUser->secondName : '') . ' ' . (!empty($infoUser->firstName) ? $infoUser->firstName : '')
+                ];
+            }
+        }
+        //---e:best checks---
         if(!empty($statisticInfo['tradeTurnover']['forUser'])){
             arsort($statisticInfo['tradeTurnover']['forUser']);
             $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,20);
