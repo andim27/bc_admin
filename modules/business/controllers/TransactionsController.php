@@ -5,11 +5,12 @@ namespace app\modules\business\controllers;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api\transactions\Withdrawal;
+use app\models\api\transactions\WorldBonus;
 use app\models\PaymentCard;
 use app\models\Transaction;
-use app\models\Users;
 use MongoDB\BSON\ObjectID;
 use Yii;
+use yii\web\Response;
 
 /**
  * Class TransactionsController
@@ -51,8 +52,8 @@ class TransactionsController extends BaseController
     }
 
     /**
-     * save info about payment card
      * @return \yii\web\Response
+     * @throws \yii\mongodb\Exception
      */
     public function actionSavePaymentCard()
     {
@@ -241,5 +242,80 @@ class TransactionsController extends BaseController
 
         return $this->redirect('/' . Yii::$app->language .'/business/transactions/withdrawal');
     }
+
+    public function actionWorldBonus()
+    {
+        $nowMonth = intval(gmdate('m'));
+        $nowYear = intval(gmdate('Y'));
+
+        return $this->render('world_bonus', [
+            'month' => $nowMonth,
+            'year'  => $nowYear
+        ]);
+    }
     
+    public function actionGetWorldBonus()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $from = Yii::$app->request->post('from');
+            $to = Yii::$app->request->post('to');
+
+            return $this->renderAjax('_world_bonus_table', [
+                'worldBonuses' => WorldBonus::getByDate($from, $to)
+            ]);
+        }
+    }
+
+    public function actionGetWorldBonusPayInfo()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $date = Yii::$app->request->post('date');
+
+            $amount = Yii::$app->request->post('amount');
+
+            $amount = !is_null($amount) ? intval($amount) : null;
+
+            return $this->renderAjax('_world_bonus_pay_info', [
+                'payInfo' => WorldBonus::getWorldBonusPayInfo($date, $amount),
+                'amount' => $amount
+            ]);
+        }
+    }
+
+    public function actionSetWorldBonus()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $users = Yii::$app->request->post('users');
+            $month = Yii::$app->request->post('month');
+            $year = Yii::$app->request->post('year');
+
+            if (WorldBonus::setWorldBonus($users, $month, $year)) {
+                $result = true;
+            } else {
+                $result = false;
+            }
+
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            return $result;
+        }
+    }
+
+    public function actionCancelCurrentWorldBonus()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $date = Yii::$app->request->post('date');
+
+            if (WorldBonus::cancelCurrentWorldBonus($date)) {
+                $result = true;
+            } else {
+                $result = false;
+            }
+
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            return $result;
+        }
+    }
+
 }
