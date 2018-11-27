@@ -44,6 +44,8 @@ HTML;
                 $('#block-place-'+block_name).html(data.details_html).show();
             } else {
                 console.log('Error:get block_name  '+block_name);
+                error_html ='<div class="alert alert-danger"><strong>'+data.details_html+'</strong></div>';
+                $('#block-place-'+block_name).html(error_html).show();
             }
 
         })
@@ -490,8 +492,8 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][0]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][0]['fio'] ?></small>
+                <span class="h3 block m-t-xs"><strong><?=@number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][0]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=@$statisticInfo['tradeTurnover']['bestChecksUser'][0]['fio'] ?></small>
             </a>
         </div>
         <!-- Максимальный чек - 2 за период -->
@@ -501,8 +503,8 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][1]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][1]['fio'] ?></small>
+                <span class="h3 block m-t-xs"><strong><?=@number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][1]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=@$statisticInfo['tradeTurnover']['bestChecksUser'][1]['fio'] ?></small>
             </a>
         </div>
         <!-- Максимальный чек - 3 за период -->
@@ -512,8 +514,8 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][2]['sum']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][2]['fio'] ?> </small>
+                <span class="h3 block m-t-xs"><strong><?=@number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][2]['sum']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=@$statisticInfo['tradeTurnover']['bestChecksUser'][2]['fio'] ?> </small>
             </a>
         </div>
         <!-- Максимальный чек - 4 за период -->
@@ -523,8 +525,8 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][3]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][3]['fio'] ?></small>
+                <span class="h3 block m-t-xs"><strong><?=@number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][3]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=@$statisticInfo['tradeTurnover']['bestChecksUser'][3]['fio'] ?></small>
             </a>
         </div>
         <div class="col-sm-2 col-md-2 padder-v b-r b-light">
