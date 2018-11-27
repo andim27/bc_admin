@@ -21,4 +21,14 @@ class Order
         return $response == 'OK';
     }
 
+    /**
+     * @return mixed
+     */
+    public static function getAll()
+    {
+        $apiClient = new ApiClient('order/getAll');
+
+        return $apiClient->get();
+    }
+
 }
