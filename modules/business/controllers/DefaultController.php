@@ -173,6 +173,12 @@ class DefaultController extends BaseController
 
                     //if (!empty($typeProject[$listProductsType[$item['product']]])) {
                     //--WebWellness--
+                    if (preg_match('/Фирменная сумка/',$item['productName'] ) ) {
+                        $statisticInfo['receiptMoney_Wellness']+=$item['price'];
+                    }
+                    if (preg_match('/Life balance*Life expert*пополнение баланса на 100/',$item['productName'] ) ) {
+                        $statisticInfo['receiptMoney_Wellness']+=100;
+                    }
                     if (preg_match('/WebWellness/',$item['productName'] ) ) {
                         if ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
                             $statisticInfo['receiptMoney_Wellness']+=$item['price'];
@@ -216,7 +222,12 @@ class DefaultController extends BaseController
                             }
                             if (preg_match('/310/',$item['productName'] )){
                                 $statisticInfo['receiptMoney_VipVip']+=250;
+                            }  else {
+                                if (preg_match('/пополнение баланса/',$item['productName'])) {
+                                    $statisticInfo['receiptMoney_VipVip']+=$item['price'];
+                                }
                             }
+
                         }
                     }
                     //--VIPCOIN-------------------------------------------------------
@@ -226,6 +237,9 @@ class DefaultController extends BaseController
                         } else {
                             if (preg_match('/VIPCOIN (стандарт)/',$item['productName'] )){
                                 $statisticInfo['receiptMoney_VipCoin']+=330;
+                            }
+                            if (preg_match('/VipCoin активность/',$item['productName'])) {
+                                $statisticInfo['receiptMoney_VipCoin']+=$item['price'];
                             }
                         }
                     }
@@ -421,6 +435,7 @@ class DefaultController extends BaseController
             ];
             //-----------b:transaction +
             //'forWhat' =>['$in'=>['/Purchase for/','/Closing steps/','/Mentor bonus/','/For stocks/','/Executive bonus/','/Bonus per the achievement/']]
+            //'forWhat' =>['$in'=>['Purchase for','Closing steps','Mentor bonus','For stocks','Executive bonus','Bonus per the achievement']]
             $model = (new \yii\mongodb\Query())
                 ->select(['amount','dateCreate', 'forWhat', 'idTo'])
                 ->from('transactions')
@@ -433,6 +448,7 @@ class DefaultController extends BaseController
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
                     'type'=>1,
+                    //wrong sum - why??? //'forWhat' =>['$in'=>['Purchase for','Closing steps','Mentor bonus','For stocks','Executive bonus','Bonus per the achievement']]
                     'forWhat'=>['$regex'=>'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement']
 
                 ])
