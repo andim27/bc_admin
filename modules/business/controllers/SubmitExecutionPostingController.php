@@ -312,10 +312,12 @@ class SubmitExecutionPostingController extends BaseController {
         if(!empty($request['partsAccessoriesId'])){
             $model = PartsAccessories::findOne(['_id'=>new ObjectID($request['partsAccessoriesId'])]);
 
+            $p_lang = $request['p_lang'];
             return $this->renderPartial('_kit-execution-posting', [
                 'language'      => Yii::$app->language,
                 'model'         => $model,
                 'performerId'   => (!empty($request['performerId']) ? $request['performerId'] : ''),
+                'p_lang'        => $p_lang
             ]);
         }
 
