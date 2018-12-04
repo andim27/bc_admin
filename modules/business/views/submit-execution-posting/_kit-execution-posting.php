@@ -16,17 +16,44 @@ function pasportLang($name,$p_lang) {
     }
     if ( preg_match('/Паспорт/', $name)  ) {
         if ($p_lang == 'rus') {
-            if (preg_match('/анг/', $name)) {
-                return false;
-            } else {
+            if (preg_match('/рус/', $name)) {
                 return true;
+            }
+            else {
+                return false;
             }
         }
         if ($p_lang == 'eng') {
-            if ( preg_match('/рус/', $name)) {
-                return false;
-            } else {
+            if ( preg_match('/анг/', $name)) {
                 return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if ($p_lang == 'lat') {
+            //echo "<br>----p_lang:$p_lang-------------$name---------------<br>";
+            if ( preg_match('/латв/', $name)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if ($p_lang == 'eng_rus') {
+            if (preg_match('/рус|анг/', $name)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if ($p_lang == 'eng_lat') {
+            if (preg_match('/латв|анг/', $name)) {
+                return true;
+            }
+            else {
+                return false;
             }
         }
     } else {
@@ -75,9 +102,9 @@ function pasportLang($name,$p_lang) {
                                     $temp['partContractor'] += $partContractor;
 
                                 ?>
-
+                        <?php if ((!empty($p_lang)) && pasportLang($itemInterchangeable,$p_lang)) {?>
                                 <div class="form-group row">
-                                    <div class="col-md-7">
+                                    <div class="col-md-7 mmm">
                                         <?=Html::hiddenInput('complectInterchangeable['.(string)$item['_id'].'][]',$kInterchangeable,[]);?>
                                         <?=Html::input('text','',$itemInterchangeable,
                                             [
@@ -121,6 +148,7 @@ function pasportLang($name,$p_lang) {
                                         ]);?>
                                     </div>
                                 </div>
+                        <?php } ?>
                             <?php } ?>
 
 

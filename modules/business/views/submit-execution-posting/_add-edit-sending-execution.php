@@ -106,6 +106,9 @@ if(!empty($model)){
                             <option value="all">Все</option>
                             <option value="rus">Рус</option>
                             <option value="eng">Англ</option>
+                            <option value="lat">Латв</option>
+                            <option value="eng_rus">Англ-Рус</option>
+                            <option value="eng_lat">Англ-Латв</option>
                         </select>
                     </div>
                     <div class="col-md-1">
