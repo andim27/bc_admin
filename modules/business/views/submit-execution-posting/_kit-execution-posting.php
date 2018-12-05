@@ -32,7 +32,6 @@ function pasportLang($name,$p_lang) {
             }
         }
         if ($p_lang == 'lat') {
-            //echo "<br>----p_lang:$p_lang-------------$name---------------<br>";
             if ( preg_match('/латв/', $name)) {
                 return true;
             }
