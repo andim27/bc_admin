@@ -492,8 +492,8 @@ class ReferenceController extends BaseController
             try {
                 $product_lang    =$request->post('product-lang');
                 $product_name    =$request->post('product-name');
-                if ($product_name =='???') {
-                    $mes='Error!Fill product name, please!';
+                if (preg_match('/\?\?\?/',$product_name )) {
+                    $mes='Error! Fill correct product name, please!';
                     $res=['success'=>false,'message'=>$mes];
                     return $res;
                 }
@@ -604,7 +604,11 @@ class ReferenceController extends BaseController
                     $product->productType =(int)$product_type;
                     $product->type        =(int)$product_type; //---delete in future
                     $product->bonusMoney  =(int)$product_bonusStart; //---delete in future
-                    $product->productName =$product_name;
+                    if (in_array($product_lang,['ru','en'])) {
+                        $product->productName = $product_name;
+                    } else {
+                        $product->productName = '???('.$product_lang.') Product:'.$product_name;
+                    }
                     $product->productNatural =(int)$product_natural;
                     $product->product     =(int)$product_id;
                     $product->products     =[];//--depends on productType
