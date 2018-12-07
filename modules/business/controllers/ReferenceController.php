@@ -492,6 +492,11 @@ class ReferenceController extends BaseController
             try {
                 $product_lang    =$request->post('product-lang');
                 $product_name    =$request->post('product-name');
+                if ($product_name =='???') {
+                    $mes='Error!Fill product name, please!';
+                    $res=['success'=>false,'message'=>$mes];
+                    return $res;
+                }
                 $product_natural    =$request->post('product-natural');
                 $product_category   =$request->post('product-category');
                 $product_categories =$request->post('product-categories');
