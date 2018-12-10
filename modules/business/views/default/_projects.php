@@ -8,7 +8,7 @@
 use app\components\THelper;
 ?>
 <div class="row">
-    <h3 style="padding-left: 50%"><?= THelper::t('projects'); ?></h3>
+    <h3 style="padding-left: 40%"><?= THelper::t('projects'); ?>:<strong> <?=number_format(round($statisticInfo['receiptMoney_Projects']),0,',',' ') ?> <i class="fa fa-eur"></i></strong></strong></h3>
 </div>
 
 <!-- приход по проекту Wellness -->

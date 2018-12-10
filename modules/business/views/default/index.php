@@ -28,6 +28,9 @@ HTML;
     function moneyAllDetails() {
         $('#m_all_details').toggle();
     }
+    function moneyIncomeDetails() {
+        $('#m_income_details').toggle();
+    }
     function tOverDetails() {
         $('#t_over_details').toggle();
     }
@@ -169,10 +172,14 @@ HTML;
                     <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
-                <a class="clear" href="#">
+                <a class="clear" href="#" onclick="moneyIncomeDetails()">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock"><?= THelper::t('money_income'); ?></small>
                 </a>
+                <table id="m_income_details" style="display: none">
+                    <tr><td  width="25%"><span>Income:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['receiptMoneyDetails']['income']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['income']), 0, ',', ' ')) : 0 ?> </span></td></tr>
+                    <tr><td  width="25%"><span>Reloan:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['reloan']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['reloan']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                </table>
             </div>
             <!--  --------  b:Перенос --------->
             <div class="col-sm-2 col-md-2 padder-v b-r b-light">

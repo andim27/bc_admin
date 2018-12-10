@@ -139,6 +139,8 @@ class DefaultController extends BaseController
                 //Приход за деньги по программе VipVip
                 'receiptMoney_VipVip'           => 0,
 
+                'receiptMoney_Projects'         => 0,
+
                 'receiptMoney_BalanceTopUp'     => 0,
                 'receiptMoney_BusinessSupport'  => 0,
             ];
@@ -247,6 +249,10 @@ class DefaultController extends BaseController
                     if (preg_match('/активность бизнес|Сопровождение бизнеса/',$item['productName'] ) ) {
                         $statisticInfo['receiptMoney_BusinessSupport']+=$item['price'];
                     }
+                    //--Balance top-up-------------------------------------------------------
+                    if (preg_match('/Balance top-up/',$item['productName'])) {
+                        $statisticInfo['receiptMoney_BalanceTopUp']+=$item['price'];
+                    }
                     //-----from old stat methods---------------------------------------------
                     if (array_key_exists($item['product'], $listProductsType)) {
                         try {
@@ -263,6 +269,7 @@ class DefaultController extends BaseController
                 }//--foreach--
             }//---model--
             //var_dump($statisticInfo);die();
+            $statisticInfo['receiptMoney_Projects'] = $statisticInfo['receiptMoney_Wellness'] + $statisticInfo['receiptMoney_VipVip'] + $statisticInfo['receiptMoney_VipCoin'] + $statisticInfo['receiptMoney_BusinessSupport'] + $statisticInfo['receiptMoney_BalanceTopUp'];
         }
         //--------------------------------B:TURNOVER--------------------------------------------------
         if ($block_name =='turnover') {
@@ -590,6 +597,7 @@ class DefaultController extends BaseController
 
             // приход за деньги
             'receiptMoney'                  => 0,
+            'receiptMoneyDetails'           => [],
             //Приход за деньги по программе vipcoin
             'receiptMoney_VipCoin'          => 0,
             //Приход за деньги по программе Wellness
@@ -909,7 +917,8 @@ class DefaultController extends BaseController
         }
 
         //----b:new calculation for income money---
-        $loanRep=0;
+        $loanRep = 0;
+        $income  = 0;
         $loanRep = (new \yii\mongodb\Query())
             ->select(['amount'])
             ->from('loan_repayment')
@@ -920,7 +929,7 @@ class DefaultController extends BaseController
                 ]
             ])
             ->sum('amount');
-        $statisticInfo['receiptMoney']= $loanRep + (new \yii\mongodb\Query())
+        $income = (new \yii\mongodb\Query())
             ->select(['amount'])
             ->from('orders')
             ->where([
@@ -931,6 +940,20 @@ class DefaultController extends BaseController
                 'paymentStatus' =>'paid'
             ])
             ->sum('amount');
+//        $income = (new \yii\mongodb\Query())
+//            ->select(['amount'])
+//            ->from('transactions')
+//            ->where([
+//                'dateCreate' => [
+//                    '$gte' => new UTCDatetime($queryDateFrom),
+//                    '$lte' => new UTCDateTime($queryDateTo)
+//                ],
+//                'type' =>1
+//            ])
+//            ->sum('amount');
+        $statisticInfo['receiptMoney']= $loanRep + $income;
+        $statisticInfo['receiptMoneyDetails']['income']= $income;
+        $statisticInfo['receiptMoneyDetails']['reloan']= $loanRep;
         //----e:new calculation---
         //--b:calc right sum--
         $users = api\User::spilover('573b8a83507cba1c091c1b51', 200);//--test user
