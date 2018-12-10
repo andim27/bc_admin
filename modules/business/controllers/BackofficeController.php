@@ -534,12 +534,22 @@ class BackofficeController extends BaseController
         if ($request->isPost) {
             $documentForm->load($request->post());
 
-            $result = api\Document::add([
-                'title'  => $documentForm->title,
-                'body'   => $documentForm->body,
-                'author' => $documentForm->author,
-                'lang'   => $documentForm->lang
-            ]);
+            if ($document = api\Document::get($documentForm['lang'])) {
+                $result = api\Document::update([
+                    'id'     => $document->id,
+                    'title'  => $documentForm->title,
+                    'body'   => $documentForm->body,
+                    'author' => $documentForm->author,
+                    'lang'   => $documentForm->lang
+                ]);
+            } else {
+                $result = api\Document::add([
+                    'title'  => $documentForm->title,
+                    'body'   => $documentForm->body,
+                    'author' => $documentForm->author,
+                    'lang'   => $documentForm->lang
+                ]);
+            }
 
             if ($result) {
                 Yii::$app->session->setFlash('success', 'backoffice_document_save_success');
