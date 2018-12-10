@@ -2,9 +2,10 @@
 
 namespace app\modules\business\controllers;
 
-use app\components\DateTimeHelper;
+use App\Models\NotificationMailPush;
 use app\modules\business\models\NotificationMailQueueForUsers;
 use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDateTime;
 use Yii;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
@@ -38,7 +39,7 @@ class NotificationController extends BaseController
         $pushes = NotificationMailPushes::find()->all();
         $pushTemplates = NotificationMailTemplates::find()->all();
         $queue = NotificationMailQueue::find()->all();
-        $languages = api\dictionary\Lang::all();
+        $languages = api\dictionary\Lang::supported();
         $deliveryConditions = self::getDeliveryConditions();
         $variables = $this->getVariables();
 
@@ -55,9 +56,8 @@ class NotificationController extends BaseController
         ]);
     }
 
-
     /**
-     * @return string
+     * @return Response
      */
     public function actionPushAdd()
     {
@@ -66,15 +66,17 @@ class NotificationController extends BaseController
         $pushAddForm = new PushAddForm();
 
         if ($pushAddForm->load($request)) {
+            $isTime = (bool)$pushAddForm['isTime'];
+
             $model = new NotificationMailPushes([
                 'language' => $pushAddForm['language'],
                 'phrase' => $pushAddForm['phrase'],
                 'message' => $pushAddForm['message'],
                 'date' => $pushAddForm['date'],
-                'isTime' => $pushAddForm['isTime'],
-                'time' => $request['time'],
-                'action' => $pushAddForm['action'],
-                'isSent' => 0,
+                'isTime' => $isTime,
+                'time' => $isTime ? $request['time'] : '',
+                'action' => intval($pushAddForm['action']),
+                'isSent' => false,
             ]);
 
             if ($model->save()) {
@@ -84,9 +86,8 @@ class NotificationController extends BaseController
             }
         }
 
-        return $this->redirect(self::NOTIFICATION_URL);
+        return $this->redirect('/' . Yii::$app->language . self::NOTIFICATION_URL);
     }
-
 
     /**
      * @param null $id
@@ -99,13 +100,15 @@ class NotificationController extends BaseController
         if ($pushAddForm->load($request = Yii::$app->request->post())) {
             $push = NotificationMailPushes::find()->where(['_id' => $pushAddForm['id']])->one();
 
+            $isTime = (bool)$pushAddForm['isTime'];
+
             $push->language = $pushAddForm['language'];
             $push->phrase = $pushAddForm['phrase'];
             $push->message = $pushAddForm['message'];
             $push->date = $pushAddForm['date'];
-            $push->isTime = $pushAddForm['isTime'];
-            $push->time = $request['time'];
-            $push->action = $pushAddForm['action'];
+            $push->isTime = $isTime;
+            $push->time = $isTime ? $request['time'] : '';
+            $push->action = intval($pushAddForm['action']);
 
             if ($push->save()) {
                 Yii::$app->session->setFlash('success', THelper::t('push_has_been_updated'));
@@ -113,25 +116,24 @@ class NotificationController extends BaseController
                 Yii::$app->session->setFlash('danger', THelper::t('something_is_wrong'));
             }
 
-            return $this->redirect(self::NOTIFICATION_URL);
+            return $this->redirect('/' . Yii::$app->language . self::NOTIFICATION_URL);
         }
 
         $push = NotificationMailPushes::find()->where(['_id' => $id])->one();
 
-        $pushAddForm->id = (string)$push->_id;
+        $pushAddForm->id = strval($push->_id);
         $pushAddForm->language = $push->language;
         $pushAddForm->phrase = $push->phrase;
         $pushAddForm->message = $push->message;
         $pushAddForm->date = $push->date;
-        $pushAddForm->isTime = $push->isTime;
+        $pushAddForm->isTime = (bool)$push->isTime;
         $pushAddForm->time = $push->time;
-        $pushAddForm->action = $push->action;
+        $pushAddForm->action = intval($push->action);
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         return $pushAddForm;
     }
-
 
     /**
      * @param null $id
@@ -146,7 +148,7 @@ class NotificationController extends BaseController
         if ($request->isAjax) {
             return $this->renderAjax('modals/delete', [
                 'id' => $id,
-                'action' => self::NOTIFICATION_URL . '/push-delete',
+                'action' => '/' . Yii::$app->language . self::NOTIFICATION_URL . '/push-delete',
                 'title' => THelper::t('push_delete_title'),
             ]);
         }
@@ -162,7 +164,7 @@ class NotificationController extends BaseController
             Yii::$app->session->setFlash('danger', THelper::t('something_is_wrong'));
         }
 
-        return $this->redirect(self::NOTIFICATION_URL);
+        return $this->redirect('/' . Yii::$app->language . self::NOTIFICATION_URL);
     }
 
     /**
@@ -211,16 +213,20 @@ class NotificationController extends BaseController
      */
     public function actionQueueView($id)
     {
-
         $request = Yii::$app->request;
-        $queue = NotificationMailQueue::find()->where(['_id' => $id])->one();
-        $template = NotificationMailTemplates::find()->where(['_id' => $queue->template_id])->one();
 
         if ($request->isAjax) {
+            if ($queue = NotificationMailQueue::find()->where(['_id' => $id])->one()) {
+                if ($queue->template_id) {
+                    $template = NotificationMailTemplates::find()->where(['_id' => strval($queue->template_id)])->one();
+                } else if ($queue->push_id) {
+                    $push = NotificationMailPushes::find()->where(['_id' => strval($queue->push_id)])->one();
+                }
+            }
             return $this->renderAjax('modals/queue_view', [
                 'id' => $id,
-                'title' => $template->phrase,
-                'text' => $template->message,
+                'title' => isset($template) ? $template->phrase : isset($push) ? $push->phrase : '',
+                'text' => isset($template) ? $template->message : isset($push) ? $push->message : '',
             ]);
         }
 
@@ -471,10 +477,21 @@ class NotificationController extends BaseController
     {
         $push = NotificationMailPushes::find()->where(['_id' => $id])->one();
 
-        $datetime = $push->date;
-
+        if ($push->date) {
+            $dateArray = explode('.', $push->date);
+        }
         if ($push->isTime) {
-            $datetime .= ' ' . $push->time;
+            $timeArray = explode(':', $push->time);
+        }
+
+        $date = gmmktime(isset($timeArray[0]) ? $timeArray[0] : 0, isset($timeArray[1]) ? $timeArray[1] : 0, 0, isset($dateArray[1]) ? $dateArray[1] : null, isset($dateArray[0]) ? $dateArray[0] : null, isset($dateArray[2]) ? $dateArray[2] : null);
+        $nowDate = time();
+
+        if ($date <= $nowDate) {
+            $theTimeIsOver = true;
+            $date = $nowDate + 60;
+        } else {
+            $theTimeIsOver = false;
         }
 
         $queue = NotificationMailQueue::find()->where(['push_id' => new ObjectID($id)])->one();
@@ -485,15 +502,9 @@ class NotificationController extends BaseController
 
         $queue->title = $push->phrase;
         $queue->language = $push->language;
-
-        $queue->datetime = strtotime($datetime);
-
-        if ($theTimeIsOver = DateTimeHelper::isPast($datetime)) {
-            $queue->datetime = time() + 60;
-        }
-
+        $queue->date = new UTCDateTime($date * 1000);
         $queue->event = '';
-        $queue->status = 'not_sent';
+        $queue->status = 0;
         $queue->push_id = $push->_id;
 
         $queue->save();
@@ -513,7 +524,7 @@ class NotificationController extends BaseController
 
         return [
             //'time_left' => DateTimeHelper::dateTimeDiff($time, $format),
-            'date_left' => date('Y/m/d', strtotime($datetime)),
+            'date_left' => gmdate('Y/m/d', $date),
             'date_format' => $format,
             'queue_id' => (string)$queue->_id,
         ];
@@ -541,5 +552,5 @@ class NotificationController extends BaseController
 
         return [];
     }
-}
 
+}
