@@ -430,7 +430,7 @@ GoodsAsset::register($this);
             'product-lang':$('#product-lang').attr('cur-lang'),
             'product-name':$('#product-name').val(),
             'product-natural':$('#product-natural').is(':checked')?1:0,
-            'product-category':$('#product-category').val(),
+            'product-category':$('#product-categories').val()[0],
             'product-categories':$('#product-categories').val(),
             'product-type':$('#product-type').val(),
             'product-id':$('#product-id').val(),

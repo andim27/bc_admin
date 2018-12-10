@@ -132,7 +132,7 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
     
     public static function getListPartsAccessoriesWithComposite()
     {
-        $model = self::find()->all();
+        $model = self::find()->addOrderBy('title')->all();
         $list = [];
         foreach ($model as $item){
             if(!empty($item->composite)){
@@ -147,7 +147,7 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
 
     public static function getListPartsAccessoriesWithoutComposite()
     {
-        $model = self::find()->all();
+        $model = self::find()->addOrderBy('title')->all();
         $list = [];
         foreach ($model as $item){
             if(empty($item->composite)){
