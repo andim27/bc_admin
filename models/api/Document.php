@@ -9,7 +9,6 @@ class Document {
     public $id;
     public $author;
     public $lang;
-    public $v;
     public $isDelete;
     public $dateOfPublication;
     public $dateUpdate;
@@ -29,9 +28,7 @@ class Document {
 
         $response = $apiClient->get();
 
-        $result = self::_getResults($response);
-
-        return $result ? current($result) : false;
+        return $response ? self::_getResults($response) : false;
     }
 
     /**
@@ -50,35 +47,43 @@ class Document {
     }
 
     /**
+     * Update document
+     *
+     * @param $data
+     * @return bool
+     */
+    public static function update($data)
+    {
+        $apiClient = new ApiClient('documents');
+
+        $response = $apiClient->put($data, false);
+
+        return $response == 'OK';
+    }
+
+    /**
      * Convert response from API
      *
      * @param $data
      * @return array
      */
-    private static function _getResults($data)
+    private static function _getResults($object)
     {
-        $result = [];
+        $result = false;
 
-        if ($data) {
-            if (! is_array($data)) {
-                $data = [$data];
-            }
-            foreach ($data as $object) {
-                $promotion = new self;
+        if ($object) {
+            $document = new self;
 
-                $promotion->id         = $object->_id;
-                $promotion->author     = $object->author;
-                $promotion->lang       = $object->lang;
-                $promotion->v          = isset($object->__v)?$object->__v:0;
-                $promotion->isDelete   = $object->isDelete;
-                $promotion->dateOfPublication = isset($object->dateOfPublication)?strtotime($object->dateOfPublication):strtotime($object->dateCreate);
-                $promotion->dateUpdate = strtotime($object->dateUpdate);
-                $promotion->dateCreate = strtotime($object->dateCreate);
-                $promotion->body       = $object->body;
-                $promotion->title      = $object->title;
+            $document->id = $object->_id;
+            $document->author = $object->author;
+            $document->lang = $object->lang;
+            $document->isDelete = $object->isDelete;
+            $document->dateUpdate = strtotime($object->dateUpdate);
+            $document->dateCreate = strtotime($object->dateCreate);
+            $document->body = $object->body;
+            $document->title = $object->title;
 
-                $result[] = $promotion;
-            }
+            $result = $document;
         }
 
         return $result;
