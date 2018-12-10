@@ -19,13 +19,13 @@ use yii\helpers\Html;
             <tbody>
             <?php foreach ($queue as $k => $item) { ?>
                 <tr>
-                    <td><?=$item->title?></td>
-                    <td><?=$item->language?></td>
-                    <td><?=is_numeric($item->datetime) ? date("F j, Y, H:i", $item->datetime) : $item->datetime; ?></td>
-                    <td><?=$item->event?></td>
-                    <td><a href="/business/notification/queue-view?id=<?=$item->_id?>" class="view" data-toggle="ajaxModal">Просмотр</a></td>
+                    <td><?= $item->title ?></td>
+                    <td><?= $item->language ?></td>
+                    <td><?= $item->date->toDateTime()->format('d.m.Y H:i:s'); ?></td>
+                    <td><?= $item->event ?></td>
+                    <td><a href="/<?= Yii::$app->language ?>/business/notification/queue-view?id=<?=$item->_id?>" class="view" data-toggle="ajaxModal">Просмотр</a></td>
                     <td>
-                        <?php if ($item->status === 'not_sent') { ?>
+                        <?php if ($item->status === 0) { ?>
                             Ожидание
                             <br>
                             <a href="/business/notification/queue-delete?id=<?=$item->_id?>&type=current-one" class="delete" data-toggle="ajaxModal">Удалить</a>
@@ -34,7 +34,7 @@ use yii\helpers\Html;
                             <br>
                             <a href="/business/notification/queue-delete?id=<?=$item->_id?>&type=all" class="delete" data-toggle="ajaxModal">Удалить все подобные сообщения с очереди</a> &nbsp;
                         <?php } else { ?>
-                            Отправлено &nbsp;
+                            Отправлено
                         <?php } ?>
                     </td>
                 </tr>

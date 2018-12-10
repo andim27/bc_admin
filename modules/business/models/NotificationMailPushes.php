@@ -2,7 +2,6 @@
 
 namespace app\modules\business\models;
 
-
 use app\components\PushNotification\Interfaces\iPush;
 use yii\mongodb\ActiveRecord;
 
@@ -44,8 +43,8 @@ class NotificationMailPushes extends ActiveRecord implements iPush
      */
     public static function markAsSent($push)
     {
-        $push->isInAQueue = 0;
-        $push->isSent = 1;
+        $push->isInAQueue = false;
+        $push->isSent = true;
 
         $push->save();
     }
@@ -55,8 +54,8 @@ class NotificationMailPushes extends ActiveRecord implements iPush
      */
     public static function markAsStopped($push)
     {
-        $push->isInAQueue = 0;
-        $push->isSent = 0;
+        $push->isInAQueue = false;
+        $push->isSent = false;
 
         $push->save();
     }
@@ -66,8 +65,8 @@ class NotificationMailPushes extends ActiveRecord implements iPush
      */
     public static function markAsInAQueue($push)
     {
-        $push->isInAQueue = 1;
-        $push->isSent = 0;
+        $push->isInAQueue = true;
+        $push->isSent = false;
 
         $push->save();
     }

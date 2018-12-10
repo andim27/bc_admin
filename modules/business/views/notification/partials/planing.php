@@ -96,26 +96,25 @@ use yii\widgets\ActiveForm; ?>
             <tbody>
                 <?php foreach ($pushes as $k => $item) { ?>
                     <tr>
-                       <td><?=$item->phrase?></td>
-                       <td><?=$item->language?></td>
-                       <td><?=$item->date?></td>
+                       <td><?= $item->phrase ?></td>
+                       <td><?= $item->language ?></td>
+                       <td><?= trim($item->date . ' ' . $item->time) ?></td>
                        <td>
                            <?php if (!$item->isSent) { ?>
-
                                <?php if ($item->isInAQueue) { ?>
                                    <div class="countdown hide" data-active="true"></div>
-                                   <a href="#" class="send hide" data-id="<?=$item->_id?>">Отправить</a> &nbsp;
-                                   <a href="#" class="stop" data-id="<?=$item->_id?>">Остановить</a> &nbsp;
+                                   <a href="#" class="send hide" data-id="<?= $item->_id ?>">Отправить</a> &nbsp;
+                                   <a href="#" class="stop" data-id="<?= $item->_id ?>">Остановить</a> &nbsp;
                                <?php } else { ?>
                                    <div class="countdown hide"></div>
-                                   <a href="#" class="send" data-id="<?=$item->_id?>">Отправить</a> &nbsp;
-                                   <a href="#" class="stop hide" data-id="<?=$item->_id?>">Остановить</a> &nbsp;
+                                   <a href="#" class="send" data-id="<?= $item->_id ?>">Отправить</a> &nbsp;
+                                   <a href="#" class="stop hide" data-id="<?= $item->_id ?>">Остановить</a> &nbsp;
                                <?php } ?>
-                               <a href="#" class="push-edit" data-id="<?=$item->_id?>">Редактировать</a> &nbsp;
-                               <a href="/business/notification/push-delete?id=<?=$item->_id?>" class="delete" data-toggle="ajaxModal">Удалить</a> &nbsp;
+                               <a href="#" class="push-edit" data-id="<?= $item->_id ?>">Редактировать</a> &nbsp;
+                               <a href="/business/notification/push-delete?id=<?= $item->_id ?>" class="delete" data-toggle="ajaxModal">Удалить</a> &nbsp;
                            <?php } else { ?>
-                               Разослано &nbsp;
-                               <a href="/business/notification/push-view?id=<?=$item->_id?>" class="view" data-toggle="ajaxModal">Просмотр</a>
+                               Разослано
+                               <a href="/business/notification/push-view?id=<?= $item->_id ?>" class="view" data-toggle="ajaxModal">Просмотр</a>
                            <?php } ?>
                        </td>
                     </tr>
@@ -124,10 +123,8 @@ use yii\widgets\ActiveForm; ?>
         </table>
     </div>
 </section>
-
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
 <?php $this->registerJsFile('/js/countdown/jquery.countdown.min.js'); ?>
-
 <script>
     $(document).ready(function () {
         $('.countdown').each(function (index, elem) {
@@ -149,9 +146,6 @@ use yii\widgets\ActiveForm; ?>
         plugins : 'advlist autolink link image lists charmap print preview fullscreen'
     });
 
-    /**
-     * Edit
-     */
     $(document).on('click', '.push-edit', function (e) {
         e.preventDefault();
 
@@ -185,10 +179,6 @@ use yii\widgets\ActiveForm; ?>
         });
     });
 
-
-    /**
-     * Send
-     */
     $(document).on('click', '.send', function (e) {
         e.preventDefault();
 
@@ -197,9 +187,6 @@ use yii\widgets\ActiveForm; ?>
         sendPush.call($this, $this.data('id'));
     });
 
-    /**
-     * Stop
-     */
     $(document).on('click', '.stop', function (e) {
         e.preventDefault();
 

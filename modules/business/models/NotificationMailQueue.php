@@ -24,12 +24,12 @@ class NotificationMailQueue extends ActiveRecord
      * @param $templateId
      * @param $title
      * @param $language
-     * @param $datetime
+     * @param $date
      * @param $event
      * @param $status
      * @return mixed
      */
-    public static function create($pushId, $templateId, $title, $language, $datetime, $event, $status)
+    public static function create($pushId, $templateId, $title, $language, $date, $event, $status)
     {
         $mailQueue = new self();
 
@@ -37,7 +37,7 @@ class NotificationMailQueue extends ActiveRecord
         $mailQueue->template_id = $templateId;
         $mailQueue->title = $title;
         $mailQueue->language = $language;
-        $mailQueue->datetime = $datetime;
+        $mailQueue->date = $date;
         $mailQueue->event = $event;
         $mailQueue->status = $status;
 
@@ -57,7 +57,7 @@ class NotificationMailQueue extends ActiveRecord
             'template_id',
             'title',
             'language',
-            'datetime',
+            'date',
             'event',
             'status',
         ];

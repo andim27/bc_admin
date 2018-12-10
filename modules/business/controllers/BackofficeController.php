@@ -334,17 +334,29 @@ class BackofficeController extends BaseController
     public function actionCareer()
     {
         $request = Yii::$app->request;
+
         $careerForm = new CareerForm();
 
         if ($request->isPost) {
+
             $careerForm->load($request->post());
 
-            $result = api\Career::add([
-                'title'  => $careerForm->title,
-                'body'   => $careerForm->body,
-                'author' => $careerForm->author,
-                'lang'   => $careerForm->lang
-            ]);
+            if ($careerPlan = api\Career::get($careerForm['lang'])) {
+                $result = api\Career::update([
+                    'id'     => $careerPlan->id,
+                    'title'  => $careerForm->title,
+                    'body'   => $careerForm->body,
+                    'author' => $careerForm->author,
+                    'lang'   => $careerPlan->lang
+                ]);
+            } else {
+                $result = api\Career::add([
+                    'title'  => $careerForm->title,
+                    'body'   => $careerForm->body,
+                    'author' => $careerForm->author,
+                    'lang'   => $careerForm->lang
+                ]);
+            }
 
             if ($result) {
                 Yii::$app->session->setFlash('success', 'backoffice_career_save_success');
@@ -356,7 +368,7 @@ class BackofficeController extends BaseController
         } else {
             $requestLanguage = $request->get('l');
             $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $languages = api\dictionary\Lang::all();
+            $languages = api\dictionary\Lang::supported();
             $career = api\Career::get($language);
 
             $careerForm->author = $this->user->username;

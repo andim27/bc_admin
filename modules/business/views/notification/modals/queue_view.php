@@ -1,5 +1,4 @@
 <?php
-    use yii\widgets\ActiveForm;
     use app\components\THelper;
 ?>
 <div class="modal-dialog">
@@ -10,7 +9,6 @@
         </div>
         <div class="modal-body">
             <?= $text ?>
-
             <a href="javascript:void(0);" class="btn btn-warning" data-dismiss="modal">
                 <?= THelper::t('cancel') ?>
             </a>

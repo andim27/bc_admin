@@ -45,24 +45,24 @@ use kartik\file\FileInput;
                     <input id="product-name" class="form-control" value="<?=htmlspecialchars(empty($product['productNameLangs'][Yii::$app->language])?'???':$product['productNameLangs'][Yii::$app->language]); ?>" size=80 type="text">
                     <div class="input-group-btn">
                        <!-- <button type="button" class="btn btn-default" id="product-name-save" >Save</button>-->
-                        <button type="button" class="btn btn-default" id="product-lang" cur-lang="ru" tabindex="-1"><?=strtoupper(Yii::$app->language); ?></button>
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu pull-right">
-                            <li>
-                                <a href="#" onclick="setProductLang('ru')" >RU</a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="setProductLang('en')">EN</a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="setProductLang('tr')">TR</a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="setProductLang('es')">ES</a>
-                            </li>
-                        </ul>
+                        <button type="button" class="btn btn-default" disabled id="product-lang" cur-lang="<?=(Yii::$app->language); ?>" tabindex="-1"><?=strtoupper(Yii::$app->language); ?></button>
+<!--                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">-->
+<!--                            <span class="caret"></span>-->
+<!--                        </button>-->
+<!--                        <ul class="dropdown-menu pull-right">-->
+<!--                            <li>-->
+<!--                                <a href="#" onclick="setProductLang('ru')" >RU</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href="#" onclick="setProductLang('en')">EN</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href="#" onclick="setProductLang('tr')">TR</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href="#" onclick="setProductLang('es')">ES</a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
                     </div>
                     <!-- /btn-group -->
                 </div>

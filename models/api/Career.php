@@ -10,7 +10,6 @@ class Career
     public $author;
     public $dateOfPublication;
     public $lang;
-    public $v;
     public $isDelete;
     public $dateUpdate;
     public $dateCreate;
@@ -29,9 +28,7 @@ class Career
 
         $response = $apiClient->get();
 
-        $result = self::_getResults($response);
-
-        return $result ? current($result) : false;
+        return $response ? self::_getResults($response) : false;
     }
 
     /**
@@ -50,35 +47,43 @@ class Career
     }
 
     /**
+     * Update career
+     *
+     * @param $data
+     * @return bool
+     */
+    public static function update($data)
+    {
+        $apiClient = new ApiClient('careerPlan');
+
+        $response = $apiClient->put($data, false);
+
+        return $response == 'OK';
+    }
+
+    /**
      * Convert response from API
      *
      * @param $data
      * @return array
      */
-    private static function _getResults($data)
+    private static function _getResults($object)
     {
-        $result = [];
+        $result = false;
 
-        if ($data) {
-            if (! is_array($data)) {
-                $data = [$data];
-            }
-            foreach ($data as $object) {
-                $promotion = new self;
+        if ($object) {
+            $promotion = new self;
 
-                $promotion->id         = $object->_id;
-                $promotion->author     = $object->author;
-                $promotion->lang       = $object->lang;
-                $promotion->v          = $object->__v;
-                $promotion->isDelete   = $object->isDelete;
-                $promotion->dateOfPublication = strtotime($object->dateOfPublication);
-                $promotion->dateUpdate = strtotime($object->dateUpdate);
-                $promotion->dateCreate = strtotime($object->dateCreate);
-                $promotion->body       = $object->body;
-                $promotion->title      = $object->title;
+            $promotion->id         = $object->_id;
+            $promotion->author     = $object->author;
+            $promotion->lang       = $object->lang;
+            $promotion->isDelete   = $object->isDelete;
+            $promotion->dateUpdate = strtotime($object->dateUpdate);
+            $promotion->dateCreate = strtotime($object->dateCreate);
+            $promotion->body       = $object->body;
+            $promotion->title      = $object->title;
 
-                $result[] = $promotion;
-            }
+            $result = $promotion;
         }
 
         return $result;
