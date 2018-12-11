@@ -195,19 +195,19 @@ class DefaultController extends BaseController
                                 $statisticInfo['receiptMoney_Wellness']+=50;
                             }
                             if (preg_match('/€10/',$item['productName'] )){
-                                $statisticInfo['generalReceiptMoney_Wellness']+=10;
+                                $statisticInfo['receiptMoney_Wellness']+=10;
                             }
                             if (preg_match('/Life Balance" и пополнение баланса на 300/',$item['productName'] )){
-                                $statisticInfo['generalReceiptMoney_Wellness']+=300;
+                                $statisticInfo['receiptMoney_Wellness']+=300;
                             }
                             if (preg_match('/Life Expert Profi" и пополнение баланса WebWellness на 200/',$item['productName'] )){
-                                $statisticInfo['generalReceiptMoney_Wellness']+=200;
+                                $statisticInfo['receiptMoney_Wellness']+=200;
                             }
                             if (preg_match('/активность бизнес-места на 12 месяцев - 150€/',$item['productName'] )){
                                 $statisticInfo['receiptMoney_Wellness']+=120;
                             }
                             if (preg_match('/Life Watch/',$item['productName'] )){
-                                $statisticInfo['generalReceiptMoney_Wellness']+=$item['price'];
+                                $statisticInfo['receiptMoney_Wellness']+=$item['price'];
                             }
                         }
                     }
@@ -929,31 +929,59 @@ class DefaultController extends BaseController
                 ]
             ])
             ->sum('amount');
-        $income = (new \yii\mongodb\Query())
-            ->select(['amount'])
+//        $income = (new \yii\mongodb\Query())
+//            ->select(['amount'])
+//            ->from('orders')
+//            ->where([
+//                'paymentDate' => [
+//                    '$gte' => new UTCDatetime($queryDateFrom),
+//                    '$lte' => new UTCDateTime($queryDateTo)
+//                ],
+//                'paymentStatus' =>'paid',
+//                'status'        =>'confirmed',
+//                'paymentType'   =>['$ne'=>'balance']
+//            ])
+//            ->sum('amount');
+        $income_items = (new \yii\mongodb\Query())
+            ->select(['amount','paymentType'])
             ->from('orders')
             ->where([
                 'paymentDate' => [
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'paymentStatus' =>'paid'
+                'paymentStatus' =>'paid',
+                'status'        =>'confirmed',
+                'paymentType'   =>['$ne'=>'balance']
             ])
-            ->sum('amount');
-//        $income = (new \yii\mongodb\Query())
-//            ->select(['amount'])
-//            ->from('transactions')
-//            ->where([
-//                'dateCreate' => [
-//                    '$gte' => new UTCDatetime($queryDateFrom),
-//                    '$lte' => new UTCDateTime($queryDateTo)
-//                ],
-//                'type' =>1
-//            ])
-//            ->sum('amount');
-        $statisticInfo['receiptMoney']= $loanRep + $income;
-        $statisticInfo['receiptMoneyDetails']['income']= $income;
-        $statisticInfo['receiptMoneyDetails']['reloan']= $loanRep;
+            ->all();
+
+        $statisticInfo['receiptMoneyDetails']['softpay'] = 0;
+        $statisticInfo['receiptMoneyDetails']['paysera'] = 0;
+        $statisticInfo['receiptMoneyDetails']['advcash'] = 0;
+        $statisticInfo['receiptMoneyDetails']['invoice'] = 0;
+        $statisticInfo['receiptMoneyDetails']['pb'] = 0;
+        foreach ($income_items as $m_item) {
+            $income+=$m_item['amount'];
+            if (preg_match('/softpay/',$m_item['paymentType'])) {
+                $statisticInfo['receiptMoneyDetails']['softpay']+=$m_item['amount'];
+            }
+            if (preg_match('/paysera/',$m_item['paymentType'])) {
+                $statisticInfo['receiptMoneyDetails']['paysera']+=$m_item['amount'];
+            }
+            if (preg_match('/advcash/',$m_item['paymentType'])) {
+                $statisticInfo['receiptMoneyDetails']['advcash']+=$m_item['amount'];
+            }
+            if (preg_match('/invoice/',$m_item['paymentType'])) {
+                $statisticInfo['receiptMoneyDetails']['invoice']+=$m_item['amount'];
+            }
+            if (preg_match('/pb/',$m_item['paymentType'])) {
+                $statisticInfo['receiptMoneyDetails']['pb']+=$m_item['amount'];
+            }
+        }
+        $statisticInfo['receiptMoney'] = $loanRep + $income;
+        $statisticInfo['receiptMoneyDetails']['income'] = $income;
+        $statisticInfo['receiptMoneyDetails']['reloan'] = $loanRep;
         //----e:new calculation---
         //--b:calc right sum--
         $users = api\User::spilover('573b8a83507cba1c091c1b51', 200);//--test user

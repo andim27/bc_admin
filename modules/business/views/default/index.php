@@ -169,7 +169,7 @@ HTML;
 
             <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#" onclick="moneyIncomeDetails()">
@@ -177,8 +177,15 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('money_income'); ?></small>
                 </a>
                 <table id="m_income_details" style="display: none">
+                    <tr><td  width="25%"><span>softpay:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['softpay']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['softpay']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>paysera:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['paysera']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['paysera']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>advcash:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['advcash']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['advcash']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>pb:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['pb']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['pb']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>invoice:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['invoice']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['invoice']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr style="border-bottom: dotted"></tr>
                     <tr><td  width="25%"><span>Income:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['receiptMoneyDetails']['income']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['income']), 0, ',', ' ')) : 0 ?> </span></td></tr>
                     <tr><td  width="25%"><span>Reloan:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['reloan']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['reloan']), 0, ',', ' ')) : 0 ?></span></td></tr>
+
                 </table>
             </div>
             <!--  --------  b:Перенос --------->
@@ -210,7 +217,7 @@ HTML;
             </div>
         </div>
     </section>
-    <section id="block-place-projects" class="panel panel-default" style="display:none;margin-bottom: 2px">
+    <section id="block-place-projects" class="panel panel-default" style="display:none;margin-bottom: 2px;margin-left:50%;">
 
     </section>
 
