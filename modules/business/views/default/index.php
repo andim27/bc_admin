@@ -181,7 +181,7 @@ HTML;
                     <tr><td  width="25%"><span>paysera:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['paysera']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['paysera']), 0, ',', ' ')) : 0 ?></span></td></tr>
                     <tr><td  width="25%"><span>advcash:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['advcash']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['advcash']), 0, ',', ' ')) : 0 ?></span></td></tr>
                     <tr><td  width="25%"><span>pb:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['pb']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['pb']), 0, ',', ' ')) : 0 ?></span></td></tr>
-                    <tr><td  width="25%"><span>invoice:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['invoice']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['invoice']), 0, ',', ' ')) : 0 ?></span></td></tr>
+<!--                    <tr><td  width="25%"><span>invoice:</span></td><td align="right"><span class="h4 m-t-xs">--><?//= isset($statisticInfo['receiptMoneyDetails']['invoice']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['invoice']), 0, ',', ' ')) : 0 ?><!--</span></td></tr>-->
                     <tr style="border-bottom: dotted"></tr>
                     <tr><td  width="25%"><span>Income:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['receiptMoneyDetails']['income']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['income']), 0, ',', ' ')) : 0 ?> </span></td></tr>
                     <tr><td  width="25%"><span>Reloan:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['reloan']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['reloan']), 0, ',', ' ')) : 0 ?></span></td></tr>
@@ -328,31 +328,6 @@ HTML;
     </section>
     <section id="block-place-turnover" class="panel panel-default" style="display:none">
 
-<!--        <section  class="panel panel-default">-->
-<!--            <div class="row m-l-none m-r-none bg-light lter">-->
-<!--                <div class="col-sm-6 col-md-6 padder-v">-->
-<!--                    <div class="panel panel-default">-->
-<!--                        <header class="panel-heading font-bold">-->
-<!--                            Отношение товарооборота к живым деньгам-->
-<!--                        </header>-->
-<!--                        <div class="panel-body">-->
-<!--                            <div id="flot-pie" class="height400"></div>-->
-<!--                        </div>-->
-<!---->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="col-sm-6 col-md-6 padder-v">-->
-<!--                    <div class="panel panel-default">-->
-<!--                        <header class="panel-heading font-bold">-->
-<!--                            Отношение товарооборота к комиссионым-->
-<!--                        </header>-->
-<!--                        <div class="panel-body">-->
-<!--                            <div id="flot-pie2" class="height400"></div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </section>-->
         <script type="text/javascript">
 
             var da = [

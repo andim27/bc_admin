@@ -175,7 +175,7 @@ class DefaultController extends BaseController
 
                     //if (!empty($typeProject[$listProductsType[$item['product']]])) {
                     //--WebWellness--
-                    if (preg_match('/Фирменная сумка/',$item['productName'] ) ) {
+                    if (preg_match('/Фирменная сумка|Life Transfer/',$item['productName'] ) ) {
                         $statisticInfo['receiptMoney_Wellness']+=$item['price'];
                     }
                     if (preg_match('/Life balance*Life expert*пополнение баланса на 100/',$item['productName'] ) ) {
@@ -929,19 +929,7 @@ class DefaultController extends BaseController
                 ]
             ])
             ->sum('amount');
-//        $income = (new \yii\mongodb\Query())
-//            ->select(['amount'])
-//            ->from('orders')
-//            ->where([
-//                'paymentDate' => [
-//                    '$gte' => new UTCDatetime($queryDateFrom),
-//                    '$lte' => new UTCDateTime($queryDateTo)
-//                ],
-//                'paymentStatus' =>'paid',
-//                'status'        =>'confirmed',
-//                'paymentType'   =>['$ne'=>'balance']
-//            ])
-//            ->sum('amount');
+
         $income_items = (new \yii\mongodb\Query())
             ->select(['amount','paymentType'])
             ->from('orders')
@@ -972,9 +960,9 @@ class DefaultController extends BaseController
             if (preg_match('/advcash/',$m_item['paymentType'])) {
                 $statisticInfo['receiptMoneyDetails']['advcash']+=$m_item['amount'];
             }
-            if (preg_match('/invoice/',$m_item['paymentType'])) {
-                $statisticInfo['receiptMoneyDetails']['invoice']+=$m_item['amount'];
-            }
+//            if (preg_match('/invoice/',$m_item['paymentType'])) {
+//                $statisticInfo['receiptMoneyDetails']['invoice']+=$m_item['amount'];
+//            }
             if (preg_match('/pb/',$m_item['paymentType'])) {
                 $statisticInfo['receiptMoneyDetails']['pb']+=$m_item['amount'];
             }
