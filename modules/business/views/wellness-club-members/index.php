@@ -21,7 +21,7 @@
     <div class="col-md-12">
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane <?= $currentTab == 'members' ? 'active' : '' ?>" id="members">
-                <?= $this->render('_tab_members'); ?>
+                <?= $this->render('_tab_members',['ch'=>$ch]); ?>
             </div>
             <div role="tabpanel" class="tab-pane <?= $currentTab == 'info' ? 'active' : '' ?>" id="info">
                 <?= $this->render('_tab_info', [
