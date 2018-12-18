@@ -4,7 +4,6 @@ namespace app\modules\business\controllers;
 
 use app\modules\business\models\NotificationMailQueueForUsers;
 use MongoDB\BSON\ObjectID;
-use MongoDB\BSON\UTCDateTime;
 use Yii;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
@@ -13,40 +12,34 @@ use app\components\THelper;
 use app\controllers\BaseController;
 use app\modules\business\models\NotificationMailPushes;
 use app\modules\business\models\NotificationMailTemplates;
-use app\modules\business\models\NotificationMailQueue;
 use app\modules\business\models\PushAddForm;
 use app\modules\business\models\PushTemplateAddForm;
-use app\modules\business\controllers\traits\NotificationTrait;
 
 class NotificationController extends BaseController
 {
-    use NotificationTrait;
-
     const NOTIFICATION_URL = '/business/notification';
 
     /**
-     * Entry point
+     * @return string
      */
     public function actionIndex()
     {
         $pushAddForm = new PushAddForm();
         $pushTemplateAddForm = new PushTemplateAddForm();
 
-        $pushes = NotificationMailPushes::find()->all();
-        $queue = NotificationMailQueue::find()->all();
+        $pushes = api\Notification::getPushes();
         $queueForUsers = NotificationMailQueueForUsers::find()->all();
         $pushTemplates = NotificationMailTemplates::find()->all();
 
         $languages = api\dictionary\Lang::supported();
 
         return $this->render('index', [
-            'notificationUrl' => self::NOTIFICATION_URL,
+            'notificationUrl' => '/' . Yii::$app->language . self::NOTIFICATION_URL,
             'pushAddForm' => $pushAddForm,
             'pushTemplateAddForm' => $pushTemplateAddForm,
             'languages' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : [],
             'pushes' => $pushes,
             'pushTemplates' => $pushTemplates,
-            'queue' => $queue,
             'queueForUsers' => $queueForUsers,
             'deliveryConditions' => NotificationMailTemplates::getDeliveryConditions()
         ]);
@@ -73,6 +66,7 @@ class NotificationController extends BaseController
                 'time' => $isTime ? $request['time'] : '',
                 'action' => intval($pushAddForm['action']),
                 'isSent' => false,
+                'isInAQueue' => false,
             ]);
 
             if ($model->save()) {
@@ -149,12 +143,9 @@ class NotificationController extends BaseController
             ]);
         }
 
-        $id = $request->post('id');
+        $pushId = $request->post('id');
 
-        $push = NotificationMailPushes::find()->where(['_id' => $id])->one();
-
-        if ($push) {
-            $push->delete();
+        if (api\Notification::deletePush($pushId)) {
             Yii::$app->session->setFlash('success', THelper::t('push_has_been_deleted'));
         } else {
             Yii::$app->session->setFlash('danger', THelper::t('something_is_wrong'));
@@ -255,7 +246,7 @@ class NotificationController extends BaseController
                 break;
             case 'current-all':
                 if ($queueForUser = NotificationMailQueueForUsers::find()->where(['_id' => new ObjectID($id)])->one()) {
-                    $result = NotificationMailQueueForUsers::deleteAll(['userId' => new ObjectID($queueForUser->userId)]);
+                    $result = NotificationMailQueueForUsers::deleteAll(['userId' => new ObjectID($queueForUser->userId), 'status' => 0]);
                 } else {
                     $result = false;
                 }
@@ -319,7 +310,7 @@ class NotificationController extends BaseController
             }
         }
 
-        return $this->redirect(self::NOTIFICATION_URL);
+        return $this->redirect('/' . Yii::$app->language . self::NOTIFICATION_URL);
     }
 
     /**
@@ -353,7 +344,7 @@ class NotificationController extends BaseController
                 Yii::$app->session->setFlash('danger', THelper::t('something_is_wrong'));
             }
 
-            return $this->redirect(self::NOTIFICATION_URL);
+            return $this->redirect('/' . Yii::$app->language . self::NOTIFICATION_URL);
         }
 
         $pushTpl = NotificationMailTemplates::find()->where(['_id' => $id])->one();
@@ -389,7 +380,7 @@ class NotificationController extends BaseController
         if ($request->isAjax) {
             return $this->renderAjax('modals/delete', [
                 'id' => $id,
-                'action' => self::NOTIFICATION_URL . '/push-template-delete',
+                'action' => '/' . Yii::$app->language . '/push-template-delete',
                 'title' => THelper::t('push_template_delete_title'),
             ]);
         }
@@ -405,7 +396,7 @@ class NotificationController extends BaseController
             Yii::$app->session->setFlash('danger', THelper::t('something_is_wrong'));
         }
 
-        return $this->redirect(self::NOTIFICATION_URL);
+        return $this->redirect('/' . Yii::$app->language . self::NOTIFICATION_URL);
     }
 
     /**
@@ -414,65 +405,13 @@ class NotificationController extends BaseController
      */
     public function actionPushSend($id)
     {
-        $push = NotificationMailPushes::find()->where(['_id' => $id])->one();
-
-        if ($push->date) {
-            $dateArray = explode('.', $push->date);
-        }
-        if ($push->isTime) {
-            $timeArray = explode(':', $push->time);
-        }
-
-        $date = gmmktime(isset($timeArray[0]) ? $timeArray[0] : 0, isset($timeArray[1]) ? $timeArray[1] : 0, 0, isset($dateArray[1]) ? $dateArray[1] : null, isset($dateArray[0]) ? $dateArray[0] : null, isset($dateArray[2]) ? $dateArray[2] : null);
-        $nowDate = time();
-
-        if ($date <= $nowDate) {
-            $theTimeIsOver = true;
-            $date = $nowDate + 60;
-        } else {
-            $theTimeIsOver = false;
-        }
-
-        $queue = NotificationMailQueue::find()->where(['push_id' => new ObjectID($id)])->one();
-
-        if (!$queue) {
-            $queue = new NotificationMailQueue();
-        }
-
-        $queue->title = $push->phrase;
-        $queue->language = $push->language;
-        $queue->date = new UTCDateTime($date * 1000);
-        $queue->event = '';
-        $queue->status = 0;
-        $queue->push_id = $push->_id;
-
-        $queue->save();
-
-        NotificationMailPushes::markAsInAQueue($push);
-
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        if ($theTimeIsOver) {
-            return [
-                'date_format' => '%S' . ' ' . THelper::t('sec'),
-                'queue_id' => (string)$queue->_id,
-            ];
-        }
-
-        $format = '%D ' . THelper::t('days') . ' %H:%M:%S';
-
-        return [
-            //'time_left' => DateTimeHelper::dateTimeDiff($time, $format),
-            'date_left' => gmdate('Y/m/d', $date),
-            'date_format' => $format,
-            'queue_id' => (string)$queue->_id,
-        ];
+        return api\Notification::addPushToQueue($id);
     }
 
     /**
-     * @return array
-     * @throws \Exception
-     * @throws \yii\db\StaleObjectException
+     * @return bool
      */
     public function actionPushSendStop()
     {
@@ -480,16 +419,9 @@ class NotificationController extends BaseController
 
         $id = $request->post('id');
 
-        $push = NotificationMailPushes::find()->where(['_id' => $id])->one();
-        $queue = NotificationMailQueue::find()->where(['push_id' => new ObjectID($id)])->one();
-
-        $queue->delete();
-
-        NotificationMailPushes::markAsStopped($push);
-
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        return [];
+        return api\Notification::deletePushFromQueue($id);
     }
 
 }

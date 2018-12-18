@@ -5,8 +5,8 @@ namespace app\modules\business\models;
 use yii\mongodb\ActiveRecord;
 
 /**
- * Class MailPushes
- * @package app\models
+ * Class NotificationMailPushes
+ * @package app\modules\business\models
  */
 class NotificationMailPushes extends ActiveRecord
 {

@@ -4,19 +4,6 @@ use kartik\widgets\DatePicker;
 use kartik\widgets\TimePicker;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm; ?>
-<style>
-    .countdown{
-        border: 1px solid #ddd;
-        float: left;
-        padding: 3px;
-        border-radius: 3px;
-    }
-
-    /* Temporary fix */
-    .datepicker-days{
-        display: block!important;
-    }
-</style>
 <div class="panel panel-default">
     <div class="panel panel-body">
         <?php $form = ActiveForm::begin(
@@ -91,20 +78,18 @@ use yii\widgets\ActiveForm; ?>
                                <td>
                                    <?php if (!$item->isSent) { ?>
                                        <?php if ($item->isInAQueue) { ?>
-                                           <div class="countdown hide" data-active="true"></div>
-                                           <a href="#" class="send hide" data-id="<?= $item->_id ?>">Отправить</a> &nbsp;
-                                           <a href="#" class="stop" data-id="<?= $item->_id ?>">Остановить</a> &nbsp;
+                                           <a href="#" class="hide send btn btn-primary btn-sm" data-id="<?= $item->_id ?>">Отправить</a>
+                                           <a href="#" class="stop btn btn-warning btn-sm" data-id="<?= $item->_id ?>">Остановить</a>
                                        <?php } else { ?>
-                                           <div class="countdown hide"></div>
-                                           <a href="#" class="send" data-id="<?= $item->_id ?>">Отправить</a> &nbsp;
-                                           <a href="#" class="stop hide" data-id="<?= $item->_id ?>">Остановить</a> &nbsp;
+                                           <a href="#" class="send btn btn-primary btn-sm" data-id="<?= $item->_id ?>">Отправить</a>
+                                           <a href="#" class="hide stop btn btn-warning btn-sm" data-id="<?= $item->_id ?>">Остановить</a>
                                        <?php } ?>
-                                       <a href="#" class="push-edit" data-id="<?= $item->_id ?>">Редактировать</a> &nbsp;
-                                       <a href="/business/notification/push-delete?id=<?= $item->_id ?>" class="delete" data-toggle="ajaxModal">Удалить</a> &nbsp;
+                                       <a href="#" class="push-edit btn btn-primary btn-sm" data-id="<?= $item->_id ?>">Редактировать</a>
                                    <?php } else { ?>
                                        Разослано
-                                       <a href="/business/notification/push-view?id=<?= $item->_id ?>" class="view" data-toggle="ajaxModal">Просмотр</a>
                                    <?php } ?>
+                                   <a href="/business/notification/push-view?id=<?= $item->_id ?>" class="view btn btn-primary btn-sm" data-toggle="ajaxModal">Просмотр</a>
+                                   <a href="/business/notification/push-delete?id=<?= $item->_id ?>" class="delete btn btn-danger btn-sm" data-toggle="ajaxModal">Удалить</a>
                                </td>
                             </tr>
                         <?php } ?>
@@ -114,17 +99,8 @@ use yii\widgets\ActiveForm; ?>
     </div>
 </div>
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
-<?php $this->registerJsFile('/js/countdown/jquery.countdown.min.js'); ?>
 <?php $this->registerJsFile('//cdn.tinymce.com/4/tinymce.min.js', ['position' => yii\web\View::POS_HEAD]); ?>
 <script>
-    $(document).ready(function () {
-        $('.countdown').each(function (index, elem) {
-            if ($(elem).data('active')) {
-                sendPush.call($(elem), $(elem).next().data('id'));
-            }
-        });
-    });
-
     $('.table-push').dataTable({
         language: '<?=Yii::$app->language?>',
         lengthMenu: [ 25, 50, 75, 100 ],
@@ -193,9 +169,6 @@ use yii\widgets\ActiveForm; ?>
                 id : id
             },
             success: function () {
-                var $wrapper = $this.closest('td');
-
-                $wrapper.find(".countdown").countdown('stop').addClass('hide').removeClass('show').empty();
                 $this.closest('td').find('.send').removeClass('hide');
                 $this.addClass('hide');
             }
@@ -218,28 +191,7 @@ use yii\widgets\ActiveForm; ?>
 
                 $wrapper.find('.stop').removeClass('hide');
                 $this.addClass('hide');
-
-                var time = get60secFromNow();
-
-                if (data.date_left) {
-                    time = data.date_left;
-                }
-
-                $wrapper.find(".countdown").addClass('show')
-                    .countdown(time, function(event) {
-                        $(this).text(
-                            event.strftime(data.date_format)
-                        );
-                    });
             }
         });
-    }
-
-    /**
-     *  60 sec from now!
-     * @returns {Date}
-     */
-    function get60secFromNow() {
-        return new Date(new Date().valueOf() + 59 * 1000);
     }
 </script>
