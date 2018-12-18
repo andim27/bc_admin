@@ -6,11 +6,11 @@
 </div>
 <div class="panel panel-default">
     <div class="panel-body">
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs" role="tablist">
             <li class="active"><a data-toggle="tab" href="#home">Выплата</a></li>
             <li><a data-toggle="tab" href="#menu1">Таблица начислений</a></li>
         </ul>
-        <div class="tab-content">
+        <div class="tab-content" style="padding:15px">
             <div id="home" class="tab-pane fade in active">
                 <div class="panel panel-body">
                     <div class="row">

@@ -2,7 +2,6 @@
 
 namespace app\modules\business\controllers;
 
-use App\Models\NotificationMailPush;
 use app\modules\business\models\NotificationMailQueueForUsers;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDateTime;
@@ -13,14 +12,11 @@ use app\models\api;
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\modules\business\models\NotificationMailPushes;
-use app\modules\business\models\NotificationMailVariables;
 use app\modules\business\models\NotificationMailTemplates;
 use app\modules\business\models\NotificationMailQueue;
-use app\modules\business\models\PushVarAddForm;
 use app\modules\business\models\PushAddForm;
 use app\modules\business\models\PushTemplateAddForm;
 use app\modules\business\controllers\traits\NotificationTrait;
-
 
 class NotificationController extends BaseController
 {
@@ -37,11 +33,11 @@ class NotificationController extends BaseController
         $pushTemplateAddForm = new PushTemplateAddForm();
 
         $pushes = NotificationMailPushes::find()->all();
-        $pushTemplates = NotificationMailTemplates::find()->all();
         $queue = NotificationMailQueue::find()->all();
+        $queueForUsers = NotificationMailQueueForUsers::find()->all();
+        $pushTemplates = NotificationMailTemplates::find()->all();
+
         $languages = api\dictionary\Lang::supported();
-        $deliveryConditions = self::getDeliveryConditions();
-        $variables = $this->getVariables();
 
         return $this->render('index', [
             'notificationUrl' => self::NOTIFICATION_URL,
@@ -51,8 +47,8 @@ class NotificationController extends BaseController
             'pushes' => $pushes,
             'pushTemplates' => $pushTemplates,
             'queue' => $queue,
-            'deliveryConditions' => $deliveryConditions,
-            'variables' => $variables,
+            'queueForUsers' => $queueForUsers,
+            'deliveryConditions' => NotificationMailTemplates::getDeliveryConditions()
         ]);
     }
 
@@ -216,17 +212,16 @@ class NotificationController extends BaseController
         $request = Yii::$app->request;
 
         if ($request->isAjax) {
-            if ($queue = NotificationMailQueue::find()->where(['_id' => $id])->one()) {
-                if ($queue->template_id) {
-                    $template = NotificationMailTemplates::find()->where(['_id' => strval($queue->template_id)])->one();
-                } else if ($queue->push_id) {
-                    $push = NotificationMailPushes::find()->where(['_id' => strval($queue->push_id)])->one();
-                }
+            if ($queueForUser = NotificationMailQueueForUsers::find()->where(['_id' => $id])->one()) {
+                $title = $queueForUser->title;
+                $body = $queueForUser->body;
+            } else {
+                $title = '';
+                $body = '';
             }
             return $this->renderAjax('modals/queue_view', [
-                'id' => $id,
-                'title' => isset($template) ? $template->phrase : isset($push) ? $push->phrase : '',
-                'text' => isset($template) ? $template->message : isset($push) ? $push->message : '',
+                'title' => $title,
+                'body' => $body,
             ]);
         }
 
@@ -237,8 +232,6 @@ class NotificationController extends BaseController
      * @param null $id
      * @param null $type
      * @return string|Response
-     * @throws \Exception
-     * @throws \yii\db\StaleObjectException
      */
     public function actionQueueDelete($id = null, $type = null)
     {
@@ -248,7 +241,7 @@ class NotificationController extends BaseController
             return $this->renderAjax('modals/queue_delete', [
                 'id' => $id,
                 'type' => $type,
-                'action' => self::NOTIFICATION_URL . '/queue-delete',
+                'action' => '/' . Yii::$app->language . self::NOTIFICATION_URL . '/queue-delete',
                 'title' => THelper::t('push_delete_title'),
             ]);
         }
@@ -256,60 +249,40 @@ class NotificationController extends BaseController
         $id = $request->post('id');
         $type = $request->post('type');
 
-        $queue = NotificationMailQueue::find()->where(['_id' => $id])->one();
-
-        if ($queue) {
-            switch ($type){
-                case 'current-one':
-                    $queueForUser = NotificationMailQueueForUsers::find()->where(['queue_id' => $id])->all();
-
-                    foreach ($queueForUser as $item) {
-                        $item->delete();
+        switch ($type){
+            case 'current-one':
+                $result = NotificationMailQueueForUsers::deleteAll(['_id' => new ObjectID($id)]);
+                break;
+            case 'current-all':
+                if ($queueForUser = NotificationMailQueueForUsers::find()->where(['_id' => new ObjectID($id)])->one()) {
+                    $result = NotificationMailQueueForUsers::deleteAll(['userId' => new ObjectID($queueForUser->userId)]);
+                } else {
+                    $result = false;
+                }
+                break;
+            case 'all':
+                if ($queueForUser = NotificationMailQueueForUsers::find()->where(['_id' => new ObjectID($id)])->one()) {
+                    if (isset($queueForUser->templateId) && $queueForUser->templateId) {
+                        $result = NotificationMailQueueForUsers::deleteAll(['templateId' => new ObjectID($queueForUser->templateId)]);
+                    } else if (isset($queueForUser->pushId) && $queueForUser->pushId) {
+                        $result = NotificationMailQueueForUsers::deleteAll(['pushId' => new ObjectID($queueForUser->pushId)]);
                     }
+                } else {
+                    $result = false;
+                }
+                break;
+            default:
+                $result = false;
+                break;
+        }
 
-                    $queue->delete();
-                    break;
-                case 'current-all':
-                    $queueForUser = NotificationMailQueueForUsers::find()->where(['queue_id' => new ObjectID($id)])->one();
-
-                    if ($queueForUser) {
-                        $queueForUserAll = NotificationMailQueueForUsers::find()->where(['user_id' => $queueForUser->user_id])->all();
-
-                        foreach ($queueForUserAll as $item) {
-                            $item->delete();
-                        }
-                    }
-
-                    $queue->delete();
-                    break;
-                case 'all':
-                    $queueForUser = NotificationMailQueueForUsers::find()->where(['queue_id' => new ObjectID($id)])->one();
-
-                    if ($queueForUser) {
-                        $param = ['template_id' => new ObjectID($queueForUser->template_id)];
-                        
-                        $queueForUserAll = NotificationMailQueueForUsers::find()->where($param)->all();
-
-                        foreach ($queueForUserAll as $item) {
-                            $item->delete();
-                        }
-
-                        $queueAll = NotificationMailQueue::find()->where($param)->one();
-
-                        foreach ($queueAll as $item) {
-                            $item->delete();
-                        }
-                    }
-
-                    break;
-            }
-
+        if ($result) {
             Yii::$app->session->setFlash('success', THelper::t('queue_has_been_deleted'));
         } else {
             Yii::$app->session->setFlash('danger', THelper::t('something_is_wrong'));
         }
 
-        return $this->redirect(self::NOTIFICATION_URL);
+        return $this->redirect('/' . Yii::$app->language . self::NOTIFICATION_URL);
     }
 
     /**
@@ -430,40 +403,6 @@ class NotificationController extends BaseController
             Yii::$app->session->setFlash('success', THelper::t('push_template_has_been_deleted'));
         } else {
             Yii::$app->session->setFlash('danger', THelper::t('something_is_wrong'));
-        }
-
-        return $this->redirect(self::NOTIFICATION_URL);
-    }
-
-    /**
-     * @return string|Response
-     */
-    public function actionVariableAdd()
-    {
-        $variableModel = new PushVarAddForm();
-
-        $request = Yii::$app->request;
-
-        if ($request->isAjax) {
-            return $this->renderAjax('modals/variable_add', [
-                'action' => self::NOTIFICATION_URL . '/variable-add',
-                'title' => THelper::t('variable_add_title'),
-                'variableModel' => $variableModel,
-                'notificationUrl' => self::NOTIFICATION_URL,
-            ]);
-        }
-
-        if ($variableModel->load($request = $request->post())) {
-            $variable = new NotificationMailVariables();
-
-            $variable->name = $variableModel['name'];
-            $variable->value = $variableModel['value'];
-
-            if ($variable->save()) {
-                Yii::$app->session->setFlash('success', THelper::t('push_variable_has_been_added'));
-            } else {
-                Yii::$app->session->setFlash('danger', THelper::t('something_is_wrong'));
-            }
         }
 
         return $this->redirect(self::NOTIFICATION_URL);

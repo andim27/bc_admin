@@ -8,7 +8,7 @@
             <h4 class="modal-title"><?= $title ?></h4>
         </div>
         <div class="modal-body">
-            <?= $text ?>
+            <?= $body ?>
             <a href="javascript:void(0);" class="btn btn-warning" data-dismiss="modal">
                 <?= THelper::t('cancel') ?>
             </a>
