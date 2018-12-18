@@ -309,8 +309,14 @@ HTML;
                 </a>
             </div>
             <div class="col-sm-2 col-md-2 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">&nbsp;</span>
-                <a class="clear" href="#"></a>
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesPoints']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('points_turnover'); ?></small>
+                </a>
             </div>
             <div class="col-sm-2 col-md-2 padder-v b-r b-light">
                 <a class="btn btn-success center-block" title="Товарооборот- графики" onclick="getDetailsBlock('turnover-graph')">

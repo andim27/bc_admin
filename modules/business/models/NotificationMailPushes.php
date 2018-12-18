@@ -2,14 +2,13 @@
 
 namespace app\modules\business\models;
 
-use app\components\PushNotification\Interfaces\iPush;
 use yii\mongodb\ActiveRecord;
 
 /**
- * Class MailPushes
- * @package app\models
+ * Class NotificationMailPushes
+ * @package app\modules\business\models
  */
-class NotificationMailPushes extends ActiveRecord implements iPush
+class NotificationMailPushes extends ActiveRecord
 {
     /**
      * @return string

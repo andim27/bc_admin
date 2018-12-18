@@ -1442,6 +1442,25 @@ class DefaultController extends BaseController
             ->sum('price');
         $statisticInfo['salesTurnoverDetails']['rest']=0;
         //--e:p_pack--
+        //--b:salesPoints
+        $statisticInfo['salesPoints'] = (new \yii\mongodb\Query())
+            ->select(['productData.bonus.point.vip_investor_3'])
+            ->from('sales')
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'type'=>[
+                    '$ne'=>-1
+                ],
+                'product'=>['$ne'=>'0'],
+                'username' =>[
+                    '$ne'=>'main'
+                ]
+            ])
+            ->sum('productData.bonus.point.vip_investor_3');
+        //--e:salesPoints
         return $statisticInfo;
     }
 
