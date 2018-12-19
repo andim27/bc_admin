@@ -3,6 +3,22 @@
 ?>
 <section class="panel panel-default">
     <div class="panel-body">
+        <div class="row center-block">
+            <div class="col-sm-3 col-sm-offset-4">
+                <form class="form-inline" action="<?= \yii\helpers\Url::to(['wellness-club-members/apply']) ?>">
+                    <div class="form-group">
+                        <label for="ch"><?= THelper::t('unconfirmed_claims'); ?></label>
+                        <?php  if ($ch == 1) { ?>
+                             <input type="checkbox" checked class="form-control" id="ch" name="ch">
+                        <?php } else { ?>
+
+                            <input type="checkbox"  class="form-control" id="ch" name="ch">
+                        <?php } ?>
+                    </div>
+                </form>
+            </div>
+
+        </div>
         <table class="table table-users table-striped datagrid m-b-sm">
             <thead>
             <tr>
@@ -46,7 +62,11 @@
 </section>
 <script>
     var table = $('.table-users');
-
+    <?php  if (Yii::$app->request->get('ch') == 1) { ?>
+    c_m_empty = 1;
+    <?php } else {?>
+    c_m_empty = 0;
+    <?php } ?>
     table = table.dataTable({
         language: TRANSLATION,
         "paging": true,
@@ -55,7 +75,10 @@
         "processing": true,
         "serverSide": true,
         "ajax": {
-            "url": '/' + LANG + '/business/wellness-club-members'
+            "url": '/' + LANG + '/business/wellness-club-members',
+            "data": function ( d ) {
+                d.ch = c_m_empty;
+            }
         },
         "columns": [
             {"data": "id"},
@@ -90,4 +113,11 @@
         });
     });
 
+    $('#ch').click(function () {
+        if (document.getElementById('ch').checked) {
+            window.location.href ='/' + LANG + '/business/wellness-club-members?ch=1';
+        } else {
+            window.location.href ='/' + LANG + '/business/wellness-club-members?ch=0';
+        }
+    });
 </script>
