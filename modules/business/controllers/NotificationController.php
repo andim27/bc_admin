@@ -300,7 +300,7 @@ class NotificationController extends BaseController
                 'delivery_to' => $request['delivery_to'],
                 'created_at' => date("d.m.y"),
                 'updated_at' => date("d.m.y"),
-                'author' => $this->getAuthor(),
+                'author' => $this->user->username,
             ]);
 
             if ($model->save()) {
@@ -336,7 +336,7 @@ class NotificationController extends BaseController
             $push->delivery_to = $request['delivery_to'];
             $push->group = $pushTplAddForm['group'];
             $push->updated_at = date("d.m.y");
-            $push->author = $this->getAuthor();
+            $push->author = $this->user->username;
 
             if ($push->save()) {
                 Yii::$app->session->setFlash('success', THelper::t('push_template_has_been_updated'));
