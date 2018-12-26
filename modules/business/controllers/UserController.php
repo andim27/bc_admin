@@ -1171,6 +1171,8 @@ class UserController extends BaseController
         $pincode = null;
         $defaultProduct = self::DEFAULT_PRODUCT; //Пополнение счета оплаты
         $model = new PincodeGenerateForm();
+        $model->loan = 1;
+
         $request = Yii::$app->request;
 
         if ($request->isPost && $model->load($request->post())) {
@@ -1223,12 +1225,14 @@ class UserController extends BaseController
         }
 
         foreach (Product::all() as $product) {
-            $productList[$product->product] = $product->productName . ' - ' . $product->price .' eur';
-            $productListData[$product->product] = [
-                'price' => $product->price,
-                'bonusMoney' => $product->bonusMoney,
-                'bonusPoints' => $product->bonusPoints,
-            ];
+            if (($product->product ==9001)) {//--balance top-up
+                $productList[$product->product] = $product->productName . ' - ' . $product->price .' eur';
+                $productListData[$product->product] = [
+                    'price' => $product->price,
+                    'bonusMoney' => $product->bonusMoney,
+                    'bonusPoints' => $product->bonusPoints,
+                ];
+            }
         }
 
 
