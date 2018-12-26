@@ -9,7 +9,7 @@ use app\models\CurrencyRate;
 use kartik\widgets\Select2;
 
 $listGoods = PartsAccessories::getListPartsAccessories();
-
+$listGoods = ArrayHelper::merge([''=>'Выберите товар'],$listGoods);
 $listSuppliersPerformers=SuppliersPerformers::getListSuppliersPerformers();
 $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поставщика-испонителя'],$listSuppliersPerformers);
 
@@ -33,14 +33,23 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
 
             <div class="form-group">
                 <?=Html::label(THelper::t('goods'))?>
-                <?= Select2::widget([
-                        'name' => 'parts_accessories_id',
-                        'data' => $listGoods,
+<!--                 Select2::widget([-->
+<!--                        'name' => 'parts_accessories_id',-->
+<!--                        'data' => $listGoods,-->
+<!--                        'options' => [-->
+<!--                            'placeholder' => 'Выберите товар',-->
+<!--                        ]-->
+<!--                    ]);-->
+
+                <?=Html::dropDownList('parts_accessories_id','',
+                    $listGoods,[
+                        'class'=>'form-control',
+                        'id'=>'parts_accessories_id',
+                        'required'=>'required',
                         'options' => [
-                            'placeholder' => 'Выберите товар',
+                            '' => ['disabled' => true]
                         ]
-                    ]);
-                ?>               
+                    ])?>
             </div>
 
             <div class="form-group">
@@ -90,7 +99,17 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
                         ])?>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12 text-left">
+                        <?=Html::label('Примечание')?>
+                        <?=Html::input('text','comment', '',[
+                            'class'=>'form-control',
+
+                        ])?>
+                    </div>
+                </div>
             </div>
+
 
             <div class="row">
                 <div class="col-md-12 text-right">
