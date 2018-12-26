@@ -881,7 +881,7 @@ class ManufacturingSuppliersController extends BaseController {
                     'action'                    =>  'posting_ordering',
                     'parts_accessories_id'      =>  $request['parts_accessories_id'],
                     'number'                    =>  $request['number'],
-
+                    'comment'                   =>  $request['comment'],
                     'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
 
                     'money'                     =>  $last_price_eur,
