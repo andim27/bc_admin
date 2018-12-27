@@ -1134,6 +1134,27 @@ class UserController extends BaseController
         }
         return $result;
     }
+
+    public function actionGetBalanceTable()
+    {
+        $result = ['success' => false, 'message' => THelper::t('user_not_found')];
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $login = Yii::$app->request->post('login');
+        $user  = api\User::get($login, false);
+        if ($user) {
+            $data = [];
+            $loans = 0;
+            $payments = 0;
+            $data['username'] = $user->username;
+            $data['user_id '] = $user->id;
+            $data['moneys']   = round($user->moneys,2);
+            $data['loans']    = $loans;
+            $data['payments'] = $payments;
+            $result = ['success' => true, 'message' => THelper::t('ok'),'data'=>$data];
+        }
+        return $result;
+    }
+
     public function actionPincodeCancel()
     {
         $status = '';
@@ -1193,12 +1214,15 @@ class UserController extends BaseController
                     if (!$partner) {
                         Yii::$app->session->setFlash('danger', THelper::t('partner_not_found'));
                     }
-
+                    $kind    = $request->post('kind-operation') ?? '';
+                    $comment = $request->post('comment') ?? '';
                     $response = Sale::buy([
                         'iduser' => $partner->id,
                         'pin' => $pin,
                         'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
-                        'formPayment' => 1
+                        'formPayment' => 1,
+                        'kind' => ';kind:'.$kind,
+                        'comment' =>';comment:'.$comment
                     ]);
 
                     if ($response === 'OK') {

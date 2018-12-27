@@ -15,8 +15,17 @@
                 <div class="col-md-12">
                     <?= $form->field($model, 'pin')->label(THelper::t('pin')) ?>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-10">
                     <?= $form->field($model, 'partnerLogin')->textInput(['id' => 'login'])->label(THelper::t('login')) ?>
+
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="user-balance">Баланс:<span id="balance-block-moneys" class="mark" ></span></label>
+                        <button type="button" class="btn btn-s-md btn-success" style=""  id="user-balance"><?=THelper::t('balance') ?> ?</button>
+
+                    </div>
+
                 </div>
                 <div class="col-md-12">
                     <label for="product-list">Операция</label>
@@ -40,7 +49,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="kind-operation">Вид операции</label>
-                        <select id="kind-operation" class="form-control">
+                        <select id="kind-operation" name="kind-operation" class="form-control">
                             <option value="loan">Займ</option>
                             <option value="bank">Пополнение через банк</option>
                             <option value="paysera">Пополнение баланса PaySera</option>
@@ -53,7 +62,7 @@
                 <div class="col-md-12" id="comment-row" >
                     <div class="form-group">
                         <label for="comment">Примечание</label>
-                        <input id="comment"  class="form-control" type="text" />
+                        <input id="comment" name="comment" class="form-control" type="text" />
                     </div>
                 </div>
                 <div class="col-md-12" style="display: none">
@@ -111,6 +120,7 @@
 
     var $kind_operation = $('#kind-operation');
     var $loan = $('#pincodegenerateform-loan');
+    var $user_balance = $('#user-balance');
     /**
      * Handlers
      */
@@ -138,6 +148,29 @@
 
     $kind_operation.on('change',function () {
        changeKindOperation($(this).val())
+    });
+
+    $user_balance.on('click', function () {
+        var $username=$login.val();
+        if ($username=='') {
+            alert('No user login!');
+            return;
+        }
+        $.ajax({
+            url: '/' + LANG + '/business/user/get-balance-table',// '<?= \yii\helpers\Url::to(['user/get-balance-table']) ?>',
+            type: 'POST',
+            data: {
+                action:'user-balance',
+                login: $username
+            },
+            success: function (response) {
+                if (response) {
+                    console.log(response);
+
+                    $('#balance-block-moneys').html('<strong>'+response.data.moneys+'</strong>');
+                }
+            }
+        });
     });
     /**
      *  Functions
