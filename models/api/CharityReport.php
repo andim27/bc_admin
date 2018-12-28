@@ -66,7 +66,7 @@ class CharityReport {
                 $charityReport->lang              = $object->lang;
                 $charityReport->body              = $object->body;
                 $charityReport->title             = $object->title;
-                $charityReport->dateOfPublication = strtotime($object->dateOfPublication);
+                $charityReport->dateOfPublication = (isset($object->dateOfPublication)?strtotime($object->dateOfPublication):strtotime(date('Y-m-d')));
                 $charityReport->dateUpdate        = strtotime($object->dateUpdate);
                 $charityReport->dateCreate        = strtotime($object->dateCreate);
                 $charityReports[] = $charityReport;

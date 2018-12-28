@@ -28,6 +28,19 @@
 
                 </div>
                 <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="kind-operation">Вид операции</label>
+                        <select id="kind-operation" name="kind-operation" class="form-control">
+                            <option value="loan">Займ</option>
+                            <option value="bank">Пополнение через банк</option>
+                            <option value="paysera">Пополнение баланса PaySera</option>
+                            <option value="advcash">Пополнение баланса AdvCash</option>
+                            <option value="advaction">Пополнение по рекламной акции</option>
+                            <option value="other">Другое</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12">
                     <label for="product-list">Операция</label>
                     <select id="product-list" class="form-control">
                         <?php foreach ($productList as $key=>$value) {  ?>
@@ -46,19 +59,7 @@
 <!--                    ])->label(THelper::t('product'))-->
 
                 </div>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="kind-operation">Вид операции</label>
-                        <select id="kind-operation" name="kind-operation" class="form-control">
-                            <option value="loan">Займ</option>
-                            <option value="bank">Пополнение через банк</option>
-                            <option value="paysera">Пополнение баланса PaySera</option>
-                            <option value="advcash">Пополнение баланса AdvCash</option>
-                            <option value="advaction">Пополнение по рекламной акции</option>
-                            <option value="other">Другое</option>
-                        </select>
-                    </div>
-                </div>
+
                 <div class="col-md-12" id="comment-row" >
                     <div class="form-group">
                         <label for="comment">Примечание</label>

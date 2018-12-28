@@ -1195,6 +1195,8 @@ class UserController extends BaseController
         $model->loan = 1;
 
         $request = Yii::$app->request;
+        $kind    = $request->post('kind-operation') ?? '';
+        $comment = $request->post('comment') ?? '';
 
         if ($request->isPost && $model->load($request->post())) {
 
@@ -1204,8 +1206,8 @@ class UserController extends BaseController
                 return ActiveForm::validate($model);
             }
 
-            if (compareShortPin($model->pin)) {
-                $product = Products::findOne(['product' => (integer)$model->product]);
+            if (compareShortPin($model->pin) ) {
+                $product = Products::findOne(['product' => (integer)$defaultProduct]);
                 $pin = api\Pin::createPinForProduct($product ? $product->idInMarket : null, $model->quantity, $this->user->id);
 
                 if ($model->isLogin && $pin) {
@@ -1214,23 +1216,25 @@ class UserController extends BaseController
                     if (!$partner) {
                         Yii::$app->session->setFlash('danger', THelper::t('partner_not_found'));
                     }
-                    $kind    = $request->post('kind-operation') ?? '';
-                    $comment = $request->post('comment') ?? '';
-                    $response = Sale::buy([
-                        'iduser' => $partner->id,
-                        'pin' => $pin,
-                        'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
-                        'formPayment' => 1,
-                        'kind' => ';kind:'.$kind,
-                        'comment' =>';comment:'.$comment
-                    ]);
 
-                    if ($response === 'OK') {
-                        Yii::$app->session->setFlash('success', THelper::t('partner_payment_is_success'));
-                    } else {
-                        Yii::$app->session->setFlash('danger', THelper::t('partner_payment_is_unsuccessful')
-                            . ' ' . '<span style="display:none;">' . $response . ' ' . $partner->id . '</span>');
-                    }
+                    //if ($kind != 'loan') { //--Does loan generate purchase?
+
+                        $response = Sale::buy([
+                            'iduser' => $partner->id,
+                            'pin' => $pin,
+                            'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
+                            'formPayment' => 1,
+                            'kind' => ';kind:'.$kind,
+                            'comment' =>';comment:'.$comment
+                        ]);
+
+                        if ($response === 'OK') {
+                            Yii::$app->session->setFlash('success', THelper::t('partner_payment_is_success'));
+                        } else {
+                            Yii::$app->session->setFlash('danger', THelper::t('partner_payment_is_unsuccessful')
+                                . ' ' . '<span style="display:none;">' . $response . ' ' . $partner->id . '</span>');
+                        }
+                    //}
                 }
 
                 $pincode = $pin;
@@ -1238,18 +1242,33 @@ class UserController extends BaseController
                 Yii::$app->session->setFlash('danger', THelper::t('pin_is_incorrect'));
             }
 
-
-            if(!empty($pincode) && !empty($model->loan)){
+            if ($kind =='loan') {
+                $model->loan = 1;
+            }
+            if(!empty($pincode) ){
+                $mes='';
                 $modelPin = Pins::findOne(['pin'=>$pincode]);
                 if(!empty($modelPin)){
-                    $modelPin->loan=(boolean)true;
-                    if($modelPin->save()){}
+                    if (!empty($model->loan)) {
+                        $modelPin->loan=(boolean)true;
+                    }
+                    If (!empty($comment)) {
+                        $modelPin->comment = $comment;
+                        $mes='!';
+                    }
+                    If (!empty($kind)) {
+                        $modelPin->kind = $kind;
+                        $mes='!!';
+                    }
+                    if ($modelPin->save()){
+                        Yii::$app->session->setFlash('success', 'Сохранено '.$mes);
+                    }
                 }
             }
         }
 
         foreach (Product::all() as $product) {
-            if (($product->product ==9001)) {//--balance top-up
+            if (($product->product == self::DEFAULT_PRODUCT)) {//--balance top-up
                 $productList[$product->product] = $product->productName . ' - ' . $product->price .' eur';
                 $productListData[$product->product] = [
                     'price' => $product->price,

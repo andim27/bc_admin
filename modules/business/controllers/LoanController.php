@@ -158,11 +158,18 @@ class LoanController extends BaseController {
 
                 if(!empty($infoPin->pinUsedBy) && $infoUser->username==$infoPin->pinUsedBy){
                     $dateCr = date('Y-m-d H:i:s',strtotime($infoPin->productDateCreate));
+                    $comment_str = 'создан pin на ' .$infoPin->productName . ' по цене ' . $infoPin->productPrice . ' eur/шт в кол ' .  $infoPin->count . ' шт.';
+                    if (isset($infoPin->comment)) {
+                        $comment_str = $infoPin->comment.';\n'.$infoPin->productName.' цена '.$infoPin->productPrice . ' eur/шт в кол ' .  $infoPin->count . ' шт.';
+                    }
+                    if (isset($infoPin->kind)) {
+                        $comment_str = '('.$infoPin->kind.')'.$comment_str;
+                    }
                     $info[$dateCr] = [
                         'userSentTransaction'   => '-',
                         'amountLoan'            => ($infoPin->productPrice * $infoPin->count),
                         'amountRepayment'       => '0',
-                        'comment'               => 'создан pin на ' .$infoPin->productName . ' по цене ' . $infoPin->productPrice . ' eur/шт в кол ' .  $infoPin->count . ' шт.'
+                        'comment'               =>  $comment_str
                     ];
 
                 }
