@@ -33,6 +33,7 @@ class DefaultController extends BaseController
 
     public function actionStatDetails() {
         $result=['success'=>false,'details_html'=>''];
+        try {
         $block_name =Yii::$app->request->post('block_name');
         $view_name='';
         $listProducts = Products::find()->where(['product'=>['$gt'=>999]])->all();
@@ -138,6 +139,8 @@ class DefaultController extends BaseController
                 //Приход за деньги по программе VipVip
                 'receiptMoney_VipVip'           => 0,
 
+                'receiptMoney_Projects'         => 0,
+
                 'receiptMoney_BalanceTopUp'     => 0,
                 'receiptMoney_BusinessSupport'  => 0,
             ];
@@ -172,8 +175,14 @@ class DefaultController extends BaseController
 
                     //if (!empty($typeProject[$listProductsType[$item['product']]])) {
                     //--WebWellness--
+                    if (preg_match('/Фирменная сумка|Life Transfer/',$item['productName'] ) ) {
+                        $statisticInfo['receiptMoney_Wellness']+=$item['price'];
+                    }
+                    if (preg_match('/Life balance*Life expert*пополнение баланса на 100/',$item['productName'] ) ) {
+                        $statisticInfo['receiptMoney_Wellness']+=100;
+                    }
                     if (preg_match('/WebWellness/',$item['productName'] ) ) {
-                        if (count($item['productData']['categories']) <=1) {//cat len=1
+                        if ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
                             $statisticInfo['receiptMoney_Wellness']+=$item['price'];
                         } else {
                             if (preg_match('/150/',$item['productName'] )){
@@ -186,25 +195,25 @@ class DefaultController extends BaseController
                                 $statisticInfo['receiptMoney_Wellness']+=50;
                             }
                             if (preg_match('/€10/',$item['productName'] )){
-                                $statisticInfo['generalReceiptMoney_Wellness']+=10;
+                                $statisticInfo['receiptMoney_Wellness']+=10;
                             }
                             if (preg_match('/Life Balance" и пополнение баланса на 300/',$item['productName'] )){
-                                $statisticInfo['generalReceiptMoney_Wellness']+=300;
+                                $statisticInfo['receiptMoney_Wellness']+=300;
                             }
                             if (preg_match('/Life Expert Profi" и пополнение баланса WebWellness на 200/',$item['productName'] )){
-                                $statisticInfo['generalReceiptMoney_Wellness']+=200;
+                                $statisticInfo['receiptMoney_Wellness']+=200;
                             }
                             if (preg_match('/активность бизнес-места на 12 месяцев - 150€/',$item['productName'] )){
                                 $statisticInfo['receiptMoney_Wellness']+=120;
                             }
                             if (preg_match('/Life Watch/',$item['productName'] )){
-                                $statisticInfo['generalReceiptMoney_Wellness']+=$item['price'];
+                                $statisticInfo['receiptMoney_Wellness']+=$item['price'];
                             }
                         }
                     }
                     //--VIPVIP-----------------------------------------------------
                     if (preg_match('/VIPVIP/',$item['productName'] ) ) {
-                        if (count($item['productData']['categories']) <=1) {//cat len=1
+                        if  ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
                             $statisticInfo['receiptMoney_VipVip']+=$item['price'];
                         } else {
                             if (preg_match('/100/',$item['productName'] )){
@@ -215,22 +224,34 @@ class DefaultController extends BaseController
                             }
                             if (preg_match('/310/',$item['productName'] )){
                                 $statisticInfo['receiptMoney_VipVip']+=250;
+                            }  else {
+                                if (preg_match('/пополнение баланса/',$item['productName'])) {
+                                    $statisticInfo['receiptMoney_VipVip']+=$item['price'];
+                                }
                             }
+
                         }
                     }
                     //--VIPCOIN-------------------------------------------------------
                     if (preg_match('/VipCoin/',$item['productName'] ) ) {
-                        if (count($item['productData']['categories']) <=1) {//cat len=1
+                        if ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
                             $statisticInfo['receiptMoney_VipCoin']+=$item['price'];
                         } else {
                             if (preg_match('/VIPCOIN (стандарт)/',$item['productName'] )){
                                 $statisticInfo['receiptMoney_VipCoin']+=330;
+                            }
+                            if (preg_match('/VipCoin активность/',$item['productName'])) {
+                                $statisticInfo['receiptMoney_VipCoin']+=$item['price'];
                             }
                         }
                     }
                     //--Business support----------------------------------------------------
                     if (preg_match('/активность бизнес|Сопровождение бизнеса/',$item['productName'] ) ) {
                         $statisticInfo['receiptMoney_BusinessSupport']+=$item['price'];
+                    }
+                    //--Balance top-up-------------------------------------------------------
+                    if (preg_match('/Balance top-up/',$item['productName'])) {
+                        $statisticInfo['receiptMoney_BalanceTopUp']+=$item['price'];
                     }
                     //-----from old stat methods---------------------------------------------
                     if (array_key_exists($item['product'], $listProductsType)) {
@@ -248,6 +269,7 @@ class DefaultController extends BaseController
                 }//--foreach--
             }//---model--
             //var_dump($statisticInfo);die();
+            $statisticInfo['receiptMoney_Projects'] = $statisticInfo['receiptMoney_Wellness'] + $statisticInfo['receiptMoney_VipVip'] + $statisticInfo['receiptMoney_VipCoin'] + $statisticInfo['receiptMoney_BusinessSupport'] + $statisticInfo['receiptMoney_BalanceTopUp'];
         }
         //--------------------------------B:TURNOVER--------------------------------------------------
         if ($block_name =='turnover') {
@@ -420,6 +442,7 @@ class DefaultController extends BaseController
             ];
             //-----------b:transaction +
             //'forWhat' =>['$in'=>['/Purchase for/','/Closing steps/','/Mentor bonus/','/For stocks/','/Executive bonus/','/Bonus per the achievement/']]
+            //'forWhat' =>['$in'=>['Purchase for','Closing steps','Mentor bonus','For stocks','Executive bonus','Bonus per the achievement']]
             $model = (new \yii\mongodb\Query())
                 ->select(['amount','dateCreate', 'forWhat', 'idTo'])
                 ->from('transactions')
@@ -432,6 +455,7 @@ class DefaultController extends BaseController
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
                     'type'=>1,
+                    //wrong sum - why??? //'forWhat' =>['$in'=>['Purchase for','Closing steps','Mentor bonus','For stocks','Executive bonus','Bonus per the achievement']]
                     'forWhat'=>['$regex'=>'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement']
 
                 ])
@@ -465,9 +489,8 @@ class DefaultController extends BaseController
                 ->andWhere([
                     '$or' =>[
                         [
-                            'forWhat' => [
-                                '$regex' => 'Cancellation purchase for a partner'
-                            ]
+                            'forWhat' => 'Cancellation purchase for a partner'
+
                         ]
                     ]
                 ])
@@ -494,6 +517,9 @@ class DefaultController extends BaseController
                 'statisticInfo' => $statisticInfo,
             ])];
 
+        }
+        } catch (\Exception $e) {
+            $result =['success'=>false,'details_html'=>'Error!'.$e->getMessage().' line:'.$e->getLine()];
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return $result;
@@ -545,6 +571,7 @@ class DefaultController extends BaseController
 
             // общий приход
             'generalReceiptMoney'           => 0,
+            'generalReceiptMoneyDetails'    => [],
             'generalReceiptMoneyMonth'      => [],
             //Приход по программе vipcoin
             'generalReceiptMoney_VipCoin'        => 0,
@@ -570,6 +597,7 @@ class DefaultController extends BaseController
 
             // приход за деньги
             'receiptMoney'                  => 0,
+            'receiptMoneyDetails'           => [],
             //Приход за деньги по программе vipcoin
             'receiptMoney_VipCoin'          => 0,
             //Приход за деньги по программе Wellness
@@ -609,14 +637,15 @@ class DefaultController extends BaseController
             // выданно коммисионных
             'issuedCommission'                => 0,
             'issuedCommissionMonth'           => [],
+
         ];
 
         $request = Yii::$app->request->post();
         if(empty($request)){
             $statisticInfo['request']['to'] = date("Y-m");
-            $date = strtotime('-3 month', strtotime($statisticInfo['request']['to']));
-            //$statisticInfo['request']['from'] = date('Y-m', $date);//--old definition
-            $statisticInfo['request']['from'] = date('Y-m', strtotime('2018-09'));//--start new accounting firm period
+            $date = strtotime('-1 month', strtotime($statisticInfo['request']['to']));
+            $statisticInfo['request']['from'] = date('Y-m', $date);//--old definition
+            //$statisticInfo['request']['from'] = date('Y-m', strtotime('2018-09'));//--start new accounting firm period
         } else {
             $statisticInfo['request']['from'] = $request['from'];
             $statisticInfo['request']['to'] = $request['to'];
@@ -762,7 +791,34 @@ class DefaultController extends BaseController
             }
         }
         unset($model);
-
+        //--b:vipcoin--
+        $sum_vipcoin = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere([
+                'productType' => [
+                    '$in' => [1,9,10]
+                ]
+            ])
+            ->andWhere([
+                'productData.categories' => [
+                    '$elemMatch' => ['$eq'=>'5b4c46469ed4eb002a683891']
+                ]
+            ])
+            ->sum('price');
+        $statisticInfo['generalReceiptMoneyDetails']['all']=$statisticInfo['generalReceiptMoney'];
+        $statisticInfo['generalReceiptMoneyDetails']['vipcoin']=$sum_vipcoin;
+        $statisticInfo['generalReceiptMoney']+=$sum_vipcoin;
+        //--e:vipcoin--
 
         $arrayQuery=[];
         foreach ($listProducts as $listProduct) {
@@ -861,7 +917,8 @@ class DefaultController extends BaseController
         }
 
         //----b:new calculation for income money---
-        $loanRep=0;
+        $loanRep = 0;
+        $income  = 0;
         $loanRep = (new \yii\mongodb\Query())
             ->select(['amount'])
             ->from('loan_repayment')
@@ -872,17 +929,47 @@ class DefaultController extends BaseController
                 ]
             ])
             ->sum('amount');
-        $statisticInfo['receiptMoney']= $loanRep + (new \yii\mongodb\Query())
-            ->select(['amount'])
+
+        $income_items = (new \yii\mongodb\Query())
+            ->select(['amount','paymentType'])
             ->from('orders')
             ->where([
                 'paymentDate' => [
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'paymentStatus' =>'paid'
+                'paymentStatus' =>'paid',
+                'status'        =>'confirmed',
+                'paymentType'   =>['$ne'=>'balance']
             ])
-            ->sum('amount');
+            ->all();
+
+        $statisticInfo['receiptMoneyDetails']['softpay'] = 0;
+        $statisticInfo['receiptMoneyDetails']['paysera'] = 0;
+        $statisticInfo['receiptMoneyDetails']['advcash'] = 0;
+        $statisticInfo['receiptMoneyDetails']['invoice'] = 0;
+        $statisticInfo['receiptMoneyDetails']['pb'] = 0;
+        foreach ($income_items as $m_item) {
+            $income+=$m_item['amount'];
+            if (preg_match('/softpay/',$m_item['paymentType'])) {
+                $statisticInfo['receiptMoneyDetails']['softpay']+=$m_item['amount'];
+            }
+            if (preg_match('/paysera/',$m_item['paymentType'])) {
+                $statisticInfo['receiptMoneyDetails']['paysera']+=$m_item['amount'];
+            }
+            if (preg_match('/advcash/',$m_item['paymentType'])) {
+                $statisticInfo['receiptMoneyDetails']['advcash']+=$m_item['amount'];
+            }
+//            if (preg_match('/invoice/',$m_item['paymentType'])) {
+//                $statisticInfo['receiptMoneyDetails']['invoice']+=$m_item['amount'];
+//            }
+            if (preg_match('/pb/',$m_item['paymentType'])) {
+                $statisticInfo['receiptMoneyDetails']['pb']+=$m_item['amount'];
+            }
+        }
+        $statisticInfo['receiptMoney'] = $loanRep + $income;
+        $statisticInfo['receiptMoneyDetails']['income'] = $income;
+        $statisticInfo['receiptMoneyDetails']['reloan'] = $loanRep;
         //----e:new calculation---
         //--b:calc right sum--
         $users = api\User::spilover('573b8a83507cba1c091c1b51', 200);//--test user
@@ -904,15 +991,13 @@ class DefaultController extends BaseController
             ->select(['amount'])
             ->from('transactions')
             ->where([
+                'forWhat' => 'Withdrawal',
+                'reduced' => true,
+                'confirmed' => 0,
                 'dateCreate' => [
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'forWhat'=> [
-                    '$regex' => 'Withdrawal',
-                ],
-                'reduced' => ['$ne'=>false],
-                'confirmed' => 0
             ])
             ->sum('amount');
 
@@ -971,12 +1056,14 @@ class DefaultController extends BaseController
                 ],
                 'type'=>1,
             ])
+            //->andWhere(['forWhat' =>'Cancellation purchase for a partner'])
+            //->andWhere(['forWhat' => ['$regex'=>'Cancellation purchase for a partner']])
             ->andWhere([
                 '$or' =>[
                     [
-                        'forWhat' => [
-                            '$regex' => 'Cancellation purchase for a partner'
-                        ]
+                        // 'forWhat' => ['$regex'=>'Cancellation purchase for a partner']
+                        'forWhat' =>'Cancellation purchase for a partner'
+
                     ]
                 ]
             ])
@@ -1000,8 +1087,15 @@ class DefaultController extends BaseController
                 $statisticInfo['tradeTurnover']['forUser'][(string)$item['idFrom']] -= $item['amount'];
 
             }
-        }
 
+        } else {
+            if(empty($statisticInfo['tradeTurnover']['forUser'])) {
+                for ($i = 0; $i <= 3; $i++) {
+                    //$statisticInfo['tradeTurnover']['forUser'][$i]['sum'] = 0;
+                    //$statisticInfo['tradeTurnover']['forUser'][$i]['fio'] = '??';
+                }
+            }
+        }
         if(!empty($statisticInfo['tradeTurnover']['forUser'])){
             arsort($statisticInfo['tradeTurnover']['forUser']);
             $statisticInfo['tradeTurnover']['forUser'] = array_slice($statisticInfo['tradeTurnover']['forUser'],0,20);
@@ -1009,29 +1103,32 @@ class DefaultController extends BaseController
         }
         //---b:best checks---
         $statisticInfo['tradeTurnover']['bestChecksUser']=[];
-        foreach ($statisticInfo['tradeTurnover']['forUser'] as $k=>$item) {
-            $infoUser = Users::findOne(['_id'=>new \MongoDB\BSON\ObjectID($k)]);
-            $statisticInfo['tradeTurnover']['bestChecksUser'][] = [
-                'sum'=>$item,
-                'fio'=>(!empty($infoUser->secondName) ? $infoUser->secondName : '').' '.(!empty($infoUser->firstName) ? $infoUser->firstName : '')
-            ];
+
+        if(!empty($statisticInfo['tradeTurnover']['forUser'])) {
+            foreach ($statisticInfo['tradeTurnover']['forUser'] as $k => $item) {
+                $infoUser = Users::findOne(['_id' => new \MongoDB\BSON\ObjectID($k)]);
+                $statisticInfo['tradeTurnover']['bestChecksUser'][] = [
+                    'sum' => $item,
+                    'fio' => (!empty($infoUser->secondName) ? $infoUser->secondName : '') . ' ' . (!empty($infoUser->firstName) ? $infoUser->firstName : '')
+                ];
+            }
         }
         //---e:best checks---
+
+
 
         // выдача комиссионных
         $model = (new \yii\mongodb\Query())
             ->select(['amount','dateConfirm'])
             ->from('transactions')
             ->where([
+                'forWhat' => 'Withdrawal',
+                'reduced' => true,
+                'confirmed' => 1,
                 'dateConfirm' => [
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
-                ],
-                'forWhat'=> [
-                    '$regex' => 'Withdrawal',
-                ],
-                'reduced' => ['$ne'=>false],
-                'confirmed'=>1
+                ]
             ])
             ->all();
         if(!empty($model)) {
@@ -1170,9 +1267,10 @@ class DefaultController extends BaseController
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'forWhat' => [
-                    '$regex' => 'Purchase for a partner'
-                ],
+//                'forWhat' => [
+//                    '$regex' => 'Purchase for a partner'
+//                ],
+                'forWhat' => 'Purchase for a partner',
                 'idTo' => [
                     '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                 ],
@@ -1187,9 +1285,10 @@ class DefaultController extends BaseController
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'forWhat' => [
-                    '$regex' => 'Cancellation purchase for a partner'
-                ],
+//                'forWhat' => [
+//                    '$regex' => 'Cancellation purchase for a partner'
+//                ],
+                'forWhat'=>'Cancellation purchase for a partner',
                 'idTo' => [
                     '$ne' => new ObjectID('000000000000000000000001')
                 ],
@@ -1228,9 +1327,10 @@ class DefaultController extends BaseController
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'forWhat' => [
-                    '$regex' => 'Entering the money'
-                ],
+//                'forWhat' => [
+//                    '$regex' => 'Entering the money'
+//                ],
+                'forWhat' =>'Entering the money',
                 'idTo' => [
                     '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                 ],
@@ -1246,9 +1346,10 @@ class DefaultController extends BaseController
                     '$gte' => new UTCDatetime($queryDateFrom),
                     '$lte' => new UTCDateTime($queryDateTo)
                 ],
-                'forWhat' => [
-                    '$regex' => 'Entering the money \\(Rollback'
-                ],
+//                'forWhat' => [
+//                    '$regex' => 'Entering the money \\(Rollback'
+//                ],
+                'forWhat' =>'Entering the money \\(Rollback',
                 'idTo' => [
                     '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                 ],
@@ -1322,6 +1423,44 @@ class DefaultController extends BaseController
             ])
             ->sum('price');
         //--e:salesTurnover
+        //--b:p_pack--
+        $p_set_arr     = Products::productIDWithSet();
+
+
+        $statisticInfo['salesTurnoverDetails']['packs']  = Sales::find()
+            ->select(['price'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ]
+            ])
+            ->andWhere(['in','product',$p_set_arr])
+            ->andWhere([
+                'type' => ['$ne' => -1]
+            ])
+            ->sum('price');
+        $statisticInfo['salesTurnoverDetails']['rest']=0;
+        //--e:p_pack--
+        //--b:salesPoints
+        $statisticInfo['salesPoints'] = (new \yii\mongodb\Query())
+            ->select(['productData.bonus.point.vip_investor_3'])
+            ->from('sales')
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'type'=>[
+                    '$ne'=>-1
+                ],
+                'product'=>['$ne'=>'0'],
+                'username' =>[
+                    '$ne'=>'main'
+                ]
+            ])
+            ->sum('productData.bonus.point.vip_investor_3');
+        //--e:salesPoints
         return $statisticInfo;
     }
 

@@ -9,12 +9,18 @@ class Pin {
     /**
      * @param $idInMarket
      * @param int $qty
-     * @return mixed
-     * @internal param $userId
+     * @param null $userId
+     * @return string
      */
-    public static function createPinForProduct($idInMarket, $qty = 1)
+    public static function createPinForProduct($idInMarket, $qty = 1, $userId = null)
     {
-        $apiClient = new ApiClient('system/pin/' . $idInMarket . '&' . $qty);
+        $url = 'system/pin/' . $idInMarket . '&' . $qty;
+
+        if ($userId) {
+            $url .= '/' . $userId;
+        }
+
+        $apiClient = new ApiClient($url);
 
         $response = $apiClient->get();
 

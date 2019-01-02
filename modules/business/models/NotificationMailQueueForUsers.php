@@ -2,7 +2,6 @@
 
 namespace app\modules\business\models;
 
-use MongoDB\BSON\ObjectId;
 use yii\mongodb\ActiveRecord;
 
 /**
@@ -19,31 +18,6 @@ class NotificationMailQueueForUsers extends ActiveRecord
         return 'notification_mail_queue_for_users';
     }
 
-
-    /**
-     * @param $userId
-     * @param $queueId
-     * @param $pushId
-     * @param $templateId
-     * @param $datetime
-     * @param $event
-     * @param $message
-     */
-    public static function create($userId, $queueId, $pushId, $templateId, $datetime, $event, $message)
-    {
-        $queueForUsers = new self();
-
-        $queueForUsers->user_id = $userId ? new ObjectID($userId) : null;
-        $queueForUsers->queue_id = $queueId ? new ObjectID($queueId) : null;
-        $queueForUsers->push_id = $pushId ? new ObjectID($pushId) : null;
-        $queueForUsers->template_id = $templateId ? new ObjectID($templateId) : null;
-        $queueForUsers->datetime = $datetime;
-        $queueForUsers->event = $event;
-        $queueForUsers->message = $message;
-
-        $queueForUsers->save();
-    }
-
     /**
      * @return array
      */
@@ -51,14 +25,18 @@ class NotificationMailQueueForUsers extends ActiveRecord
     {
         return [
             '_id',
-            'queue_id',
-            'user_id',
-            'push_id',
-            'template_id',
+            'userId',
+            'status',
+            'deviceId',
+            'date',
+            'title',
+            'body',
+            'templateId',
+            'pushId',
+            'count',
+            'created_at',
             'language',
-            'datetime',
-            'event',
-            'message',
+            'username'
         ];
     }
 }

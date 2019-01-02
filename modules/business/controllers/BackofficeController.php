@@ -29,7 +29,7 @@ class BackofficeController extends BaseController
         $request = Yii::$app->request;
         $requestLanguage = $request->get('l');
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-        $languages = api\dictionary\Lang::all();
+        $languages = api\dictionary\Lang::supported();
 
         return $this->render('news', [
             'news' => api\News::all($language),
@@ -131,7 +131,7 @@ class BackofficeController extends BaseController
         $request = Yii::$app->request;
         $requestLanguage = $request->get('l');
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-        $languages = api\dictionary\Lang::all();
+        $languages = api\dictionary\Lang::supported();
 
         return $this->render('promotion', [
             'promotions' => api\Promotion::getForAdmin($language),
@@ -238,7 +238,6 @@ class BackofficeController extends BaseController
         $this->redirect('/' . Yii::$app->language . '/business/backoffice/promotion/?l=' . $language);
     }
 
-
     public function actionConference()
     {
         $request = Yii::$app->request;
@@ -264,7 +263,7 @@ class BackofficeController extends BaseController
         } else {
             $requestLanguage = $request->get('l');
             $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $languages = api\dictionary\Lang::all();
+            $languages = api\dictionary\Lang::supported();
             $conference = api\Conference::get($language);
 
             $conferenceForm->author  = $this->user->username;
@@ -310,7 +309,7 @@ class BackofficeController extends BaseController
         } else {
             $requestLanguage = $request->get('l');
             $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $languages = api\dictionary\Lang::all();
+            $languages = api\dictionary\Lang::supported();
             $marketing = api\Marketing::get($language);
 
             $marketingForm->author = $this->user->username;
@@ -334,17 +333,29 @@ class BackofficeController extends BaseController
     public function actionCareer()
     {
         $request = Yii::$app->request;
+
         $careerForm = new CareerForm();
 
         if ($request->isPost) {
+
             $careerForm->load($request->post());
 
-            $result = api\Career::add([
-                'title'  => $careerForm->title,
-                'body'   => $careerForm->body,
-                'author' => $careerForm->author,
-                'lang'   => $careerForm->lang
-            ]);
+            if ($careerPlan = api\Career::get($careerForm['lang'])) {
+                $result = api\Career::update([
+                    'id'     => $careerPlan->id,
+                    'title'  => $careerForm->title,
+                    'body'   => $careerForm->body,
+                    'author' => $careerForm->author,
+                    'lang'   => $careerPlan->lang
+                ]);
+            } else {
+                $result = api\Career::add([
+                    'title'  => $careerForm->title,
+                    'body'   => $careerForm->body,
+                    'author' => $careerForm->author,
+                    'lang'   => $careerForm->lang
+                ]);
+            }
 
             if ($result) {
                 Yii::$app->session->setFlash('success', 'backoffice_career_save_success');
@@ -356,7 +367,7 @@ class BackofficeController extends BaseController
         } else {
             $requestLanguage = $request->get('l');
             $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $languages = api\dictionary\Lang::all();
+            $languages = api\dictionary\Lang::supported();
             $career = api\Career::get($language);
 
             $careerForm->author = $this->user->username;
@@ -402,7 +413,7 @@ class BackofficeController extends BaseController
         } else {
             $requestLanguage = $request->get('l');
             $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $languages = api\dictionary\Lang::all();
+            $languages = api\dictionary\Lang::supported();
             $price = api\Price::get($language);
 
             $priceForm->author = $this->user->username;
@@ -448,7 +459,7 @@ class BackofficeController extends BaseController
         } else {
             $requestLanguage = $request->get('l');
             $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $languages = api\dictionary\Lang::all();
+            $languages = api\dictionary\Lang::supported();
             $charity = api\CharityReport::get($language);
 
             $charityReportForm->author = $this->user->username;
@@ -494,7 +505,7 @@ class BackofficeController extends BaseController
         } else {
             $requestLanguage = $request->get('l');
             $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $languages = api\dictionary\Lang::all();
+            $languages = api\dictionary\Lang::supported();
             $instruction = api\Instruction::get($language);
 
             $instructionForm->author = $this->user->username;
@@ -523,12 +534,22 @@ class BackofficeController extends BaseController
         if ($request->isPost) {
             $documentForm->load($request->post());
 
-            $result = api\Document::add([
-                'title'  => $documentForm->title,
-                'body'   => $documentForm->body,
-                'author' => $documentForm->author,
-                'lang'   => $documentForm->lang
-            ]);
+            if ($document = api\Document::get($documentForm['lang'])) {
+                $result = api\Document::update([
+                    'id'     => $document->id,
+                    'title'  => $documentForm->title,
+                    'body'   => $documentForm->body,
+                    'author' => $documentForm->author,
+                    'lang'   => $documentForm->lang
+                ]);
+            } else {
+                $result = api\Document::add([
+                    'title'  => $documentForm->title,
+                    'body'   => $documentForm->body,
+                    'author' => $documentForm->author,
+                    'lang'   => $documentForm->lang
+                ]);
+            }
 
             if ($result) {
                 Yii::$app->session->setFlash('success', 'backoffice_document_save_success');
@@ -540,7 +561,7 @@ class BackofficeController extends BaseController
         } else {
             $requestLanguage = $request->get('l');
             $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $languages = api\dictionary\Lang::all();
+            $languages = api\dictionary\Lang::supported();
             $document = api\Document::get($language);
 
             $documentForm->author = $this->user->username;
@@ -586,7 +607,7 @@ class BackofficeController extends BaseController
         } else {
             $requestLanguage = $request->get('l');
             $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $languages = api\dictionary\Lang::all();
+            $languages = api\dictionary\Lang::supported();
             $agreement = api\Agreement::get($language);
 
             $agreementForm->author = $this->user->username;
@@ -636,7 +657,7 @@ class BackofficeController extends BaseController
         } else {
             $requestLanguage = $request->get('l');
             $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-            $languages = api\dictionary\Lang::all();
+            $languages = api\dictionary\Lang::supported();
             $resources = api\Resource::all($language, true);
 
             $resourceForms = [];
@@ -666,7 +687,7 @@ class BackofficeController extends BaseController
         $request = Yii::$app->request;
         $requestLanguage = $request->get('l');
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-        $languages = api\dictionary\Lang::all();
+        $languages = api\dictionary\Lang::supported();
 
         $videofsForm = new VideofsForm();
         $videofsForm->lang = $language;
@@ -683,7 +704,7 @@ class BackofficeController extends BaseController
         $request = Yii::$app->request;
         $requestLanguage = $request->get('l');
         $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-        $languages = api\dictionary\Lang::all();
+        $languages = api\dictionary\Lang::supported();
 
         $regbuttonForm = new RegbuttonForm();
         $regbuttonForm->lang = $language;

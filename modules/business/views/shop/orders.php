@@ -13,6 +13,8 @@
                         <thead>
                         <tr>
                             <th><?= THelper::t('shop_orders_order_id') ?></th>
+                            <th><?= THelper::t('shop_orders_user') ?></th>
+                            <th><?= THelper::t('shop_orders_user_to') ?></th>
                             <th><?= THelper::t('shop_orders_date') ?></th>
                             <th><?= THelper::t('shop_orders_products') ?></th>
                             <th><?= THelper::t('shop_orders_total') ?></th>
@@ -25,11 +27,21 @@
                             <?php foreach($orders as $order) { ?>
                                 <tr>
                                     <td><?= $order->orderId ?></td>
-                                    <td><?= $order->created_at->toDateTime()->format('d.m.Y') ?></td>
+                                    <td>
+                                        <?= $order->user->login ?>
+                                        <br />
+                                        <?= trim($order->user->firstName . ' ' . $order->user->secondName) ?>
+                                    </td>
+                                    <td>
+                                        <?= $order->userTo->login ?>
+                                        <br />
+                                        <?= trim($order->userTo->firstName . ' ' . $order->userTo->secondName) ?>
+                                    </td>
+                                    <td><?= gmdate('d.m.Y', $order->date) ?></td>
                                     <td>
                                         <ul class="list-group">
                                         <?php foreach ($order->products as $product) { ?>
-                                            <li class="list-group-item"><?= $product['productName']; ?></li>
+                                            <li class="list-group-item"><?= $product->productName; ?></li>
                                         <?php } ?>
                                         </ul>
                                     </td>

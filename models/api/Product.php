@@ -40,7 +40,7 @@ class Product
 
         $response = $apiClient->get();
 
-        return current(self::_getResults($response));
+        return !isset($response->error) ? current(self::_getResults($response)) : false;
     }
 
     /**

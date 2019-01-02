@@ -101,6 +101,26 @@ class Products extends ActiveRecord
 
     }
 
+    public static function productNOTIDWithSet()
+    {
+        $model = self::find()->where(['productSet'=>[
+            '$exists' => false
+        ]])->all();
+
+        $arrayId = [];
+
+        if(!empty($model)){
+            foreach ($model as $item){
+                if(empty($item->productSet)){
+                    $arrayId[] = $item->product;
+                }
+            }
+        }
+
+        return $arrayId;
+
+    }
+
     public static function getListPack($withoutHide=false)
     {
         $list = [];

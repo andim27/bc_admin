@@ -292,12 +292,17 @@ Class Menu
                         'url' => ['/business/user/pincode-generator'],
                         'action' => 'pincode-generator',
                     ],
-
                     [
                         'key'   =>  'sidebar_loans',
                         'label' => THelper::t('sidebar_loans'),
                         'url' => ['/business/loan/loans'],
                         'action' => 'loans',
+                    ],
+                    [
+                        'key'   =>  'sidebar_world_bonus',
+                        'label' => THelper::t('sidebar_world_bonus'),
+                        'url' => ['/business/transactions/world-bonus'],
+                        'action' => 'world-bonus',
                     ],
                 ]
             ],

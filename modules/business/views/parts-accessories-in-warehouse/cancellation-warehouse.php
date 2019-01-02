@@ -52,10 +52,12 @@ $listGoods = PartsAccessories::getListPartsAccessories();
             ]); ?>
         </div>
 
-        <div class="col-md-8 m-b">
+        <div class="col-md-1 m-b">
             <?= Html::submitButton(THelper::t('search'), ['class' => 'btn btn-success']) ?>
         </div>
-
+        <div class="col-md-1 m-b">
+            <?=Html::a('<i class="fa fa-file-o"></i>','#',['class'=>'btn btn-default btn-block exportExcel','title'=>'Выгрузка в excel'])?>
+        </div>
         <?php ActiveForm::end(); ?>
 
     </div>
@@ -101,6 +103,13 @@ $listGoods = PartsAccessories::getListPartsAccessories();
         lengthMenu: [ 25, 50, 75, 100 ],
         "order": [[ 0, "desc" ]]
     });
+    $('.exportExcel').on('click',function (e) {
+        e.preventDefault();
+
+        formFilter = $('form[name="saveStatus"]');
+        formFilter.attr('action','<?=\yii\helpers\Url::to(['parts-accessories-in-warehouse/cancellation-warehouse-exel'])?>').submit();
+        setTimeout(function() { formFilter.attr('action','<?=\yii\helpers\Url::to(['parts-accessories-in-warehouse/cancellation-warehouse'])?>') }, 5000);
+    })
 </script>
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js'); ?>
 

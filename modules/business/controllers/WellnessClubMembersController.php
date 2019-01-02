@@ -23,7 +23,11 @@ class WellnessClubMembersController extends BaseController
     {
         $request = Yii::$app->request;
 
+        $ch = $request->get('ch');
         $wellnessClubMembers = wellnessClubMembers::find();
+        if ($ch ==1) {
+            $wellnessClubMembers->andFilterWhere(['wellness_club_partner_date_end' => ['$exists' => false]]);
+        }
 
         if ($search = $request->get('search')['value']) {
 
@@ -130,6 +134,7 @@ class WellnessClubMembersController extends BaseController
             'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : [],
             'currentTab' => $currentTab,
             'videos' => $wellnessClubVideos,
+            'ch'    =>$ch,
         ]);
     }
 

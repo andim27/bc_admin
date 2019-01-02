@@ -1183,7 +1183,7 @@ class UserController extends BaseController
 
             if (compareShortPin($model->pin)) {
                 $product = Products::findOne(['product' => (integer)$model->product]);
-                $pin = api\Pin::createPinForProduct($product ? $product->idInMarket : null, $model->quantity);
+                $pin = api\Pin::createPinForProduct($product ? $product->idInMarket : null, $model->quantity, $this->user->id);
 
                 if ($model->isLogin && $pin) {
                     $partner = api\User::get($model->partnerLogin);

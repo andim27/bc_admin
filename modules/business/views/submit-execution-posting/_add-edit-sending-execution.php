@@ -100,13 +100,24 @@ if(!empty($model)){
                             ])?>
                         <?=(!empty($model) ?  Html::hiddenInput('parts_accessories_id',(string)$model->parts_accessories_id) : '')?>
                     </div>
+                    <div class="col-md-2">
+                       <label for="p-lang">Паспорт</label>
+                        <select id="p-lang">
+                            <option value="all">Все</option>
+                            <option value="rus">Рус</option>
+                            <option value="eng">Англ</option>
+                            <option value="lat">Латв</option>
+                            <option value="eng_rus">Англ-Рус</option>
+                            <option value="eng_lat">Англ-Латв</option>
+                        </select>
+                    </div>
                     <div class="col-md-1">
                         можно собрать
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <?=Html::input('text','can_number',($canMake+$want_number),['class'=>'form-control CanCollect','disabled'=>'disabled'])?>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <?=Html::input('number','want_number',$want_number,[
                             'class'=>'form-control WantCollect',
                             'pattern'=>'\d*',
@@ -258,15 +269,16 @@ if(!empty($model)){
 
     listGoodsFromMyWarehouse = <?=json_encode($listGoodsFromMyWarehouse)?>;
 
-    $(document).on('change','#selectGoods',function () {
-        blForm = $(this).closest('form');
-
+    $(document).on('change','#selectGoods,#p-lang',function () {
+        blForm = $('#selectGoods').closest('form');
+        $('.blPartsAccessories').html('');
         $.ajax({
             url: '<?=\yii\helpers\Url::to(['submit-execution-posting/kit-execution-posting'])?>',
             type: 'POST',
             data: {
-                partsAccessoriesId  : $(this).val(),
-                performerId         : $('#selectChangeStatus').val()
+                partsAccessoriesId  : $('#selectGoods').val(),
+                performerId         : $('#selectChangeStatus').val(),
+                p_lang              : $('#p-lang').val(),
             },
             success: function (data) {
                 blForm.find('.blPartsAccessories').html(data);

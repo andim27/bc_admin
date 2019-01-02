@@ -14,7 +14,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 
 $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getListGoodsFromMyWarehouse();
 asort($listGoodsFromMyWarehouse);
-
+//var_dump($listGoodsFromMyWarehouse);
 
 
 $countGoodsFromMyWarehouse = json_encode(PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse());
@@ -53,16 +53,15 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
 
                 <div class="form-group row">
                     <div class="col-md-10">
-                        <?=Select2::widget([
-                            'name' => '',
-                            'data' => $listGoodsFromMyWarehouse,
-                            'options' => [
-                                'class'=>'form-control',
-                                'id'=>'selectGoods',
-                                'placeholder' => THelper::t('choose_good'),
-                                'multiple' => false
-                            ]
-                        ]);?>
+                        <select class="form-control" id="selectGoods" >
+                            <option value="" selected="true"><?=THelper::t('choose_good') ?></option>
+                            <?php foreach ($listGoodsFromMyWarehouse as $key=>$value) { ?>
+                            <option value="<?=$key ?>"><?=$value; ?></option>
+                            <?php } ?>
+                        </select>
+
+<!--                        //=Select2::widget(['name' => '','data' => $listGoodsFromMyWarehouse,'options' => ['class'=>'form-control','id'=>'selectGoods','placeholder' => THelper::t('choose_good'),'multiple' => false]]); -->
+
                     </div>
                     <div class="col-md-2">
                         <?=Html::button('<i class="fa fa-plus"></i>',[
@@ -95,21 +94,28 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
 
                 <div class="form-group row">
                     <div class="col-md-7">
-                        <?=Select2::widget([
-                            'name' => 'where_sent',
-                            'value' => (!empty($model->where_sent) ? (string)$model->where_sent : ''),
-                            'data' => $listWarehouse,
-                            'options' => [
-                                'class'=>'form-control',
-                                'id'=>'whereSend',
-                                'required'=>true,
-                                'placeholder' => THelper::t('where_we_ship'),
-                                'multiple' => false
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]);?>
+                        <select class="form-control"  name="where_sent"  id="whereSend">
+                            <option value="" selected><?=THelper::t('where_we_ship'); ?></option>
+                            <?php  foreach ($listWarehouse as $key=>$value) { ?>
+                                <option value="<?=$key ?>"><?=$value; ?></option>
+                            <?php } ?>
+                        </select>
+
+<!--                        Select2::widget([-->
+<!--                            'name' => 'where_sent',-->
+<!--                            'value' => (!empty($model->where_sent) ? (string)$model->where_sent : ''),-->
+<!--                            'data' => $listWarehouse,-->
+<!--                            'options' => [-->
+<!--                                'class'=>'form-control',-->
+<!--                                'id'=>'whereSend',-->
+<!--                                'required'=>true,-->
+<!--                                'placeholder' => THelper::t('where_we_ship'),-->
+<!--                                'multiple' => false-->
+<!--                            ],-->
+<!--                            'pluginOptions' => [-->
+<!--                                'allowClear' => true-->
+<!--                            ],-->
+<!--                        ]);-->
                     </div>
                     <div class="col-md-5">
                         <?=Html::input('text','comment', (!empty($model->comment) ? (string)$model->comment : ''),[
@@ -253,6 +259,10 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
 
     //hide btn when send form
     $('.formAddEditParcel').submit(function() {
+        if ($('#whereSend :selected').val() =='') {
+            alert('Sklad ?');
+            return false;
+        }
         $(this).find('.sendBtn').hide();
     });
 

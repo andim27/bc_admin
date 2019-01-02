@@ -846,14 +846,16 @@ class StatusSalesController extends BaseController {
      */
     public function actionConsolidatedReportSales()
     {
+      try {
+        $error = false;
         $request =  Yii::$app->request->post();
-        
+
         if(!empty($request)){
             $dateInterval['to'] = $request['to'];
             $dateInterval['from'] =  $request['from'];
         } else {
             $dateInterval['to'] = date("Y-m-d");
-            $dateInterval['from'] = date("Y-01-01");
+            $dateInterval['from'] = date("Y-09-01");
         }
         
         $listAdmin = [];
@@ -868,6 +870,9 @@ class StatusSalesController extends BaseController {
             $request['listWarehouse'] = 'all';
         }
 
+        $p_set_arr     = Products::productIDWithSet();
+        $p_not_set_arr = Products::productNOTIDWithSet();
+
         $model = Sales::find()
             ->where([
                 'dateCreate' => [
@@ -875,7 +880,23 @@ class StatusSalesController extends BaseController {
                     '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
                 ]
             ])
-            ->andWhere(['in','product',Products::productIDWithSet()])
+            ->andWhere(['in','product',$p_set_arr])
+            ->andWhere([
+                'type' => ['$ne' => -1]
+            ])
+            ->all();
+
+
+
+        $model_rest = Sales::find()
+            ->select(['product','productName','price','username','statusSale'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($dateInterval['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere(['in','product',$p_not_set_arr])
             ->andWhere([
                 'type' => ['$ne' => -1]
             ])
@@ -927,6 +948,21 @@ class StatusSalesController extends BaseController {
 
                     }
                 }
+            }
+        }
+        $infoRestGoods = [];
+        if(!empty($model_rest)) {
+            foreach ($model_rest as $item) {
+                //if(empty($listAdmin) || $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {
+                    if (empty($infoRestGoods[$item->product]['count'])) {
+                        $infoRestGoods[$item->product]['title'] = $item->productName;
+                        $infoRestGoods[$item->product]['count'] = 0;
+                        $infoRestGoods[$item->product]['amount'] = 0;
+                    }
+                    $infoRestGoods[$item->product]['username'] = $item->username;
+                    $infoRestGoods[$item->product]['count']++;
+                    $infoRestGoods[$item->product]['amount'] += $item->price;
+                //}
             }
         }
 
@@ -1031,13 +1067,18 @@ class StatusSalesController extends BaseController {
                 }
             }
         }
-
+        } catch (\Exception $e) {
+            $error.= $e->getMessage();
+            $error.= "<br>Line:".$e->getLine();
+            $error.= "<br>Error - try to <a href='javascript:window.location.reload();'>reload</a> page";
+        }
         return $this->render('consolidated-report-sales',[
             'language' => Yii::$app->language,
             'dateInterval' => $dateInterval,
             'infoGoods' => $infoGoods,
+            'infoRestGoods' => $infoRestGoods,
             'infoSetGoods' => $infoSetGoods,
-
+            'error'        =>$error,
             'request' => $request,
         ]);
     }
@@ -1063,7 +1104,38 @@ class StatusSalesController extends BaseController {
                 'type' => ['$ne' => -1]
             ])
             ->all();
-
+        //-----b:rest products------
+        $p_not_set_arr = Products::productNOTIDWithSet();
+        $model_rest = Sales::find()
+            ->select(['product','productName','price','username','statusSale'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($from) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($to . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere(['in','product',$p_not_set_arr])
+            ->andWhere([
+                'type' => ['$ne' => -1]
+            ])
+            ->all();
+        $infoRestGoods = [];
+        $listAdmin = [];
+        if(!empty($model_rest)) {
+            foreach ($model_rest as $item) {
+                //if(empty($listAdmin) || $item->statusSale->checkSalesForUserChange($listAdmin)!==false) {
+                    if (empty($infoRestGoods[$item->product]['count'])) {
+                        $infoRestGoods[$item->product]['title'] = $item->productName;
+                        $infoRestGoods[$item->product]['count'] = 0;
+                        $infoRestGoods[$item->product]['amount'] = 0;
+                    }
+                    $infoRestGoods[$item->product]['username'] = $item->username;
+                    $infoRestGoods[$item->product]['count']++;
+                    $infoRestGoods[$item->product]['amount'] += $item->price;
+                //}
+            }
+        }
+        //-----e:rest products------
         $listAdminCheck = [];
         if(!empty($listWarehouse) && $listWarehouse != 'all' && !empty($flWarehouse) && $flWarehouse==1){
             $infoWarehouse = Warehouse::find()->where(['_id'=> new ObjectID($listWarehouse)])->one();
@@ -1224,17 +1296,31 @@ class StatusSalesController extends BaseController {
             }
         }
 
+        $infoExportGoodsRest = [];
+        if(!empty($infoRestGoods)){
+            foreach ($infoRestGoods as $k=>$item) {
 
+                $infoExportGoodsRest[] = [
+                    'id'             => $k,
+                    'product_name'   => $item['title'],
+                    'user_name'      => $item['username'],
+                    'cnt'        => $item['count'],
+                    'amount'     => $item['amount']
+                ];
+            }
+        }
         \moonland\phpexcel\Excel::export([
             'isMultipleSheet' => true,
             'fileName'  => 'export_'.$from.'-'.$to.'_' . $language,
             'models'    => [
                 'Goods' => $infoExportGoods,
                 'Pack' => $infoExportPack,
+                'GoodsRest' => $infoExportGoodsRest,
             ],
             'columns'   => [
                 'Goods' => ['goods','number_booked','number_issue','current_balance'],
-                'Pack' => ['id','business_product','number_booked'], ],
+                'Pack' => ['id','business_product','number_booked'],
+                'GoodsRest' => ['id','product_name','user_name','cnt','amount'], ],
             'headers' => [
                 'Goods' => [
                     'goods'             => THelper::t('goods'),
@@ -1246,6 +1332,13 @@ class StatusSalesController extends BaseController {
                     'id'                => '№',
                     'business_product'  => THelper::t('business_product'),
                     'number_booked'     => THelper::t('number_booked'),
+                ],
+                'GoodsRest' => [
+                    'id'                => '№',
+                    'product_name'  => THelper::t('sale_product_name'),
+                    'user_name'  => THelper::t('user_title'),
+                    'cnt'  => THelper::t('number_booked'),
+                    'amount'     => THelper::t('amount'),
                 ],
             ],
         ]);

@@ -492,9 +492,19 @@ class ReferenceController extends BaseController
             try {
                 $product_lang    =$request->post('product-lang');
                 $product_name    =$request->post('product-name');
+                if (preg_match('/\?\?\?/',$product_name )) {
+                    $mes='Error! Fill correct product name, please!';
+                    $res=['success'=>false,'message'=>$mes];
+                    return $res;
+                }
                 $product_natural    =$request->post('product-natural');
-                $product_category   =$request->post('product-category');
+                $product_category   =$request->post('product-category') ?? 0;
                 $product_categories =$request->post('product-categories');
+                if (empty($product_categories)) {
+                    $mes='Error! Fill correct product categories, please!';
+                    $res=['success'=>false,'message'=>$mes];
+                    return $res;
+                }
                 $product_type=$request->post('product-type');
                 $product_id         =$request->post('product-id');
                 $product_idInMarket =$request->post('product-idInMarket');
@@ -593,13 +603,17 @@ class ReferenceController extends BaseController
 
                     $product->history=$new_history;
                     //-----------------------------e: history ---------------------------------
-                    $product->category_id =new ObjectID($product_category);
+                    $product->category_id =(empty($product_category))?0:new ObjectID($product_category);
                     //$product->category_id =$product_category;
                     $product->categories = $product_categories;
                     $product->productType =(int)$product_type;
                     $product->type        =(int)$product_type; //---delete in future
                     $product->bonusMoney  =(int)$product_bonusStart; //---delete in future
-                    $product->productName =$product_name;
+                    if (in_array($product_lang,['ru','en'])) {
+                        $product->productName = $product_name;
+                    } else {
+                        $product->productName = '???('.$product_lang.') Product:'.$product_name;
+                    }
                     $product->productNatural =(int)$product_natural;
                     $product->product     =(int)$product_id;
                     $product->products     =[];//--depends on productType
@@ -695,7 +709,7 @@ class ReferenceController extends BaseController
             } catch (\Exception $e) {
                 $head_error='<strong>Error!</strong>';
                 if ($product_category==0) {
-                    $head_error='<strong>Error! Fill product category!</strong>';
+                    $head_error='<strong>Error! Fill product category!</strong><br>';
                 }
                 $mes=$head_error.' product_id='.$p_id.' error mes:'.$e->getMessage().' line='.$e->getLine();
 

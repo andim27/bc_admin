@@ -25,6 +25,15 @@ HTML;
 </style>
 
 <script>
+    function moneyAllDetails() {
+        $('#m_all_details').toggle();
+    }
+    function moneyIncomeDetails() {
+        $('#m_income_details').toggle();
+    }
+    function tOverDetails() {
+        $('#t_over_details').toggle();
+    }
     function getDetailsBlock(block_name) {
         if ($("#block-place-"+block_name).css('display') == 'none') {
             $("#block-place-"+block_name).css('display','block');
@@ -38,6 +47,8 @@ HTML;
                 $('#block-place-'+block_name).html(data.details_html).show();
             } else {
                 console.log('Error:get block_name  '+block_name);
+                error_html ='<div class="alert alert-danger"><strong>'+data.details_html+'</strong></div>';
+                $('#block-place-'+block_name).html(error_html).show();
             }
 
         })
@@ -84,7 +95,7 @@ HTML;
     <section class="panel panel-default">
 
         <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-4c6cc1"></i>
                     <i class="fa fa-users fa-stack-1x text-white"></i>
@@ -95,7 +106,7 @@ HTML;
                 </a>
             </div>
 
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-4cc0c1"></i>
                     <i class="fa fa-male fa-stack-1x text-white"></i>
@@ -106,7 +117,7 @@ HTML;
                 </a>
             </div>
 
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-c14cba"></i>
                     <i class="fa fa-sign-out fa-stack-1x text-white"></i>
@@ -116,8 +127,8 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('main_partners_excluded'); ?></small>
                 </a>
             </div>
-            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                  <a class="btn btn-success " title="График подключения" onclick="getDetailsBlock('partners')">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light ">
+                  <a class="btn btn-success center-block" title="График подключения" onclick="getDetailsBlock('partners')">
                       <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
                   </a>
             </div>
@@ -146,21 +157,36 @@ HTML;
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
-                <a class="clear" href="#">
+                <a class="clear" href="#" onclick="moneyAllDetails()">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock"><?= THelper::t('general_arrival'); ?>:</small>
                 </a>
+                <table id="m_all_details" style="display: none">
+                    <tr><td  width="25%"><span>General:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['generalReceiptMoneyDetails']['all']) ? (number_format(round($statisticInfo['generalReceiptMoneyDetails']['all']), 0, ',', ' ')) : 0 ?> </span></td></tr>
+                    <tr><td  width="25%"><span>VipCoin:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['generalReceiptMoneyDetails']['vipcoin']) ? (number_format(round($statisticInfo['generalReceiptMoneyDetails']['vipcoin']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                </table>
             </div>
 
             <div class="col-sm-3 col-md-3 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-c14d4c"></i>
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
-                <a class="clear" href="#">
+                <a class="clear" href="#" onclick="moneyIncomeDetails()">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock"><?= THelper::t('money_income'); ?></small>
                 </a>
+                <table id="m_income_details" style="display: none">
+                    <tr><td  width="25%"><span>softpay:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['softpay']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['softpay']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>paysera:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['paysera']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['paysera']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>advcash:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['advcash']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['advcash']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>pb:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['pb']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['pb']), 0, ',', ' ')) : 0 ?></span></td></tr>
+<!--                    <tr><td  width="25%"><span>invoice:</span></td><td align="right"><span class="h4 m-t-xs">--><?//= isset($statisticInfo['receiptMoneyDetails']['invoice']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['invoice']), 0, ',', ' ')) : 0 ?><!--</span></td></tr>-->
+                    <tr style="border-bottom: dotted"></tr>
+                    <tr><td  width="25%"><span>Income:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['receiptMoneyDetails']['income']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['income']), 0, ',', ' ')) : 0 ?> </span></td></tr>
+                    <tr><td  width="25%"><span>Reloan:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['reloan']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['reloan']), 0, ',', ' ')) : 0 ?></span></td></tr>
+
+                </table>
             </div>
             <!--  --------  b:Перенос --------->
             <div class="col-sm-2 col-md-2 padder-v b-r b-light">
@@ -174,7 +200,7 @@ HTML;
                 </a>
             </div>
             <!--  -------   e:Перенос  -------->
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
@@ -184,14 +210,14 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('vaucher_income'); ?></small>
                 </a>
             </div>
-            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                <a class="btn btn-success " title="Детализиция по проектам" onclick="getDetailsBlock('projects')">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <a class="btn btn-success center-block" title="Детализиция по проектам" onclick="getDetailsBlock('projects')">
                     <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('projects'); ?>
                 </a>
             </div>
         </div>
     </section>
-    <section id="block-place-projects" class="panel panel-default" style="display:none;margin-bottom: 2px">
+    <section id="block-place-projects" class="panel panel-default" style="display:none;margin-bottom: 2px;margin-left:50%;">
 
     </section>
 
@@ -226,7 +252,7 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('accrued_commissions'); ?></small>
                 </a>
             </div>
-            <div class="col-sm-5 col-md-5 padder-v b-r b-light">
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
@@ -236,8 +262,8 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('issued_commissions'); ?></small>
                 </a>
             </div>
-            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('commission-graph')">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <a class="btn btn-success center-block" title="Товарооборот- графики" onclick="getDetailsBlock('commission-graph')">
                     <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
                 </a>
             </div>
@@ -262,10 +288,14 @@ HTML;
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesTurnover']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('goods_turnover'); ?></small>
+                <a class="clear" href="#" onclick="tOverDetails();">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesTurnoverDetails']['packs']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('goods_turnover'); ?> (packs)</small>
                 </a>
+                <table id="t_over_details" style="display: none">
+                    <tr><td  width="25%"><span>General:</span></td><td align="right"><span class="h4 m-t-xs"> <?=number_format(round($statisticInfo['salesTurnover']), 0, ',', ' ');?> </span><span>   (<?=@number_format(round(($statisticInfo['salesTurnoverDetails']['packs']*100)/$statisticInfo['salesTurnover']),2, ',', ' ');?>)%</span></td></tr>
+<!--                    <tr><td  width="25%"><span>Rest:</span></td><td align="right"><span class="h4 m-t-xs">--><?//=//number_format(round($statisticInfo['salesTurnoverDetails']['rest']), 0, ',', ' ');?><!--</span></td></tr>-->
+                </table>
             </div>
 
             <div class="col-sm-3 col-md-3 padder-v b-r b-light">
@@ -278,17 +308,23 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('on_personal_accounts'); ?></small>
                 </a>
             </div>
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">&nbsp;</span>
-                <a class="clear" href="#"></a>
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesPoints']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('points_turnover'); ?></small>
+                </a>
             </div>
-            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('turnover-graph')">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <a class="btn btn-success center-block" title="Товарооборот- графики" onclick="getDetailsBlock('turnover-graph')">
                     <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
                 </a>
             </div>
-            <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-                <a class="btn btn-success " title="Товарооборот- графики" onclick="getDetailsBlock('turnover')">
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <a class="btn btn-success center-block" title="Товарооборот- графики" onclick="getDetailsBlock('turnover')">
                     <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('table'); ?>
                 </a>
             </div>
@@ -298,31 +334,6 @@ HTML;
     </section>
     <section id="block-place-turnover" class="panel panel-default" style="display:none">
 
-        <section  class="panel panel-default">
-            <div class="row m-l-none m-r-none bg-light lter">
-                <div class="col-sm-6 col-md-6 padder-v">
-                    <div class="panel panel-default">
-                        <header class="panel-heading font-bold">
-                            Отношение товарооборота к живым деньгам
-                        </header>
-                        <div class="panel-body">
-                            <div id="flot-pie" class="height400"></div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-6 padder-v">
-                    <div class="panel panel-default">
-                        <header class="panel-heading font-bold">
-                            Отношение товарооборота к комиссионым
-                        </header>
-                        <div class="panel-body">
-                            <div id="flot-pie2" class="height400"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
         <script type="text/javascript">
 
             var da = [
@@ -394,6 +405,7 @@ HTML;
                 }
             });
         </script>
+
     </section>
     <section>
         <div class="m-b-md">
@@ -475,8 +487,8 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][0]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][0]['fio'] ?></small>
+                <span class="h3 block m-t-xs"><strong><?=@number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][0]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=@$statisticInfo['tradeTurnover']['bestChecksUser'][0]['fio'] ?></small>
             </a>
         </div>
         <!-- Максимальный чек - 2 за период -->
@@ -486,8 +498,8 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][1]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][1]['fio'] ?></small>
+                <span class="h3 block m-t-xs"><strong><?=@number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][1]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=@$statisticInfo['tradeTurnover']['bestChecksUser'][1]['fio'] ?></small>
             </a>
         </div>
         <!-- Максимальный чек - 3 за период -->
@@ -497,23 +509,23 @@ HTML;
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][2]['sum']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][2]['fio'] ?> </small>
+                <span class="h3 block m-t-xs"><strong><?=@number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][2]['sum']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=@$statisticInfo['tradeTurnover']['bestChecksUser'][2]['fio'] ?> </small>
             </a>
         </div>
         <!-- Максимальный чек - 4 за период -->
-        <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+        <div class="col-sm-2 col-md-2 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-male fa-stack-1x text-white"></i>
                 </span>
             <a class="clear" href="#">
-                <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][3]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                <small class="text-muted text-uc capsLock"><?=$statisticInfo['tradeTurnover']['bestChecksUser'][3]['fio'] ?></small>
+                <span class="h3 block m-t-xs"><strong><?=@number_format(round($statisticInfo['tradeTurnover']['bestChecksUser'][3]['sum']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                <small class="text-muted text-uc capsLock"><?=@$statisticInfo['tradeTurnover']['bestChecksUser'][3]['fio'] ?></small>
             </a>
         </div>
-        <div class="col-sm-1 col-md-1 padder-v b-r b-light">
-            <a class="btn btn-success " title="Детализиция по проектам" onclick="getDetailsBlock('checks')">
+        <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+            <a class="btn btn-success center-block" title="Детализиция по проектам" onclick="getDetailsBlock('checks')">
                 <span class="glyphicon glyphicon-stats"></span><?= THelper::t('table'); ?>
             </a>
         </div>

@@ -1,17 +1,19 @@
 <?php
 
 namespace app\modules\business\controllers;
-
+use app\components\THelper;
 use app\models\LogWarehouse;
 use DateTime;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\SendingWaitingParcel;
 use app\models\StatusSales;
 use app\models\Warehouse;
+use app\models\PartsAccessories;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
 use app\controllers\BaseController;
+use yii\base\Object;
 
 class PartsAccessoriesInWarehouseController extends BaseController {
 
@@ -198,6 +200,66 @@ class PartsAccessoriesInWarehouseController extends BaseController {
         return $this->redirect('in-warehouse');
     }
 
+    public function actionCancellationWarehouseExel(){
+        $myWarehouse = Warehouse::getIdMyWarehouse();
+        $request = Yii::$app->request->post();
+        if(!empty($request)){
+            $dateInterval['to'] = $request['to'];
+            $dateInterval['from'] =  $request['from'];
+        }
+        $listWarehouse = Warehouse::getArrayWarehouse();
+        $listGoods = PartsAccessories::getListPartsAccessories();
+        $model = LogWarehouse::find()
+            ->where(['action'=>'cancellation','admin_warehouse_id'=> new ObjectID($myWarehouse)])
+            ->andWhere([
+                'date_create' => [
+                    '$gte' => new UTCDatetime(strtotime($dateInterval['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->orderBy(['date_create'=>SORT_DESC])
+            ->all();
+
+        $model_excel=[];
+        if(!empty($model)){
+            foreach ($model as $k=>$item) {
+                $model_excel[] =
+                   ['date_create'=>$item->date_create->toDateTime()->format('Y-m-d H:i:s'),
+                    'product'=>$listGoods[(string)$item->parts_accessories_id],
+                    'count' =>$item->number,
+                    'what_warehouse_cancellation'=>$listWarehouse[(string)$item->admin_warehouse_id],
+                    'who_cancellation'=>(!empty($item->adminInfo) ? $item->adminInfo->secondName . ' ' . $item->adminInfo->firstName : ''),
+                    'reason_cancellation'=>$item->comment
+                ];
+
+            }
+        }
+
+
+        \moonland\phpexcel\Excel::export([
+            'models' => $model_excel,
+            'fileName' => 'c_export '.date('Y-m-d H:i:s'),
+            'columns' => [
+                'date_create',
+                'product',
+                'count',
+                'what_warehouse_cancellation',
+                'who_cancellation',
+                'reason_cancellation'
+            ],
+            'headers' => [
+                'date_create'   =>  THelper::t('date_cancellation'),
+                'product'             =>  THelper::t('product'),
+                'count'               =>  THelper::t('count'),
+                'what_warehouse_cancellation'       =>  THelper::t('what_warehouse_cancellation'),
+                'who_cancellation'     =>  THelper::t('who_cancellation'),
+                'reason_cancellation'  =>  THelper::t('reason_cancellation')
+            ],
+        ]);
+
+        die();
+
+    }
     /**
      * list cancellation for user`s warehouse
      * @return string

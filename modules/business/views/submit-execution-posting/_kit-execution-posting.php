@@ -10,7 +10,56 @@ $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWare
 
 //$contractorInfo = ExecutionPosting::getCountSpareForContractor();
 $contractorInfo = [];
+function pasportLang($name,$p_lang) {
+    if ($p_lang == 'all') {
+        return true;
+    }
+    if ( preg_match('/Паспорт/', $name)  ) {
+        if ($p_lang == 'rus') {
+            if (preg_match('/рус/', $name)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if ($p_lang == 'eng') {
+            if ( preg_match('/анг/', $name)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if ($p_lang == 'lat') {
+            if ( preg_match('/латв/', $name)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if ($p_lang == 'eng_rus') {
+            if (preg_match('/рус|анг/', $name)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if ($p_lang == 'eng_lat') {
+            if (preg_match('/латв|анг/', $name)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    } else {
+        return true;
+    }
 
+}
 ?>
 
 <div class="col-md-12">
@@ -45,14 +94,16 @@ $contractorInfo = [];
                             ?>
                             <?php foreach ($interchangeableList as $kInterchangeable => $itemInterchangeable) {?>
                                 <?php
+
                                     $partContractor = ExecutionPosting::getPresenceInPerformer($kInterchangeable,$performerId);
 
                                     $temp['listGoodsFromMyWarehouse'] += (!empty($listGoodsFromMyWarehouse[$kInterchangeable]) ? $listGoodsFromMyWarehouse[$kInterchangeable] : 0);
                                     $temp['partContractor'] += $partContractor;
-                                ?>
 
+                                ?>
+                        <?php if ((!empty($p_lang)) && pasportLang($itemInterchangeable,$p_lang)) {?>
                                 <div class="form-group row">
-                                    <div class="col-md-7">
+                                    <div class="col-md-7 mmm">
                                         <?=Html::hiddenInput('complectInterchangeable['.(string)$item['_id'].'][]',$kInterchangeable,[]);?>
                                         <?=Html::input('text','',$itemInterchangeable,
                                             [
@@ -96,6 +147,7 @@ $contractorInfo = [];
                                         ]);?>
                                     </div>
                                 </div>
+                        <?php } ?>
                             <?php } ?>
 
 
@@ -133,7 +185,8 @@ $contractorInfo = [];
                         <?php
                             $partContractor = ExecutionPosting::getPresenceInPerformer((string)$item['_id'],$performerId);
                         ?>
-                    <div class="form-group row blUnique">
+                    <?php if ((!empty($p_lang)) && pasportLang($listGoods[(string)$item['_id']],$p_lang)) {?>
+                            <div class="form-group row blUnique">
                         <div class="col-md-7">
                             <?=Html::hiddenInput('complect[]',(string)$item['_id'],[]);?>
                             <?=Html::input('text','',$listGoods[(string)$item['_id']],
@@ -174,6 +227,7 @@ $contractorInfo = [];
                             ]);?>
                         </div>
                     </div>
+                    <?php } ?>
                     <?php } ?>
             <?php } ?>
         <?php } ?>
