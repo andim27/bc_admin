@@ -1038,11 +1038,13 @@ class OffsetsWithWarehousesController extends BaseController
                             if (!empty($info[$representativeId]['warehouses'][$warehouseId])) {
                                 $productID = array_search($itemSet['title'],$listGoodsWithTitle);
 
-                                $productPrice = (!empty($listGoodsWithPriceForPack[$item->sales->product][$productID]) ? $listGoodsWithPriceForPack[$item->sales->product][$productID] : '0');
+                                if(!empty($productID)){
+                                    $productPrice = (!empty($listGoodsWithPriceForPack[$item->sales->product][$productID]) ? $listGoodsWithPriceForPack[$item->sales->product][$productID] : '0');
 
-                                $info[$representativeId]['warehouses'][$warehouseId]['listProducts'][$productID] += $productPrice;
-                                $info[$representativeId]['warehouses'][$warehouseId]['numberProducts'][$productID]++;
-                                $info[$representativeId]['listProducts'][$productID] += $productPrice;
+                                    $info[$representativeId]['warehouses'][$warehouseId]['listProducts'][$productID] += $productPrice;
+                                    $info[$representativeId]['warehouses'][$warehouseId]['numberProducts'][$productID]++;
+                                    $info[$representativeId]['listProducts'][$productID] += $productPrice;
+                                }
                             }
                         }
                     }
