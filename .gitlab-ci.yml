@@ -12,7 +12,7 @@ variables:
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
-  
+
 
 build_dev:
   stage: build
@@ -22,7 +22,7 @@ build_dev:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
     - vendor/
-  script:    
+  script:
     - composer install --ignore-platform-reqs
     - mv ./vendor/bower-asset ./vendor/bower/ || true
     - ./pre-admin.sh
@@ -70,13 +70,13 @@ deploy_dev:
         name: dev
         url: admin-dev.bpt.ooo.ua
     only:
-        - dev    
+        - dev
     script:
         - echo "${KUBE_CA_PEM}" > kube_ca.pem
         - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
         - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
         - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
-        - kubectl config use-context default-system                
+        - kubectl config use-context default-system
         - cd kube
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml
         - sed -i "s/__ADMIN-REPLICA__/1/" deployment.yaml
@@ -138,7 +138,7 @@ clear_cache:
     stage: cache
     environment:
         name: prod
-    only:
-        - master
+    # only:
+    #     - master
     script:
         - ./clear-cache.sh
