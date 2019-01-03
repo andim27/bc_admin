@@ -40,6 +40,7 @@
             } else {
                 $product = $products[$purchase->product];
             }
+            if ($product) {
             ?>
             <tr>
                 <td>
@@ -71,7 +72,7 @@
                     <?php } ?>
                 </td>
             </tr>
-        <?php }
+        <?php }}
     }
     ?>
     </tbody>
