@@ -53,7 +53,7 @@ class Sales extends ActiveRecord
             'comment',
             'comment_user_name',
             'updated_at',
-            ''
+            'whenceSale'
         ];
     }
 
