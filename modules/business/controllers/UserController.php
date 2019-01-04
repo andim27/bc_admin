@@ -16,6 +16,7 @@ use app\models\Products;
 use app\models\Sales;
 use app\models\Transaction;
 use app\models\Users;
+use app\models\LoanRepayment;
 use app\modules\business\models\AddWriteOffFrom;
 use app\modules\business\models\PincodeCancelForm;
 use app\modules\business\models\PincodeForm;
@@ -1145,6 +1146,45 @@ class UserController extends BaseController
             $data = [];
             $loans = 0;
             $payments = 0;
+            $data['username'] = $user->username;
+            $data['user_id '] = $user->id;
+            $data['moneys']   = round($user->moneys,2);
+            $data['loans']    = $loans;
+            $data['payments'] = $payments;
+            $result = ['success' => true, 'message' => THelper::t('ok'),'data'=>$data];
+        }
+        return $result;
+    }
+    public function actionGetLoanTable()
+    {
+        $result = ['success' => false, 'message' => THelper::t('user_not_found')];
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $login = Yii::$app->request->post('login');
+        $user  = api\User::get($login, false);
+
+        if ($user) {
+            $loans =0;
+            //--b:loan--
+            $wherePins = [
+                'loan' => true,
+                'isDelete' => false,
+                'userId' =>  new ObjectID($user->id)
+            ];
+            $model = Pins::find()->where($wherePins)->all();
+            if ($model) {
+                foreach ($model as $item) {
+                    $infoPin = api\Pin::getPinInfo($item->pin);
+                    if (!empty($infoPin->pinUsedBy)) {
+                        $loans += ($infoPin->productPrice * $infoPin->count);
+                    }
+                }
+            }
+            //--e:loan--
+            //--b:parments--
+            $payments = LoanRepayment::find()->where(['user_id'=>new ObjectID($user->id)])->sum('amount');
+            //--e:payments--
+            $data = [];
+
             $data['username'] = $user->username;
             $data['user_id '] = $user->id;
             $data['moneys']   = round($user->moneys,2);

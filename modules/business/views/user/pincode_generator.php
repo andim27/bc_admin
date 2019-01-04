@@ -11,22 +11,37 @@
     <div class="col-md-12">
         <section class="panel panel-default">
             <div class="panel-body">
+
                 <?php $form = ActiveForm::begin(['id' => $model->formName(), 'enableAjaxValidation' => true]); ?>
                 <div class="col-md-12">
                     <?= $form->field($model, 'pin')->label(THelper::t('pin')) ?>
                 </div>
-                <div class="col-md-10">
+
+
+
+
+                <div class="col-md-6">
                     <?= $form->field($model, 'partnerLogin')->textInput(['id' => 'login'])->label(THelper::t('login')) ?>
 
                 </div>
-                <div class="col-md-2">
+
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label for="user-balance">Баланс:<span id="balance-block-moneys" class="mark" ></span></label>
-                        <button type="button" class="btn btn-s-md btn-success" style=""  id="user-balance"><?=THelper::t('balance') ?> ?</button>
+                        <label for="loan-balance">Расчеты:<span id="loan-block-moneys" class="mark" ></span></label><br>
+                        <button type="button" class="btn btn-s-md btn-success" style=""  id="loan-balance"><?= THelper::t('sidebar_loan') ?> ?</button>
 
                     </div>
 
                 </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="user-balance">На счету:<span id="balance-block-moneys" class="mark" ></span></label>
+                        <button type="button" class="btn btn-s-md btn-success" style=""  id="user-balance"><?=THelper::t('current_balance') ?> ?</button>
+
+                    </div>
+
+                </div>
+
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="kind-operation">Вид операции</label>
@@ -122,6 +137,7 @@
     var $kind_operation = $('#kind-operation');
     var $loan = $('#pincodegenerateform-loan');
     var $user_balance = $('#user-balance');
+    var $loan_balance = $('#loan-balance');
     /**
      * Handlers
      */
@@ -168,7 +184,29 @@
                 if (response) {
                     console.log(response);
 
-                    $('#balance-block-moneys').html('<strong>'+response.data.moneys+'</strong>');
+                    $('#balance-block-moneys').html('Займ:<strong>'+response.data.loans+'</strong> Выплата:<strong>'+response.data.payments+'</strong>');
+                }
+            }
+        });
+    });
+    $loan_balance.on('click', function () {
+        var $username=$login.val();
+        if ($username=='') {
+            alert('No user login!');
+            return;
+        }
+        $.ajax({
+            url: '/' + LANG + '/business/user/get-loan-table',// '<?= \yii\helpers\Url::to(['user/get-loan-table']) ?>',
+            type: 'POST',
+            data: {
+                action:'user-loan',
+                login: $username
+            },
+            success: function (response) {
+                if (response) {
+                    console.log(response);
+
+                    $('#loan-block-moneys').html('<strong>'+response.data.moneys+'</strong>');
                 }
             }
         });
