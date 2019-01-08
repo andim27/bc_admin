@@ -204,12 +204,22 @@
             success: function (response) {
                 if (response) {
                     console.log(response);
-                    if (response.data.debt >0) {
+                    if (parseInt(response.data.debt) >0) {
                         debt_html ='Долг:<span style="color:red">'+response.data.debt+'</span>';
                     } else {
-                        debt_html ='Долг:нет';
+                        debt_html ='<span style="color:green">Долг: нет</span>';
                     }
-                    $('#loan-block-moneys').html('Займ:<strong>'+response.data.loans+'</strong> Выплата:<strong>'+response.data.payments+'</strong> '+debt_html);
+                    if (parseInt(response.data.loans) >0) {
+                        loans_html = response.data.loans;
+                    } else {
+                        loans_html = 'нет';
+                    }
+                    if (parseInt(response.data.payments) >0) {
+                        paied_html = response.data.payments;
+                    } else {
+                        paied_html = 'нет';
+                    }
+                    $('#loan-block-moneys').html('Займ:<strong>'+loans_html+'</strong> Выплата:<strong>'+paied_html+'</strong> '+debt_html);
 
                 }
             }
