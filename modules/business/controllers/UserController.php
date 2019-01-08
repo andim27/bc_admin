@@ -1259,15 +1259,21 @@ class UserController extends BaseController
                     }
 
                     //if ($kind != 'loan') { //--Does loan generate purchase?
-
-                        $response = Sale::buy([
+                        $data =[
+                            'author_id' => $this->user->id,
+                            'product' =>$defaultProduct,
+                            'amount'  => $model->quantity,
                             'iduser' => $partner->id,
                             'pin' => $pin,
                             'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
                             'formPayment' => 1,
+                            'kind_val'    => $kind,
+                            'comment_val' => $comment,
                             'kind' => ';kind:'.$kind,
                             'comment' =>';comment:'.$comment
-                        ]);
+                        ];
+                        $response = self::actionPreUpCreate($data);
+
 
                         if ($response === 'OK') {
                             Yii::$app->session->setFlash('success', THelper::t('partner_payment_is_success'));
@@ -1328,6 +1334,13 @@ class UserController extends BaseController
             'defaultProduct' => $defaultProduct,
             'pincode' => !empty($pincode) ? $pincode : null
         ]);
+    }
+
+    public function actionPreUpCreate($data)
+    {
+        $res = 'OK';
+        $res = Sale::buy($data);
+        return $res;
     }
 
     public function actionSearchListUsers($q = null, $id = null)
