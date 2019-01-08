@@ -27,7 +27,7 @@
 
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="loan-balance">Расчеты:<span id="loan-block-moneys" class="mark" ></span></label><br>
+                        <label for="loan-balance"><span id="loan-block-moneys" class="mark" >Расчеты:</span></label><br>
                         <button type="button" class="btn btn-s-md btn-success" style=""  id="loan-balance"><?= THelper::t('sidebar_loan') ?> ?</button>
 
                     </div>
@@ -183,8 +183,7 @@
             success: function (response) {
                 if (response) {
                     console.log(response);
-
-                    $('#balance-block-moneys').html('Займ:<strong>'+response.data.loans+'</strong> Выплата:<strong>'+response.data.payments+'</strong>');
+                    $('#balance-block-moneys').html('<strong>'+response.data.moneys+'</strong>');
                 }
             }
         });
@@ -205,14 +204,19 @@
             success: function (response) {
                 if (response) {
                     console.log(response);
+                    if (response.data.debt >0) {
+                        debt_html ='Долг:<span style="color:red">'+response.data.debt+'</span>';
+                    } else {
+                        debt_html ='Долг:нет';
+                    }
+                    $('#loan-block-moneys').html('Займ:<strong>'+response.data.loans+'</strong> Выплата:<strong>'+response.data.payments+'</strong> '+debt_html);
 
-                    $('#loan-block-moneys').html('<strong>'+response.data.moneys+'</strong>');
                 }
             }
         });
     });
-    /**
-     *  Functions
+
+     /**  Functions
      */
     function switchLoginField() {
         $login.attr('disabled', !$isLogin.is(':checked'));
@@ -231,7 +235,7 @@
         $form.find('input[name="<?=$model->formName()?>[partnerLogin]"]').val('');
     }
 
-    function copyToClipboard(text) {
+  function copyToClipboard(text) {
         if (window.clipboardData && window.clipboardData.setData) {
             // IE specific code path to prevent textarea being shown while dialog is visible.
             return clipboardData.setData("Text", text);

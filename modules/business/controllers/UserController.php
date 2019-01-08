@@ -1190,6 +1190,7 @@ class UserController extends BaseController
             $data['moneys']   = round($user->moneys,2);
             $data['loans']    = $loans;
             $data['payments'] = $payments;
+            $data['debt'] = $loans - $payments;
             $result = ['success' => true, 'message' => THelper::t('ok'),'data'=>$data];
         }
         return $result;
