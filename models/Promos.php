@@ -29,6 +29,7 @@ class Promos extends ActiveRecord
             'userId',
             'username',
             'date',
+            'date2',
             'completed',
             'completed2',
             'needSteps',

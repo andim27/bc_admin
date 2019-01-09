@@ -1044,6 +1044,12 @@ class OffsetsWithWarehousesController extends BaseController
                                     $info[$representativeId]['warehouses'][$warehouseId]['listProducts'][$productID] += $productPrice;
                                     $info[$representativeId]['warehouses'][$warehouseId]['numberProducts'][$productID]++;
                                     $info[$representativeId]['listProducts'][$productID] += $productPrice;
+                                } else {
+                                    header('Content-Type: text/html; charset=utf-8');
+                                    echo '<xmp>';
+                                    print_r($itemSet['title']);
+                                    echo '</xmp>';
+                                    die();
                                 }
                             }
                         }
