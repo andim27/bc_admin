@@ -28,7 +28,10 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
 
         '5ac48adb4ec6e100093d2a92',
         '5ac48b5d4ec6e100075980c2',
-        '5ac48bb84ec6e100065962f3'
+        '5ac48bb84ec6e100065962f3',
+
+        '5bfe9cae053298057c203332',
+        '5c078af30532982991395792'
     ];
 
     /**
