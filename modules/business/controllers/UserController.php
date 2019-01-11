@@ -1264,13 +1264,13 @@ class UserController extends BaseController
                             'product' =>$defaultProduct,
                             'amount'  => $model->quantity,
                             'iduser' => $partner->id,
+                            'username'=> $model->partnerLogin,
                             'pin' => $pin,
                             'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
                             'formPayment' => 1,
-                            'kind_val'    => $kind,
-                            'comment_val' => $comment,
-                            'kind' => ';kind:'.$kind,
-                            'comment' =>';comment:'.$comment
+                            'kind'    => $kind,
+                            'comment' => $comment,
+                            'status'=>'created'//'wait','done','cancel'
                         ];
                         $response = self::actionPreUpCreate($data);
 
@@ -1279,7 +1279,8 @@ class UserController extends BaseController
                             Yii::$app->session->setFlash('success', THelper::t('partner_payment_is_success'));
                         } else {
                             Yii::$app->session->setFlash('danger', THelper::t('partner_payment_is_unsuccessful')
-                                . ' ' . '<span style="display:none;">' . $response . ' ' . $partner->id . '</span>');
+                                . ' ' . '<span style="display:none;">' . $response . ' ' . $partner->id . '</span>'.
+                            (isset($response['mes'])?$response['mes']:'') );
                         }
                     //}
                 }
@@ -1339,7 +1340,23 @@ class UserController extends BaseController
     public function actionPreUpCreate($data)
     {
         $res = 'OK';
-        $res = Sale::buy($data);
+        //----!! Save to PreUp before buing -wait to be accepted
+        // $data['kind'] = ';kind:'.$data['kind'];
+        // $data['comment'] =';comment:'.$data['comment'];
+        // $res = Sale::buy($data);
+        $cat_coll_name ='pre_up';
+        try {
+            $Categories=Yii::$app->mongodb->getCollection($cat_coll_name);
+            if (!($Categories->name == $cat_coll_name)) {
+                Yii::$app->mongodb->createCollection($cat_coll_name);
+
+            }
+            $data['created_at'] = date("d.m.y");
+            $Categories->insert($data);
+        } catch (\Exception $e) {
+            $res['mes'] = 'Saved result:'.$e->getMessage();
+        }
+
         return $res;
     }
 
