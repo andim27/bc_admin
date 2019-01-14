@@ -12,7 +12,7 @@ use kartik\widgets\DatePicker;
 use yii\bootstrap\Html;
 
 
-function balanceMesssage($item_str,$item) {
+function balanceMesssage($item_str,$item) { //--for sales?not for pre
     $res_str = $item_str;
     if (!isset($item)) {
         $res_str += ' ?';
@@ -30,6 +30,19 @@ function balanceMesssage($item_str,$item) {
             $res_str ='??';
         }
 
+    }
+    return $res_str;
+}
+
+function statusIcon($status_str) {
+    $res_str ='<i class="fa fa-spinner fa-spin" style="font-size:24px" title="wait..."></i>';
+    if (isset($status_str)) {
+        if ($status_str == 'ok') {
+            $res_str =' <span class="glyphicon glyphicon-ok" title="done"></span>';
+        }
+        if ($status_str == 'cancel') {
+            $res_str =' <span class="glyphicon glyphicon-remove" title="canceled">';
+        }
     }
     return $res_str;
 }
@@ -94,6 +107,7 @@ function balanceMesssage($item_str,$item) {
                 <th><?=THelper::t('sum')?></th>
                 <th><?=THelper::t('kind')?></th>
                 <th width="25%"><?=THelper::t('comments')?></th>
+                <th><?=THelper::t('status')?></th>
             </tr>
             </thead>
 
@@ -102,14 +116,15 @@ function balanceMesssage($item_str,$item) {
                 <?php
                    $totalSum=0;
                    foreach($infoSale as $item) {
-                       $totalSum+=$item['price'];
+                       $totalSum+=$item['amount'];//--amount for pre - price for sale
                  ?>
                     <tr  role="row">
-                        <td><?=$item['dateCreate']->toDateTime()->format('Y-m-d H:i:s');?></td>
+                        <td><?=$item['created_at']->toDateTime()->format('Y-m-d H:i:s');?></td>
                         <td><?=$item['username']?></td>
-                        <td><?=$item['price']?></td>
-                        <td><?=balanceMesssage('kind',$item['whenceSale']);?></td>
-                        <td width="25%"><?=balanceMesssage('comment',$item['whenceSale']);?></td>
+                        <td><?=$item['amount']?></td>
+                        <td><?=$item['kind'] ?? '?'//balanceMesssage('kind',$item['whenceSale']);?></td>
+                        <td width="25%"><?= $item['comment'] ?? '...'//balanceMesssage('comment',$item['whenceSale']);?></td>
+                        <td><?=statusIcon(($item['status'] ?? ''));?></td>
                     </tr>
                 <?php } ?>
             </tbody>

@@ -11,6 +11,7 @@ use app\models\Products;
 use app\models\Repayment;
 use app\models\RepaymentAmounts;
 use app\models\Sales;
+use app\models\PreUp;
 use app\models\SendingWaitingParcel;
 use app\models\Settings;
 use app\models\StatusSales;
@@ -1712,28 +1713,28 @@ class SaleReportController extends BaseController
         $request =  Yii::$app->request->post();
 
         if(empty($request)){
-            $request['to'] = date("Y-m-d");
+            $request['to']   = date("Y-m-d");
             $request['from'] = date("Y-m-d", strtotime( $request['to']." -1 months"));
         }
-        $dateTo = $request['to'];
-        $dateFrom =  $request['from'];
+        $dateTo   = $request['to'];
+        $dateFrom = $request['from'];
 
-        $infoSale = Sales::find()
+        $infoSale = PreUp::find()
             ->where([
-                'dateCreate' => [
+                'created_at' => [
                     '$gte' => new UTCDatetime(strtotime($request['from']) * 1000),
                     '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
                 ]
             ])
-            ->andWhere([
-                'type' => [
-                    '$ne'   =>  -1
-                ]
-            ])
+//            ->andWhere([
+//                'type' => [
+//                    '$ne'   =>  -1
+//                ]
+//            ])
             ->andWhere([
                 'product' => 9001
             ])
-            ->orderBy(['dateCreate'=>SORT_DESC]) //SORT_ASC//SORT_DESC//
+            ->orderBy(['created_at' => SORT_DESC]) //SORT_ASC//SORT_DESC//
             ->all();
         return $this->render('report-balance-up',[
                 'language' => Yii::$app->language,

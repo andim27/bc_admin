@@ -1260,17 +1260,17 @@ class UserController extends BaseController
 
                     //if ($kind != 'loan') { //--Does loan generate purchase?
                         $data =[
-                            'author_id' => $this->user->id,
-                            'product' =>$defaultProduct,
-                            'amount'  => $model->quantity,
-                            'iduser' => $partner->id,
-                            'username'=> $model->partnerLogin,
-                            'pin' => $pin,
+                            'author_id' => $this->user->id, //new ObjectID($this->user->id),
+                            'product'   => $defaultProduct,
+                            'amount'    => (int)$model->quantity,
+                            'iduser'    => $partner->id,
+                            'username'  => $model->partnerLogin,
+                            'pin'       => $pin,
                             'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
                             'formPayment' => 1,
-                            'kind'    => $kind,
-                            'comment' => $comment,
-                            'status'=>'created'//'wait','done','cancel'
+                            'kind'      => $kind,
+                            'comment'   => $comment,
+                            'status'    =>'created'//'wait','done','cancel'
                         ];
                         $response = self::actionPreUpCreate($data);
 
@@ -1351,7 +1351,8 @@ class UserController extends BaseController
                 Yii::$app->mongodb->createCollection($cat_coll_name);
 
             }
-            $data['created_at'] = date("d.m.y");
+            //$data['created_at'] = \DateTime::createFromFormat('Y/m/d H:i:s',date("y.m.d"));
+            $data['created_at'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
             $Categories->insert($data);
         } catch (\Exception $e) {
             $res['mes'] = 'Saved result:'.$e->getMessage();
