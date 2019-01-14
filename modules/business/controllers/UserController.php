@@ -1277,9 +1277,10 @@ class UserController extends BaseController
 
                         if ($response === 'OK') {
                             Yii::$app->session->setFlash('success', THelper::t('partner_payment_is_success'));
-                        } else {
+                        }
+                         else {
                             Yii::$app->session->setFlash('danger', THelper::t('partner_payment_is_unsuccessful')
-                                . ' ' . '<span style="display:none;">' . $response . ' ' . $partner->id . '</span>'.
+                                . ' ' . '<span style="display:none;">' . implode(",", $response). ' ' . $partner->id . '</span>'.
                             (isset($response['mes'])?$response['mes']:'') );
                         }
                     //}
@@ -1339,7 +1340,7 @@ class UserController extends BaseController
 
     public function actionPreUpCreate($data)
     {
-        $res = 'OK';
+        $res = [];
         //----!! Save to PreUp before buing -wait to be accepted
         // $data['kind'] = ';kind:'.$data['kind'];
         // $data['comment'] =';comment:'.$data['comment'];
@@ -1353,10 +1354,34 @@ class UserController extends BaseController
             }
             //$data['created_at'] = \DateTime::createFromFormat('Y/m/d H:i:s',date("y.m.d"));
             $data['created_at'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
-            $Categories->insert($data);
+            $pre_up_id = $Categories->insert($data);
+            if($curl=curl_init())
+            {
+                $items = ['id' =>$pre_up_id,'comment' => $data['comment']];
+                curl_setopt($curl,CURLOPT_URL,'http://ovh-1.ooo.ua:3039/receiveMessage');
+                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+                curl_setopt($curl,CURLOPT_POST,true);
+                curl_setopt($curl, CURLOPT_POSTFIELDS,http_build_query($items));
+
+                //curl_setopt($curl,CURLOPT_POSTFIELDS,"items=".json_encode($items));
+                $out=curl_exec($curl);
+                curl_close($curl);
+
+                $out = json_decode($out,True);
+                //foreach ($out as $item) {
+                    //$arrayUnits[$item['id__pr']] = $item['id'];
+                //}
+                if ($out['action'] == 'ok') {
+                    self::actionBalanceApply();
+                }
+                $res = 'OK';
+            } else {
+                $res['mes'] = 'Viber send error...';
+            }
         } catch (\Exception $e) {
-            $res['mes'] = 'Saved result:'.$e->getMessage();
+            $res['mes'] = 'Saved result:'.$e->getMessage().' line:'.$e->getLine();
         }
+        //--send to vider for apply
 
         return $res;
     }

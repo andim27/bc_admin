@@ -50,6 +50,8 @@
                             <option value="bank">Пополнение через банк</option>
                             <option value="paysera">Пополнение баланса PaySera</option>
                             <option value="advcash">Пополнение баланса AdvCash</option>
+                            <option value="perevod">Пополнение переводом</option>
+                            <option value="cash">Пополнение наличными</option>
                             <option value="advaction">Пополнение по рекламной акции</option>
                             <option value="other">Другое</option>
                         </select>
@@ -57,7 +59,7 @@
                 </div>
                 <div class="col-md-12">
                     <label for="product-list">Операция</label>
-                    <select id="product-list" class="form-control">
+                    <select id="product-list" class="form-control" disabled>
                         <?php foreach ($productList as $key=>$value) {  ?>
                         <option value="<?=$key ?>" selected ><?=$value ?></option>
                         <?php } ?>
@@ -95,7 +97,7 @@
                         </div>
                     </div>
                 <?php } ?>
-                <div class="col-md-12">
+                <div class="col-md-2">
                     <?= $form->field($model, 'quantity')->textInput(['value' => 1])->label(THelper::t('quantity')) ?>
                 </div>
                 <?php if ($pincode) { ?>
