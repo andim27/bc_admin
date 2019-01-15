@@ -36,7 +36,8 @@ class NotificationMailQueueForUsers extends ActiveRecord
             'count',
             'created_at',
             'language',
-            'username'
+            'username',
+            'parentId'
         ];
     }
 }
