@@ -17,14 +17,14 @@
             <tbody>
             <?php foreach ($queueForUsers as $queue) { ?>
                 <tr>
-                    <td><?= $queue->title ?></td>
+                    <td><?= $queue->title ?><?= $queue->count && $queue->count > 1 ? ' (' . $queue->count . ')' : '' ?></td>
                     <td><?= $queue->language ?></td>
                     <td><?= $queue->username ?></td>
                     <td><?= $queue->date->toDateTime()->format('d.m.Y H:i:s'); ?></td>
                     <td><a href="/<?= Yii::$app->language ?>/business/notification/queue-view?id=<?= $queue->_id ?>" class="view" data-toggle="ajaxModal">Просмотр</a></td>
                     <td>
                         <?php if ($queue->status == 0) { ?>
-                            Ожидание
+                            Ожидает отправки
                             <br>
                             <a href="/<?= Yii::$app->language ?>/business/notification/queue-delete?id=<?= $queue->_id ?>&type=current-one" class="delete" data-toggle="ajaxModal">Удалить</a>
                             <br>
