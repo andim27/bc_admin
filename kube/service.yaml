@@ -7,13 +7,12 @@ metadata:
     commit: __COMMIT__
     env: __CI_ENVIRONMENT_SLUG__
   namespace: bpt
-spec:  
+spec:
   ports:
     - name: http
       port: 80
       targetPort: 80
-      protocol: TCP    
+      protocol: TCP
   selector:
-    name: bpt-admin-__CI_ENVIRONMENT_SLUG__ 
-  type: LoadBalancer
-  sessionAffinity: ClientIP
+    name: bpt-admin-__CI_ENVIRONMENT_SLUG__
+  type: NodePort

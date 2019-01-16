@@ -589,6 +589,52 @@ Class Menu
                         'action' => 'all-cancellation-warehouse',
                     ],
                 ]
+            ],
+
+
+            [
+                'key'   =>  'showrooms',
+                'label' => THelper::t('showrooms'),
+                'url' => '#',
+                'controller' => 'showrooms',
+                'items' => [
+                    [
+                        'key'   =>  'opening_conditions',
+                        'label' => THelper::t('opening_conditions'),
+                        'url' => ['showrooms/opening-conditions'],
+                        'action' => 'opening-conditions',
+                    ],
+                    [
+                        'key'   =>  'requests_open',
+                        'label' => THelper::t('requests_open'),
+                        'url' => ['showrooms/requests-open'],
+                        'action' => 'requests-open',
+                    ],
+                    [
+                        'key'   =>  'list_showrooms',
+                        'label' => THelper::t('list_showrooms'),
+                        'url' => ['showrooms/list'],
+                        'action' => 'list',
+                    ],
+                    [
+                        'key'   =>  'compensation_table',
+                        'label' => THelper::t('compensation_table'),
+                        'url' => ['showrooms/compensation-table'],
+                        'action' => 'compensation-table',
+                    ],
+                    [
+                        'key'   =>  'charge_compensation',
+                        'label' => THelper::t('charge_compensation'),
+                        'url' => ['showrooms/charge-compensation'],
+                        'action' => 'charge-compensation',
+                    ],
+                    [
+                        'key'   =>  'reception_issue_goods',
+                        'label' => THelper::t('reception_issue_goods'),
+                        'url' => ['showrooms/reception-issue-goods'],
+                        'action' => 'reception-issue-goods',
+                    ]
+                ]
             ]
 
         ];
