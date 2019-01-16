@@ -87,6 +87,7 @@ deploy_dev:
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__URL__/$DEV_URL/" ingress.yaml
         - kubectl get deployments -l name=bpt-admin-${CI_ENVIRONMENT_SLUG}
+        - kubectl apply -f ingress.yaml
         - kubectl create -f deployment.yaml || (kubectl delete -f deployment.yaml && kubectl apply -f deployment.yaml)
         - kubectl create -f service.yaml || true
 
@@ -111,6 +112,7 @@ deploy_stage:
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__URL__/$STAGE_URL/" ingress.yaml
         - kubectl get deployments -l name=bpt-admin-${CI_ENVIRONMENT_SLUG}
+        - kubectl apply -f ingress.yaml
         - kubectl create -f deployment.yaml || (kubectl delete -f deployment.yaml && kubectl apply -f deployment.yaml)
         - kubectl create -f service.yaml || true
 
@@ -136,6 +138,7 @@ deploy_prod:
         - sed -i "s/__URL__/$PROD_URL/" ingress.yaml
         - kubectl cluster-info
         - kubectl get deployments -l name=bpt-admin-${CI_ENVIRONMENT_SLUG}
+        - kubectl apply -f ingress.yaml
         - kubectl apply -f deployment.yaml
         - kubectl apply -f service.yaml || true
 
