@@ -46,14 +46,9 @@
                     <div class="form-group">
                         <label for="kind-operation">Вид операции</label>
                         <select id="kind-operation" name="kind-operation" class="form-control">
-                            <option value="loan">Займ</option>
-                            <option value="bank">Пополнение через банк</option>
-                            <option value="paysera">Пополнение баланса PaySera</option>
-                            <option value="advcash">Пополнение баланса AdvCash</option>
-                            <option value="perevod">Пополнение переводом</option>
-                            <option value="cash">Пополнение наличными</option>
-                            <option value="advaction">Пополнение по рекламной акции</option>
-                            <option value="other">Другое</option>
+                            <?php foreach ($kind_items as $key=>$value) { ?>
+                                <option value="<?=$key?>"><?=$value ?></option>
+                            <?php } ?>
                         </select>
                     </div>
                 </div>

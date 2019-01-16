@@ -12,6 +12,7 @@ use app\models\api\User;
 use app\models\Langs;
 use app\models\MoneyTransfer;
 use app\models\Pins;
+use app\models\PreUp;
 use app\models\Products;
 use app\models\Sales;
 use app\models\Transaction;
@@ -1232,6 +1233,16 @@ class UserController extends BaseController
         $productListData = [];
         $pincode = null;
         $defaultProduct = self::DEFAULT_PRODUCT; //Пополнение счета оплаты
+        $kind_items =[
+            'loan'=>'Займ',
+            'bank'=>'Пополнение через банк',
+            'paysera'  =>'Пополнение баланса PaySera',
+            'advcash'  =>'Пополнение баланса AdvCash',
+            'perevod'  =>'Пополнение переводом',
+            'cash'     =>'Пополнение наличными',
+            'advaction'=>'Пополнение по рекламной акции',
+            'other'    =>'Другое'
+        ];
         $model = new PincodeGenerateForm();
         $model->loan = 1;
 
@@ -1330,11 +1341,12 @@ class UserController extends BaseController
 
 
         return $this->render('pincode_generator', [
-            'model' => $model,
-            'productList' => $productList,
+            'model'           => $model,
+            'productList'     => $productList,
             'productListData' => $productListData,
-            'defaultProduct' => $defaultProduct,
-            'pincode' => !empty($pincode) ? $pincode : null
+            'defaultProduct'  => $defaultProduct,
+            'pincode'         => !empty($pincode) ? $pincode : null,
+            'kind_items'      => $kind_items
         ]);
     }
 
@@ -1372,9 +1384,12 @@ class UserController extends BaseController
                     //$arrayUnits[$item['id__pr']] = $item['id'];
                 //}
                 if ($out['action'] == 'ok') {
-                    self::actionBalanceApply();
+                    //$pre_up_state ='ok';
+                    $pre_up_id = '5c3c829f1198a400157fb302';
+                    $res = self::actionBalanceApply($pre_up_id);
+
                 }
-                $res = 'OK';
+                //$res = 'OK';
             } else {
                 $res['mes'] = 'Viber send error...';
             }
@@ -1382,6 +1397,39 @@ class UserController extends BaseController
             $res['mes'] = 'Saved result:'.$e->getMessage().' line:'.$e->getLine();
         }
         //--send to vider for apply
+
+        return $res;
+    }
+
+    public function actionBalanceApply($id)
+    {
+       $res = 'OK';
+        try {
+            //--status change--
+            $rec = PreUp::find($id);
+            $rec->status = 'done';
+            $rec->save();
+            //--buy product--
+            $data =[
+                'author_id' => $rec->id, //new ObjectID($this->user->id),
+                'product'   => $rec->product,
+                'amount'    => (int)$rec->quantity,
+                'iduser'    => $rec->id,
+                'username'  => $rec->partnerLogin,
+                'pin'       => $rec->pin,
+                //'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
+                'formPayment' => 1,
+                'kind'      => ';kind:'.$rec->kind,
+                'comment'   => ';comment:'.$rec->comment,
+                'status'    => 'done' //'created','wait','done','cancel'
+            ];
+            $res = Sale::buy($data);
+            if ($res != 'OK') {
+                $res['mes'] = '!Balance Up ERROR!';
+            }
+        } catch (\Exception $e) {
+            $res['mes'] = 'Pre status error id:'.$id.' '.$e->getMessage().' line:'.$e->getLine();
+        }
 
         return $res;
     }
