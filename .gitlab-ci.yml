@@ -8,9 +8,9 @@ stages:
 
 variables:
   CONTAINER_REGISTRY: registry.ooo.ua
-  DEV_URL: bc-dev.bpt.ooo.ua
-  STAGE_URL: bc-stage.bpt.ooo.ua
-  PROD_URL: bc.businessprocess.biz
+  DEV_URL: admin-dev.bpt.ooo.ua
+  STAGE_URL: admin-stage.bpt.ooo.ua
+  PROD_URL: admin.businessprocess.biz
 
 
 before_script:
