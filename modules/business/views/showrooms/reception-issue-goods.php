@@ -1,0 +1,5 @@
+<?php
+
+?>
+
+reception-issue-goods
