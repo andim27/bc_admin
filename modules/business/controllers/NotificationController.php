@@ -28,7 +28,7 @@ class NotificationController extends BaseController
         $pushTemplateAddForm = new PushTemplateAddForm();
 
         $pushes = api\Notification::getPushes();
-        $queueForUsers = NotificationMailQueueForUsers::find()->all();
+        $queueForUsers = NotificationMailQueueForUsers::find()->where(['parentId' => null])->all();
         $pushTemplates = NotificationMailTemplates::find()->all();
 
         $languages = api\dictionary\Lang::supported();
@@ -203,16 +203,8 @@ class NotificationController extends BaseController
         $request = Yii::$app->request;
 
         if ($request->isAjax) {
-            if ($queueForUser = NotificationMailQueueForUsers::find()->where(['_id' => $id])->one()) {
-                $title = $queueForUser->title;
-                $body = $queueForUser->body;
-            } else {
-                $title = '';
-                $body = '';
-            }
             return $this->renderAjax('modals/queue_view', [
-                'title' => $title,
-                'body' => $body,
+                'notifications' => NotificationMailQueueForUsers::find()->orWhere(['_id' => new ObjectID($id)])->orWhere(['parentId' => new ObjectID($id)])->all()
             ]);
         }
 
@@ -242,7 +234,7 @@ class NotificationController extends BaseController
 
         switch ($type){
             case 'current-one':
-                $result = NotificationMailQueueForUsers::deleteAll(['_id' => new ObjectID($id)]);
+                $result = NotificationMailQueueForUsers::deleteAll(['or', ['_id' => new ObjectID($id)], ['parentId' => new ObjectID($id)]]);
                 break;
             case 'current-all':
                 if ($queueForUser = NotificationMailQueueForUsers::find()->where(['_id' => new ObjectID($id)])->one()) {
