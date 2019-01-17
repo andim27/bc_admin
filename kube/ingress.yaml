@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-admin-__CI_ENVIRONMENT_SLUG__
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+
+spec:
+  rules:
+  - host: __URL__
+    http:
+      paths:
+      - backend:
+          serviceName: bpt-admin-__CI_ENVIRONMENT_SLUG__
+          servicePort: 80
+        path: /
