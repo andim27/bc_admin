@@ -1385,7 +1385,7 @@ class UserController extends BaseController
                 //}
                 if ($out['action'] == 'ok') {
                     //$pre_up_state ='ok';
-                    $pre_up_id = '5c3c829f1198a400157fb302';
+                    $pre_up_id = '5c3f544f1198a40011232343';
                     $res = self::actionBalanceApply($pre_up_id);
 
                 }
@@ -1433,7 +1433,21 @@ class UserController extends BaseController
 
         return $res;
     }
-
+    public function actionBalanceAction()
+    {
+        if (Yii::$app->request->isAjax) {
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        }
+        $request = Yii::$app->request;
+        $id     = $request->post('id');
+        $action = $request->post('action');
+        $status_html_done = '<span class="glyphicon glyphicon-ok" style="color:green" title="done"></span>';
+        if ($action == 'cancel') {
+            $status_html_done = '<span class="glyphicon glyphicon-remove" title="done"></span>';
+        }
+        $res = ['success'=>true,'mes'=>'done','status_html'=>'done','id'=>$id,'status_html' => $status_html_done];
+        return $res;
+    }
     public function actionSearchListUsers($q = null, $id = null)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

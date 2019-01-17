@@ -95,10 +95,11 @@ function statusIcon($status_str) {
 
 
 <section class="panel panel-default">
+<!--    <pre>-->
+<!--           --><?//=($p_key) ?>
+<!--    </pre>-->
     <div class="table-responsive">
-        <!--            <pre>-->
-        <!--                --><?//=var_dump($infoSale) ?>
-        <!--            </pre>-->
+
         <table class="table table-translations table-striped datagrid m-b-sm">
             <thead>
             <tr role="row">
@@ -108,6 +109,11 @@ function statusIcon($status_str) {
                 <th><?=THelper::t('kind')?></th>
                 <th width="25%"><?=THelper::t('comments')?></th>
                 <th><?=THelper::t('status')?></th>
+                <?php
+                if (isset($p_key)) {
+                ?>
+                <th><?=THelper::t('controls')?></th>
+                <?php } ?>
             </tr>
             </thead>
 
@@ -124,7 +130,17 @@ function statusIcon($status_str) {
                         <td><?=$item['amount']?></td>
                         <td><?=$item['kind'] ?? '?'//balanceMesssage('kind',$item['whenceSale']);?></td>
                         <td width="25%"><?= $item['comment'] ?? '...'//balanceMesssage('comment',$item['whenceSale']);?></td>
-                        <td><?=statusIcon(($item['status'] ?? ''));?></td>
+                        <td id="status-<?=$item['_id'] ?>"><?=statusIcon(($item['status'] ?? ''));?></td>
+
+                        <?php
+                             if (isset($p_key)) {
+                        ?>
+                        <td>
+                         <button type="button" class="btn btn-success btn-sm" onclick="applyBalance('<?=$item['_id'] ?>')">Apply</button>
+                         <button type="button" class="btn btn-danger  btn-sm" onclick="cancelBalance('<?=$item['_id'] ?>')">Cancel</button>
+                        </td>
+
+                        <?php } ?>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -141,7 +157,37 @@ function statusIcon($status_str) {
     </div>
 
 </section>
-
+<?php
+if (isset($p_key)) {
+?>
+<script>
+    function applyBalance(id) {
+        //alert(id);
+        sendActionBalance('done',id);
+    }
+    function cancelBalance(id) {
+        //alert(id);
+        sendActionBalance('cancel',id);
+    }
+    function changeStatusBalance(data) {
+        console.log(data);
+        if ((data.id !=undefined)&&(data.status_html !=undefined)){
+            $('#status-'+data.id).html(data.status_html);
+        }
+    }
+    function sendActionBalance(action,id) {
+        var url = "/<?=Yii::$app->language?>/business/user/balance-action";
+        var data = {'id':id,'action':action,'type':'adminka'}
+        $.post(url,data).done(function (data) {
+            if (data.success == true) {
+                changeStatusBalance(data);
+            } else {
+                alert('Change balance error');
+            }
+        });
+    }
+</script>
+<?php } ?>
 
 
 <script>

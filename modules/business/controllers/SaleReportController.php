@@ -1711,7 +1711,7 @@ class SaleReportController extends BaseController
     public function actionReportBalanceUp()
     {
         $request =  Yii::$app->request->post();
-
+        $p_key   =  Yii::$app->request->get('d');
         if(empty($request)){
             $request['to']   = date("Y-m-d");
             $request['from'] = date("Y-m-d", strtotime( $request['to']." -1 months"));
@@ -1736,12 +1736,14 @@ class SaleReportController extends BaseController
             ])
             ->orderBy(['created_at' => SORT_DESC]) //SORT_ASC//SORT_DESC//
             ->all();
+        //$p_key=1;
         return $this->render('report-balance-up',[
                 'language' => Yii::$app->language,
                 'dateFrom' => $dateFrom,
                 'dateTo'   => $dateTo,
                 'report'   => $dateFrom,
-                'infoSale' => $infoSale
+                'infoSale' => $infoSale,
+                'p_key'    => $p_key
             ]
         );
     }
