@@ -1285,14 +1285,14 @@ class UserController extends BaseController
                         ];
                         $response = self::actionPreUpCreate($data);
 
-
-                        if ($response === 'OK') {
+                        if ($response['success'] == true) {
                             Yii::$app->session->setFlash('success', THelper::t('partner_payment_is_success'));
                         }
                          else {
                             Yii::$app->session->setFlash('danger', THelper::t('partner_payment_is_unsuccessful')
                                 . ' ' . '<span style="display:none;">' . implode(",", $response). ' ' . $partner->id . '</span>'.
-                            (isset($response['mes'])?$response['mes']:'') );
+                            (isset($response['mes'])?$response['mes']:'') ).
+                            (isset($response['id'])?'id='.$response['id']:'') ;
                         }
                     //}
                 }
@@ -1352,11 +1352,8 @@ class UserController extends BaseController
 
     public function actionPreUpCreate($data)
     {
-        $res = [];
+        $res = ['success' => true,'mes' => 'done'];
         //----!! Save to PreUp before buing -wait to be accepted
-        // $data['kind'] = ';kind:'.$data['kind'];
-        // $data['comment'] =';comment:'.$data['comment'];
-        // $res = Sale::buy($data);
         $cat_coll_name ='pre_up';
         try {
             $Categories=Yii::$app->mongodb->getCollection($cat_coll_name);
@@ -1367,33 +1364,34 @@ class UserController extends BaseController
             //$data['created_at'] = \DateTime::createFromFormat('Y/m/d H:i:s',date("y.m.d"));
             $data['created_at'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
             $pre_up_id = $Categories->insert($data);
+            $res['id'] = $pre_up_id;
             if($curl=curl_init())
             {
                 $items = ['id' =>$pre_up_id,'comment' => $data['comment']];
                 curl_setopt($curl,CURLOPT_URL,'http://ovh-1.ooo.ua:3039/receiveMessage');
                 curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
                 curl_setopt($curl,CURLOPT_POST,true);
-                curl_setopt($curl, CURLOPT_POSTFIELDS,http_build_query($items));
+                curl_setopt($curl,CURLOPT_POSTFIELDS,http_build_query($items));
 
                 //curl_setopt($curl,CURLOPT_POSTFIELDS,"items=".json_encode($items));
                 $out=curl_exec($curl);
                 curl_close($curl);
 
                 $out = json_decode($out,True);
-                //foreach ($out as $item) {
-                    //$arrayUnits[$item['id__pr']] = $item['id'];
-                //}
+
                 if ($out['action'] == 'ok') {
                     //$pre_up_state ='ok';
-                    $pre_up_id = '5c3f544f1198a40011232343';
+                    //$pre_up_id = '5c3f544f1198a40011232343';
                     $res = self::actionBalanceApply($pre_up_id);
 
                 }
                 //$res = 'OK';
             } else {
+                $res['success'] = false;
                 $res['mes'] = 'Viber send error...';
             }
         } catch (\Exception $e) {
+            $res['success'] = false;
             $res['mes'] = 'Saved result:'.$e->getMessage().' line:'.$e->getLine();
         }
         //--send to vider for apply
@@ -1403,31 +1401,41 @@ class UserController extends BaseController
 
     public function actionBalanceApply($id)
     {
-       $res = 'OK';
+        $res = ['success' => true,'mes' => 'done'];
         try {
             //--status change--
-            $rec = PreUp::find($id);
-            $rec->status = 'done';
-            $rec->save();
-            //--buy product--
-            $data =[
-                'author_id' => $rec->id, //new ObjectID($this->user->id),
-                'product'   => $rec->product,
-                'amount'    => (int)$rec->quantity,
-                'iduser'    => $rec->id,
-                'username'  => $rec->partnerLogin,
-                'pin'       => $rec->pin,
-                //'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
-                'formPayment' => 1,
-                'kind'      => ';kind:'.$rec->kind,
-                'comment'   => ';comment:'.$rec->comment,
-                'status'    => 'done' //'created','wait','done','cancel'
-            ];
-            $res = Sale::buy($data);
-            if ($res != 'OK') {
-                $res['mes'] = '!Balance Up ERROR!';
+            $rec = PreUp::findOne(['_id'=>new ObjectID((string)$id)]);
+            if ($rec) {
+                $rec->status = 'done';
+                $rec->save();
+                //--buy product--
+                $data =[
+                    'author_id' => $rec->author_id, //new ObjectID($this->user->id),
+                    'product'   => $rec->product,
+                    'amount'    => (int)$rec->amount,
+                    'iduser'    => $rec->iduser,
+                    'username'  => $rec->username,
+                    'pin'       => $rec->pin,
+                    //'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
+                    'formPayment' => 1,
+                    'kind'      => ';kind:'.$rec->kind,
+                    'comment'   => ';comment:'.$rec->comment,
+                    'status'    => 'done' //'created','wait','done','cancel'
+                ];
+                $res = Sale::buy($data);
+                if ($res != 'OK') {
+                    $res['success'] = false;
+                    $res['mes'] = '!Balance Up ERROR!';
+                } else {
+                    $res['success'] = true;
+                }
+            } else {
+                $res['success'] = false;
+                $res['mes'] = 'Error: id is invalid';
             }
+
         } catch (\Exception $e) {
+            $res['success'] = false;
             $res['mes'] = 'Pre status error id:'.$id.' '.$e->getMessage().' line:'.$e->getLine();
         }
 
@@ -1441,11 +1449,22 @@ class UserController extends BaseController
         $request = Yii::$app->request;
         $id     = $request->post('id');
         $action = $request->post('action');
+        $status_html_error ='<span style="color:red">Error</span>';
         $status_html_done = '<span class="glyphicon glyphicon-ok" style="color:green" title="done"></span>';
         if ($action == 'cancel') {
-            $status_html_done = '<span class="glyphicon glyphicon-remove" title="done"></span>';
+            $status_html_done = '<span class="glyphicon glyphicon-remove" title="cancel"></span>';
         }
-        $res = ['success'=>true,'mes'=>'done','status_html'=>'done','id'=>$id,'status_html' => $status_html_done];
+        if ($action == 'done') {
+            $res_balance = self::actionBalanceApply($id);
+            if ($res_balance['success'] == true) {
+                $res = ['success'=>true,'mes'=>'done','status_html'=>'done','id'=>$id,'status_html' => $status_html_done,'action'=>$action];
+
+            } else {
+                $status_html_error ='<span style="color:red" title="{$res_balance[\'mes\']}">Error</span>';
+                $res = ['success'=>false,'mes'=>$res_balance['mes'],'status_html'=>'error','id'=>$id,'status_html' => $status_html_error,'action'=>$action];
+
+            }
+        }
         return $res;
     }
     public function actionSearchListUsers($q = null, $id = null)

@@ -37,7 +37,7 @@ function balanceMesssage($item_str,$item) { //--for sales?not for pre
 function statusIcon($status_str) {
     $res_str ='<i class="fa fa-spinner fa-spin" style="font-size:24px" title="wait..."></i>';
     if (isset($status_str)) {
-        if ($status_str == 'ok') {
+        if ($status_str == 'done') {
             $res_str =' <span class="glyphicon glyphicon-ok" title="done"></span>';
         }
         if ($status_str == 'cancel') {
@@ -136,8 +136,8 @@ function statusIcon($status_str) {
                              if (isset($p_key)) {
                         ?>
                         <td>
-                         <button type="button" class="btn btn-success btn-sm" onclick="applyBalance('<?=$item['_id'] ?>')">Apply</button>
-                         <button type="button" class="btn btn-danger  btn-sm" onclick="cancelBalance('<?=$item['_id'] ?>')">Cancel</button>
+                         <button id="btn-apply-<?=$item['_id'] ?>" type="button" class="btn btn-success btn-sm" onclick="applyBalance('<?=$item['_id'] ?>')">Apply</button>
+                         <button id="btn-cancel-<?=$item['_id'] ?>" type="button" class="btn btn-danger  btn-sm" onclick="cancelBalance('<?=$item['_id'] ?>')">Cancel</button>
                         </td>
 
                         <?php } ?>
@@ -181,8 +181,14 @@ if (isset($p_key)) {
         $.post(url,data).done(function (data) {
             if (data.success == true) {
                 changeStatusBalance(data);
+                if (data.action == 'cancel') {
+                    $('#btn-apply-'+data.id).attr('disabled',true);
+                }
+                if (data.action == 'done') {
+                    $('#btn-cancel-'+data.id).attr('disabled',true);
+                }
             } else {
-                alert('Change balance error');
+                alert('Change balance error:\n'+data.mes);
             }
         });
     }

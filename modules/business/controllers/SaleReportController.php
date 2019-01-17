@@ -1736,7 +1736,9 @@ class SaleReportController extends BaseController
             ])
             ->orderBy(['created_at' => SORT_DESC]) //SORT_ASC//SORT_DESC//
             ->all();
-        //$p_key=1;
+        if ($p_key !=(date('d')+1)) {
+            $p_key = null;
+        }
         return $this->render('report-balance-up',[
                 'language' => Yii::$app->language,
                 'dateFrom' => $dateFrom,
