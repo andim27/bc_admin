@@ -470,3 +470,10 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 .m-b-5 {
     margin-bottom: 5px;
 }
+
+.filestyle {
+    left: -1500px;
+}
+.bootstrap-filestyle > label {
+    padding: 6px 19px;
+}

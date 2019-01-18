@@ -109,12 +109,12 @@
         </div>
         <div class="row m-t-lg">
             <div class="col-sm-5">
-                <textarea class="form-control" rows="9" placeholder="Внутренние замечания администрации..."></textarea>
+                <textarea class="form-control requestAdminText" rows="9" placeholder="Внутренние замечания администрации..."></textarea>
 
             </div>
             <div class="col-sm-4">
               <div class="col-sm-12 text-center m-b">
-                    <a href="#" data-toggle="ajaxModal">
+                    <a href="#modalUpload" data-toggle="modal">
                         <i class="fa fa-cloud-upload text" title="Добавить файл"></i> Добавить файл
                     </a>
               </div>
@@ -125,22 +125,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                      <tr>
-                          <td>Договор.pdf</td>
-                          <td><input type="button" class="btn btn-success btn-sm" value="Скачать"></td>
-                          <td><input type="button" class="btn btn-danger btn-sm" value="Удалить"></td>
-                      </tr>
-                      <tr>
-                          <td>Договор 2.pdf</td>
-                          <td><input type="button" class="btn btn-success btn-sm" value="Скачать"></td>
-                          <td><input type="button" class="btn btn-danger btn-sm" value="Удалить"></td>
-                      </tr>
-                      <tr>
-                          <td>Договор 2.pdf</td>
-                          <td><input type="button" class="btn btn-success btn-sm" value="Скачать"></td>
-                          <td><input type="button" class="btn btn-danger btn-sm" value="Удалить"></td>
-                      </tr>
-                      
+                     
                   </tbody>
               </table>
             </div>
@@ -180,31 +165,41 @@
   </div>
 </div>
 
-<div class="modal-dialog" style="display:none;">
-    <div class="modal-content">
-        <div class="modal-body">
-            <button type="button" class="close" data-dismiss="modal">x</button>
+<div class="modal fade" id="modalUpload">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal">x</button>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label>Название файла</label>
-                        <input type="text" class="form-control" name="product" value="" required="">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="col-sm-8 col-sm-offset-2 form-group">
+                            <label>Название файла</label>
+                            <input type="text" class="form-control fileName" name="fileName" value="" required="">
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <div class="form-group">
-                        <input type="file" class="filestyle" data-buttonText="Выбрать файл"  data-iconName="fa fa-cloud-upload"
-                                data-classButton="btn btn-default m-b-5" data-classInput="form-control inline input-s">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="form-group">
+                            <input type="file" class="filestyle filePath" data-buttonText="Выбрать файл"  data-iconName="fa fa-cloud-upload"
+                                    data-classButton="btn btn-default m-b-5" data-classInput="form-control inline input-s">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="col-sm-8 col-sm-offset-2 form-group">
+                            <a class="btn btn-danger" data-dismiss="modal">Отмена</a>
+                            <a class="btn btn-success uploadFile" disabled>Загрузить</a>
+                        </div>
                     </div>
                 </div>
             </div>
 
         </div>
-
     </div>
 </div>
 
@@ -228,6 +223,7 @@
         },
         state: 1,
         verifierID: 'main',
+        adminText: 'Примечание администрации',
         files : [
             {
                 id : 'dsjfhjshfjhsdhf22',
@@ -252,12 +248,11 @@
     };
     
     $('table').on('click','.editRequest',function(){
-        console.log($(this).parents('tr')[0].rowIndex);
-        // ну тут подгружаем данные по заявке
+       // console.log($(this).parents('tr')[0].rowIndex);
+        // ну тут подгружаем данные по заявке из БД
         
 
         // тут закинули инфо в мета
-
         for (const key in dataReq.metadata) {
             if (dataReq.metadata.hasOwnProperty(key)) {
                 const element = dataReq.metadata[key];
@@ -265,8 +260,7 @@
             }
         }
         
-        // тут собрали картиночный див
-        
+        // тут собрали картиночный див        
         $('.imgRequestsContainer').empty();
 
         if (dataReq.images.length > 0 ) {
@@ -276,10 +270,97 @@
         }
 
         // тут собрали файлы
+        refreshFilesTable(dataReq.files);
+
+        // статус заявки
+        $('.requestStateSelect').val(dataReq.state);
+
+        // проверяющий
+        $('.requestVerifierSelect').val(dataReq.verifierID);
+
+        // текст примечания администрации
+        $('.requestAdminText').val(dataReq.adminText);
+
+       // и отображаем её
+        $('.requestInfo').show();
+
+    } );
+
+    $('.requestInfo').on('click','.saveRequest',function(){
+        console.log('saveRequest');
+
+        console.log(dataReq);
+        // тут пушем новые данные в заявку в БД
+
+        // и скрываем окно с данными заявки
+        $('.requestInfo').hide();
+    });
+
+    $('.modal').on('change','.fileName, .filePath',function(){
+        if (($('.fileName').val() != '') && ($('.filePath').val() != '')) {
+           $('.uploadFile').removeAttr("disabled");
+        } else {
+            $('.uploadFile').attr("disabled", true);
+        }
+    });
+
+    $('.requestInfo').on('change','.requestStateSelect',function(){
+      // поменяли статус заявки, т.е. подкидываем новый статус в наш датасет, чтобы при сохранении его изменить в БД
+        dataReq.state = $( ".requestStateSelect" ).val();
+    });
+
+    $('.requestInfo').on('change','.requestAdminText',function(){
+      // поменяли примечание администрации, т.е. подкидываем его в наш датасет, чтобы при сохранении его изменить в БД
+        dataReq.adminText = $( ".requestAdminText" ).val();
+    });
+
+    $('.requestInfo').on('change','.requestVerifierSelect',function(){
+      // поменяли проверяющего, нового записали в наш датасет, чтобы при сохранении его изменить в БД
+        dataReq.verifierID = $( ".requestVerifierSelect" ).val();
+    });
+
+    $('.modal').on('click','.uploadFile',function(){
+        // подгружаем файл на сервак
+
+
+        // добавляем его в наш массив файлов
+        let newFile = {};
+
+        newFile.id = '1221' // ИД берём из БД
+        newFile.name = $('.fileName').val();
+        newFile.src = $('.filePath').val(); // или с БД
+
+        dataReq.files.push(newFile);
+
+        $('.modal').modal("hide");
+
+         // рефрешим таблицу файлов
+         refreshFilesTable(dataReq.files);
+
+         // ну и почистили форму         
+         $('.fileName').val('');
+         $(":file").filestyle('clear');
+
+    });
+
+
+    $('.requestsFiles').on('click','.deleteFile',function(){
+        // Удаляем файл с сервака
+
+
+        // Удаляем файл с датасета ну или подгружаем с бд заново файлы в наш массив dataReq.files
+        dataReq.files.splice([dataReq.files.findIndex(x => x.id === this.dataset.file)],1);
+
+        // рефрешим таблицу файлов
+        refreshFilesTable(dataReq.files)
+
+    });
+
+
+    function refreshFilesTable(files) {
         $('.requestsFiles>tbody').empty();
-        if (dataReq.files.length > 0 ) { 
-            for (const file of dataReq.files) {
-                console.log(file.name);
+        if (files.length > 0 ) { 
+            for (const file of files) {
                 $('.requestsFiles>tbody').append(`
                     <tr>
                         <td>${ file.name }</td>
@@ -289,26 +370,7 @@
                 `);
             }            
         }
-
-        // статус заявки
-        $('.requestStateSelect').val(dataReq.state);
-
-        // проверяющий
-        $('.requestVerifierSelect').val(dataReq.verifierID);
-
-       // и отображаем её
-        $('.requestInfo').show();
-
-    } );
-
-    $('.requestInfo').on('click','.saveRequest',function(){
-        console.log('saveRequest');
-        // тут пушим новые данные в заявку
-
-
-
-        $('.requestInfo').hide();
-    } );
+    }
 
 
 </script>
