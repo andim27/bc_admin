@@ -8,7 +8,6 @@ class CharityReport {
 
     public $author;
     public $lang;
-    public $dateOfPublication;
     public $dateUpdate;
     public $dateCreate;
     public $body;
@@ -26,13 +25,11 @@ class CharityReport {
 
         $response = $apiClient->get();
 
-        $result = self::_getResults($response);
-
-        return $result ? current($result) : false;
+        return $response ? self::_getResults($response) : false;
     }
 
     /**
-     * Adds charity
+     * Add charity
      *
      * @param $data
      * @return bool
@@ -54,25 +51,15 @@ class CharityReport {
      */
     private static function _getResults($data)
     {
-        $charityReports = [];
+        $charityReport             = new self;
+        $charityReport->author     = $data->author;
+        $charityReport->lang       = $data->lang;
+        $charityReport->body       = $data->body;
+        $charityReport->title      = $data->title;
+        $charityReport->dateUpdate = $data->updated_at;
+        $charityReport->dateCreate = $data->created_at;
 
-        if ($data) {
-            if (! is_array($data)) {
-                $data = [$data];
-            }
-            foreach ($data as $object) {
-                $charityReport                    = new self;
-                $charityReport->author            = $object->author;
-                $charityReport->lang              = $object->lang;
-                $charityReport->body              = $object->body;
-                $charityReport->title             = $object->title;
-                $charityReport->dateOfPublication = strtotime($object->dateOfPublication);
-                $charityReport->dateUpdate        = strtotime($object->dateUpdate);
-                $charityReport->dateCreate        = strtotime($object->dateCreate);
-                $charityReports[] = $charityReport;
-            }
-        }
-
-        return $charityReports;
+        return $charityReport;
     }
+
 }
