@@ -104,7 +104,7 @@ function statusIcon($status_str) {
             <thead>
             <tr role="row">
                 <th><?=THelper::t('date_create')?></th>
-                <th><?=THelper::t('username')?></th>
+                <th><?=THelper::t('user')?></th>
                 <th><?=THelper::t('sum')?></th>
                 <th><?=THelper::t('kind')?></th>
                 <th width="25%"><?=THelper::t('comments')?></th>
@@ -136,8 +136,8 @@ function statusIcon($status_str) {
                              if (isset($p_key)) {
                         ?>
                         <td>
-                         <button id="btn-apply-<?=$item['_id'] ?>" type="button" class="btn btn-success btn-sm" onclick="applyBalance('<?=$item['_id'] ?>')">Apply</button>
-                         <button id="btn-cancel-<?=$item['_id'] ?>" type="button" class="btn btn-danger  btn-sm" onclick="cancelBalance('<?=$item['_id'] ?>')">Cancel</button>
+                         <button id="btn-apply-<?=$item['_id'] ?>"  <?=($item['status']=='done')?'disabled':'' ?>  type="button" class="btn btn-success btn-sm" onclick="applyBalance('<?=$item['_id'] ?>')">Apply</button>
+                         <button id="btn-cancel-<?=$item['_id'] ?>" <?=($item['status']=='done')?'disabled':'' ?>  type="button" class="btn btn-danger  btn-sm" onclick="cancelBalance('<?=$item['_id'] ?>')">Cancel</button>
                         </td>
 
                         <?php } ?>
@@ -177,7 +177,10 @@ if (isset($p_key)) {
     }
     function sendActionBalance(action,id) {
         var url = "/<?=Yii::$app->language?>/business/user/balance-action";
-        var data = {'id':id,'action':action,'type':'adminka'}
+        var data = {'id':id,'action':action,'type':'adminka'};
+        if (action =='done') {
+            $('#btn-apply-'+data.id).attr('disabled',true);
+        }
         $.post(url,data).done(function (data) {
             if (data.success == true) {
                 changeStatusBalance(data);
@@ -185,10 +188,12 @@ if (isset($p_key)) {
                     $('#btn-apply-'+data.id).attr('disabled',true);
                 }
                 if (data.action == 'done') {
+                    $('#btn-apply-'+data.id).attr('disabled',true);
                     $('#btn-cancel-'+data.id).attr('disabled',true);
                 }
             } else {
                 alert('Change balance error:\n'+data.mes);
+                $('#btn-apply-'+data.id).attr('disabled',false);
             }
         });
     }

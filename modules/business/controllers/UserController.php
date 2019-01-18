@@ -1350,6 +1350,33 @@ class UserController extends BaseController
         ]);
     }
 
+    public function actionSendToViber($id,$data)
+    {
+        $res = ['success' => true,'mes' => 'done'];
+        if($curl=curl_init())
+        {
+            $items = ['id' =>$id,'comment' => $data['comment']];
+            curl_setopt($curl,CURLOPT_URL,'http://ovh-1.ooo.ua:3039/receiveMessage');
+            curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+            curl_setopt($curl,CURLOPT_POST,true);
+            curl_setopt($curl,CURLOPT_POSTFIELDS,http_build_query($items));
+
+            //curl_setopt($curl,CURLOPT_POSTFIELDS,"items=".json_encode($items));
+            $out=curl_exec($curl);
+            curl_close($curl);
+
+            $out = json_decode($out,True);
+
+            if ($out['action'] == 'ok') {
+                //$pre_up_state ='ok';
+                //$pre_up_id = '5c3f544f1198a40011232343';
+                $res = self::actionBalanceApply($id);
+
+            }
+        }
+        return $res;
+    }
+
     public function actionPreUpCreate($data)
     {
         $res = ['success' => true,'mes' => 'done'];
@@ -1365,36 +1392,18 @@ class UserController extends BaseController
             $data['created_at'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
             $pre_up_id = $Categories->insert($data);
             $res['id'] = $pre_up_id;
-            if($curl=curl_init())
+            //--send to viber for apply
+            $res_vider =self::actionSendToViber($pre_up_id,$data);
+            if($res_vider['success'])
             {
-                $items = ['id' =>$pre_up_id,'comment' => $data['comment']];
-                curl_setopt($curl,CURLOPT_URL,'http://ovh-1.ooo.ua:3039/receiveMessage');
-                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-                curl_setopt($curl,CURLOPT_POST,true);
-                curl_setopt($curl,CURLOPT_POSTFIELDS,http_build_query($items));
+              //$res = self::actionBalanceApply($pre_up_id);
 
-                //curl_setopt($curl,CURLOPT_POSTFIELDS,"items=".json_encode($items));
-                $out=curl_exec($curl);
-                curl_close($curl);
-
-                $out = json_decode($out,True);
-
-                if ($out['action'] == 'ok') {
-                    //$pre_up_state ='ok';
-                    //$pre_up_id = '5c3f544f1198a40011232343';
-                    $res = self::actionBalanceApply($pre_up_id);
-
-                }
-                //$res = 'OK';
             } else {
-                $res['success'] = false;
-                $res['mes'] = 'Viber send error...';
+                $res = ['success' => false,'mes' =>'Viber send error...'];
             }
         } catch (\Exception $e) {
-            $res['success'] = false;
-            $res['mes'] = 'Saved result:'.$e->getMessage().' line:'.$e->getLine();
+            $res = ['success' => false,'mes' =>'Saved result:'.$e->getMessage().' line:'.$e->getLine()];
         }
-        //--send to vider for apply
 
         return $res;
     }
@@ -1422,21 +1431,18 @@ class UserController extends BaseController
                     'comment'   => ';comment:'.$rec->comment,
                     'status'    => 'done' //'created','wait','done','cancel'
                 ];
-                $res = Sale::buy($data);
-                if ($res != 'OK') {
-                    $res['success'] = false;
-                    $res['mes'] = '!Balance Up ERROR!';
+                $res_sale = Sale::buy($data);
+                if (isset($res_sale['error'])) {
+                    $res = ['success' => false,'mes'=>'!Balance Up ERROR!'];
                 } else {
                     $res['success'] = true;
                 }
             } else {
-                $res['success'] = false;
-                $res['mes'] = 'Error: id is invalid';
+                $res =['success'=> false,'mes'=>'Error: id is invalid'];
             }
 
         } catch (\Exception $e) {
-            $res['success'] = false;
-            $res['mes'] = 'Pre status error id:'.$id.' '.$e->getMessage().' line:'.$e->getLine();
+            $res =['success' => false,'mes'=>'Pre status error id:'.$id.' '.$e->getMessage().' line:'.$e->getLine()];
         }
 
         return $res;
