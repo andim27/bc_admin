@@ -51,7 +51,7 @@
     </div>
 </section>
 
-<div class="panel panel-default reauestInfo">
+<div class="panel panel-default requestInfo">
   <div class="panel-body">
       <div class="row">
           <div class="col-sm-12">
@@ -85,7 +85,7 @@
             </div>
             <div class="col-sm-4">
               <div class="col-sm-12 text-center m-b">
-                  <button class="btn btn-default center"><i class="fa fa-cloud-upload text"></i> Добавить файл</button>
+                <button class="btn btn-default center"><i class="fa fa-cloud-upload text"></i> Добавить файл</button>
               </div>
               <table class="table datagrid m-b-sm requestsFiles">
                   <thead>
@@ -143,7 +143,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-              <input type="button" class="btn btn-success pull-right" value="Сохранить">
+              <input type="button" class="btn btn-success pull-right saveRequest" value="Сохранить">
             </div>
         </div>
   </div>
@@ -153,11 +153,7 @@
 <?php $this->registerJsFile('/js/lightbox/lightbox.js', ['position' => yii\web\View::POS_END]); ?>
 
 <script>
-
-$(document).ready(function() {
-
-} );
-
+    
     var table = $('.table-users');
 
     table = table.dataTable({
@@ -180,10 +176,26 @@ $(document).ready(function() {
             {"data": "phoneNumber"},
             {
               "data": null,
-              "defaultContent": '<a href="#"><i class="fa fa-pencil"></i></a>'
+              "defaultContent": '<a class="editRequest" href="#"><i class="fa fa-pencil"></i></a>'
             }
         ],
         "order": [[ 0, "asc" ]]
     })
+
+    $('table').on('click','.editRequest',function(){
+        console.log($(this).parents('tr')[0].rowIndex);
+        // ну тут подгружаем данные по заявке
+
+       // и закидываем инфу в форму requestInfo
+
+
+       // и отображаем её
+        $('.requestInfo').show();
+    } );
+
+    $('.requestInfo').on('click','.saveRequest',function(){
+        console.log('saveRequest');
+    } );
+
 
 </script>

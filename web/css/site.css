@@ -461,3 +461,7 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
     height: 150px;
     margin-top: 3px;
 }
+
+.requestInfo {
+    display: none;
+}
