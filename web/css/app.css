@@ -286,6 +286,10 @@ a:hover .caret-white {
 .panel .table-striped > tbody > tr:nth-child(odd) > th {
   background-color: #f9f9f9;
 }
+.panel .table-striped > tbody > tr:nth-child(odd).selected > td,
+.panel .table-striped > tbody > tr:nth-child(odd).selected > th {
+  background-color: #B0BED9;
+}
 .panel .table-striped > thead th {
   background: #f5f5f5;
   border-right: 1px solid #f1f1f1;
