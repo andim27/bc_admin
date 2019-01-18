@@ -460,8 +460,13 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
     max-width: 14%;
     height: 150px;
     margin-top: 3px;
+    margin-left: 2px;
 }
 
 .requestInfo {
     display: none;
+}
+
+.m-b-5 {
+    margin-bottom: 5px;
 }
