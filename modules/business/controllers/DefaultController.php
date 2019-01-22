@@ -117,8 +117,11 @@ class DefaultController extends BaseController
 
         }
         //--------------------------------B:PROJECTS--------------------------------------------------
-        if ($block_name =='projects') {
+        if (($block_name =='projects') ||($block_name =='turnover-details')) {
             $view_name = '_projects';
+            if ($block_name =='turnover-details') {
+                $view_name = '_turnover_projects';
+            }
             $statisticInfo = [
                 // общий приход
                 'generalReceiptMoney' => 0,
@@ -321,6 +324,160 @@ class DefaultController extends BaseController
                 }
             }
         }
+        //--------------------------------B:COMMISSION-details----------------------------------------
+        if ($block_name =='commission-details') {
+            $view_name = '_commission_details';
+            // infoBonus
+            $listBonus = ['worldBonus','propertyBonus'];
+            foreach ($listBonus as $itemBonus) {
+                $statisticInfo['bonus'][$itemBonus] = (new \yii\mongodb\Query())
+                    ->select(['statistics.'.$itemBonus])
+                    ->from('users')
+                    ->where([
+                        'username' => [
+                            '$nin' => ['main','datest1','danilchenkoalex']
+                        ]
+                    ])
+                    ->sum('statistics.'.$itemBonus);
+            }
+            $statisticInfo['bonus']['autoBonus'] = Transaction::find()
+                ->select(['amount'])
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'forWhat' => [
+                        '$regex' => 'Auto bonus'
+                    ],
+                    'idTo' => [
+                        '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                    ],
+                    'type'=>4,
+                ])
+                ->sum('amount');
+            $statisticInfo['bonus']['executiveBonus'] = Transaction::find()
+                ->select(['amount'])
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'forWhat' => [
+                        '$regex' => 'Executive bonus'
+                    ],
+                    'idTo' => [
+                        '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                    ],
+                    'type'=>1,
+                ])
+                ->sum('amount');
+
+            $statisticInfo['bonus']['careerBonus'] = Transaction::find()
+                ->select(['amount'])
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'forWhat' => [
+                        '$regex' => 'Bonus per the achievement'
+                    ],
+                    'idTo' => [
+                        '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                    ],
+                    'type'=>1,
+                ])
+                ->sum('amount');
+
+            $statisticInfo['bonus']['mentorBonus'] = Transaction::find()
+                ->select(['amount'])
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'forWhat' => [
+                        '$regex' => 'Mentor bonus'
+                    ],
+                    'idTo' => [
+                        '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                    ],
+                    'type'=>1,
+                ])
+                ->sum('amount');
+
+
+            $statisticInfo['bonus']['equityBonus'] = Transaction::find()
+                ->select(['amount'])
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'forWhat' => [
+                        '$regex' => 'For stocks'
+                    ],
+                    'idTo' => [
+                        '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                    ],
+                    'type'=>1,
+                ])
+                ->sum('amount');
+
+            $statisticInfo['bonus']['teamBonus'] = Transaction::find()
+                ->select(['amount'])
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'forWhat' => [
+                        '$regex' => 'Closing steps'
+                    ],
+                    'idTo' => [
+                        '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                    ],
+                    'type'=>1,
+                ])
+                ->sum('amount');
+
+            $connectingBonusAdd = Transaction::find()
+                ->select(['amount'])
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+//                'forWhat' => [
+//                    '$regex' => 'Purchase for a partner'
+//                ],
+                    'forWhat' => 'Purchase for a partner',
+                    'idTo' => [
+                        '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                    ],
+                    'type'=>1,
+                ])
+                ->sum('amount');
+
+            $connectingBonusCancellation = Transaction::find()
+                ->select(['amount'])
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'forWhat'=>'Cancellation purchase for a partner',
+                    'idTo' => [
+                        '$ne' => new ObjectID('000000000000000000000001')
+                    ],
+                    'type'=>1,
+                ])
+                ->sum('amount');
+
+            $statisticInfo['bonus']['connectingBonus'] = $connectingBonusAdd - $connectingBonusCancellation;
+
+        }
         //--------------------------------B:COMMISSION GRAPH--------------------------------------------------
         if ($block_name =='commission-graph') {
             $view_name = '_commission_graph';
@@ -342,7 +499,7 @@ class DefaultController extends BaseController
                     ],
                     'type' => 1,
                     'forWhat' => [
-                        '$regex' => 'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement|Cancellation purchase for a partner'
+                        '$regex' => 'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement|Cancellation purchase for a partner|Auto bonus'
                     ]
                 ])
                 ->all();
@@ -982,7 +1139,12 @@ class DefaultController extends BaseController
         $statisticInfo['onPersonalAccounts'] = (new \yii\mongodb\Query())
             ->select(['moneys'])
             ->from('users')
-            ->where(['username' => ['$ne'=>'main']])
+            ->where(['username' => ['$ne'=>'main'],
+                    'isDelete' =>['$ne' =>[null,true]]
+                    //'isDelete' =>['$ne' =>null]
+                    ]
+
+            )
             ->sum('moneys');
 
         $statisticInfo['onPersonalAccounts']= abs($statisticInfo['onPersonalAccounts'])-$r_sum;
@@ -1014,7 +1176,7 @@ class DefaultController extends BaseController
                     '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                 ],
                 'type'=>1,
-                'forWhat'=>['$regex'=>'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement']
+                'forWhat'=>['$regex'=>'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement|Auto bonus']
             ])
             ->all();
 
@@ -1054,15 +1216,15 @@ class DefaultController extends BaseController
                 'idTo' => [
                     '$ne' => new ObjectID('000000000000000000000001')
                 ],
-                'type'=>1,
+                'type'=>[1],
             ])
             //->andWhere(['forWhat' =>'Cancellation purchase for a partner'])
             //->andWhere(['forWhat' => ['$regex'=>'Cancellation purchase for a partner']])
             ->andWhere([
                 '$or' =>[
                     [
-                        // 'forWhat' => ['$regex'=>'Cancellation purchase for a partner']
-                        'forWhat' =>'Cancellation purchase for a partner'
+                        'forWhat' => ['$regex'=>'Cancellation purchase']
+                        //'forWhat' =>'Cancellation purchase for a partner'
 
                     ]
                 ]
@@ -1144,159 +1306,6 @@ class DefaultController extends BaseController
         }
 
 
-
-        // infoBonus
-        $listBonus = ['worldBonus','propertyBonus'];
-        foreach ($listBonus as $itemBonus) {
-            $statisticInfo['bonus'][$itemBonus] = (new \yii\mongodb\Query())
-                ->select(['statistics.'.$itemBonus])
-                ->from('users')
-                ->where([
-                    'username' => [
-                        '$nin' => ['main','datest1','danilchenkoalex']
-                    ]
-                ])
-                ->sum('statistics.'.$itemBonus);
-        }
-        $statisticInfo['bonus']['autoBonus'] = Transaction::find()
-            ->select(['amount'])
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDatetime($queryDateFrom),
-                    '$lte' => new UTCDateTime($queryDateTo)
-                ],
-                'forWhat' => [
-                    '$regex' => 'Auto bonus'
-                ],
-                'idTo' => [
-                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
-                ],
-                'type'=>4,
-            ])
-            ->sum('amount');
-        $statisticInfo['bonus']['executiveBonus'] = Transaction::find()
-            ->select(['amount'])
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDatetime($queryDateFrom),
-                    '$lte' => new UTCDateTime($queryDateTo)
-                ],
-                'forWhat' => [
-                    '$regex' => 'Executive bonus'
-                ],
-                'idTo' => [
-                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
-                ],
-                'type'=>1,
-            ])
-            ->sum('amount');
-
-        $statisticInfo['bonus']['careerBonus'] = Transaction::find()
-            ->select(['amount'])
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDatetime($queryDateFrom),
-                    '$lte' => new UTCDateTime($queryDateTo)
-                ],
-                'forWhat' => [
-                    '$regex' => 'Bonus per the achievement'
-                ],
-                'idTo' => [
-                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
-                ],
-                'type'=>1,
-            ])
-            ->sum('amount');
-
-        $statisticInfo['bonus']['mentorBonus'] = Transaction::find()
-            ->select(['amount'])
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDatetime($queryDateFrom),
-                    '$lte' => new UTCDateTime($queryDateTo)
-                ],
-                'forWhat' => [
-                    '$regex' => 'Mentor bonus'
-                ],
-                'idTo' => [
-                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
-                ],
-                'type'=>1,
-            ])
-            ->sum('amount');
-
-
-        $statisticInfo['bonus']['equityBonus'] = Transaction::find()
-            ->select(['amount'])
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDatetime($queryDateFrom),
-                    '$lte' => new UTCDateTime($queryDateTo)
-                ],
-                'forWhat' => [
-                    '$regex' => 'For stocks'
-                ],
-                'idTo' => [
-                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
-                ],
-                'type'=>1,
-            ])
-            ->sum('amount');
-
-        $statisticInfo['bonus']['teamBonus'] = Transaction::find()
-            ->select(['amount'])
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDatetime($queryDateFrom),
-                    '$lte' => new UTCDateTime($queryDateTo)
-                ],
-                'forWhat' => [
-                    '$regex' => 'Closing steps'
-                ],
-                'idTo' => [
-                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
-                ],
-                'type'=>1,
-            ])
-            ->sum('amount');
-
-        $connectingBonusAdd = Transaction::find()
-            ->select(['amount'])
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDatetime($queryDateFrom),
-                    '$lte' => new UTCDateTime($queryDateTo)
-                ],
-//                'forWhat' => [
-//                    '$regex' => 'Purchase for a partner'
-//                ],
-                'forWhat' => 'Purchase for a partner',
-                'idTo' => [
-                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
-                ],
-                'type'=>1,
-            ])
-            ->sum('amount');
-
-        $connectingBonusCancellation = Transaction::find()
-            ->select(['amount'])
-            ->where([
-                'dateCreate' => [
-                    '$gte' => new UTCDatetime($queryDateFrom),
-                    '$lte' => new UTCDateTime($queryDateTo)
-                ],
-//                'forWhat' => [
-//                    '$regex' => 'Cancellation purchase for a partner'
-//                ],
-                'forWhat'=>'Cancellation purchase for a partner',
-                'idTo' => [
-                    '$ne' => new ObjectID('000000000000000000000001')
-                ],
-                'type'=>1,
-            ])
-            ->sum('amount');
-
-        $statisticInfo['bonus']['connectingBonus'] = $connectingBonusAdd - $connectingBonusCancellation;
 
 
 //        $entering_money = Transaction::find()
