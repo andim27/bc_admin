@@ -142,11 +142,11 @@
                         <div class="row">
                             <div class="col-md-12 m-b">
                                 <span class="m-r">С</span>
-                                <input id="profitFrom" class="input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="12-02-2013" data-date-format="dd-mm-yyyy">
+                                <input id="historyFrom" class="input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="12-02-2013" data-date-format="dd-mm-yyyy">
                                 <span class="m-r m-l">ПО</span>
-                                <input id="profitTo" class="input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="22-01-2019" data-date-format="dd-mm-yyyy">
+                                <input id="historyTo" class="input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="22-01-2019" data-date-format="dd-mm-yyyy">
                                 <span class="m-r m-l">Логин</span>
-                                <span class="font-bold loginProfit">Main</span>
+                                <span class="font-bold loginHistory">Main</span>
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -154,22 +154,36 @@
                                 <thead>
                                     <tr>
                                         <th>
+                                            Страна
+                                        </th>
+                                        <th>
+                                            Город
+                                        </th>
+                                        <th>
+                                            Логин
+                                        </th>
+                                        <th>
+                                            ФИО
+                                        </th>
+                                        <th>
                                             Дата выплаты
                                         </th>
                                         <th>
                                             Выплачено безналом
                                         </th>
                                         <th>
-                                            Скидки на лиц.сч.
-                                        </th>
-                                        <th>
-                                            Оплата ремонта
+                                            Скидка на лиц.сч.
                                         </th>
                                         <th>
                                             Остаток
                                         </th>
                                         <th>
                                             Комментарий
+                                        </th>
+                                        <th>
+                                            Отредактировано
+                                        </th>
+                                        <th>
                                         </th>
                                     </tr>
                                 </thead>
@@ -181,22 +195,37 @@
                                         <td>4</td>
                                         <td>5</td>
                                         <td>6</td>
+                                        <td>7</td>
+                                        <td>8</td>
+                                        <td>9</td>
+                                        <td>10</td>
+                                        <td><a class="editHistory" href="#historyEditCompensation" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                     </tr>
                                     <tr>
-                                        <td>1</td>
+                                    <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
                                         <td>4</td>
                                         <td>5</td>
                                         <td>6</td>
+                                        <td>7</td>
+                                        <td>8</td>
+                                        <td>9</td>
+                                        <td>10</td>
+                                        <td><a class="editHistory" href="#historyEditCompensation" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                     </tr>
                                     <tr>
-                                        <td>1</td>
+                                    <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
                                         <td>4</td>
                                         <td>5</td>
                                         <td>6</td>
+                                        <td>7</td>
+                                        <td>8</td>
+                                        <td>9</td>
+                                        <td>10</td>
+                                        <td><a class="editHistory" href="#historyEditCompensation" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                     </tr>
 
                                 </tbody>
@@ -263,7 +292,7 @@
 </div>
 
 <div class="modal fade" id="chargeCompensation">
-<div class="modal-dialog" >
+    <div class="modal-dialog" >
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Списание</h4>
@@ -303,6 +332,57 @@
     </div>
 </div>
 
+<div class="modal fade" id="historyEditCompensation">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Редактирование</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                       <p>Шоу-рум <span class="font-bold cityShowroom m-l m-r">Новосибирск</span> Логин <span class="font-bold loginShowroom  m-l m-r">main</span>
+                       </p> 
+                    </div>
+                    <div class="col-md-12 m-b-sm">
+                        <h4>Иванов Иван Иванович</h4>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <select name="compensationHistoryTypeSelect" class="compensationHistoryTypeSelect form-control m-b"> 
+                            <option value="1">Безнал</option> 
+                            <option value="2">Нал</option> 
+                            <option value="3">Бонусы</option> 
+                            <option value="4" selected>Тугрики</option>
+                            <option value="5">Виртуальное "Спасибо"</option>
+                            <option value="6">Хер вам а не пополнение</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="compensationHistoryEditAmount" id="compensationHistoryEditAmount" placeholder="Сумма">
+                    </div>
+                    <div class="col-md-12">
+                        Комментарий
+                        <textarea class="form-control compensationHistoryEditComment m-t m-b" name="compensationHistoryEditComment" id="compensationHistoryEditComment" rows="5" placeholder=""></textarea>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="col-sm-8 col-sm-offset-2 form-group">
+                            <a class="btn btn-danger" data-dismiss="modal">Отмена</a>
+                            <a class="btn btn-success editHistoryCompensation">Сохранить</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php $this->registerCssFile('/js/datepicker/datepicker.css', ['position' => yii\web\View::POS_HEAD]); ?>
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js', ['position' => yii\web\View::POS_END]); ?>
 
@@ -321,6 +401,10 @@
         // сохраняем пополнение
         
     });   
-    
+
+    $('.modal').on('click','.editHistoryCompensation',function(){
+        // редактируем историю
+        
+    });
 
 </script>
