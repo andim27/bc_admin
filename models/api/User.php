@@ -653,4 +653,25 @@ class User
         return $this->id == '573a0d76965dd0fb16f60bfe';
     }
 
+    /**
+     * get list how have rank high top manager (rank > 5)
+     *
+     * @return array
+     */
+    public static function getListUserHighTopManager()
+    {
+        $listUser = self::admins();
+
+        $list = [];
+        if(!empty($listUser)){
+            foreach ($listUser as $item) {
+                if($item->rank > 5){
+                    $list[strval($item->id)] = $item->username;
+                }
+            }
+        }
+
+        return $list;
+    }
+
 }

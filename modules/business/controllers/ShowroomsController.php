@@ -2,7 +2,7 @@
 
 namespace app\modules\business\controllers;
 
-use app\modules\business\models\ShowroomsOpeningConditions;
+use app\modules\business\models\ShowroomsOpeningConditionsForm;
 use yii\helpers\ArrayHelper;
 use app\controllers\BaseController;
 use Yii;
@@ -10,20 +10,34 @@ use app\models\api;
 
 class ShowroomsController extends BaseController
 {
+    /**
+     * Opening conditions
+     * @return string
+     */
     public function actionOpeningConditions()
     {
         $request = Yii::$app->request;
-        $conditionForm = new ShowroomsOpeningConditions();
+        $conditionForm = new ShowroomsOpeningConditionsForm();
 
         if ($request->isPost) {
             $conditionForm->load($request->post());
 
-            $result = api\ShowroomsOpeningCondition::add([
-                'title'  => $conditionForm->title,
-                'body'   => $conditionForm->body,
-                'author' => $conditionForm->author,
-                'lang'   => $conditionForm->lang
-            ]);
+            if(!empty($conditionForm->id)) {
+                $result = api\ShowroomsOpeningCondition::edit([
+                    'id'     => $conditionForm->id,
+                    'title'  => $conditionForm->title,
+                    'body'   => $conditionForm->body,
+                    'author' => $conditionForm->author,
+                    'lang'   => $conditionForm->lang
+                ]);
+            } else {
+                $result = api\ShowroomsOpeningCondition::add([
+                    'title'  => $conditionForm->title,
+                    'body'   => $conditionForm->body,
+                    'author' => $conditionForm->author,
+                    'lang'   => $conditionForm->lang
+                ]);
+            }
 
             if ($result) {
                 Yii::$app->session->setFlash('success', 'showrooms_opening_conditions_save_success');
@@ -41,11 +55,12 @@ class ShowroomsController extends BaseController
             $conditionForm->author = $this->user->username;
 
             if ($condition) {
-                $conditionForm->title = $condition->title;
-                $conditionForm->body  = $condition->body;
-                $conditionForm->lang  = $condition->lang;
+                $conditionForm->id      = $condition->id;
+                $conditionForm->title   = $condition->title;
+                $conditionForm->body    = $condition->body;
+                $conditionForm->lang    = $condition->lang;
             } else {
-                $conditionForm->lang  = $language;
+                $conditionForm->lang    = $language;
             }
 
             return $this->render('opening-conditions', [
@@ -56,11 +71,120 @@ class ShowroomsController extends BaseController
         }
     }
 
+    /**
+     * Requests open
+     * @return string
+     */
     public function actionRequestsOpen()
     {
-        return $this->render('requests-open', [
+        $requestsOpen = api\ShowroomsRequestsOpen::getList();
 
+        return $this->render('requests-open', [
+            'requestsOpen'  => $requestsOpen
         ]);
+    }
+
+    /**
+     * @return array|bool|mixed|\yii\web\Response
+     */
+    public function actionGetRequestsOpen()
+    {
+        if (Yii::$app->request->isAjax) {
+
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $request = Yii::$app->request->post();
+
+            $response = [];
+            if(!empty($request['id'])){
+                $response = api\ShowroomsRequestsOpen::get($request['id']);
+            }
+
+            return $response;
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
+    public function actionUpdateRequestsOpen()
+    {
+        if (Yii::$app->request->isAjax) {
+
+            $response = false;
+
+            $request = Yii::$app->request->post();
+
+            if(!empty($request)){
+                $result = api\ShowroomsRequestsOpen::edit([
+                    'id'                => $request['id'],
+                    'status'            => $request['status'],
+                    'comment'           => $request['comment'],
+                    'userHowCheckId'    => $request['userHowCheck']
+                ]);
+            }
+
+            if($result == 'OK'){
+                $response = true;
+            }
+
+            return $response;
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
+    public function actionAddFileRequestsOpen()
+    {
+        if (Yii::$app->request->isAjax) {
+
+            $response = false;
+
+            $request = Yii::$app->request->post();
+
+            if(!empty($request)){
+                $result = api\ShowroomsRequestsOpen::edit([
+                    'id'                => $request['id'],
+                    'status'            => $request['status'],
+                    'comment'           => $request['comment'],
+                    'userHowCheckId'    => $request['userHowCheck']
+                ]);
+            }
+
+            if($result == 'OK'){
+                $response = true;
+            }
+
+            return $response;
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
+    public function actionDeleteFileRequestsOpen()
+    {
+        if (Yii::$app->request->isAjax) {
+
+            $response = false;
+
+            $request = Yii::$app->request->post();
+
+            if(!empty($request)){
+                $result = api\ShowroomsRequestsOpen::edit([
+                    'id'                => $request['id'],
+                    'status'            => $request['status'],
+                    'comment'           => $request['comment'],
+                    'userHowCheckId'    => $request['userHowCheck']
+                ]);
+            }
+
+            if($result == 'OK'){
+                $response = true;
+            }
+
+            return $response;
+        } else {
+            return $this->redirect('/','301');
+        }
     }
 
     public function actionList()
