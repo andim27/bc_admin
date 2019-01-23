@@ -51,4 +51,9 @@ use app\components\THelper;
         <span class="label bg-dark">9</span>
         Недвижимость бонус
     </li>
+    <li class="list-group-item">
+        <span class="pull-right"><?=$statisticInfo['bonus']['representative'] ?></span>
+        <span class="label bg-dark">10</span>
+        Затраты представителей
+    </li>
 </ul>

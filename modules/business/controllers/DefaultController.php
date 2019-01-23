@@ -9,6 +9,7 @@ use app\models\Products;
 use app\models\Sales;
 use app\models\Transaction;
 use app\models\Users;
+use app\models\RecoveryForRepaymentAmounts;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
@@ -476,6 +477,16 @@ class DefaultController extends BaseController
                 ->sum('amount');
 
             $statisticInfo['bonus']['connectingBonus'] = $connectingBonusAdd - $connectingBonusCancellation;
+            $repayment_month = '2018-11';
+            $repayment_sum = RecoveryForRepaymentAmounts::find()
+                ->where([
+                    'month_recovery'=>$repayment_month,
+                    'warehouse_id'=>[
+                        '$nin' => [null]
+                    ]
+                ])
+                ->sum('recovery');
+            $statisticInfo['bonus']['representative'] = $repayment_sum;
 
         }
         //--------------------------------B:COMMISSION GRAPH--------------------------------------------------
