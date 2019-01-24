@@ -1,4 +1,5 @@
 image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
+
 stages:
 - build
 - deploy
