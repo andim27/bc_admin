@@ -14,6 +14,7 @@ variables:
 
 
 before_script:
+  image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
 #  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
   - echo "${KUBE_CA_PEM}" > kube_ca.pem
   - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
