@@ -16,12 +16,18 @@ variables:
 
 
 before_script:
-  - docker login -u oauth2accesstoken -p $REGISTRY_TOKEN $CONTAINER_REGISTRY
-#  - echo "${KUBE_CA_PEM}" > kube_ca.pem
-#  - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
-#  - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
-#  - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace $PROD_NS
-#  - kubectl config use-context default-system
+  #- docker login -u oauth2accesstoken -p $REGISTRY_TOKEN $CONTAINER_REGISTRY
+  # Install CA certs, openssl to https downloads, python for gcloud sdk
+  - apk add --update make ca-certificates openssl python
+  - update-ca-certificates
+  # Write our GCP service account private key into a file
+  - echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+  # Download and install Google Cloud SDK
+  - wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz
+  - tar zxvf google-cloud-sdk.tar.gz && ./google-cloud-sdk/install.sh --usage-reporting=false --path-update=true
+  - google-cloud-sdk/bin/gcloud --quiet components update
+  - google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
+  - docker login -u _json_key --password-stdin https://us.gcr.io < ${HOME}/gcloud-service-key.json
 
 build_dev:
   stage: build
