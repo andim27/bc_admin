@@ -329,6 +329,7 @@ class DefaultController extends BaseController
         if ($block_name =='commission-details') {
             $view_name = '_commission_details';
             // infoBonus
+           // return "month1=".$statisticInfo['request']['from'].' month2='.$statisticInfo['request']['to'];
             $listBonus = ['worldBonus','propertyBonus'];
             foreach ($listBonus as $itemBonus) {
                 $statisticInfo['bonus'][$itemBonus] = (new \yii\mongodb\Query())
@@ -477,7 +478,26 @@ class DefaultController extends BaseController
                 ->sum('amount');
 
             $statisticInfo['bonus']['connectingBonus'] = $connectingBonusAdd - $connectingBonusCancellation;
-            $repayment_month = '2018-11';
+            //s$repayment_month = $statisticInfo['request']['from'];
+            $month_interval = date_diff(date_create($statisticInfo['request']['from'].'-01'), date_create($statisticInfo['request']['to'].'-01'));
+            $month_interval =(int) $month_interval->format('%m');
+            $y_from = explode("-", $statisticInfo['request']['from'])[0];
+            $y_to   = explode("-", $statisticInfo['request']['to'])[0];
+            $y_from_m = explode("-", $statisticInfo['request']['from'])[1];
+            $y_to_m   = explode("-", $statisticInfo['request']['to'])[1];
+            if  ($y_from == $y_to) {
+                if ($month_interval >=1) {
+                    $z=0;
+                    if ( (int)$y_from_m >9) {
+                        $z='';
+                    }
+                    $next_y_m = $y_from.'-'.$z.($y_from_m+1);
+                    $repayment_month =[$statisticInfo['request']['from'],$next_y_m];
+                }
+
+            } else {
+                $repayment_month = $statisticInfo['request']['from'];
+            }
             $repayment_sum = RecoveryForRepaymentAmounts::find()
                 ->where([
                     'month_recovery'=>$repayment_month,
