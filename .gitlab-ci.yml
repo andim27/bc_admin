@@ -91,6 +91,7 @@ deploy_dev:
         - sed -i "s/__ADMIN-REPLICA__/1/" deployment.yaml
         - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
+        - echo $CONTAINER_REGISTRY
         - sed -i "s/__REGISTRY__/$CONTAINER_REGISTRY/" deployment.yaml
         - sed -i "s/__URL__/$DEV_URL/" ingress.yaml
         - kubectl get deployments -l name=bpt-admin-${CI_ENVIRONMENT_SLUG}
