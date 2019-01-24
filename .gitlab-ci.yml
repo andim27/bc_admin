@@ -24,7 +24,7 @@ before_script:
   - kubectl config use-context default-system
 
 build_dev:
-#  image: bulich/builder
+  image: bulich/builder
   stage: build
   only:
     - dev
@@ -45,7 +45,7 @@ build_dev:
     - ./post-admin.sh
 
 build_stage:
-#  image: bulich/builder
+  image: bulich/builder
   stage: build
   only:
     - master
