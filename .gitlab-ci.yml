@@ -1,4 +1,4 @@
-#image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
+image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
 
 stages:
 - build
@@ -14,7 +14,6 @@ variables:
 
 
 before_script:
-  image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
 #  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
   - echo "${KUBE_CA_PEM}" > kube_ca.pem
   - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
@@ -23,7 +22,7 @@ before_script:
   - kubectl config use-context default-system
 
 build_dev:
-  image: bulich/builder
+#  image: bulich/builder
   stage: build
   only:
     - dev
@@ -44,7 +43,7 @@ build_dev:
     - ./post-admin.sh
 
 build_stage:
-  image: bulich/builder
+#  image: bulich/builder
   stage: build
   only:
     - master
