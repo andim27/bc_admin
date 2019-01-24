@@ -7,7 +7,7 @@ stages:
 - cache
 
 variables:
-  CONTAINER_REGISTRY: eu.gcr.io/bpt-core/
+  CONTAINER_REGISTRY: eu.gcr.io/bpt-core
   PROD_NS: bpt
   DEV_NS: bpt-dev
   DEV_URL: admin-dev.bpt.ooo.ua
@@ -38,9 +38,9 @@ build_dev:
     - docker info
     - cp config/params.dev config/params.php
     - cp config/web.dev config/web.php
-    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
-    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
-    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
+    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
+    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
+    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
     - ./post-admin.sh
 
 build_stage:
