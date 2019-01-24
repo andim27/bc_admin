@@ -16,12 +16,12 @@ variables:
 
 
 before_script:
-#  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
-  - echo "${KUBE_CA_PEM}" > kube_ca.pem
-  - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
-  - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
-  - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace $PROD_NS
-  - kubectl config use-context default-system
+  - docker login -u oauth2accesstoken -p $REGISTRY_TOKEN $CONTAINER_REGISTRY
+#  - echo "${KUBE_CA_PEM}" > kube_ca.pem
+#  - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
+#  - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
+#  - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace $PROD_NS
+#  - kubectl config use-context default-system
 
 build_dev:
   stage: build
