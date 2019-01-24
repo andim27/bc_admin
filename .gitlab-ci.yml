@@ -16,10 +16,6 @@ variables:
 
 
 before_script:
-  #- docker login -u oauth2accesstoken -p $REGISTRY_TOKEN $CONTAINER_REGISTRY
-  # Install CA certs, openssl to https downloads, python for gcloud sdk
-  #- apk add --update make ca-certificates openssl python
-  #- update-ca-certificates
   # Write our GCP service account private key into a file
   - echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
   # Download and install Google Cloud SDK
@@ -64,9 +60,9 @@ build_stage:
     - docker info
     - cp config/params.prod config/params.php
     - cp config/web.prod config/web.php
-    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
-    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
-    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
+    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
+    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
+    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
     - ./post-admin.sh
 
 merge_to_stage:
