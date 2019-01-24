@@ -19,7 +19,7 @@ spec:
             ntype: bpt
       containers:
       - name: admin
-        image: __REGISTRY__/bpt-admin:__VERSION__
+        image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
         ports:
         - containerPort: 80
       imagePullSecrets:
