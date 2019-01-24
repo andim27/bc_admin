@@ -7,15 +7,19 @@ stages:
 - cache
 
 variables:
-  CONTAINER_REGISTRY: registry.ooo.ua
+  CONTAINER_REGISTRY: eu.gcr.io/bpt-core/
   DEV_URL: admin-dev.bpt.ooo.ua
   STAGE_URL: admin-stage.bpt.ooo.ua
   PROD_URL: admin.businessprocess.biz
 
 
 before_script:
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
-
+#  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
+  - echo "${KUBE_CA_PEM}" > kube_ca.pem
+  - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
+  - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
+  - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
+  - kubectl config use-context default-system
 
 build_dev:
   stage: build
