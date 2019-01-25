@@ -106,7 +106,7 @@ class ShowroomsController extends BaseController
         }
     }
 
-    public function actionUpdateRequestsOpen()
+    public function actionUpdateRequestOpen()
     {
         if (Yii::$app->request->isAjax) {
 
@@ -133,22 +133,54 @@ class ShowroomsController extends BaseController
         }
     }
 
-    public function actionAddFileRequestsOpen()
+    public function actionAddFileRequestOpen()
+    {
+        if (Yii::$app->request->isAjax) {
+
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $response['error'] = 'error';
+
+            $request = Yii::$app->request->post();
+
+
+            if(!empty($request['fileName']) && !empty($_FILES['fileData'])){
+                $data = file_get_contents($_FILES['fileData']['tmp_name']);
+                $base64 = 'data:' . $_FILES['fileData']['type'] . ';base64,' . base64_encode($data);
+                $key = time();
+
+                $result = api\ShowroomsRequestsOpen::addFile([
+                    'key'   => $key,
+                    'id'    => $request['id'],
+                    'title' => $request['fileName'],
+                    'data'  => $base64,
+                ]);
+
+                if(!empty($result)){
+                    $response = [
+                        'key'   => $key,
+                        'id'    => $request['id'],
+                        'title' => $request['fileName']
+                    ];
+                }
+            }
+
+            return $response;
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
+    public function actionDeleteFileRequestOpen($id,$key)
     {
         if (Yii::$app->request->isAjax) {
 
             $response = false;
 
-            $request = Yii::$app->request->post();
-
-            if(!empty($request)){
-                $result = api\ShowroomsRequestsOpen::edit([
-                    'id'                => $request['id'],
-                    'status'            => $request['status'],
-                    'comment'           => $request['comment'],
-                    'userHowCheckId'    => $request['userHowCheck']
-                ]);
-            }
+            $result = api\ShowroomsRequestsOpen::deleteFile([
+                'id'                => $id,
+                'key'               => $key
+            ]);
 
             if($result == 'OK'){
                 $response = true;
@@ -160,31 +192,25 @@ class ShowroomsController extends BaseController
         }
     }
 
-    public function actionDeleteFileRequestsOpen()
+    public function actionGetFileRequestOpen($id,$key)
     {
-        if (Yii::$app->request->isAjax) {
+        $result = api\ShowroomsRequestsOpen::getFile([
+            'id'                => $id,
+            'key'               => $key
+        ]);
 
-            $response = false;
-
-            $request = Yii::$app->request->post();
-
-            if(!empty($request)){
-                $result = api\ShowroomsRequestsOpen::edit([
-                    'id'                => $request['id'],
-                    'status'            => $request['status'],
-                    'comment'           => $request['comment'],
-                    'userHowCheckId'    => $request['userHowCheck']
-                ]);
-            }
-
-            if($result == 'OK'){
-                $response = true;
-            }
-
-            return $response;
+        if(!empty($result->file)){
+            $data = explode(',', $result->file);
+            $data = base64_decode($data[1]);
+            header('Content-Type: application/pdf');
+            header("Content-Disposition: attachment; filename=".$result->title.".pdf");
+            echo $data;
+            die();
         } else {
-            return $this->redirect('/','301');
+            return $this->redirect('/',301);
         }
+
+
     }
 
     public function actionList()

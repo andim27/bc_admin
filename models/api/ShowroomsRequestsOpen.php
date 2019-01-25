@@ -5,6 +5,7 @@ namespace app\models\api;
 use app\components\THelper;
 use Yii;
 use app\components\ApiClient;
+use yii\base\Object;
 
 class ShowroomsRequestsOpen
 {
@@ -19,6 +20,14 @@ class ShowroomsRequestsOpen
     public $userLogin,$userFirstName,$userSecondName,$userCountry,$userCity,$userAddress,$userRank;
 
 
+
+
+    /**
+     * get request opening
+     *
+     * @param $id
+     * @return bool|mixed
+     */
     public static function get($id)
     {
         $apiClient = new ApiClient('showrooms/request-open?id=' . $id);
@@ -30,7 +39,11 @@ class ShowroomsRequestsOpen
         return $result[0] ? $result[0] : false;
     }
 
-
+    /**
+     * get list requests opening
+     *
+     * @return array|bool
+     */
     public static function getList()
     {
 
@@ -74,6 +87,73 @@ class ShowroomsRequestsOpen
     }
 
     /**
+     * get file in request opening
+     *
+     * @param $data
+     * @return mixed|string
+     */
+    public static function getFile($data)
+    {
+        $apiClient = new ApiClient('showrooms/file-request-open?'.http_build_query($data));
+
+        $response = $apiClient->get(true);
+
+        return (!isset($response->error) ? $response : '');
+    }
+
+    /**
+     * add file in request opening
+     *
+     * @param $data
+     * @return string
+     */
+    public static function addFile($data)
+    {
+        $apiClient = new ApiClient('showrooms/file-request-open');
+
+        $response = $apiClient->post($data, true);
+
+        return (!isset($response->error) ? $response : '');
+    }
+
+    /**
+     * delete file in request opening
+     *
+     * @param $data
+     * @return mixed|string
+     */
+    public static function deleteFile($data)
+    {
+        $apiClient = new ApiClient('showrooms/file-request-open');
+
+        $response = $apiClient->delete($data, true);
+
+        return (!isset($response->error) ? $response : '');
+    }
+
+    /**
+     * @return array
+     */
+    public static function getStatusRequestOpen()
+    {
+        return [
+            self::STATUS_CONFIRMED  => THelper::t('status_request_open_showroom_confirmed'),
+            self::STATUS_PENDING    => THelper::t('status_request_open_showroom_pending'),
+            self::STATUS_CANCELED   => THelper::t('status_request_open_showroom_canceled')
+        ];
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public static function getStatusRequestOpenValue($key)
+    {
+        $aStatus = self::getStatusRequestOpen();
+        return isset($aStatus[$key]) ? $aStatus[$key] : '';
+    }
+
+    /**
      * Convert response from API
      *
      * @param $data
@@ -109,7 +189,7 @@ class ShowroomsRequestsOpen
 
                 $item->comment         = !empty($object->comment) ? $object->comment : '';
                 $item->imagesUser      = !empty($object->images) ? $object->images : [];
-                $item->filesAdmin      = !empty($object->files_admin) ? $object->files_admin : [];
+                $item->filesAdmin      = !empty($object->files_admin) ? $object->files_admin : new Object();
 
                 $item->userHowCheckLogin = isset($object->userHowCheck->login) ? $object->userHowCheck->login : '';
                 $item->userHowCheckId  = isset($object->userHowCheck->_id) ? $object->userHowCheck->_id : '';
@@ -121,26 +201,6 @@ class ShowroomsRequestsOpen
         return $result;
     }
 
-    /**
-     * @return array
-     */
-    public static function getStatusRequestOpen()
-    {
-        return [
-            self::STATUS_CONFIRMED  => THelper::t('status_request_open_showroom_confirmed'),
-            self::STATUS_PENDING    => THelper::t('status_request_open_showroom_pending'),
-            self::STATUS_CANCELED   => THelper::t('status_request_open_showroom_canceled')
-        ];
-    }
 
-    /**
-     * @param $key
-     * @return mixed
-     */
-    public static function getStatusRequestOpenValue($key)
-    {
-        $aStatus = self::getStatusRequestOpen();
-        return isset($aStatus[$key]) ? $aStatus[$key] : '';
-    }
 
 }

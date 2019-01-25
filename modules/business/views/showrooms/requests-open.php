@@ -111,7 +111,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="col-sm-12 text-center m-b">
-                        <a href="#" data-toggle="modal" data-target="#loadFile">
+                        <a href="#modalUpload" data-toggle="modal">
                             <i class="fa fa-cloud-upload text" title="Добавить файл"></i> Добавить файл
                         </a>
                     </div>
@@ -122,22 +122,6 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>Договор.pdf</td>
-                            <td><input type="button" class="btn btn-success btn-sm" value="Скачать"></td>
-                            <td><input type="button" class="btn btn-danger btn-sm" value="Удалить"></td>
-                        </tr>
-                        <tr>
-                            <td>Договор 2.pdf</td>
-                            <td><input type="button" class="btn btn-success btn-sm" value="Скачать"></td>
-                            <td><input type="button" class="btn btn-danger btn-sm" value="Удалить"></td>
-                        </tr>
-                        <tr>
-                            <td>Договор 2.pdf</td>
-                            <td><input type="button" class="btn btn-success btn-sm" value="Скачать"></td>
-                            <td><input type="button" class="btn btn-danger btn-sm" value="Удалить"></td>
-                        </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -164,34 +148,43 @@
   </div>
 </div>
 
-<div class="modal fade" id="loadFile" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-body">
-            <button type="button" class="close" data-dismiss="modal">x</button>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label>Название файла</label>
-                        <input type="text" class="form-control" name="product" value="" required="">
+<div class="modal fade" id="modalUpload">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <form name="formUploadFile" class="formUploadFile">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <div class="col-sm-8 col-sm-offset-2 form-group">
+                                <label>Название файла</label>
+                                <input type="text" class="form-control fileName" name="fileName" value="" required="">
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <div class="form-group">
-                        <input type="file" class="filestyle" data-buttonText="Выбрать файл"  data-iconName="fa fa-cloud-upload"
-                                data-classButton="btn btn-default m-b-5" data-classInput="form-control inline input-s">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <div class="form-group">
+                                <input type="file" class="filestyle filePath" name="fileData" data-buttonText="Выбрать файл"  data-iconName="fa fa-cloud-upload"
+                                       data-classButton="btn btn-default m-b-5" data-classInput="form-control inline input-s"
+                                       accept="application/pdf">
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <div class="col-sm-8 col-sm-offset-2 form-group">
+                                <a class="btn btn-danger" data-dismiss="modal">Отмена</a>
+                                <button type="submit" class="btn btn-success uploadFile" disabled>Загрузить</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-
     </div>
-</div>
 </div>
 
 <?php $this->registerCssFile('/css/lightbox.css', ['position' => yii\web\View::POS_HEAD]); ?>
@@ -200,61 +193,12 @@
 
 <script>
 
-    // var dataReq = {
-    //     metadata : {
-    //         date : '26.12.1996',
-    //         login : 'mai',
-    //         FIO : 'Петрова Светлана',
-    //         country : 'Россия',
-    //         city : 'Москва',
-    //         contacts : 'Россия петрозаводск +784444144',
-    //         text : 'блабла бла бал ба лаб алаб ал ла абал ба ла ла бюал аб ла бал аб ал бал аб ла',
-    //         stateCarrer: 'Специалист 2',
-    //         conditions : 'НЕТ'
-    //     },
-    //     state: 1,
-    //     verifierID: 'main',
-    //     files : [
-    //         {
-    //             id : 'dsjfhjshfjhsdhf22',
-    //             name : 'Договор лизинга',
-    //             src : '/requestsFiles/mai/Договор1.pdf'
-    //         },
-    //         {
-    //             id : 'dsjfhjshfjhsdhf21111',
-    //             name : 'Договор лизинга 2',
-    //             src : '/requestsFiles/mai/Договор2.pdf'
-    //         }
-    //     ],
-    //     images : [
-    //         '/images/backgrounds/1.jpg',
-    //         '/images/backgrounds/2.jpg',
-    //         '/images/backgrounds/3.jpg',
-    //         '/images/backgrounds/4.jpg',
-    //         '/images/backgrounds/5.jpg',
-    //         '/images/backgrounds/6.jpg',
-    //         '/images/backgrounds/7.jpg'
-    //     ]
-    // };
     
     $('table').on('click','.editRequest',function(){
         var blInfo = $('.requestInfo');
 
+        clearRequestInfoForm();
 
-        blInfo.find('.request-id').html('');
-        blInfo.find('.request-date').html('');
-        blInfo.find('.request-login').html('');
-        blInfo.find('.request-fio').html('');
-        blInfo.find('.request-country').html('');
-        blInfo.find('.request-city').html('');
-        blInfo.find('.request-contacts').html('');
-        blInfo.find('.request-text').html('');
-        blInfo.find('.request-stateCarrer').html('');
-        blInfo.find('.request-conditions').html('');
-        blInfo.find('.requestStateSelect').val('');
-        blInfo.find('.requestVerifierSelect').val('');
-        blInfo.find('.request-comment').val('');
-        blInfo.find('.imgRequestsContainer').html('');
         blInfo.show();
 
         $.ajax({
@@ -286,34 +230,25 @@
                 blInfo.find('.requestStateSelect').val(dataReq.status);
                 blInfo.find('.requestVerifierSelect').val(dataReq.userHowCheckId);
 
-                // тут собрали картиночный див
-                $('.imgRequestsContainer').empty();
                 if (dataReq.imagesUser.length > 0 ) {
                     for (const image of dataReq.imagesUser) {
                         blInfo.find('.imgRequestsContainer').append(`<a href="${ image }" data-lightbox="roadtrip"><img src="${ image }" class="imgRequests"></a>`);
                     }
                 }
 
-
-                //
-                // // тут собрали файлы
-                // $('.requestsFiles>tbody').empty();
-                // if (dataReq.filesAdmin.length > 0 ) {
-                //     for (const file of dataReq.filesAdmin) {
-                //         $('.requestsFiles>tbody').append(`
-                //             <tr>
-                //                 <td>${ file.name }</td>
-                //                 <td class="w-69"><a href="${ file.src }" class="btn btn-success btn-sm">Скачать</a></td>
-                //                 <td class="w-69"><a href="#" data-file="${ file.id }" class="btn btn-danger btn-sm deleteFile">Удалить</a></td>
-                //             </tr>
-                //         `);
-                //     }
-                // }
+                if($.isEmptyObject(dataReq.filesAdmin) === false){
+                    $.each(dataReq.filesAdmin, function(index, value) {
+                        blInfo.find('.requestsFiles>tbody').append(`
+                            <tr>
+                                <td>${ value.title }</td>
+                                <td class="w-69"><a href="/ru/business/showrooms/get-file-request-open?id=${ index }&key=${ dataReq.id }" class="btn btn-success btn-sm">Скачать</a></td>
+                                <td class="w-69"><button type="button" data-file-id="${ index }" data-request-id="${ dataReq.id }" class="btn btn-danger btn-sm deleteFile">Удалить</button></td>
+                            </tr>
+                        `);
+                    });
+                }
             }
         });
-
-
-
     } );
 
     $('.requestInfo').on('submit','.formUpdateRequest',function (e) {
@@ -325,7 +260,7 @@
         var data = form.serialize();
 
         $.ajax({
-            url: '/ru/business/showrooms/update-requests-open',
+            url: '/ru/business/showrooms/update-request-open',
             type: 'POST',
             data: data,
             beforeSend: function () {
@@ -339,4 +274,105 @@
             }
         });
     });
+
+    $('#modalUpload').on('change','.fileName, .filePath',function(){
+        if (($('.fileName').val() != '') && ($('.filePath').val() != '')) {
+            $('.uploadFile').removeAttr("disabled");
+        } else {
+            $('.uploadFile').attr("disabled", true);
+        }
+    });
+
+
+    $('#modalUpload').on('submit','.formUploadFile',function(e){
+        e.preventDefault();
+
+        var form = $(this);
+        var modal = form.closest('#modalUpload');
+        var blInfo = $('.requestInfo');
+
+        var data = new FormData($(this)[0]);
+        data.append('id', $('.requestInfo .request-id').val());
+
+        $.ajax({
+            url: '/ru/business/showrooms/add-file-request-open',
+            type: 'POST',
+
+            data: data,
+            async: false,
+            cache: false,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+
+            beforeSend: function () {
+                modal.find('.panel-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                modal.find('.loader').remove();
+            },
+            success: function(msg){
+                console.log(msg);
+
+                blInfo('.requestsFiles>tbody').append(`
+                            <tr>
+                                <td>${ msg.title }</td>
+                                <td class="w-69"><a href="/ru/business/showrooms/get-file-request-open?id=${ msg.id }&key=${ msg.key }" class="btn btn-success btn-sm">Скачать</a></td>
+                                <td class="w-69"><button type="button" data-file-id="${ msg.key }" data-request-id="${ msg.id }" class="btn btn-danger btn-sm deleteFile">Удалить</button></td>
+                            </tr>
+                        `);
+
+                form.trigger('reset');
+
+                $('#modalUpload').modal("hide");
+            }
+        });
+
+
+    });
+
+
+    $('.requestsFiles').on('click','.deleteFile',function(){
+        var btn = $(this);
+        var bl = btn.closest('tr');
+        var blInfo = $('.requestInfo');
+
+        $.ajax({
+            url: '/ru/business/showrooms/delete-file-request-open',
+            type: 'GET',
+            data: {id:btn.data('request-id'),key:btn.data('file-id')},
+            beforeSend: function () {
+                blInfo.find('.panel-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                blInfo.find('.loader').remove();
+            },
+            success: function(msg){
+                bl.remove();
+            }
+        });
+    });
+
+    function clearRequestInfoForm(){
+        var blInfo = $('.requestInfo');
+
+        blInfo.find('.request-id').val('');
+        blInfo.find('.request-date').empty();
+        blInfo.find('.request-login').empty();
+        blInfo.find('.request-fio').empty();
+        blInfo.find('.request-country').empty();
+        blInfo.find('.request-city').empty();
+        blInfo.find('.request-contacts').empty();
+        blInfo.find('.request-text').empty();
+        blInfo.find('.request-stateCarrer').empty();
+        blInfo.find('.request-conditions').empty();
+        blInfo.find('.requestStateSelect').val('');
+        blInfo.find('.requestVerifierSelect').val('');
+        blInfo.find('.request-comment').val('');
+        blInfo.find('.imgRequestsContainer').empty();
+
+        blInfo.find('.imgRequestsContainer').empty();
+        blInfo.find('.requestsFiles>tbody').empty();
+    }
+
 </script>

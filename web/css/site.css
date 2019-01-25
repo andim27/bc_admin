@@ -472,6 +472,80 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
     margin-top:200px;
 }
 
+.showroomInfo {
+    display: none;
+}
+
 .m-b-5 {
     margin-bottom: 5px;
+}
+
+.filestyle {
+    left: -1500px;
+}
+.bootstrap-filestyle > label {
+    padding: 6px 19px;
+}
+
+.w-50 {
+    width: 50%;
+}
+
+.w-45 {
+    width: 45%;
+}
+
+.messengerDiv {
+    display: inline-block;
+    padding: 0px 10px;
+    height: 25px;
+}
+
+.anotherLogin {
+    padding-bottom: 6px;
+}
+
+.h-30p {
+    height: 30px;
+}
+
+.p-t-3p {
+    padding-top: 3px;
+}
+
+.h-27p {
+    height: 27px;
+    margin-top: 2px;
+}
+.m-t--9 {
+    margin-top: -9px;
+}
+
+.editShowroom {
+    width: 100%;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.w-85 {
+    width: 85%;
+}
+
+.showroomWebData {
+    background-color: #ccc;
+    color: black;
+}
+
+.w-195p {
+    width: 195px;
+}
+
+.w-287p {
+    width: 287px;
+}
+
+.input-showroom {
+    width: 120px;
 }
