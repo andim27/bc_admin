@@ -32,6 +32,12 @@ class DefaultController extends BaseController
         ]);
     }
 
+    public function calcMoneyBalanceTopUp()
+    {
+        $res='?';
+        return $res;
+    }
+
     public function actionStatDetails() {
         $result=['success'=>false,'details_html'=>''];
         try {
@@ -148,6 +154,8 @@ class DefaultController extends BaseController
                 'receiptMoney_BalanceTopUp'     => 0,
                 'receiptMoney_BusinessSupport'  => 0,
             ];
+            //--Balance top-up(f)-----------------------------------------------------
+            $statisticInfo['receiptMoney_BalanceTopUp'] = self::calcMoneyBalanceTopUp();
             $model = (new \yii\mongodb\Query())
                 ->select(['dateCreate', 'price', 'product','productData.categories','productName', 'username', 'project'])
                 ->from('sales')
@@ -255,8 +263,9 @@ class DefaultController extends BaseController
                     }
                     //--Balance top-up-------------------------------------------------------
                     if (preg_match('/Balance top-up/',$item['productName'])) {
-                        $statisticInfo['receiptMoney_BalanceTopUp']+=$item['price'];
+                        //$statisticInfo['receiptMoney_BalanceTopUp']+=$item['price'];
                     }
+
                     //-----from old stat methods---------------------------------------------
                     if (array_key_exists($item['product'], $listProductsType)) {
                         try {
@@ -813,6 +822,8 @@ class DefaultController extends BaseController
             'onPersonalAccounts'            => 0,
             //пополнение
             'refill'                        => 0,
+            'refill_vipvip'                 => 0,
+            'refill_wellness'               => 0,
 
             // заказано на вывод
             'orderedForWithdrawal'          => 0,
@@ -1501,6 +1512,49 @@ class DefaultController extends BaseController
             ])
             ->sum('productData.bonus.point.vip_investor_3');
         //--e:salesPoints
+        //---refill_vipvip
+//        $statisticInfo['refill_vipvip'] = Transaction::find()
+//            ->select(['amount'])
+//            ->where([
+//                'dateCreate' => [
+//                    '$gte' => new UTCDatetime($queryDateFrom),
+//                    '$lte' => new UTCDateTime($queryDateTo)
+//                ],
+//                'forWhat' => [
+//                    '$regex' => 'Пополнение баланса VIPVIP'
+//                ],
+////                'idTo' => [
+////                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+////                ],
+//                'type'=>1,
+//            ])
+//            ->sum('amount');
+        $statisticInfo['refill_vipvip'] = Sales::find()
+            ->select(['amount'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'productName' => [
+                    '$regex' => 'Пополнение баланса VIPVIP|пополнение баланса программы VIPVIP'
+                ],
+                //'product'=>[5001,5002,7003],
+                'type'=>1,
+            ])
+            ->sum('price');
+        //--refill_wellness --Пополнение баланса WebWellness|пополнение баланса программы WebWellness|WebWellness активность бизнес-места
+        $statisticInfo['refill_wellness'] = Sales::find()
+            ->select(['amount'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'product'=>[6001,6002,6003,6005,7001],
+                'type'=>1,
+            ])
+            ->sum('price');
         return $statisticInfo;
     }
 

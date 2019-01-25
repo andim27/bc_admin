@@ -253,13 +253,8 @@ HTML;
 
                 </table>
             </div>
+
             <div class="col-sm-3 col-md-3 padder-v b-r b-light">
-                  <span class="fa-stack fa-2x pull-left m-r-sm " style="margin-left: 40%">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
-                    <i class="fa fa-money fa-stack-1x text-white"></i>
-                </span>
-            </div>
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
@@ -269,15 +264,28 @@ HTML;
                     <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?></small>
                 </a>
             </div>
-
-            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                  <span class="fa-stack fa-2x pull-left m-r-sm " style="margin-left: 4%">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-money fa-stack-1x text-white"></i>
+                  </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill_vipvip']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?> VipVip</small>
+                </a>
+            </div>
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
 <!--                <a class="btn btn-success center-block" title="Детализиция по проектам" onclick="getDetailsBlock('projects')">-->
 <!--                    <span class="glyphicon glyphicon-stats"></span> --><?//= THelper::t('projects'); ?>
 <!--                </a>-->
-                <span class="fa-stack fa-2x pull-left m-r-sm " style="margin-left: 40%">
+                <span class="fa-stack fa-2x pull-left m-r-sm " style="margin-left: 4%">
                     <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill_wellness']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?> Wellness</small>
+                </a>
             </div>
         </div>
     </section>
