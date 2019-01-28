@@ -3,11 +3,11 @@
 namespace app\modules\business\models;
 
 use yii\base\Model;
-use Yii;
 use app\components\THelper;
 
-class ShowroomsOpeningConditions extends Model
+class ShowroomsOpeningConditionsForm extends Model
 {
+    public $id;
     public $title;
     public $body;
     public $author;
@@ -17,7 +17,8 @@ class ShowroomsOpeningConditions extends Model
     public function rules()
     {
         return [
-            [['title', 'body', 'author', 'lang', 'dateOfPublication'], 'required', 'message' => THelper::t('required_field')],
+            [['id'], 'string'],
+            [['title', 'body', 'author', 'lang'], 'required', 'message' => THelper::t('required_field')],
         ];
     }
 }

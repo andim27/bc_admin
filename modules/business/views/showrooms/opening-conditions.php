@@ -14,6 +14,7 @@ use yii\widgets\ActiveForm;
 </div>
 <div class="row">
     <?php $form = ActiveForm::begin(); ?>
+    <?= $form->field($conditionForm, 'id')->hiddenInput()->label(false)->error(false) ?>
     <?= $form->field($conditionForm, 'lang')->hiddenInput()->label(false)->error(false) ?>
     <?= $form->field($conditionForm, 'author')->hiddenInput()->label(false)->error(false) ?>
     <div class="col-md-12">

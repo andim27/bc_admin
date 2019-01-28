@@ -11,7 +11,6 @@ class ShowroomsOpeningCondition {
     public $lang;
     public $v;
     public $isDelete;
-    public $dateOfPublication;
     public $dateUpdate;
     public $dateCreate;
     public $body;
@@ -42,7 +41,22 @@ class ShowroomsOpeningCondition {
 
         $response = $apiClient->post($data, true);
 
-        return (!isset($data['error']) ? 'OK' : '');
+        return (!isset($response->error) ? 'OK' : '');
+    }
+
+    /**
+     * Add agreement
+     *
+     * @param $data
+     * @return bool
+     */
+    public static function edit($data)
+    {
+        $apiClient = new ApiClient('showrooms/opening-conditions');
+
+        $response = $apiClient->put($data, true);
+
+        return (!isset($response->error) ? 'OK' : '');
     }
 
     /**
