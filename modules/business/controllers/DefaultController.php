@@ -32,9 +32,95 @@ class DefaultController extends BaseController
         ]);
     }
 
-    public function calcMoneyBalanceTopUp()
+    public function calcMoneyBalanceTopUp($queryDateFrom,$queryDateTo)
     {
         $res='?';
+        $z = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'forWhat' => [
+                    '$regex' => 'Balance top'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+        $h = Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'forWhat' => [
+                    '$regex' => 'Денежный перевод'
+                ],
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+//        $g = (new \yii\mongodb\Query())
+//                ->select(['amount'])
+//                ->from('sales')
+//                ->where([
+//
+//                ])
+//                ->sum('amount');
+        $g =Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere([
+                'product' =>9001
+            ])
+            ->andWhere(['whenceSale'=>[
+                '$regex' => 'adminka;kind'
+            ]])
+            ->sum('price');
+        $o = (new \yii\mongodb\Query())
+            ->select(['amount'])
+            ->from('transactions')
+            ->where([
+                'forWhat' => 'Withdrawal',
+                'reduced' => true,
+                'confirmed' => 0,
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+            ])
+            ->sum('amount');
+        $b =Transaction::find()
+            ->select(['amount'])
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'forWhat' => 'Purchase for a partner',
+                'idTo' => [
+                    '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                ],
+                'type'=>1,
+            ])
+            ->sum('amount');
+        $res =$z-$b-$o;
         return $res;
     }
 
@@ -155,7 +241,7 @@ class DefaultController extends BaseController
                 'receiptMoney_BusinessSupport'  => 0,
             ];
             //--Balance top-up(f)-----------------------------------------------------
-            $statisticInfo['receiptMoney_BalanceTopUp'] = self::calcMoneyBalanceTopUp();
+            $statisticInfo['receiptMoney_BalanceTopUp'] = self::calcMoneyBalanceTopUp($queryDateFrom,$queryDateTo);
             $model = (new \yii\mongodb\Query())
                 ->select(['dateCreate', 'price', 'product','productData.categories','productName', 'username', 'project'])
                 ->from('sales')
