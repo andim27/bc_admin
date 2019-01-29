@@ -1706,5 +1706,44 @@ class SaleReportController extends BaseController
             ]
         );
     }
+    //------------b:--Report balance up
+    public function actionReportBalanceUp()
+    {
+        $request =  Yii::$app->request->post();
+
+        if(empty($request)){
+            $request['to'] = date("Y-m-d");
+            $request['from'] = date("Y-m-d", strtotime( $request['to']." -1 months"));
+        }
+        $dateTo = $request['to'];
+        $dateFrom =  $request['from'];
+
+        $infoSale = Sales::find()
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime(strtotime($request['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere([
+                'product' => 9001
+            ])
+            ->orderBy(['dateCreate'=>SORT_DESC]) //SORT_ASC//SORT_DESC//
+            ->all();
+        return $this->render('report-balance-up',[
+                'language' => Yii::$app->language,
+                'dateFrom' => $dateFrom,
+                'dateTo'   => $dateTo,
+                'report'   => $dateFrom,
+                'infoSale' => $infoSale
+            ]
+        );
+    }
+    //------------e:--Report balance up
 
 }
