@@ -11,24 +11,75 @@
     <div class="col-md-12">
         <section class="panel panel-default">
             <div class="panel-body">
+
                 <?php $form = ActiveForm::begin(['id' => $model->formName(), 'enableAjaxValidation' => true]); ?>
                 <div class="col-md-12">
                     <?= $form->field($model, 'pin')->label(THelper::t('pin')) ?>
                 </div>
+
+
+
+
+                <div class="col-md-6">
+                    <?= $form->field($model, 'partnerLogin')->textInput(['id' => 'login'])->label(THelper::t('login')) ?>
+
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="loan-balance"><span id="loan-block-moneys" class="mark" >Расчеты:</span></label><br>
+                        <button type="button" class="btn btn-s-md btn-success" style=""  id="loan-balance"><?= THelper::t('sidebar_loan') ?> ?</button>
+
+                    </div>
+
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="user-balance">На счету:<span id="balance-block-moneys" class="mark" ></span></label>
+                        <button type="button" class="btn btn-s-md btn-success" style=""  id="user-balance"><?=THelper::t('current_balance') ?> ?</button>
+
+                    </div>
+
+                </div>
+
                 <div class="col-md-12">
-                    <?php $model->product = (!empty($model->product) ? $model->product : $defaultProduct);?>
-                    <?= $form->field($model, 'product')->widget(Select2::className(),[
-                        'data' => $productList,
-                        'language' => 'ru',
-                        'options' => [
-                            'id'=>'product-list',
-                            'placeholder' => '',
-                            'multiple' => false
-                        ]
-                    ])->label(THelper::t('product')) ?>
+                    <div class="form-group">
+                        <label for="kind-operation">Вид операции</label>
+                        <select id="kind-operation" name="kind-operation" class="form-control">
+                            <?php foreach ($kind_items as $key=>$value) { ?>
+                                <option value="<?=$key?>"><?=$value ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
                 </div>
                 <div class="col-md-12">
-                    <?= $form->field($model, 'loan')->checkbox([],[false])->label(THelper::t('loan')) ?>
+                    <label for="product-list">Операция</label>
+                    <select id="product-list" class="form-control" disabled>
+                        <?php foreach ($productList as $key=>$value) {  ?>
+                        <option value="<?=$key ?>" selected ><?=$value ?></option>
+                        <?php } ?>
+                    </select>
+                    <?php $model->product = (!empty($model->product) ? $model->product : $defaultProduct);?>
+<!--                    $form->field($model, 'product')->widget(Select2::className(),[-->
+<!--                        'data' => $productList,-->
+<!--                        'language' => 'ru',-->
+<!--                        'options' => [-->
+<!--                            'id'=>'product-list',-->
+<!--                            'placeholder' => '',-->
+<!--                            'multiple' => false-->
+<!--                        ]-->
+<!--                    ])->label(THelper::t('product'))-->
+
+                </div>
+
+                <div class="col-md-12" id="comment-row" >
+                    <div class="form-group">
+                        <label for="comment">Примечание</label>
+                        <input id="comment" name="comment" class="form-control" type="text" />
+                    </div>
+                </div>
+                <div class="col-md-12" style="display: none">
+                    <?= $form->field($model, 'loan')->checkbox([],['checked '=>true])->label(THelper::t('loan')) ?>
                 </div>
                 <?php if (isset($productListData[$defaultProduct])) { ?>
                     <div class="col-md-12" style="margin-bottom: 15px;">
@@ -41,7 +92,7 @@
                         </div>
                     </div>
                 <?php } ?>
-                <div class="col-md-12">
+                <div class="col-md-2">
                     <?= $form->field($model, 'quantity')->textInput(['value' => 1])->label(THelper::t('quantity')) ?>
                 </div>
                 <?php if ($pincode) { ?>
@@ -54,13 +105,11 @@
                     </div>
                 <?php } ?>
                 <div class="col-md-12">
-                    <div class="checkbox">
-                        <?= $form->field($model, 'isLogin')->checkbox(['id' => 'is-login', 'label' => THelper::t('direct_replenishment')]); ?>
+                    <div class="checkbox" style="display: none">
+                        <?= $form->field($model, 'isLogin')->checkbox(['id' => 'is-login','checked ' => true, 'value' =>1, 'label' => THelper::t('direct_replenishment')]); ?>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <?= $form->field($model, 'partnerLogin')->textInput(['id' => 'login', 'disabled' => true])->label(THelper::t('login')) ?>
-                </div>
+
                 <div class="col-md-12 text-center">
                     <?= Html::submitButton(THelper::t('apply'), array('class' => 'btn btn-s-md btn-success', 'style' => 'margin-bottom:15px')); ?>
                 </div>
@@ -82,17 +131,20 @@
 
     var productsData = <?=json_encode($productListData)?>;
 
-
+    var $kind_operation = $('#kind-operation');
+    var $loan = $('#pincodegenerateform-loan');
+    var $user_balance = $('#user-balance');
+    var $loan_balance = $('#loan-balance');
     /**
      * Handlers
      */
     $(document).ready(function () {
-        switchLoginField();
+        //switchLoginField();
         clearFields();
     });
 
     $isLogin.on('change', function () {
-        switchLoginField();
+        //switchLoginField();
     });
 
     $productList.on('change', function () {
@@ -108,9 +160,70 @@
         }
     });
 
+    $kind_operation.on('change',function () {
+       changeKindOperation($(this).val())
+    });
 
-    /**
-     *  Functions
+    $user_balance.on('click', function () {
+        var $username=$login.val();
+        if ($username=='') {
+            alert('No user login!');
+            return;
+        }
+        $.ajax({
+            url: '/' + LANG + '/business/user/get-balance-table',// '<?= \yii\helpers\Url::to(['user/get-balance-table']) ?>',
+            type: 'POST',
+            data: {
+                action:'user-balance',
+                login: $username
+            },
+            success: function (response) {
+                if (response) {
+                    console.log(response);
+                    $('#balance-block-moneys').html('<strong>'+response.data.moneys+'</strong>');
+                }
+            }
+        });
+    });
+    $loan_balance.on('click', function () {
+        var $username=$login.val();
+        if ($username=='') {
+            alert('No user login!');
+            return;
+        }
+        $.ajax({
+            url: '/' + LANG + '/business/user/get-loan-table',// '<?= \yii\helpers\Url::to(['user/get-loan-table']) ?>',
+            type: 'POST',
+            data: {
+                action:'user-loan',
+                login: $username
+            },
+            success: function (response) {
+                if (response) {
+                    console.log(response);
+                    if (parseInt(response.data.debt) >0) {
+                        debt_html ='Долг:<span style="color:red">'+response.data.debt+'</span>';
+                    } else {
+                        debt_html ='<span style="color:green">Долг: нет</span>';
+                    }
+                    if (parseInt(response.data.loans) >0) {
+                        loans_html = response.data.loans;
+                    } else {
+                        loans_html = 'нет';
+                    }
+                    if (parseInt(response.data.payments) >0) {
+                        paied_html = response.data.payments;
+                    } else {
+                        paied_html = 'нет';
+                    }
+                    $('#loan-block-moneys').html('Займ:<strong>'+loans_html+'</strong> Выплата:<strong>'+paied_html+'</strong> '+debt_html);
+
+                }
+            }
+        });
+    });
+
+     /**  Functions
      */
     function switchLoginField() {
         $login.attr('disabled', !$isLogin.is(':checked'));
@@ -129,7 +242,7 @@
         $form.find('input[name="<?=$model->formName()?>[partnerLogin]"]').val('');
     }
 
-    function copyToClipboard(text) {
+  function copyToClipboard(text) {
         if (window.clipboardData && window.clipboardData.setData) {
             // IE specific code path to prevent textarea being shown while dialog is visible.
             return clipboardData.setData("Text", text);
@@ -150,4 +263,13 @@
             }
         }
     }
+
+    function changeKindOperation(value) {
+        if (value =='loan') {
+            $loan.attr('checked',true);
+        } else {
+            $loan.attr('checked',false);
+        }
+    }
+
 </script>

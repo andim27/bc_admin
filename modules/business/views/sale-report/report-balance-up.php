@@ -12,7 +12,7 @@ use kartik\widgets\DatePicker;
 use yii\bootstrap\Html;
 
 
-function balanceMesssage($item_str,$item) {
+function balanceMesssage($item_str,$item) { //--for sales?not for pre
     $res_str = $item_str;
     if (!isset($item)) {
         $res_str += ' ?';
@@ -30,6 +30,19 @@ function balanceMesssage($item_str,$item) {
             $res_str ='??';
         }
 
+    }
+    return $res_str;
+}
+
+function statusIcon($status_str) {
+    $res_str ='<i class="fa fa-spinner fa-spin" style="font-size:24px" title="wait..."></i>';
+    if (isset($status_str)) {
+        if ($status_str == 'done') {
+            $res_str =' <span class="glyphicon glyphicon-ok" title="done"></span>';
+        }
+        if ($status_str == 'cancel') {
+            $res_str =' <span class="glyphicon glyphicon-remove" title="canceled">';
+        }
     }
     return $res_str;
 }
@@ -82,18 +95,25 @@ function balanceMesssage($item_str,$item) {
 
 
 <section class="panel panel-default">
+<!--    <pre>-->
+<!--           --><?//=($p_key) ?>
+<!--    </pre>-->
     <div class="table-responsive">
-        <!--            <pre>-->
-        <!--                --><?//=var_dump($infoSale) ?>
-        <!--            </pre>-->
+
         <table class="table table-translations table-striped datagrid m-b-sm">
             <thead>
             <tr role="row">
                 <th><?=THelper::t('date_create')?></th>
-                <th><?=THelper::t('username')?></th>
+                <th><?=THelper::t('user')?></th>
                 <th><?=THelper::t('sum')?></th>
                 <th><?=THelper::t('kind')?></th>
                 <th width="25%"><?=THelper::t('comments')?></th>
+                <th><?=THelper::t('status')?></th>
+                <?php
+                if (isset($p_key)) {
+                ?>
+                <th><?=THelper::t('controls')?></th>
+                <?php } ?>
             </tr>
             </thead>
 
@@ -102,14 +122,25 @@ function balanceMesssage($item_str,$item) {
                 <?php
                    $totalSum=0;
                    foreach($infoSale as $item) {
-                       $totalSum+=$item['price'];
+                       $totalSum+=$item['amount'];//--amount for pre - price for sale
                  ?>
                     <tr  role="row">
-                        <td><?=$item['dateCreate']->toDateTime()->format('Y-m-d H:i:s');?></td>
+                        <td><?=$item['created_at']->toDateTime()->format('Y-m-d H:i:s');?></td>
                         <td><?=$item['username']?></td>
-                        <td><?=$item['price']?></td>
-                        <td><?=balanceMesssage('kind',$item['whenceSale']);?></td>
-                        <td width="25%"><?=balanceMesssage('comment',$item['whenceSale']);?></td>
+                        <td><?=$item['amount']?></td>
+                        <td><?=$item['kind'] ?? '?'//balanceMesssage('kind',$item['whenceSale']);?></td>
+                        <td width="25%"><?= $item['comment'] ?? '...'//balanceMesssage('comment',$item['whenceSale']);?></td>
+                        <td id="status-<?=$item['_id'] ?>"><?=statusIcon(($item['status'] ?? ''));?></td>
+
+                        <?php
+                             if (isset($p_key)) {
+                        ?>
+                        <td>
+                         <button id="btn-apply-<?=$item['_id'] ?>"  <?=($item['status']=='done')?'disabled':'' ?>  type="button" class="btn btn-success btn-sm" onclick="applyBalance('<?=$item['_id'] ?>')">Apply</button>
+                         <button id="btn-cancel-<?=$item['_id'] ?>" <?=($item['status']=='done')?'disabled':'' ?>  type="button" class="btn btn-danger  btn-sm" onclick="cancelBalance('<?=$item['_id'] ?>')">Cancel</button>
+                        </td>
+
+                        <?php } ?>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -126,7 +157,48 @@ function balanceMesssage($item_str,$item) {
     </div>
 
 </section>
-
+<?php
+if (isset($p_key)) {
+?>
+<script>
+    function applyBalance(id) {
+        //alert(id);
+        sendActionBalance('done',id);
+    }
+    function cancelBalance(id) {
+        //alert(id);
+        sendActionBalance('cancel',id);
+    }
+    function changeStatusBalance(data) {
+        console.log(data);
+        if ((data.id !=undefined)&&(data.status_html !=undefined)){
+            $('#status-'+data.id).html(data.status_html);
+        }
+    }
+    function sendActionBalance(action,id) {
+        var url = "/<?=Yii::$app->language?>/business/user/balance-action";
+        var data = {'id':id,'action':action,'type':'adminka'};
+        if (action =='done') {
+            $('#btn-apply-'+data.id).attr('disabled',true);
+        }
+        $.post(url,data).done(function (data) {
+            if (data.success == true) {
+                changeStatusBalance(data);
+                if (data.action == 'cancel') {
+                    $('#btn-apply-'+data.id).attr('disabled',true);
+                }
+                if (data.action == 'done') {
+                    $('#btn-apply-'+data.id).attr('disabled',true);
+                    $('#btn-cancel-'+data.id).attr('disabled',true);
+                }
+            } else {
+                alert('Change balance error:\n'+data.mes);
+                $('#btn-apply-'+data.id).attr('disabled',false);
+            }
+        });
+    }
+</script>
+<?php } ?>
 
 
 <script>
