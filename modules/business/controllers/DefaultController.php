@@ -573,9 +573,9 @@ class DefaultController extends BaseController
                 ->sum('amount');
 
             $statisticInfo['bonus']['connectingBonus'] = $connectingBonusAdd - $connectingBonusCancellation;
-            //s$repayment_month = $statisticInfo['request']['from'];
-            $month_interval = date_diff(date_create($statisticInfo['request']['from'].'-01'), date_create($statisticInfo['request']['to'].'-01'));
-            $month_interval =(int) $month_interval->format('%m');
+            $repayment_month = $statisticInfo['request']['from'];
+            $month_interval  = date_diff(date_create($statisticInfo['request']['from'].'-01'), date_create($statisticInfo['request']['to'].'-01'));
+            $month_interval  =(int) $month_interval->format('%m');
             $y_from = explode("-", $statisticInfo['request']['from'])[0];
             $y_to   = explode("-", $statisticInfo['request']['to'])[0];
             $y_from_m = explode("-", $statisticInfo['request']['from'])[1];
