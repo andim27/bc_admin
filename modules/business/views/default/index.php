@@ -86,194 +86,7 @@ HTML;
         </div>
     </section>
 
-    <section>
-        <div class="m-b-md">
-            <h3 class="m-b-none"><?= THelper::t('tree_partners'); ?></h3>
-        </div>
-    </section>
-
-    <section class="panel panel-default">
-
-        <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-4c6cc1"></i>
-                    <i class="fa fa-users fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['newRegistration'];?></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('new_partners_for_period'); ?></small>
-                </a>
-            </div>
-
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-4cc0c1"></i>
-                    <i class="fa fa-male fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['ofThemPaid'];?></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('which_paid'); ?></small>
-                </a>
-            </div>
-
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-c14cba"></i>
-                    <i class="fa fa-sign-out fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['removeUsers']?></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('main_partners_excluded'); ?></small>
-                </a>
-            </div>
-            <div class="col-sm-2 col-md-2 padder-v b-r b-light ">
-                  <a class="btn btn-success center-block" title="График подключения" onclick="getDetailsBlock('partners')">
-                      <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
-                  </a>
-            </div>
-
-        </div>
-    </section>
-
-    <section id="block-place-partners" class="panel panel-default" style="display:none">
-        <header class="panel-heading font-bold">
-            <?= THelper::t('partners_graph_by_time'); ?>
-        </header>
-        <div class="panel-body">
-            <div id="flot-connect-partners" class="height250"></div>
-        </div>
-    </section>
-
-    <section>
-        <div class="m-b-md">
-            <h3 class="m-b-none"><?= THelper::t('money'); ?></h3>
-        </div>
-    </section>
-    <section class="panel panel-default">
-        <div class="row m-l-none m-r-none bg-light lter">
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#" onclick="moneyAllDetails()">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['generalReceiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('general_arrival'); ?>:</small>
-                </a>
-                <table id="m_all_details" style="display: none">
-                    <tr><td  width="25%"><span>General:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['generalReceiptMoneyDetails']['all']) ? (number_format(round($statisticInfo['generalReceiptMoneyDetails']['all']), 0, ',', ' ')) : 0 ?> </span></td></tr>
-                    <tr><td  width="25%"><span>VipCoin:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['generalReceiptMoneyDetails']['vipcoin']) ? (number_format(round($statisticInfo['generalReceiptMoneyDetails']['vipcoin']), 0, ',', ' ')) : 0 ?></span></td></tr>
-                </table>
-            </div>
-
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
-                    <i class="fa fa-money fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#" onclick="moneyIncomeDetails()">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('money_income'); ?></small>
-                </a>
-                <table id="m_income_details" style="display: none">
-                    <tr><td  width="25%"><span>softpay:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['softpay']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['softpay']), 0, ',', ' ')) : 0 ?></span></td></tr>
-                    <tr><td  width="25%"><span>paysera:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['paysera']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['paysera']), 0, ',', ' ')) : 0 ?></span></td></tr>
-                    <tr><td  width="25%"><span>advcash:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['advcash']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['advcash']), 0, ',', ' ')) : 0 ?></span></td></tr>
-                    <tr><td  width="25%"><span>pb:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['pb']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['pb']), 0, ',', ' ')) : 0 ?></span></td></tr>
-<!--                    <tr><td  width="25%"><span>invoice:</span></td><td align="right"><span class="h4 m-t-xs">--><?//= isset($statisticInfo['receiptMoneyDetails']['invoice']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['invoice']), 0, ',', ' ')) : 0 ?><!--</span></td></tr>-->
-                    <tr style="border-bottom: dotted"></tr>
-                    <tr><td  width="25%"><span>Income:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['receiptMoneyDetails']['income']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['income']), 0, ',', ' ')) : 0 ?> </span></td></tr>
-                    <tr><td  width="25%"><span>Reloan:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['reloan']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['reloan']), 0, ',', ' ')) : 0 ?></span></td></tr>
-
-                </table>
-            </div>
-            <!--  --------  b:Перенос --------->
-            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?></small>
-                </a>
-            </div>
-            <!--  -------   e:Перенос  -------->
-            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
-                    <i class="fa fa-file-text-o fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptVoucher']-$statisticInfo['cancellationVoucher']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('vaucher_income'); ?></small>
-                </a>
-            </div>
-            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
-                <a class="btn btn-success center-block" title="Детализиция по проектам" onclick="getDetailsBlock('projects')">
-                    <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('projects'); ?>
-                </a>
-            </div>
-        </div>
-    </section>
-    <section id="block-place-projects" class="panel panel-default" style="display:none;margin-bottom: 2px;margin-left:50%;">
-
-    </section>
-
-
-    <section>
-        <div class="m-b-md">
-            <h3 class="m-b-none"><?= THelper::t('user_commission_title'); ?></h3>
-        </div>
-    </section>
-    <section class="panel panel-default">
-        <div class="row m-l-none m-r-none bg-light lter">
-
-
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['orderedForWithdrawal']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('ordered_for_withdrawal'); ?></small>
-                </a>
-            </div>
-
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-4c6cc1"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['feesCommission']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('accrued_commissions'); ?></small>
-                </a>
-            </div>
-            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
-                <span class="fa-stack fa-2x pull-left m-r-sm">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
-                    <i class="fa fa-usd fa-stack-1x text-white"></i>
-                </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['issuedCommission']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('issued_commissions'); ?></small>
-                </a>
-            </div>
-            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
-                <a class="btn btn-success center-block" title="Товарооборот- графики" onclick="getDetailsBlock('commission-graph')">
-                    <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
-                </a>
-            </div>
-
-        </div>
-    </section>
-    <section id="block-place-commission-graph" class="panel panel-default" style="display:none">
-    </section>
-
-
+    <!--b: GoodsTurnover-->
     <section>
         <div class="m-b-md">
             <h3 class="m-b-none"><?= THelper::t('goods_turnover'); ?></h3>
@@ -288,14 +101,14 @@ HTML;
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
-                <a class="clear" href="#" onclick="tOverDetails();">
+                <a class="clear" href="#" onclick="getDetailsBlock('turnover-details')">
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesTurnoverDetails']['packs']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock"><?= THelper::t('goods_turnover'); ?> (packs)</small>
                 </a>
                 <table id="t_over_details" style="display: none">
-                    <tr><td  width="25%"><span>General:</span></td><td align="right"><span class="h4 m-t-xs"> <?=number_format(round($statisticInfo['salesTurnover']), 0, ',', ' ');?> </span><span>   (<?=@number_format(round(($statisticInfo['salesTurnoverDetails']['packs']*100)/$statisticInfo['salesTurnover']),2, ',', ' ');?>)%</span></td></tr>
-<!--                    <tr><td  width="25%"><span>Rest:</span></td><td align="right"><span class="h4 m-t-xs">--><?//=//number_format(round($statisticInfo['salesTurnoverDetails']['rest']), 0, ',', ' ');?><!--</span></td></tr>-->
                 </table>
+                <section id="block-place-turnover-details" class="panel panel-default" style="display:none">
+                </section>
             </div>
 
             <div class="col-sm-3 col-md-3 padder-v b-r b-light">
@@ -407,72 +220,141 @@ HTML;
         </script>
 
     </section>
+
+    <!--e:  GoodsTurnOver-->
+
+<!--b: Money-->
     <section>
         <div class="m-b-md">
-            <h3 class="m-b-none"><?= THelper::t('bonuses'); ?></h3>
+            <h3 class="m-b-none"><?= THelper::t('money'); ?></h3>
         </div>
     </section>
-    <div class="row">
-        <div class="col-md-4">
-            <ul class="list-group no-radius">
-                <li class="list-group-item">
-                    <span class="pull-right"><?=number_format(round($statisticInfo['bonus']['connectingBonus']),0,',',' ')?></span>
-                    <span class="label bg-primary">1</span>
-                    <?= THelper::t('personal_award') ?>
-                </li>
-                <li class="list-group-item">
-                    <span class="pull-right"><?=number_format(round($statisticInfo['bonus']['teamBonus']),0,',',' ')?></span>
-                    <span class="label bg-dark">2</span>
-                    <?= THelper::t('team_award') ?>
-                </li>
-                <li class="list-group-item">
-                    <span class="pull-right"><?=number_format(round($statisticInfo['bonus']['mentorBonus']),0,',',' ')?></span>
-                    <span class="label bg-77382E">3</span>
-                    <?= THelper::t('mentor_bonus') ?>
-                </li>
-                <li class="list-group-item">
-                    <span class="pull-right"><?=number_format(round($statisticInfo['bonus']['careerBonus']),0,',',' ')?></span>
-                    <span class="label bg-009A8C">4</span>
-                    <?= THelper::t('career_bonus') ?>
-                </li>
-                <li class="list-group-item">
-                    <span class="pull-right"><?=number_format(round($statisticInfo['bonus']['executiveBonus']),0,',',' ')?></span>
-                    <span class="label bg-AAA100">5</span>
-                    <?= THelper::t('executive_bonus') ?>
-                </li>
-                <li class="list-group-item">
-                    <span class="pull-right"><?=number_format(round($statisticInfo['bonus']['worldBonus']),0,',',' ')?></span>
-                    <span class="label bg-AA0900">6</span>
-                    <?= THelper::t('world_bonus') ?>
-                </li>
+    <section class="panel panel-default">
+        <div class="row m-l-none m-r-none bg-light lter">
 
-                <li class="list-group-item">
-                    <span class="pull-right"><?=number_format(round($statisticInfo['bonus']['equityBonus']),0,',',' ')?></span>
-                    <span class="label bg-664CC1">7</span>
-                    <?= THelper::t('bonus_equity'); ?>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-4">
-            <div class="row">
-                <div class="col-md-6 bg-664CC1">
-                    <div class="padder-v">
-                        <span class="m-b-xs h3 block text-white"><?=number_format(round($statisticInfo['bonus']['autoBonus']),0,',',' ')?></span>
-                        <small class="text-white"><?= THelper::t('main_auto_bonus') ?></small>
-                    </div>
-                </div>
-                <div class="col-md-6 bg-593FB5">
-                    <div class="padder-v">
-                        <span class="m-b-xs h3 block text-white"><?=number_format(round($statisticInfo['bonus']['propertyBonus']),0,',',' ')?></span>
-                        <small class="text-white"><?= THelper::t('main_property_bonus') ?></small>
-                    </div>
-                </div>
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-money fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#" onclick="moneyIncomeDetails()">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('money_income'); ?></small>
+                </a>
+                <table id="m_income_details" style="display: none">
+                    <tr><td  width="25%"><span>softpay:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['softpay']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['softpay']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>paysera:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['paysera']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['paysera']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>advcash:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['advcash']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['advcash']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>pb:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['pb']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['pb']), 0, ',', ' ')) : 0 ?></span></td></tr>
+<!--                    <tr><td  width="25%"><span>invoice:</span></td><td align="right"><span class="h4 m-t-xs">--><?//= isset($statisticInfo['receiptMoneyDetails']['invoice']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['invoice']), 0, ',', ' ')) : 0 ?><!--</span></td></tr>-->
+                    <tr style="border-bottom: dotted"></tr>
+                    <tr><td  width="25%"><span>Income:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['receiptMoneyDetails']['income']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['income']), 0, ',', ' ')) : 0 ?> </span></td></tr>
+                    <tr><td  width="25%"><span>Reloan:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['reloan']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['reloan']), 0, ',', ' ')) : 0 ?></span></td></tr>
+
+                </table>
+            </div>
+
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?></small>
+                </a>
+            </div>
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                  <span class="fa-stack fa-2x pull-left m-r-sm " style="margin-left: 4%">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-money fa-stack-1x text-white"></i>
+                  </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill_vipvip']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?> VipVip</small>
+                </a>
+            </div>
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+<!--                <a class="btn btn-success center-block" title="Детализиция по проектам" onclick="getDetailsBlock('projects')">-->
+<!--                    <span class="glyphicon glyphicon-stats"></span> --><?//= THelper::t('projects'); ?>
+<!--                </a>-->
+                <span class="fa-stack fa-2x pull-left m-r-sm " style="margin-left: 4%">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-money fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill_wellness']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?> Wellness</small>
+                </a>
             </div>
         </div>
-    </div>
+    </section>
+    <section id="block-place-projects" class="panel panel-default" style="display:none;margin-bottom: 2px;margin-left:50%;">
+
+    </section>
+
+<!--e: Money-->
+<!--b: Comission-->
+    <section>
+        <div class="m-b-md">
+            <h3 class="m-b-none"><?= THelper::t('user_commission_title'); ?></h3>
+        </div>
+    </section>
+    <section class="panel panel-default">
+        <div class="row m-l-none m-r-none bg-light lter">
 
 
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['orderedForWithdrawal']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('ordered_for_withdrawal'); ?></small>
+                </a>
+            </div>
 
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-4c6cc1"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#" onclick="getDetailsBlock('commission-details')">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['feesCommission']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('accrued_commissions'); ?></small>
+                </a>
+                <section id="block-place-commission-details" class="panel panel-default" style="display:none;margin-bottom: 2px;">
+
+                </section>
+            </div>
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['issuedCommission']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('issued_commissions'); ?></small>
+                </a>
+            </div>
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light">
+                <a class="btn btn-success center-block" title="Товарооборот- графики" onclick="getDetailsBlock('commission-graph')">
+                    <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
+                </a>
+            </div>
+
+        </div>
+    </section>
+    <section id="block-place-commission-graph" class="panel panel-default" style="display:none">
+    </section>
+
+<!--e: Comission-->
+
+<!--b:  Bonuses-->
+
+<!--e:  Bonuses-->
+<!--b:  Cheki-->
     <section>
         <div class="m-b-md">
             <h3 class="m-b-none"><?="Чеки" ?></h3>
@@ -535,5 +417,64 @@ HTML;
 
 
     </section>
+    <!--   b: Partners-->
+    <section>
+        <div class="m-b-md">
+            <h3 class="m-b-none"><?= THelper::t('tree_partners'); ?></h3>
+        </div>
+    </section>
+    <section class="panel panel-default">
 
+        <div class="row m-l-none m-r-none bg-light lter">
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-4c6cc1"></i>
+                    <i class="fa fa-users fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['newRegistration'];?></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('new_partners_for_period'); ?></small>
+                </a>
+            </div>
+
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-4cc0c1"></i>
+                    <i class="fa fa-male fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=$statisticInfo['ofThemPaid'];?></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('which_paid'); ?></small>
+                </a>
+            </div>
+
+            <div class="col-sm-4 col-md-4 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-c14cba"></i>
+                    <i class="fa fa-sign-out fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=(!isset($statisticInfo['removeUsers'])? Thelper::t('no'):$statisticInfo['removeUsers']);  ?></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('main_partners_excluded'); ?></small>
+                </a>
+            </div>
+            <div class="col-sm-2 col-md-2 padder-v b-r b-light ">
+                <a class="btn btn-success center-block" title="График подключения" onclick="getDetailsBlock('partners')">
+                    <span class="glyphicon glyphicon-stats"></span> <?= THelper::t('graph'); ?>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="block-place-partners" class="panel panel-default" style="display:none">
+        <header class="panel-heading font-bold">
+            <?= THelper::t('partners_graph_by_time'); ?>
+        </header>
+        <div class="panel-body">
+            <div id="flot-connect-partners" class="height250"></div>
+        </div>
+    </section>
+    <!--e: Partners-->
+<!--e:  Cheki-->
 <?php } ?>
