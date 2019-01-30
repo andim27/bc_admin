@@ -1255,6 +1255,59 @@ class DefaultController extends BaseController
         $statisticInfo['receiptMoney'] = $loanRep + $income;
         $statisticInfo['receiptMoneyDetails']['income'] = $income;
         $statisticInfo['receiptMoneyDetails']['reloan'] = $loanRep;
+        //---b:money from admin-----
+        $statisticInfo['receiptMoneyDetails']['bank_a'] = 0;
+        $statisticInfo['receiptMoneyDetails']['cash_a'] = 0;
+        $statisticInfo['receiptMoneyDetails']['paysera_a'] = 0;
+        $statisticInfo['receiptMoneyDetails']['advcash_a'] = 0;
+        $statisticInfo['receiptMoneyDetails']['perevod_a'] = 0;
+        $statisticInfo['receiptMoneyDetails']['advaction_a'] = 0;
+        $statisticInfo['receiptMoneyDetails']['other_a']     = 0;
+        $adm_items =  (new \yii\mongodb\Query())
+            ->select(['dateCreate','price','whenceSale'])
+            ->from('sales')
+            ->where([
+                'dateCreate' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'type'=>[
+                    '$ne'=>-1
+                ],
+                'product'=>9001,
+                'username' =>[
+                    '$ne'=>'main'
+                ]
+            ])
+            ->all();
+        foreach ($adm_items as $item ) {
+            if (isset($item['whenceSale'])) {
+                if (preg_match('/kind:bank/',$item['whenceSale'])) {
+                    $statisticInfo['receiptMoneyDetails']['bank_a']+=$item['price'];
+                }
+                if (preg_match('/kind:cash/',$item['whenceSale'])) {
+                    $statisticInfo['receiptMoneyDetails']['cash_a']+=$item['price'];
+                }
+
+                if (preg_match('/kind:paysera/',$item['whenceSale'])) {
+                    $statisticInfo['receiptMoneyDetails']['paysera_a']+=$item['price'];
+                }
+                if (preg_match('/kind:advcash/',$item['whenceSale'])) {
+                    $statisticInfo['receiptMoneyDetails']['advcash_a']+=$item['price'];
+                }
+                if (preg_match('/kind:perevod/',$item['whenceSale'])) {
+                    $statisticInfo['receiptMoneyDetails']['perevod_a']+=$item['price'];
+                }
+                if (preg_match('/kind:advaction/',$item['whenceSale'])) {
+                    $statisticInfo['receiptMoneyDetails']['advaction_a']+=$item['price'];
+                }
+                if (preg_match('/kind:other/',$item['whenceSale'])) {
+                    $statisticInfo['receiptMoneyDetails']['other_a']+=$item['price'];
+                }
+
+            }
+        }
+        //---e:money from admin-----
         //----e:new calculation---
         //--b:calc right sum--
         $users = api\User::spilover('573b8a83507cba1c091c1b51', 200);//--test user

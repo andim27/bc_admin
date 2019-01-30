@@ -17,6 +17,22 @@ $layoutDate = <<< HTML
         {$apply}
     </a>
 HTML;
+function totalDetailsSum($statisticInfo) {
+    $sum =$statisticInfo['receiptMoneyDetails']['softpay']
+    +$statisticInfo['receiptMoneyDetails']['paysera']
+    +$statisticInfo['receiptMoneyDetails']['paysera_a']
+    +$statisticInfo['receiptMoneyDetails']['advcash']
+    +$statisticInfo['receiptMoneyDetails']['advcash_a']
+    +$statisticInfo['receiptMoneyDetails']['pb']
+    +$statisticInfo['receiptMoneyDetails']['bank_a']
+    +$statisticInfo['receiptMoneyDetails']['cash_a']
+    +$statisticInfo['receiptMoneyDetails']['perevod_a']
+    +$statisticInfo['receiptMoneyDetails']['advaction_a']
+    +$statisticInfo['receiptMoneyDetails']['other_a']
+    ;
+    return number_format(round($sum));
+}
+
 ?>
 <style>
     .pm-2 {
@@ -244,12 +260,23 @@ HTML;
                 <table id="m_income_details" style="display: none">
                     <tr><td  width="25%"><span>softpay:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['softpay']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['softpay']), 0, ',', ' ')) : 0 ?></span></td></tr>
                     <tr><td  width="25%"><span>paysera:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['paysera']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['paysera']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>paysera(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['paysera_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['paysera_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
                     <tr><td  width="25%"><span>advcash:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['advcash']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['advcash']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>advcash(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['advcash_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['advcash_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
                     <tr><td  width="25%"><span>pb:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['pb']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['pb']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>bank(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['bank_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['bank_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>cash(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['cash_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['cash_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>perevod(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['perevod_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['perevod_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>advaction(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['advaction_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['advaction_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr style="border-bottom: dotted darkgreen"><td  width="25%"><span>other(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['other_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['other_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
 <!--                    <tr><td  width="25%"><span>invoice:</span></td><td align="right"><span class="h4 m-t-xs">--><?//= isset($statisticInfo['receiptMoneyDetails']['invoice']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['invoice']), 0, ',', ' ')) : 0 ?><!--</span></td></tr>-->
-                    <tr style="border-bottom: dotted"></tr>
+<!--                    <tr style="border-bottom: dotted darkgreen"></tr>-->
+                    <tfoot >
+                    <tr style="border-bottom: dotted darkgreen"><td  width="25%"><span>Total:</span></td><td align="right"><span class="h4 m-t-xs"> <?= totalDetailsSum($statisticInfo) ?> </span></td></tr>
                     <tr><td  width="25%"><span>Income:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['receiptMoneyDetails']['income']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['income']), 0, ',', ' ')) : 0 ?> </span></td></tr>
                     <tr><td  width="25%"><span>Reloan:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['reloan']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['reloan']), 0, ',', ' ')) : 0 ?></span></td></tr>
+
+                    </tfoot>
 
                 </table>
             </div>

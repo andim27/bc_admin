@@ -1240,7 +1240,7 @@ class UserController extends BaseController
             'advcash'  =>'Пополнение баланса AdvCash',
             'perevod'  =>'Пополнение переводом',
             'cash'     =>'Пополнение наличными',
-            'comis'    =>'Пополнение комиссионными',
+            //'comis'    =>'Пополнение комиссионными',
             'advaction'=>'Пополнение по рекламной акции',
             'other'    =>'Другое'
         ];
