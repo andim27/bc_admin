@@ -41,17 +41,18 @@ class WellnessClubMembersController extends BaseController
                 ['like', 'address', $search],
                 ['like', 'mobile', $search],
                 ['like', 'skype', $search],
+                ['like', 'comments', $search],
             ]);
         }
 
         $pages = new Pagination(['totalCount' => $wellnessClubMembers->count()]);
 
         $columns = [
-            'surname', 'name', 'countryId', 'address', 'mobile', 'email', 'skype', 'wellness_club_partner_date_end', 'action'
+            'surname', 'name', 'countryId', 'address', 'mobile', 'email', 'skype', 'comments','wellness_club_partner_date_end','action_btn', 'action'
         ];
 
         $filterColumns = [
-            'surname', 'name', 'countryId', 'address', 'mobile', 'email', 'skype', 'wellness_club_partner_date_end', 'action'
+            'surname', 'name', 'countryId', 'address', 'mobile', 'email', 'skype', 'comments', 'wellness_club_partner_date_end', 'action_btn','action'
         ];
 
         if ($order = $request->get('order')[0]) {
@@ -91,7 +92,7 @@ class WellnessClubMembersController extends BaseController
                         $endDate = gmdate('d/m/Y H:i:s', $endDate->toDateTime()->getTimestamp());
                     }
                 }
-
+                $comment_btn ='<button type="button"  class="btn btn-info comments-rec btn-sm" style="margin:5px;float:right"  data-id="'.strval($user->userId).'" data-toggle="modal" data-target="#popupModal">Сертификат</button>';
                 $nestedData['id'] = $count - ($key + $offset);
                 $nestedData[$columns[0]] = $user->surname;
                 $nestedData[$columns[1]] = $user->name;
@@ -100,8 +101,10 @@ class WellnessClubMembersController extends BaseController
                 $nestedData[$columns[4]] = $user->phone;
                 $nestedData[$columns[5]] = $user->email;
                 $nestedData[$columns[6]] = $user->skype;
-                $nestedData[$columns[7]] = $endDate;
-                $nestedData[$columns[8]] = '<button class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply') . '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ) . ' data-id="' . strval($user->userId) . '">' . THelper::t('accepted') . '</button>';
+                $nestedData[$columns[7]] = $user->comments ?? '?';
+                $nestedData[$columns[8]] = $endDate;
+                $nestedData[$columns[9]] = $comment_btn;
+                $nestedData[$columns[10]] ='<div class="btn-group btn-group-sm">'.$comment_btn. '<button type="button" style="margin:5px;float:right" class="btn btn-success ' . ($user->wellness_club_partner_date_end ? '' : 'apply') . '"' .(!! $user->wellness_club_partner_date_end ? 'disabled' : '' ) . ' data-id="' . strval($user->userId) . '">' . THelper::t('accepted') . '</button>'.'</div>';
 
                 $data[] = $nestedData;
             }
@@ -137,7 +140,13 @@ class WellnessClubMembersController extends BaseController
             'ch'    =>$ch,
         ]);
     }
-
+    public function actionSertSave()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $comments =  Yii::$app->request->post('comments');
+        $res = ['success'=>true,'mes'=>$comments];
+        return $res;
+    }
     public function actionAddInfo()
     {
         $request = Yii::$app->request;
