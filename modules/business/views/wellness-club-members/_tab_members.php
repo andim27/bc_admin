@@ -170,8 +170,10 @@
 
         var fio  =($($this).parent().parents('tr').find('td:nth-child(2)').text());
         var name =($($this).parent().parents('tr').find('td:nth-child(3)').text());
+        var comments =($($this).parent().parents('tr').find('td:nth-child(9)').text());
         $('#curUserFio').html(fio+' '+name);
         $('#curUserId').html(id);
+        $('#s_comments').val(comments);
         $('#error,#done').hide();
         $('.popupSertificat').modal('show');
     });

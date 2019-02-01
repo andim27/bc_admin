@@ -149,7 +149,7 @@ class WellnessClubMembersController extends BaseController
             $w = wellnessClubMembers::findOne(['userId'=>new ObjectID($id)]);
             $w->comments =$comments;
             $w->save();
-            $res = ['success'=>true,'mes'=>'Сохранено!'];
+            $res = ['success'=>true,'mes'=>'Сохранено!'.$comments];
         } catch (\Exception $e) {
             $res = ['success'=>false,'mes'=>$e->getMessage().' - line:'.$e->getLine().$comments];
         }
