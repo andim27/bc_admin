@@ -293,6 +293,12 @@ Class Menu
                         'action' => 'pincode-generator',
                     ],
                     [
+                        'key'   =>  'sidebar_report_balance_up',
+                        'label' => THelper::t('sidebar_report_balance_up'),
+                        'url' => ['/business/sale-report/report-balance-up'],
+                        'action' => 'report-balance-up',
+                    ],
+                    [
                         'key'   =>  'sidebar_loans',
                         'label' => THelper::t('sidebar_loans'),
                         'url' => ['/business/loan/loans'],
