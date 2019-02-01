@@ -22,16 +22,22 @@
             </div>
             <div class="modal-body">
                 <p><span id="curUserId"></span></p>
-                <p id="curUserFio">Some text in the modal.</p>
+                <mark id="curUserFio"></mark>
                 <form>
                     <div class="form-group">
                         <label for="email">Замечания:</label>
-                        <input type="text" class="form-control" id="s_comments" placeholder="Введите номер сертификата и Ваши замечения">
+                        <input type="text" class="form-control" id="s_comments" placeholder="Введите номер сертификата и Ваши замечения" onfocus="$('#error,#done').hide()">
                     </div>
                 </form>
+                <div id='error' class="alert alert-danger" style="display:none">
+                    <strong>Error!</strong><span id="error-mes"></span>
+                </div>
+                <div id='done'  class="alert alert-success">
+                    <strong>Success!</strong>Все сохранено!
+                </div>
             </div>
             <div class="modal-footer">
-                <button id="s_save" type="button" class="btn btn-default" data-dismiss="modal">Сохранить</button>
+                <button id="s_save" type="button" class="btn btn-default" >Сохранить</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
             </div>
         </div>
@@ -85,7 +91,7 @@
                     <?=THelper::t('skype')?>
                 </th>
                 <th>
-                    <?=THelper::t('comments')?>
+                    <?=THelper::t('certificate')?>
                 </th>
                 <th>
                     <?=THelper::t('activity_date')?>
@@ -159,13 +165,14 @@
     $(document).on('click', '.comments-rec', function () {
 
         var $this = $(this);
+        comments_rec =$this;
         var id =$this.data('id');
 
-        var fio =($($this).parent().parents('tr').find('td:nth-child(2)').text());
+        var fio  =($($this).parent().parents('tr').find('td:nth-child(2)').text());
         var name =($($this).parent().parents('tr').find('td:nth-child(3)').text());
         $('#curUserFio').html(fio+' '+name);
         $('#curUserId').html(id);
-        //var data = table.row( $($this).parent().parents('tr') ).data();
+        $('#error,#done').hide();
         $('.popupSertificat').modal('show');
     });
 
@@ -174,7 +181,8 @@
             url: '<?= \yii\helpers\Url::to(['wellness-club-members/sert-save']) ?>',
             type: 'POST',
             data: {
-                comments: $('#s_comments').val()
+                comments: $('#s_comments').val(),
+                id: $('#curUserId').html()
             },
             success: function (response) {
                 if (response) {
@@ -186,9 +194,15 @@
 
     function saveSaveResult(response) {
         if (response.success == true) {
-            // $this=null;
-            // var comments =($($this).parent().parents('tr').find('td:nth-child(9)');
-            // $($this).parent().parents('tr').find('td:nth-child(9)').html(response.mes);
+            $this=comments_rec;
+            var comments = $($this).parent().parents('tr').find('td:nth-child(9)');
+            comments.html(response.mes);
+            $('#error').hide();
+            $('#done').show();
+            $('.popupSertificat').modal('close');
+        } else {
+            $('#error').show();
+            $('#error-mes').html(response.mes);
         }
     }
     $('#ch').click(function () {

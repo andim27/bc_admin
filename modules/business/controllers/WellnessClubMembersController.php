@@ -143,8 +143,18 @@ class WellnessClubMembersController extends BaseController
     public function actionSertSave()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $comments =  Yii::$app->request->post('comments');
-        $res = ['success'=>true,'mes'=>$comments];
+        try {
+            $comments =  Yii::$app->request->post('comments');
+            $id       =  Yii::$app->request->post('id');
+            $w = wellnessClubMembers::findOne(['userId'=>new ObjectID($id)]);
+            $w->comments =$comments;
+            $w->save();
+            $res = ['success'=>true,'mes'=>'Сохранено!'];
+        } catch (\Exception $e) {
+            $res = ['success'=>false,'mes'=>$e->getMessage().' - line:'.$e->getLine().$comments];
+        }
+
+
         return $res;
     }
     public function actionAddInfo()
