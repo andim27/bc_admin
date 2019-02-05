@@ -1321,9 +1321,14 @@ class UserController extends BaseController
                         $modelPin->kind = $kind;
                         $mes='!!';
                     }
-                    if ($modelPin->save()){
-                        Yii::$app->session->setFlash('success', 'Сохранено '.$mes);
+                    if (empty($comment)) {
+                        Yii::$app->session->setFlash('danger', THelper::t('write_you_comment').'?');
+                    } else {
+                        if ($modelPin->save()){
+                            Yii::$app->session->setFlash('success', 'Сохранено '.$mes);
+                        }
                     }
+
                 }
             }
         }

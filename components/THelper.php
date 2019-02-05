@@ -76,4 +76,12 @@ class THelper
 
         return $value;
     }
+    public static function kindTranslate($value)
+    {
+        if (strtolower($value) == 'loan') {
+            return self::t('loan');
+        }
+
+        return $value;
+    }
 }

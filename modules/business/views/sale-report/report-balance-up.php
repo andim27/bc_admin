@@ -128,7 +128,7 @@ function statusIcon($status_str) {
                         <td><?=$item['created_at']->toDateTime()->format('Y-m-d H:i:s');?></td>
                         <td><?=$item['username']?></td>
                         <td><?=$item['amount']?></td>
-                        <td><?=$item['kind'] ?? '?'//balanceMesssage('kind',$item['whenceSale']);?></td>
+                        <td><?=isset($item['kind'])?THelper::kindTranslate($item['kind']) :'?'//balanceMesssage('kind',$item['whenceSale']);?></td>
                         <td width="25%"><?= $item['comment'] ?? '...'//balanceMesssage('comment',$item['whenceSale']);?></td>
                         <td id="status-<?=$item['_id'] ?>"><?=statusIcon(($item['status'] ?? ''));?></td>
 
