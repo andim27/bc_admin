@@ -18,7 +18,7 @@ class Showrooms
     public $messenger,$delivery;
     public $userIdFiledRequest,$userLoginFiledRequest,$userFirstNameFiledRequest,$userSecondNameFiledRequest,
         $userAddressFiledRequest,$userPhoneFiledRequest;
-    public $userIdOtherLogin,$userLoginOtherLogin;
+    public $userLoginOtherLogin;
     public $countryId,$countryCode,$countryName;
     public $cityId,$cityName;
 
@@ -199,8 +199,7 @@ class Showrooms
                 $item->userPhoneFiledRequest        = $object->user->phone1;
                 $item->userAddressFiledRequest      = $object->user->address;
 
-                $item->userIdOtherLogin     = (!empty($object->userIdOtherLogin) ? $object->userIdOtherLogin : '');
-                $item->userLoginOtherLogin  = (!empty($object->userLoginOtherLogin) ? $object->userLoginOtherLogin : '');
+                $item->userLoginOtherLogin  = (!empty($object->otherLogin) ? $object->otherLogin : '');
 
                 $item->created_at       = $object->created_at;
 

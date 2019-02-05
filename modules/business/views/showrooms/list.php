@@ -149,8 +149,8 @@
                             Телефон
                             <input type="text" name="Showroom[phone]" class="phoneUserShowroom pull-right w-50">
                         </div>
-                        <div class="col-md-12 m-b-20">
-                            <select name="Showroom[messenger][0][title]" class="form-control m-b messenger1 w-45 messengerDiv m-b-none">
+                        <div class="col-md-12 m-b-20 blMessenger">
+                            <select name="Showroom[messenger][0][title]" class="form-control m-b messenger1 w-45 m-b-none messengerDiv">
                                 <option value="null">Мессенджер</option>
                                 <option value="1">Viber</option>
                                 <option value="2" >Whatsapp</option>
@@ -158,7 +158,7 @@
                             </select>
                             <input type="text" name="Showroom[messenger][0][value]" class="messenger1login pull-right w-50">
                         </div>
-                        <div class="col-md-12 m-b-20">
+                        <div class="col-md-12 m-b-20 blMessenger">
                             <select name="Showroom[messenger][1][title]" class="form-control m-b messenger2 w-45 messengerDiv">
                                 <option value="null">Мессенджер</option>
                                 <option value="1">Viber</option>
@@ -173,35 +173,35 @@
                         <textarea name="Showroom[dataAdmin]" class="form-control shoowroomAdminText" rows="7" placeholder="Тут данные администратора..."></textarea>
                     </div>
                     <div class="col-md-12 m-t-md">
-                        <div class="row m-b-sm">
-                            <input type="hidden" name="Showroom[delivery][0][title]" value="Курьером">
+                        <div class="row m-b-sm blDelivery" >
+                            <input type="hidden" name="Showroom[delivery][0][title]" value="Курьером" class="deliveryTitle">
                             <div class="col-md-6">
                                 <span class="w-195p inline m-t--9">Стоисость доставки курьером </span>
-                                <input type="text" name="Showroom[delivery][0][price]" class="delivery1 pull-right w-69 text-center" placeholder="EUR">
+                                <input type="text" name="Showroom[delivery][0][price]" class="deliveryPrice pull-right w-69 text-center" placeholder="EUR">
                             </div>
                             <div class="col-md-6">
                                 До скольки дней
-                                <input type="text" name="Showroom[delivery][0][day]" class="delivery1Days w-69 m-l text-center" placeholder="дней">
+                                <input type="text" name="Showroom[delivery][0][day]" class="deliveryDays w-69 m-l text-center" placeholder="дней">
                             </div>
                         </div>
-                        <div class="row m-b-sm">
+                        <div class="row m-b-sm blDelivery">
                             <div class="col-md-6">
-                                <input type="text" name="Showroom[delivery][1][title]" class="delivery2Text pull-left w-195p padder" placeholder="Название доставки">
-                                <input type="text" name="Showroom[delivery][1][price]" class="delivery2 pull-right w-69 text-center" placeholder="EUR">
+                                <input type="text" name="Showroom[delivery][1][title]" class="deliveryTitle pull-left w-195p padder" placeholder="Название доставки">
+                                <input type="text" name="Showroom[delivery][1][price]" class="deliveryPrice pull-right w-69 text-center" placeholder="EUR">
                             </div>
                             <div class="col-md-6">
                                 До скольки дней
-                                <input type="text" name="Showroom[delivery][1][day]" class="delivery2Days w-69 m-l text-center" placeholder="дней">
+                                <input type="text" name="Showroom[delivery][1][day]" class="deliveryDays w-69 m-l text-center" placeholder="дней">
                             </div>
                         </div>
-                        <div class="row m-b-sm">
+                        <div class="row m-b-sm blDelivery">
                             <div class="col-md-6">
-                                <input type="text" name="Showroom[delivery][2][title]" class="delivery3Text pull-left w-195p padder" placeholder="Название доставки">
-                                <input type="text" name="Showroom[delivery][2][price]" class="delivery3 pull-right w-69 text-center" placeholder="EUR">
+                                <input type="text" name="Showroom[delivery][2][title]" class="deliveryTitle pull-left w-195p padder" placeholder="Название доставки">
+                                <input type="text" name="Showroom[delivery][2][price]" class="deliveryPrice pull-right w-69 text-center" placeholder="EUR">
                             </div>
                             <div class="col-md-6">
                                 До скольки дней
-                                <input type="text" name="Showroom[delivery][2][day]" class="delivery3Days w-69 m-l text-center" placeholder="дней">
+                                <input type="text" name="Showroom[delivery][2][day]" class="deliveryDays w-69 m-l text-center" placeholder="дней">
                             </div>
                         </div>
                     </div>
@@ -233,119 +233,119 @@
                                     Выходной
                                 </div>
                             </div>
-                            <div class="row m-t-xs">
-                                <input type="hidden" name="Showroom[worktime][0][title]" value="monday">
+                            <div class="row m-t-xs worktimeShowroom">
+                                <input type="hidden" name="Showroom[worktime][0][title]" value="monday" class="worktimeTitle">
                                 <div class="col-md-5">
                                     Понедельник
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][0][from]" class="mondayFrom w-85">
+                                    <input type="text" name="Showroom[worktime][0][from]" class="mondayFrom w-85 worktimeTimeFrom">
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][0][to]" class="mondayTo w-85">
+                                    <input type="text" name="Showroom[worktime][0][to]" class="mondayTo w-85 worktimeTimeTo">
                                 </div>
                                 <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][0][holiday]" class="mondayHoliday w-85">
+                                    <input type="checkbox" name="Showroom[worktime][0][holiday]" class="mondayHoliday w-85 worktimeTimeHoliday">
                                 </div>
                             </div>
-                            <div class="row m-t-xs">
-                                <input type="hidden" name="Showroom[worktime][1][title]" value="thuesday">
+                            <div class="row m-t-xs worktimeShowroom">
+                                <input type="hidden" name="Showroom[worktime][1][title]" value="thuesday" class="worktimeTitle">
                                 <div class="col-md-5">
                                     Вторник
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][1][from]" class=" thuesdayFrom w-85">
+                                    <input type="text" name="Showroom[worktime][1][from]" class=" thuesdayFrom w-85 worktimeTimeFrom">
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][1][to]" class="thuesdayTo w-85">
+                                    <input type="text" name="Showroom[worktime][1][to]" class="thuesdayTo w-85 worktimeTimeTo">
                                 </div>
                                 <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][1][holiday]" class="thuesdayHoliday w-85">
+                                    <input type="checkbox" name="Showroom[worktime][1][holiday]" class="thuesdayHoliday w-85 worktimeTimeHoliday">
                                 </div>
                             </div>
-                            <div class="row m-t-xs">
-                                <input type="hidden" name="Showroom[worktime][2][title]" value="wednesday">
+                            <div class="row m-t-xs worktimeShowroom">
+                                <input type="hidden" name="Showroom[worktime][2][title]" value="wednesday" class="worktimeTitle">
                                 <div class="col-md-5">
                                     Среда
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][2][from]" class="wednesdayFrom w-85">
+                                    <input type="text" name="Showroom[worktime][2][from]" class="wednesdayFrom w-85 worktimeTimeFrom">
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][2][to]" class="wednesdayTo w-85">
+                                    <input type="text" name="Showroom[worktime][2][to]" class="wednesdayTo w-85 worktimeTimeTo">
                                 </div>
                                 <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][2][holiday]" class="wednesdayHoliday w-85">
+                                    <input type="checkbox" name="Showroom[worktime][2][holiday]" class="wednesdayHoliday w-85 worktimeTimeHoliday">
                                 </div>
                             </div>
-                            <div class="row m-t-xs">
-                                <input type="hidden" name="Showroom[worktime][3][title]" value="thursday">
+                            <div class="row m-t-xs worktimeShowroom">
+                                <input type="hidden" name="Showroom[worktime][3][title]" value="thursday" class="worktimeTitle">
                                 <div class="col-md-5">
                                     Четверг
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][3][from]" class="thursdayFrom w-85">
+                                    <input type="text" name="Showroom[worktime][3][from]" class="thursdayFrom w-85 worktimeTimeFrom">
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][3][to]" class="thursdayTo w-85">
+                                    <input type="text" name="Showroom[worktime][3][to]" class="thursdayTo w-85 worktimeTimeTo">
                                 </div>
                                 <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][3][holiday]" class="thursdayHoliday w-85">
+                                    <input type="checkbox" name="Showroom[worktime][3][holiday]" class="thursdayHoliday w-85 worktimeTimeHoliday">
                                 </div>
                             </div>
-                            <div class="row m-t-xs">
-                                <input type="hidden" name="Showroom[worktime][4][title]" value="friday">
+                            <div class="row m-t-xs worktimeShowroom">
+                                <input type="hidden" name="Showroom[worktime][4][title]" value="friday" class="worktimeTitle">
                                 <div class="col-md-5">
                                     Пятница
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][4][from]" class="fridayFrom w-85">
+                                    <input type="text" name="Showroom[worktime][4][from]" class="fridayFrom w-85 worktimeTimeFrom">
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][4][to]" class="fridayTo w-85">
+                                    <input type="text" name="Showroom[worktime][4][to]" class="fridayTo w-85 worktimeTimeTo">
                                 </div>
                                 <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][4][holiday]" class="fridayHoliday w-85">
+                                    <input type="checkbox" name="Showroom[worktime][4][holiday]" class="fridayHoliday w-85 worktimeTimeHoliday">
                                 </div>
                             </div>
-                            <div class="row m-t-xs">
-                                <input type="hidden" name="Showroom[worktime][5][title]" value="saturday">
+                            <div class="row m-t-xs worktimeShowroom">
+                                <input type="hidden" name="Showroom[worktime][5][title]" value="saturday" class="worktimeTitle">
                                 <div class="col-md-5">
                                     Суббота
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][5][from]" class="saturdayFrom w-85">
+                                    <input type="text" name="Showroom[worktime][5][from]" class="saturdayFrom w-85 worktimeTimeFrom">
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][5][to]" class="saturdayTo w-85">
+                                    <input type="text" name="Showroom[worktime][5][to]" class="saturdayTo w-85 worktimeTimeTo">
                                 </div>
                                 <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][5][holiday]" class="saturdayHoliday w-85">
+                                    <input type="checkbox" name="Showroom[worktime][5][holiday]" class="saturdayHoliday w-85 worktimeTimeHoliday">
                                 </div>
                             </div>
-                            <div class="row m-t-xs">
-                                <input type="hidden" name="Showroom[worktime][6][title]" value="sunday">
+                            <div class="row m-t-xs worktimeShowroom">
+                                <input type="hidden" name="Showroom[worktime][6][title]" value="sunday" class="worktimeTitle worktimeTimeHoliday">
                                 <div class="col-md-5">
                                     Воскресенье
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][6][from]" class="sundayFrom w-85">
+                                    <input type="text" name="Showroom[worktime][6][from]" class="sundayFrom w-85 worktimeTimeFrom">
                                 </div>
                                 <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][6][to]" class="sundayTo w-85">
+                                    <input type="text" name="Showroom[worktime][6][to]" class="sundayTo w-85 worktimeTimeTo">
                                 </div>
                                 <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][6][holiday]" class="sundayHoliday w-85">
+                                    <input type="checkbox" name="Showroom[worktime][6][holiday]" class="sundayHoliday w-85 worktimeTimeHoliday">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12 m-b-20 m-t">
+                        <div class="col-md-12 m-b-20 m-t phoneShowroom">
                             Телефон
-                            <input type="text" name="Showroom[phoneShowroom][]" class="phoneShowroom1 pull-right w-50">
+                            <input type="text" name="Showroom[phoneShowroom][]" class="pull-right w-50">
                         </div>
-                        <div class="col-md-12 m-b-20">
+                        <div class="col-md-12 m-b-20 phoneShowroom">
                             Телефон
-                            <input type="text" name="Showroom[phoneShowroom][]" class="phoneShowroom2 pull-right w-50">
+                            <input type="text" name="Showroom[phoneShowroom][]" class="pull-right w-50">
                         </div>
                     </div>
                 </div>
@@ -364,74 +364,6 @@
 </div>
 
 <script>
-
-    var dataShowroom = 
-        {
-            applied : 'firely',
-            email : 'ferthdf@gmail.com',
-            skype: 'ferthdf',
-            phone: '+741144655',
-            loginForWindraw: 'ferthdf',
-            messenger1: { 
-                name : 'Viber',
-                login: '+45454545'
-            },
-            messenger2: { 
-                name : 'Whatsapp',
-                login: '+478785454'
-            },
-            delivery1:
-                {    
-                    name: 'Доставка курьером',
-                    cost: 35.15,
-                    days: 12
-                },
-            delivery2: 
-                {
-                    name: 'Доставка 2',
-                    cost: 15,
-                    days: 22
-                },
-            delivery3: 
-                {
-                    name: 'Доставка 3',
-                    cost: 15,
-                    days: 22
-                },
-            adminData: 'Бла бла бла бал аб лаб ал а бал аб бал аб ла бал ал лаб ',
-            state: 0,        
-            webData : 
-                {
-                    city : 'Москва',
-                    address: 'Красношкольаня набережная, д. 22',
-                    workHours: 
-                        {
-                            mondayFrom: '10:00',
-                            mondayTo: '20:30',
-                            mondayHoliday: false,
-                            thuesdayFrom: '10:00',
-                            thuesdayTo: '20:30',
-                            thuesdayHoliday: false,
-                            wednesdayFrom: '10:00',
-                            wednesdayTo: '20:30',
-                            wednesdayHoliday: false,
-                            thursdayFrom: '10:00',
-                            thursdayTo: '20:30',
-                            thursdayHoliday: false,
-                            fridayFrom: '10:00',
-                            fridayTo: '20:30',
-                            fridayHoliday: false,
-                            saturdayFrom: '',
-                            saturdayTo: '',
-                            saturdayHoliday: true,
-                            sundayFrom: '',
-                            sundayTo: '',
-                            sundayHoliday: true
-                        },
-                    phoneShowroom1 : '+7111010100101',
-                    phoneShowroom2 : '+711101014444'
-                }
-        };
 
     $('.addShowroom').on('click',function(){
 
@@ -481,10 +413,60 @@
 
                 clearShowroomForm();
 
-                $('.showroomInfo')
+                blShowroom
                     .find('.showroomApplied')
-                    .html('<option value="'+key+'" data-city-id="'+item.cityId+'" data-city-title="'+item.cityTitle+'" data-country-id="'+item.countryId+'" >' +
-                        item.userLogin+' ('+item.userSecondName+' '+item.userFirstName+')</option>');
+                    .html('<option value="'+msg.userIdFiledRequest+'" data-city-id="'+msg.cityId+'" data-city-title="'+msg.cityName.ru+'" data-country-id="'+msg.countryId+'" >' +
+                        msg.userLoginFiledRequest+' ('+msg.userSecondNameFiledRequest+' '+msg.userFirstNameFiledRequest+')</option>');
+
+                blShowroom.find('input[name="Showroom[id]"]').val(msg.id);
+                blShowroom.find('input[name="Showroom[cityId]"]').val(msg.cityId);
+                blShowroom.find('input[name="Showroom[countryId]"]').val(msg.countryId);
+
+                blShowroom.find('.emailConfirmation').val(msg.email);
+                blShowroom.find('.skypeShowroom').val(msg.skype);
+                blShowroom.find('.phoneUserShowroom').val(msg.phone);
+
+                blShowroom.find('.blMessenger').each(function (indx) {
+                    if(typeof(msg.messenger[indx]) != "undefined"){
+                        $(this).find('select').val(msg.messenger[indx].title);
+                        $(this).find('input').val(msg.messenger[indx].value);
+                    }
+                });
+
+                if(msg.userLoginOtherLogin){
+                    blShowroom.find('.anotherLogin').val(msg.userLoginOtherLogin).prop("disabled", false);
+                    blShowroom.find('.checkLogin').prop("disabled", false);
+                    blShowroom.find('.anotherCheckbox').prop( "checked", true );
+                }
+
+                blShowroom.find('.blDelivery').each(function (indx) {
+                    if(typeof(msg.delivery[indx]) != "undefined"){
+                        $(this).find('.deliveryTitle').val(msg.delivery[indx].title);
+                        $(this).find('.deliveryPrice').val(msg.delivery[indx].price);
+                        $(this).find('.deliveryDays').val(msg.delivery[indx].day);
+                    }
+                });
+
+                blShowroom.find('.shoowroomAdminText').val(msg.dataAdmin);
+                blShowroom.find('.shoowroomAddress').val(msg.showroomAddress);
+
+                blShowroom.find('.stateShowroom').val(msg.status);
+
+                blShowroom.find('.phoneShowroom').each(function (indx) {
+                    if(typeof(msg.showroomPhone[indx]) != "undefined"){
+                        $(this).find('input').val(msg.showroomPhone[indx]);
+                    }
+                });
+
+                blShowroom.find('.worktimeShowroom').each(function (indx) {
+                    if(typeof(msg.showroomWorkTime[indx]) != "undefined"){
+                        $(this).find('.worktimeTimeFrom').val(msg.showroomWorkTime[indx].from);
+                        $(this).find('.worktimeTimeTo').val(msg.showroomWorkTime[indx].to);
+                        if(msg.showroomWorkTime[indx].holiday === 'on'){
+                            $(this).find('.worktimeTimeHoliday').prop( "checked", true );
+                        }
+                    }
+                });
 
                 console.log(msg);
 
@@ -627,6 +609,10 @@
     function clearShowroomForm() {
         var form = $('.showroomInfo');
 
+        form.find('input[name="Showroom[id]"]').val('');
+        form.find('input[name="Showroom[cityId]"]').val('');
+        form.find('input[name="Showroom[countryId]"]').val('');
+
         form.find('.showroomApplied').html('');
         form.find('.emailConfirmation').val('');
         form.find('.skypeShowroom').val('');
@@ -634,37 +620,40 @@
         form.find('.messenger1login').val('');
         form.find('.messenger2login').val('');
         form.find('.shoowroomAdminText').val('');
-        form.find('.delivery1').val('');
-        form.find('.delivery1Days').val('');
-        form.find('.delivery2Text').val('');
-        form.find('.delivery2').val('');
-        form.find('.delivery2Days').val('');
-        form.find('.delivery3Text').val('');
-        form.find('.delivery3').val('');
-        form.find('.delivery3Days').val('');
 
-        for (const key in dataShowroom.webData.workHours) {
-            if (dataShowroom.webData.workHours.hasOwnProperty(key)) {
-                const element = dataShowroom.webData.workHours[key];
-                if (key.includes('Holiday')) {
-                    $(`.${ key }`).prop( "checked", false );
-                } else {
-                    $(`.${ key }`).val('');
-                }
-            }
-        }
+        form.find('.worktimeShowroom').each(function (indx) {
+            $(this).find('.worktimeTimeFrom').val('');
+            $(this).find('.worktimeTimeTo').val('');
+            $(this).find('.worktimeTimeHoliday').prop( "checked", false );
+        });
+
+        form.find('.blMessenger').each(function (indx) {
+            $(this).find('select').val('');
+            $(this).find('input').val('');
+        });
+
+        form.find('.blDelivery').each(function (indx) {
+            $(this).find('.deliveryTitle').val('');
+            $(this).find('.deliveryPrice').val('');
+            $(this).find('.deliveryDays').val('');
+        });
+
+        form.find('.phoneShowroom').each(function (indx) {
+            $(this).find('input').val('');
+        });
+
+        form.find('.anotherLogin').val('').prop("disabled", true);
+        form.find('.checkLogin').prop("disabled", true);
+        form.find('.anotherCheckbox').prop( "checked", false );
 
         form.find('.showroomCity').val('');
         form.find('.shoowroomAddress').val('');
-        form.find('.phoneShowroom1').val('');
-        form.find('.phoneShowroom2').val('');
-        form.find('.stateShowroom').val(1);
-
-
+        form.find('.stateShowroom').val('');
         form.find('.saveShowroom').val('Добавить');
     }
 
     function showHideBlOtherLogin(bl) {
+        $('.anotherLogin').val('');
         if (bl.is(":checked")) {
             $('.anotherLogin, .checkLogin').prop('disabled', false);
         } else {

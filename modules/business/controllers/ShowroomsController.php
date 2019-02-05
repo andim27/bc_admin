@@ -256,6 +256,7 @@ class ShowroomsController extends BaseController
         if(!empty($request)){
 
             if(!empty($request['Showroom']['id'])){
+
                 $result = api\Showrooms::edit($request['Showroom']);
 
                 if($result == 'OK'){
