@@ -12,10 +12,12 @@ use app\models\api\User;
 use app\models\Langs;
 use app\models\MoneyTransfer;
 use app\models\Pins;
+use app\models\PreUp;
 use app\models\Products;
 use app\models\Sales;
 use app\models\Transaction;
 use app\models\Users;
+use app\models\LoanRepayment;
 use app\modules\business\models\AddWriteOffFrom;
 use app\modules\business\models\PincodeCancelForm;
 use app\modules\business\models\PincodeForm;
@@ -1134,6 +1136,67 @@ class UserController extends BaseController
         }
         return $result;
     }
+
+    public function actionGetBalanceTable()
+    {
+        $result = ['success' => false, 'message' => THelper::t('user_not_found')];
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $login = Yii::$app->request->post('login');
+        $user  = api\User::get($login, false);
+        if ($user) {
+            $data = [];
+            $loans = 0;
+            $payments = 0;
+            $data['username'] = $user->username;
+            $data['user_id '] = $user->id;
+            $data['moneys']   = round($user->moneys,2);
+            $data['loans']    = $loans;
+            $data['payments'] = $payments;
+            $result = ['success' => true, 'message' => THelper::t('ok'),'data'=>$data];
+        }
+        return $result;
+    }
+    public function actionGetLoanTable()
+    {
+        $result = ['success' => false, 'message' => THelper::t('user_not_found')];
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $login = Yii::$app->request->post('login');
+        $user  = api\User::get($login, false);
+
+        if ($user) {
+            $loans =0;
+            //--b:loan--
+            $wherePins = [
+                'loan' => true,
+                'isDelete' => false,
+                'userId' =>  new ObjectID($user->id)
+            ];
+            $model = Pins::find()->where($wherePins)->all();
+            if ($model) {
+                foreach ($model as $item) {
+                    $infoPin = api\Pin::getPinInfo($item->pin);
+                    if (!empty($infoPin->pinUsedBy)) {
+                        $loans += ($infoPin->productPrice * $infoPin->count);
+                    }
+                }
+            }
+            //--e:loan--
+            //--b:parments--
+            $payments = LoanRepayment::find()->where(['user_id'=>new ObjectID($user->id)])->sum('amount');
+            //--e:payments--
+            $data = [];
+
+            $data['username'] = $user->username;
+            $data['user_id '] = $user->id;
+            $data['moneys']   = round($user->moneys,2);
+            $data['loans']    = $loans;
+            $data['payments'] = $payments;
+            $data['debt'] = $loans - $payments;
+            $result = ['success' => true, 'message' => THelper::t('ok'),'data'=>$data];
+        }
+        return $result;
+    }
+
     public function actionPincodeCancel()
     {
         $status = '';
@@ -1170,8 +1233,23 @@ class UserController extends BaseController
         $productListData = [];
         $pincode = null;
         $defaultProduct = self::DEFAULT_PRODUCT; //Пополнение счета оплаты
+        $kind_items =[
+            'loan'=>'Займ',
+            'bank'=>'Пополнение через банк',
+            'paysera'  =>'Пополнение баланса PaySera',
+            'advcash'  =>'Пополнение баланса AdvCash',
+            'perevod'  =>'Пополнение переводом',
+            'cash'     =>'Пополнение наличными',
+            //'comis'    =>'Пополнение комиссионными',
+            'advaction'=>'Пополнение по рекламной акции',
+            'other'    =>'Другое'
+        ];
         $model = new PincodeGenerateForm();
+        $model->loan = 1;
+
         $request = Yii::$app->request;
+        $kind    = $request->post('kind-operation') ?? '';
+        $comment = $request->post('comment') ?? '';
 
         if ($request->isPost && $model->load($request->post())) {
 
@@ -1181,8 +1259,8 @@ class UserController extends BaseController
                 return ActiveForm::validate($model);
             }
 
-            if (compareShortPin($model->pin)) {
-                $product = Products::findOne(['product' => (integer)$model->product]);
+            if (compareShortPin($model->pin) ) {
+                $product = Products::findOne(['product' => (integer)$defaultProduct]);
                 $pin = api\Pin::createPinForProduct($product ? $product->idInMarket : null, $model->quantity, $this->user->id);
 
                 if ($model->isLogin && $pin) {
@@ -1192,19 +1270,32 @@ class UserController extends BaseController
                         Yii::$app->session->setFlash('danger', THelper::t('partner_not_found'));
                     }
 
-                    $response = Sale::buy([
-                        'iduser' => $partner->id,
-                        'pin' => $pin,
-                        'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
-                        'formPayment' => 1
-                    ]);
+                    //if ($kind != 'loan') { //--Does loan generate purchase?
+                        $data =[
+                            'author_id' => $this->user->id, //new ObjectID($this->user->id),
+                            'product'   => $defaultProduct,
+                            'amount'    => (int)$model->quantity,
+                            'iduser'    => $partner->id,
+                            'username'  => $model->partnerLogin,
+                            'pin'       => $pin,
+                            'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
+                            'formPayment' => 1,
+                            'kind'      => $kind,
+                            'comment'   => $comment,
+                            'status'    =>'created'//'wait','done','cancel'
+                        ];
+                        $response = self::actionPreUpCreate($data);
 
-                    if ($response === 'OK') {
-                        Yii::$app->session->setFlash('success', THelper::t('partner_payment_is_success'));
-                    } else {
-                        Yii::$app->session->setFlash('danger', THelper::t('partner_payment_is_unsuccessful')
-                            . ' ' . '<span style="display:none;">' . $response . ' ' . $partner->id . '</span>');
-                    }
+                        if ($response['success'] == true) {
+                            Yii::$app->session->setFlash('success', THelper::t('partner_payment_is_success'));
+                        }
+                         else {
+                            Yii::$app->session->setFlash('danger', THelper::t('partner_payment_is_unsuccessful')
+                                . ' ' . '<span style="display:none;">' . implode(",", $response). ' ' . $partner->id . '</span>'.
+                            (isset($response['mes'])?$response['mes']:'') ).
+                            (isset($response['id'])?'id='.$response['id']:'') ;
+                        }
+                    //}
                 }
 
                 $pincode = $pin;
@@ -1212,36 +1303,177 @@ class UserController extends BaseController
                 Yii::$app->session->setFlash('danger', THelper::t('pin_is_incorrect'));
             }
 
-
-            if(!empty($pincode) && !empty($model->loan)){
+            if ($kind =='loan') {
+                $model->loan = 1;
+            }
+            if(!empty($pincode) ){
+                $mes='';
                 $modelPin = Pins::findOne(['pin'=>$pincode]);
                 if(!empty($modelPin)){
-                    $modelPin->loan=(boolean)true;
-                    if($modelPin->save()){}
+                    if (!empty($model->loan)) {
+                        $modelPin->loan=(boolean)true;
+                    }
+                    If (!empty($comment)) {
+                        $modelPin->comment = $comment;
+                        $mes='!';
+                    }
+                    If (!empty($kind)) {
+                        $modelPin->kind = $kind;
+                        $mes='!!';
+                    }
+                    if ($modelPin->save()){
+                        Yii::$app->session->setFlash('success', 'Сохранено '.$mes);
+                    }
                 }
             }
         }
 
         foreach (Product::all() as $product) {
-            $productList[$product->product] = $product->productName . ' - ' . $product->price .' eur';
-            $productListData[$product->product] = [
-                'price' => $product->price,
-                'bonusMoney' => $product->bonusMoney,
-                'bonusPoints' => $product->bonusPoints,
-            ];
+            if (($product->product == self::DEFAULT_PRODUCT)) {//--balance top-up
+                $productList[$product->product] = $product->productName . ' - ' . $product->price .' eur';
+                $productListData[$product->product] = [
+                    'price' => $product->price,
+                    'bonusMoney' => $product->bonusMoney,
+                    'bonusPoints' => $product->bonusPoints,
+                ];
+            }
         }
 
 
 
         return $this->render('pincode_generator', [
-            'model' => $model,
-            'productList' => $productList,
+            'model'           => $model,
+            'productList'     => $productList,
             'productListData' => $productListData,
-            'defaultProduct' => $defaultProduct,
-            'pincode' => !empty($pincode) ? $pincode : null
+            'defaultProduct'  => $defaultProduct,
+            'pincode'         => !empty($pincode) ? $pincode : null,
+            'kind_items'      => $kind_items
         ]);
     }
 
+    public function actionSendToViber($id,$data)
+    {
+        $res = ['success' => true,'mes' => 'done'];
+        if($curl=curl_init())
+        {
+            $items = ['id' =>$id,'comment' => $data['comment']];
+            curl_setopt($curl,CURLOPT_URL,'http://ovh-1.ooo.ua:3039/receiveMessage');
+            curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+            curl_setopt($curl,CURLOPT_POST,true);
+            curl_setopt($curl,CURLOPT_POSTFIELDS,http_build_query($items));
+
+            //curl_setopt($curl,CURLOPT_POSTFIELDS,"items=".json_encode($items));
+            $out=curl_exec($curl);
+            curl_close($curl);
+
+            $out = json_decode($out,True);
+
+            if ($out['action'] == 'ok') {
+                //$pre_up_state ='ok';
+                //$pre_up_id = '5c3f544f1198a40011232343';
+                $res = self::actionBalanceApply($id);
+
+            }
+        }
+        return $res;
+    }
+
+    public function actionPreUpCreate($data)
+    {
+        $res = ['success' => true,'mes' => 'done'];
+        //----!! Save to PreUp before buing -wait to be accepted
+        $cat_coll_name ='pre_up';
+        try {
+            $Categories=Yii::$app->mongodb->getCollection($cat_coll_name);
+            if (!($Categories->name == $cat_coll_name)) {
+                Yii::$app->mongodb->createCollection($cat_coll_name);
+
+            }
+            //$data['created_at'] = \DateTime::createFromFormat('Y/m/d H:i:s',date("y.m.d"));
+            $data['created_at'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+            $pre_up_id = $Categories->insert($data);
+            $res['id'] = $pre_up_id;
+            //--send to viber for apply
+            $res_vider =self::actionSendToViber($pre_up_id,$data);
+            if($res_vider['success'])
+            {
+              //$res = self::actionBalanceApply($pre_up_id);
+
+            } else {
+                $res = ['success' => false,'mes' =>'Viber send error...'];
+            }
+        } catch (\Exception $e) {
+            $res = ['success' => false,'mes' =>'Saved result:'.$e->getMessage().' line:'.$e->getLine()];
+        }
+
+        return $res;
+    }
+
+    public function actionBalanceApply($id)
+    {
+        $res = ['success' => true,'mes' => 'done'];
+        try {
+            //--status change--
+            $rec = PreUp::findOne(['_id'=>new ObjectID((string)$id)]);
+            if ($rec) {
+                $rec->status = 'done';
+                $rec->save();
+                //--buy product--
+                $data =[
+                    'author_id' => $rec->author_id, //new ObjectID($this->user->id),
+                    'product'   => $rec->product,
+                    'amount'    => (int)$rec->amount,
+                    'iduser'    => $rec->iduser,
+                    'username'  => $rec->username,
+                    'pin'       => $rec->pin,
+                    //'warehouse' => !empty($_POST['warehouse']) ? $_POST['warehouse'] : null,
+                    'formPayment' => 1,
+                    'kind'      => ';kind:'.$rec->kind,
+                    'comment'   => ';comment:'.$rec->comment,
+                    'status'    => 'done' //'created','wait','done','cancel'
+                ];
+                $res_sale = Sale::buy($data);
+                if (isset($res_sale['error'])) {
+                    $res = ['success' => false,'mes'=>'!Balance Up ERROR!'];
+                } else {
+                    $res['success'] = true;
+                }
+            } else {
+                $res =['success'=> false,'mes'=>'Error: id is invalid'];
+            }
+
+        } catch (\Exception $e) {
+            $res =['success' => false,'mes'=>'Pre status error id:'.$id.' '.$e->getMessage().' line:'.$e->getLine()];
+        }
+
+        return $res;
+    }
+    public function actionBalanceAction()
+    {
+        if (Yii::$app->request->isAjax) {
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        }
+        $request = Yii::$app->request;
+        $id     = $request->post('id');
+        $action = $request->post('action');
+        $status_html_error ='<span style="color:red">Error</span>';
+        $status_html_done = '<span class="glyphicon glyphicon-ok" style="color:green" title="done"></span>';
+        if ($action == 'cancel') {
+            $status_html_done = '<span class="glyphicon glyphicon-remove" title="cancel"></span>';
+        }
+        if ($action == 'done') {
+            $res_balance = self::actionBalanceApply($id);
+            if ($res_balance['success'] == true) {
+                $res = ['success'=>true,'mes'=>'done','status_html'=>'done','id'=>$id,'status_html' => $status_html_done,'action'=>$action];
+
+            } else {
+                $status_html_error ='<span style="color:red" title="{$res_balance[\'mes\']}">Error</span>';
+                $res = ['success'=>false,'mes'=>$res_balance['mes'],'status_html'=>'error','id'=>$id,'status_html' => $status_html_error,'action'=>$action];
+
+            }
+        }
+        return $res;
+    }
     public function actionSearchListUsers($q = null, $id = null)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

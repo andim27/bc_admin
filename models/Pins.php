@@ -32,7 +32,9 @@ class Pins extends ActiveRecord
             'pin',
             'loan',
             'author',
-            'dateCreate'
+            'dateCreate',
+            'comment',
+            'kind'
         ];
     }
 

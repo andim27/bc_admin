@@ -11,6 +11,7 @@ use app\models\Products;
 use app\models\Repayment;
 use app\models\RepaymentAmounts;
 use app\models\Sales;
+use app\models\PreUp;
 use app\models\SendingWaitingParcel;
 use app\models\Settings;
 use app\models\StatusSales;
@@ -1706,5 +1707,48 @@ class SaleReportController extends BaseController
             ]
         );
     }
+    //------------b:--Report balance up
+    public function actionReportBalanceUp()
+    {
+        $request =  Yii::$app->request->post();
+        $p_key   =  Yii::$app->request->get('d');
+        if(empty($request)){
+            $request['to']   = date("Y-m-d");
+            $request['from'] = date("Y-m-d", strtotime( $request['to']." -1 months"));
+        }
+        $dateTo   = $request['to'];
+        $dateFrom = $request['from'];
+
+        $infoSale = PreUp::find()
+            ->where([
+                'created_at' => [
+                    '$gte' => new UTCDatetime(strtotime($request['from']) * 1000),
+                    '$lte' => new UTCDateTime(strtotime($request['to'] . '23:59:59') * 1000)
+                ]
+            ])
+//            ->andWhere([
+//                'type' => [
+//                    '$ne'   =>  -1
+//                ]
+//            ])
+            ->andWhere([
+                'product' => 9001
+            ])
+            ->orderBy(['created_at' => SORT_DESC]) //SORT_ASC//SORT_DESC//
+            ->all();
+        if ($p_key !=(date('d')+1)) {
+            $p_key = null;
+        }
+        return $this->render('report-balance-up',[
+                'language' => Yii::$app->language,
+                'dateFrom' => $dateFrom,
+                'dateTo'   => $dateTo,
+                'report'   => $dateFrom,
+                'infoSale' => $infoSale,
+                'p_key'    => $p_key
+            ]
+        );
+    }
+    //------------e:--Report balance up
 
 }
