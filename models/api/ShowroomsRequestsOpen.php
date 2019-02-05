@@ -14,13 +14,12 @@ class ShowroomsRequestsOpen
     const STATUS_PENDING = 'pending';
     const STATUS_CANCELED = 'canceled';
 
-    public $id,$text,$comment,$created_at,$status,$country,$city;
+    public $id,$text,$comment,$created_at,$status;
     public $imagesUser,$filesAdmin;
     public $userHowCheckLogin,$userHowCheckId;
     public $userLogin,$userFirstName,$userSecondName,$userCountry,$userCity,$userAddress,$userRank;
-
-
-
+    public $countryId,$countryCode,$countryName;
+    public $cityId,$cityName;
 
     /**
      * get request opening
@@ -30,7 +29,7 @@ class ShowroomsRequestsOpen
      */
     public static function get($id)
     {
-        $apiClient = new ApiClient('showrooms/request-open?id=' . $id);
+        $apiClient = new ApiClient('showrooms/request-open/' . $id);
 
         $response = $apiClient->get();
 
@@ -48,6 +47,22 @@ class ShowroomsRequestsOpen
     {
 
         $apiClient = new ApiClient('showrooms/list-requests-open');
+
+        $response = $apiClient->get();
+
+        $result = self::_getResults($response);
+
+        return $result ? $result : false;
+    }
+
+    /**
+     * get list requests opening success
+     *
+     * @return array|bool
+     */
+    public static function getSuccessRequests()
+    {
+        $apiClient = new ApiClient('showrooms/list-success-requests-open');
 
         $response = $apiClient->get();
 
@@ -174,10 +189,15 @@ class ShowroomsRequestsOpen
                 $item->text            = $object->text;
                 $item->created_at      = Yii::$app->formatter->asDate($object->created_at, 'php:Y-m-d');;
                 $item->status          = $object->status;
-                $item->country         = $object->country;
-                $item->countryTitle    = dictionary\Country::get($object->country)->name;
-                $item->city            = $object->city;
 
+                $item->countryId       = $object->country->_id;
+                $item->countryCode     = $object->country->code;
+                $item->countryName     = $object->country->name;
+
+                $item->cityId          = $object->city->_id;
+                $item->cityName        = $object->city->name;
+
+                $item->userId          = $object->user->_id;
                 $item->userLogin       = $object->user->login;
                 $item->userFirstName   = $object->user->firstName;
                 $item->userSecondName  = $object->user->secondName;

@@ -1271,6 +1271,29 @@ class UserController extends BaseController
         return $out;
     }
 
+    public function actionCheckUserLogin()
+    {
+        if (Yii::$app->request->isAjax) {
+
+            $response = false;
+
+            $request = Yii::$app->request->post();
+
+            if(!empty($request)){
+                $result = api\User::get($request['login']);
+
+                if(!empty($result)){
+
+                    $response = true;
+                }
+            }
+
+            return $response;
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
 }
 
 function compareShortPin($pin){
