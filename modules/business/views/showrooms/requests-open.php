@@ -11,7 +11,7 @@
 </div>
 <section class="panel panel-default">
     <div class="table-responsive">
-        <table id="table-requests" class="table table-users table-striped datagrid m-b-sm">
+        <table id="table-requests" class="table table-users table-striped datagrid m-b-sm ">
             <thead>
                 <tr>
                     <th>
@@ -79,6 +79,12 @@
         </table>
     </div>
 </section>
+
+<div class="row">
+    <div class="col-md-12 blError">
+
+    </div>
+</div>
 
 <div class="panel panel-default requestInfo">
     <div class="panel-body">
@@ -153,6 +159,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 <button type="button" class="close" data-dismiss="modal">x</button>
+
                 <form name="formUploadFile" class="formUploadFile">
                     <div class="row">
                         <div class="col-md-12 text-center">
@@ -269,8 +276,22 @@
             complete: function () {
                 blInfo.find('.loader').remove();
             },
-            success: function(msg){
-                console.log('+')
+            success: function(msg) {
+                if (msg === '1') {
+                    $('.blError').html(
+                        '<div class="alert alert-success fade in">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                        'Заявка обновленна' +
+                        '</div>'
+                    );
+                } else {
+                    $('.blError').html(
+                        '<div class="alert alert-danger fade in">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                        'Заявка не обновленна' +
+                        '</div>'
+                    );
+                }
             }
         });
     });
