@@ -1413,7 +1413,16 @@ class UserController extends BaseController
 
         return $res;
     }
-
+    public function actionBalanceCancel($id)
+    {
+        $res = ['success' => true, 'mes' => 'done'];
+        $rec = PreUp::findOne(['_id'=>new ObjectID((string)$id)]);
+        if ($rec) {
+            $rec->status = 'cancel';
+            $rec->save();
+        }
+        return $res;
+    }
     public function actionBalanceApply($id)
     {
         $res = ['success' => true,'mes' => 'done'];
@@ -1464,7 +1473,10 @@ class UserController extends BaseController
         $status_html_error ='<span style="color:red">Error</span>';
         $status_html_done = '<span class="glyphicon glyphicon-ok" style="color:green" title="done"></span>';
         if ($action == 'cancel') {
-            $status_html_done = '<span class="glyphicon glyphicon-remove" title="cancel"></span>';
+            $status_html_cancel = '<span class="glyphicon glyphicon-remove" title="cancel"></span>';
+            $res_balance = self::actionBalanceCancel($id);
+            $res = ['success'=>true,'mes'=>'done','status_html'=>'done','id'=>$id,'status_html' => $status_html_cancel,'action'=>$action];
+
         }
         if ($action == 'done') {
             $res_balance = self::actionBalanceApply($id);
