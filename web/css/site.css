@@ -465,6 +465,11 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 
 .requestInfo {
     display: none;
+    position: relative;
+}
+
+.requestInfo .loader div{
+    margin-top:200px;
 }
 
 .showroomInfo {
@@ -559,4 +564,8 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 
 .input-showroom {
     width: 120px;
+}
+
+.showroomInfo{
+    position: relative;
 }

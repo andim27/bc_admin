@@ -148,7 +148,7 @@ class Sale {
             'iduser' => $data['iduser'],
             'pin' => $data['pin'],
             'project' => 1,
-            'whenceSale' => 'adminka',
+            'whenceSale' => 'adminka'.(!empty($data['kind']) ? $data['kind'] : '').(!empty($data['comment']) ? $data['comment'] : ''),
             'formPayment' => (!empty($data['formPayment']) ? $data['formPayment'] : '0')
         ];
 

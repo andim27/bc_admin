@@ -76,4 +76,33 @@ class THelper
 
         return $value;
     }
+    public static function kindTranslate($value)
+    {
+        $val = strtolower($value);
+        if ($val == 'loan') {
+            return self::t('loan');
+        }
+        if ($val == 'bank') {
+            return self::t('up_bank');
+        }
+        if ($val == 'paysera') {
+            return self::t('up_paysera');
+        }
+        if ($val == 'advcash') {
+            return self::t('up_advcash');
+        }
+        if ($val == 'perevod') {
+            return self::t('up_perevod');
+        }
+        if ($val == 'cash') {
+            return self::t('up_cash');
+        }
+        if ($val == 'advaction') {
+            return self::t('up_advaction');
+        }
+        if ($val == 'other') {
+            return self::t('up_other');
+        }
+        return $value;
+    }
 }

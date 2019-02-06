@@ -38,6 +38,7 @@ class WellnessClubMembers extends ActiveRecord
             'phone',
             'email',
             'skype',
+            'comments',
             'created',
             'wellness_club_partner_date_end',
         ];

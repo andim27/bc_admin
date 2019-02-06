@@ -18,8 +18,8 @@ spec:
       nodeSelector:
             ntype: bpt
       containers:
-      - name: admin   
-        image: registry.ooo.ua/bulich/bpt-admin:__VERSION__        
+      - name: admin
+        image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
         ports:
         - containerPort: 80
       imagePullSecrets:

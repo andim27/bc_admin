@@ -7,15 +7,23 @@ stages:
 - cache
 
 variables:
-  CONTAINER_REGISTRY: registry.ooo.ua
+  CONTAINER_REGISTRY: eu.gcr.io/bpt-core
+  PROD_NS: bpt
+  DEV_NS: bpt-dev
   DEV_URL: admin-dev.bpt.ooo.ua
   STAGE_URL: admin-stage.bpt.ooo.ua
   PROD_URL: admin.businessprocess.biz
 
 
 before_script:
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CONTAINER_REGISTRY
-
+  # Write our GCP service account private key into a file
+  - echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+  # Download and install Google Cloud SDK
+  - wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz
+  - tar zxvf google-cloud-sdk.tar.gz && ./google-cloud-sdk/install.sh --usage-reporting=false --path-update=true
+  - google-cloud-sdk/bin/gcloud --quiet components update
+  - google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
+  - docker login -u _json_key --password-stdin https://eu.gcr.io < ${HOME}/gcloud-service-key.json
 
 build_dev:
   stage: build
@@ -32,9 +40,9 @@ build_dev:
     - docker info
     - cp config/params.dev config/params.php
     - cp config/web.dev config/web.php
-    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
-    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
-    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
+    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
+    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
+    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
     - ./post-admin.sh
 
 build_stage:
@@ -52,9 +60,9 @@ build_stage:
     - docker info
     - cp config/params.prod config/params.php
     - cp config/web.prod config/web.php
-    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest .
-    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:latest $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
-    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_PATH}:${CI_COMMIT_SHA}
+    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
+    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
+    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
     - ./post-admin.sh
 
 merge_to_stage:
@@ -67,7 +75,6 @@ merge_to_stage:
     - HOST=${CI_PROJECT_URL} CI_PROJECT_ID=${CI_PROJECT_ID} CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME} GITLAB_USER_ID=${GITLAB_USER_ID} PRIVATE_TOKEN=${PRIVATE_TOKEN} ./utils/autoMergeRequest.sh
 
 deploy_dev:
-    image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
     stage: deploy
     environment:
         name: dev
@@ -92,7 +99,6 @@ deploy_dev:
         - kubectl create -f service.yaml || true
 
 deploy_stage:
-    image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
     stage: deploy
     environment:
         name: stage
@@ -117,7 +123,6 @@ deploy_stage:
         - kubectl create -f service.yaml || true
 
 deploy_prod:
-    image: registry.gitlab.com/gitlab-examples/kubernetes-deploy
     stage: deploy
     environment:
         name: prod
