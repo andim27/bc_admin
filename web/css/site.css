@@ -471,6 +471,22 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
     display: none;
 }
 
+.issueInfo {
+    display: none;
+}
+
+.issueOrderRow {
+    display: none;
+}
+
+.receiptGoodsRow {
+    display: none;
+}
+
+.table-reception-goods {
+    display: none;
+}
+
 .m-b-5 {
     margin-bottom: 5px;
 }
