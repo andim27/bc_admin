@@ -126,30 +126,91 @@
 
                         <div class="panel panel-default issueInfo">
                             <div class="panel-body">
-                                <div class="row m-b-sm">
+                                
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Дата заявки:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-date m-l m-r">14.02.2019</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Логин:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-login m-l m-r">mai</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>ФИО:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-FIO m-l m-r">Сидоров Иван</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Телефоны:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-phones m-l m-r">+54545454545, +5454545454</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Заказано:</p>
+                                    </div>
+                                </div>
+
+                                <div class="row">
                                     <div class="col-md-6">
-                                        <p class="m-t m-b">Дата заявки: <strong class="issue-date">14.02.19 22:34</strong></p>
-                                        <p class="m-t m-b">Логин: <strong class="issue-login">mai</strong></p>
-                                        <p class="m-t m-b">ФИО: <strong class="issue-FIO">Сидоров Иван</strong></p>
-                                        <p class="m-t m-b">Телефоны: <strong class="issue-phones">+54545454545, +5454545454</strong></p>
-                                        <p class="m-t m-b">Заказано: </p>
                                         <ul class="issue-order list-unstyled">
                                             <li>Набор Life Balanсe 2 шт. <a href="#" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>
                                             <li>Life Expert 2 шт. <a href="#" class="fromBalnce issued pull-right">Отменить</a> <span class="spanIssued pull-right m-r">Выдано с баланса</span></li>
                                         </ul>
-                                        <p class="m-t m-b">Статус: 
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p class="m-t">Статус:</p>
+                                    </div>
+                                    <div class="col-md-9">
                                         <select name="issueSelect" class="issueSelect w-50 form-control m"> 
                                             <option value="null">Доставлено</option> 
                                             <option value="1">Отгружено</option> 
                                         </select>
-                                        </p>
-                                        <p class="m-t m-b">Дата доставки: <strong class="issue-dateDelivery">10.12.18</strong></p>
-                                        <p class="m-t m-b">Адрес: <strong class="issue-address">Архитектора бекетова 23</strong></p>
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Дата доставки:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-dateDelivery m-l m-r">10.12.18</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Адрес:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-address m-l m-r">Архитектора бекетова 23</span>
+                                    </div>
+                                </div>
+
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input type="button" class="btn btn-sm btn-success pull-right checkLogin m-n" value="Сохранить">
+                                        <input type="button" class="btn btn-sm btn-success pull-right saveEditedIssue m-n" value="Сохранить">
                                     </div>
 
                                 </div>
@@ -160,12 +221,106 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" placeholder="Номер накладной">
                                     </div>
                                     <div class="col-md-4">
-                                        <input type="button" class="btn btn-success checkLogin m-n" value="Подобрать заказ">
+                                        <input type="button" class="btn btn-success checkIssue m-n" value="Подобрать заказ">
                                         
                                     </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default issueOrderDetail">
+                            <div class="panel-body">
+                                
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Дата заявки:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-date m-l m-r">14.02.2019</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Логин:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-login m-l m-r">mai</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>ФИО:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-FIO m-l m-r">Сидоров Иван</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Телефоны:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-phones m-l m-r">+54545454545, +5454545454</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Заказано:</p>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul class="issue-order list-unstyled">
+                                            <li>Набор Life Balanсe 2 шт. <a href="#" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>
+                                            <li>Life Expert 2 шт. <a href="#" class="fromBalnce issued pull-right">Отменить</a> <span class="spanIssued pull-right m-r">Выдано с баланса</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p class="m-t">Статус:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <select name="issueSelect" class="issueSelect w-50 form-control m"> 
+                                            <option value="null">Доставлено</option> 
+                                            <option value="1">Отгружено</option> 
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Дата доставки:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-dateDelivery m-l m-r">10.12.18</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>Адрес:</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <span class="font-bold issue-address m-l m-r">Архитектора бекетова 23</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="button" class="btn btn-sm btn-success pull-right checkLogin m-n" value="Подобрать заказ">
+                                    </div>
+
                                 </div>
                                 
                             </div>
@@ -499,7 +654,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -722,10 +877,24 @@
     $('table').on('click','.editIssue',function(){ 
         // и отображаем выдачу товара
         //$('.issueInfo').val('Изменить');
+        $('.issueOrderRow').hide();
+        $('.issueOrderDetail').hide();
         $('.issueInfo').show();
     })
 
+    $('#content').on('click','.checkIssue',function(){ 
+
+    // нажимаем на подобрать заказа
+        $('.issueOrderDetail').toggle();
+    })
+
+    
+
     $('#content').on('click','.issueOrder',function(){ 
+        
+        
+        $('.issueOrderDetail').hide();
+        $('.issueInfo').hide();
         $('.issueOrderRow').toggle();
     })
 

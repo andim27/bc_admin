@@ -488,6 +488,10 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
     display: none;
 }
 
+.issueOrderDetail {
+    display: none;
+}
+
 .table-reception-goods {
     display: none;
 }
