@@ -114,7 +114,7 @@ class ShowroomsController extends BaseController
                     'id'                => $request['id'],
                     'status'            => $request['status'],
                     'comment'           => $request['comment'],
-                    'userHowCheckId'    => $request['userHowCheck']
+                    'userHowCheckId'    => (isset($request['userHowCheck']) ? $request['userHowCheck'] : '')
                 ]);
             }
 

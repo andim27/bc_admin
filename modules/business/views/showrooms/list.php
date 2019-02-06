@@ -78,10 +78,10 @@
                                     <?php } ?>
                                 <?php } ?>
                             </td>
-                            <td><?=$itemShowroom->userLoginOtherLogin?></td>
+                            <td><?=(!empty($itemShowroom->userLoginOtherLogin) ? $itemShowroom->userLoginOtherLogin : $itemShowroom->userLoginFiledRequest)?></td>
                             <td>???</td>
                             <td>???</td>
-                            <td><?=$itemShowroom->status?></td>
+                            <td><?=Showrooms::getStatusValue($itemShowroom->status)?></td>
                             <td>
                                 <a class="editShowroom" href="javascript:void(0);" data-showroom="<?=$itemShowroom->id?>">
                                     <i class="fa fa-pencil"></i>
