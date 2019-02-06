@@ -549,3 +549,7 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 .input-showroom {
     width: 120px;
 }
+
+.showroomInfo{
+    position: relative;
+}

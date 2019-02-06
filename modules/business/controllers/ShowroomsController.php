@@ -12,7 +12,6 @@ class ShowroomsController extends BaseController
 {
     /**
      * Opening conditions
-     * @return string
      */
     public function actionOpeningConditions()
     {
@@ -73,7 +72,6 @@ class ShowroomsController extends BaseController
 
     /**
      * Requests open
-     * @return string
      */
     public function actionRequestsOpen()
     {
@@ -84,9 +82,6 @@ class ShowroomsController extends BaseController
         ]);
     }
 
-    /**
-     * @return array|bool|mixed|\yii\web\Response
-     */
     public function actionGetRequestsOpen()
     {
         if (Yii::$app->request->isAjax) {
@@ -142,7 +137,6 @@ class ShowroomsController extends BaseController
             $response['error'] = 'error';
 
             $request = Yii::$app->request->post();
-
 
             if(!empty($request['fileName']) && !empty($_FILES['fileData'])){
                 $data = file_get_contents($_FILES['fileData']['tmp_name']);
@@ -213,12 +207,115 @@ class ShowroomsController extends BaseController
 
     }
 
+    public function actionGetSuccessRequestOpen()
+    {
+        if (Yii::$app->request->isAjax) {
+
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $response = [];
+
+            $listRequest = api\ShowroomsRequestsOpen::getSuccessRequests();
+
+            if(!empty($listRequest)){
+                foreach ($listRequest as $item) {
+                    $response[$item->userId] = [
+                        'userLogin'         => $item->userLogin,
+                        'userFirstName'     => $item->userFirstName,
+                        'userSecondName'    => $item->userSecondName,
+                        'countryId'         => $item->countryId,
+                        'countryTitle'      => $item->countryName->ru,
+                        'cityId'            => $item->cityId,
+                        'cityTitle'         => $item->cityName->ru,
+                    ];
+                }
+            }
+
+            return $response;
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
+    /**
+     * Showrooms
+     */
     public function actionList()
     {
-        return $this->render('list', [
+        $showrooms = api\Showrooms::getList();
 
+        return $this->render('list', [
+            'showrooms'  => $showrooms
         ]);
     }
+
+    public function actionAddEditShowroom()
+    {
+        $request = Yii::$app->request->post();
+
+        if(!empty($request)){
+
+            if(!empty($request['Showroom']['id'])){
+
+                $result = api\Showrooms::edit($request['Showroom']);
+
+                if($result == 'OK'){
+                    Yii::$app->session->setFlash('alert' ,[
+                            'typeAlert' => 'success',
+                            'message' => 'Шоурум обновлен'
+                        ]
+                    );
+                } else {
+                    Yii::$app->session->setFlash('alert' ,[
+                            'typeAlert' => 'danger',
+                            'message' => 'Шоурум не обновлен'
+                        ]
+                    );
+                }
+            } else {
+                $result = api\Showrooms::add($request['Showroom']);
+
+                if($result == 'OK'){
+                    Yii::$app->session->setFlash('alert' ,[
+                            'typeAlert' => 'success',
+                            'message' => 'Шоурум создан'
+                        ]
+                    );
+                } else {
+                    Yii::$app->session->setFlash('alert' ,[
+                            'typeAlert' => 'danger',
+                            'message' => 'Шоурум не создан'
+                        ]
+                    );
+                }
+
+            }
+
+            return $this->redirect(['list'],301);
+        } else {
+            return $this->redirect('/',301);
+        }
+    }
+
+    public function actionGetShowroom()
+    {
+        if (Yii::$app->request->isAjax) {
+
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $request = Yii::$app->request->post();
+
+            $response = api\Showrooms::get($request['id']);
+
+            return $response;
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
+
+
+
 
     public function actionCompensationTable()
     {

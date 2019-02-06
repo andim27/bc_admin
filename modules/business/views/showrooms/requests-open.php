@@ -56,8 +56,8 @@
                             <td><?=$request->created_at?></td>
                             <td><?=$request->userLogin?></td>
                             <td><?=$request->userSecondName?> <?=$request->userFirstName?></td>
-                            <td><?=$request->country?></td>
-                            <td><?=$request->city?></td>
+                            <td><?=$request->countryName->ru?></td>
+                            <td><?=$request->cityName->ru?></td>
                             <td>
                                 <?=$request->userCountry?>, <?=$request->userCity?><br>
                                 <?=$request->userAddress?>
@@ -111,7 +111,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="col-sm-12 text-center m-b">
-                        <a href="#modalUpload" data-toggle="modal">
+                        <a href="javascript:void();" class="btnOpenModalAddFile">
                             <i class="fa fa-cloud-upload text" title="Добавить файл"></i> Добавить файл
                         </a>
                     </div>
@@ -217,10 +217,10 @@
 
                 blInfo.find('.request-id').val(dataReq.id);
                 blInfo.find('.request-date').html(dataReq.created_at);
-                blInfo.find('.request-login').html(dataReq.login);
+                blInfo.find('.request-login').html(dataReq.userLogin);
                 blInfo.find('.request-fio').html(dataReq.userSecondName + ' ' + dataReq.userFirstName);
-                blInfo.find('.request-country').html(dataReq.countryTitle);
-                blInfo.find('.request-city').html(dataReq.city);
+                blInfo.find('.request-country').html(dataReq.cityName.ru);
+                blInfo.find('.request-city').html(dataReq.cityName.ru);
                 blInfo.find('.request-contacts').html(dataReq.userCountry + ', ' + dataReq.userCity + ', ' + dataReq.userAddress);
                 blInfo.find('.request-text').html(dataReq.text);
                 blInfo.find('.request-stateCarrer').html(dataReq.userRank);
@@ -283,11 +283,12 @@
         }
     });
 
-
     $('#modalUpload').on('submit','.formUploadFile',function(e){
         e.preventDefault();
 
         var form = $(this);
+
+
         var modal = form.closest('#modalUpload');
         var blInfo = $('.requestInfo');
 
@@ -304,7 +305,6 @@
             contentType: false,
             enctype: 'multipart/form-data',
             processData: false,
-
             beforeSend: function () {
                 modal.find('.panel-body').append('<div class="loader"><div></div></div>');
             },
@@ -312,9 +312,13 @@
                 modal.find('.loader').remove();
             },
             success: function(msg){
+
                 console.log(msg);
 
-                blInfo('.requestsFiles>tbody').append(`
+                if(msg.error){
+
+                } else {
+                    blInfo.find('.requestsFiles>tbody').append(`
                             <tr>
                                 <td>${ msg.title }</td>
                                 <td class="w-69"><a href="/ru/business/showrooms/get-file-request-open?id=${ msg.id }&key=${ msg.key }" class="btn btn-success btn-sm">Скачать</a></td>
@@ -322,15 +326,18 @@
                             </tr>
                         `);
 
-                form.trigger('reset');
-
-                $('#modalUpload').modal("hide");
+                    $('#modalUpload').modal("hide");
+                }
             }
         });
 
 
     });
 
+    $('.btnOpenModalAddFile').on('click',function () {
+        $('#modalUpload').find('.formUploadFile').trigger('reset');
+        $('#modalUpload').modal('show');
+    });
 
     $('.requestsFiles').on('click','.deleteFile',function(){
         var btn = $(this);

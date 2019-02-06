@@ -1060,6 +1060,14 @@ class ManufacturingSuppliersController extends BaseController {
     {
         $idWarehouse = Warehouse::getIdMyWarehouse();
 
+        if(empty($idWarehouse)){
+            header('Content-Type: text/html; charset=utf-8');
+            echo '<xmp>';
+            print_r('not find warehouse');
+            echo '</xmp>';
+            die();
+        }
+
         $listGoods = [];
         $statusGoods = [];
         $listGoodsId = [];

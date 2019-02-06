@@ -1321,9 +1321,14 @@ class UserController extends BaseController
                         $modelPin->kind = $kind;
                         $mes='!!';
                     }
-                    if ($modelPin->save()){
-                        Yii::$app->session->setFlash('success', 'Сохранено '.$mes);
+                    if (empty($comment)) {
+                        Yii::$app->session->setFlash('danger', THelper::t('write_you_comment').'?');
+                    } else {
+                        if ($modelPin->save()){
+                            Yii::$app->session->setFlash('success', 'Сохранено '.$mes);
+                        }
                     }
+
                 }
             }
         }
@@ -1501,6 +1506,29 @@ class UserController extends BaseController
 
 
         return $out;
+    }
+
+    public function actionCheckUserLogin()
+    {
+        if (Yii::$app->request->isAjax) {
+
+            $response = false;
+
+            $request = Yii::$app->request->post();
+
+            if(!empty($request)){
+                $result = api\User::get($request['login']);
+
+                if(!empty($result)){
+
+                    $response = true;
+                }
+            }
+
+            return $response;
+        } else {
+            return $this->redirect('/','301');
+        }
     }
 
 }
