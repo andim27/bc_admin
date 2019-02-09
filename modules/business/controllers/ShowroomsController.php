@@ -337,4 +337,25 @@ class ShowroomsController extends BaseController
 
         ]);
     }
+
+    public function actionRepair()
+    {
+        return $this->render('repair',[]);
+    }
+
+    public function actionRepairAdmin()
+    {
+        return $this->render('repair-admin',[]);
+    }
+
+    public function actionRepairService()
+    {
+        return $this->render('repair-service',[]);
+    }
+
+    
+    public function actionOrders()
+    {
+        return $this->render('orders',[]);
+    }
 }
