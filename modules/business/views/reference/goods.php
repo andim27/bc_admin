@@ -25,6 +25,7 @@ GoodsAsset::register($this);
         text-decoration: none;
         background-color: #1b6d85;
         color:white;
+    }
 </style>
 <div class="m-b-md">
     <h3 class="m-b-none"><?=THelper::t('goods') ?></h3>
@@ -430,6 +431,7 @@ GoodsAsset::register($this);
             'product-lang':$('#product-lang').attr('cur-lang'),
             'product-name':$('#product-name').val(),
             'product-natural':$('#product-natural').is(':checked')?1:0,
+            'product-connect-to-natural':$('.product-connect-to-natural').is(":hidden")?false:$('#product-connect-to-natural').val(),
             'product-category':$('#product-categories').val()[0],
             'product-categories':$('#product-categories').val(),
             'product-type':$('#product-type').val(),

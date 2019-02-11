@@ -104,7 +104,7 @@ class Users extends ActiveRecord
 
         $model = self::find()
             ->where(['isAdmin' => 1])
-            //->andWhere(['!=','username','main'])
+            ->orderBy(['username'=>SORT_ASC])
             ->all();
         if(!empty($model)){
             foreach ($model as $item) {

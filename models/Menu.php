@@ -639,6 +639,30 @@ Class Menu
                         'label' => THelper::t('reception_issue_goods'),
                         'url' => ['showrooms/reception-issue-goods'],
                         'action' => 'reception-issue-goods',
+                    ],
+                    [
+                        'key'   =>  'showrooms_repair',
+                        'label' => THelper::t('showrooms_repair'),
+                        'url' => ['showrooms/repair'],
+                        'action' => 'repair',
+                    ],
+                    [
+                        'key'   =>  'showrooms_repair_service',
+                        'label' => THelper::t('showrooms_repair_service'),
+                        'url' => ['showrooms/repair-service'],
+                        'action' => 'repair-service',
+                    ],
+                    [
+                        'key'   =>  'showrooms_repair_admin',
+                        'label' => THelper::t('showrooms_repair_admin'),
+                        'url' => ['showrooms/repair-admin'],
+                        'action' => 'repair-admin',
+                    ],
+                    [
+                        'key'   =>  'showrooms_orders',
+                        'label' => THelper::t('showrooms_orders'),
+                        'url' => ['showrooms/orders'],
+                        'action' => 'orders',
                     ]
                 ]
             ]

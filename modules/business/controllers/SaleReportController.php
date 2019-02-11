@@ -1364,41 +1364,42 @@ class SaleReportController extends BaseController
             ->all();
         if(!empty($model)){
             foreach ($model as $item) {
+                if (!empty($item->infoUser->country)) {
+                    $country = mb_strtolower($item->infoUser->country);
+                    $listCountry[$country] = $allListCountry[$country];
 
-                $country = mb_strtolower($item->infoUser->country);
-                $listCountry[$country]=$allListCountry[$country];
+                    if (empty($request['countryReport']) || ($request['countryReport'] == $country)) {
+                        $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
 
-                if(empty($request['countryReport']) || ($request['countryReport']==$country)){
-                    $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
+                        if (empty($listAvailableCities)) {
+                            $listCity[$city] = $city;
+                        }
 
-                    if(empty($listAvailableCities)){
-                        $listCity[$city] = $city;
+                        if ((empty($request['cityReport']) && empty($listAvailableCities))
+                            || (empty($request['cityReport']) && !empty($listAvailableCities) && in_array($city, $listAvailableCities))
+                            || (!empty($request['cityReport']) && in_array($city, $request['cityReport']))
+                        ) {
+                            $infoSale[] = [
+                                'dateCreate' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
+                                'userCountry' => $allListCountry[$country],
+                                'userCity' => $city,
+                                'userAddress' => $item->infoUser->address,
+                                'userName' => $item->infoUser->secondName . ' ' . $item->infoUser->firstName,
+                                'userPhone' => $item->infoUser->phoneNumber . ' / ' . $item->infoUser->phoneNumber2,
+                                'productName' => $item->productName,
+                                'productPrice' => $item->price
+                            ];
+
+                            $totatPrice += $item->price;
+                        }
                     }
 
-                    if((empty($request['cityReport']) && empty($listAvailableCities))
-                        || (empty($request['cityReport']) && !empty($listAvailableCities) && in_array($city,$listAvailableCities))
-                        || (!empty($request['cityReport']) && in_array($city,$request['cityReport']))
-                        ){
-                        $infoSale[] = [
-                            'dateCreate' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
-                            'userCountry'=>$allListCountry[$country],
-                            'userCity'=>$city,
-                            'userAddress'=>$item->infoUser->address,
-                            'userName'=>$item->infoUser->secondName .' ' . $item->infoUser->firstName,
-                            'userPhone'=>$item->infoUser->phoneNumber . ' / ' . $item->infoUser->phoneNumber2,
-                            'productName' => $item->productName,
-                            'productPrice' => $item->price
-                        ];
 
-                        $totatPrice += $item->price;
-                    }
                 }
-
-
-            }
 
             asort($listCountry);
             asort($listCity);
+            }
         }
 
 
@@ -1461,42 +1462,42 @@ class SaleReportController extends BaseController
             ->all();
 
         $infoExport = [];
-        if(!empty($model)){
+        if(!empty($model)) {
             foreach ($model as $item) {
+                if (!empty($item->infoUser->country)) {
+                    $country = mb_strtolower($item->infoUser->country);
 
-                $country = mb_strtolower($item->infoUser->country);
+                    $listCountry[$country] = $allListCountry[$country];
 
-                $listCountry[$country] = $allListCountry[$country];
+                    if (empty($request['countryReport']) || ($request['countryReport'] == $country)) {
+                        $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
 
-                if(empty($request['countryReport']) || ($request['countryReport']==$country)){
-                    $city = (!empty($item->infoUser->city) ? $item->infoUser->city : 'None');
+                        if (empty($listAvailableCities)) {
+                            $listCity[$city] = $city;
+                        }
 
-                    if(empty($listAvailableCities)){
-                        $listCity[$city] = $city;
+                        if ((empty($request['cityReport']) && empty($listAvailableCities))
+                            || (empty($request['cityReport']) && !empty($listAvailableCities) && in_array($city, $listAvailableCities))
+                            || (!empty($request['cityReport']) && in_array($city, $request['cityReport']))
+                        ) {
+                            $infoExport[] = [
+                                'date_create' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
+                                'country' => $allListCountry[$country],
+                                'city' => $city,
+                                'address' => $item->infoUser->address,
+                                'full_name' => $item->infoUser->secondName . ' ' . $item->infoUser->firstName,
+                                'phone' => $item->infoUser->phoneNumber . ' / ' . $item->infoUser->phoneNumber2,
+                                'goods' => $item->productName,
+                                'price' => $item->price
+                            ];
+
+                        }
                     }
 
-                    if((empty($request['cityReport']) && empty($listAvailableCities))
-                        || (empty($request['cityReport']) && !empty($listAvailableCities) && in_array($city,$listAvailableCities))
-                        || (!empty($request['cityReport']) && in_array($city,$request['cityReport']))
-                    ){
-                        $infoExport[] = [
-                            'date_create' => $item->dateCreate->toDateTime()->format('Y-m-d H:i:s'),
-                            'country'=>$allListCountry[$country],
-                            'city'=>$city,
-                            'address'=>$item->infoUser->address,
-                            'full_name'=>$item->infoUser->secondName .' ' . $item->infoUser->firstName,
-                            'phone'=>$item->infoUser->phoneNumber . ' / ' . $item->infoUser->phoneNumber2,
-                            'goods' => $item->productName,
-                            'price' => $item->price
-                        ];
 
-                    }
                 }
-
-
             }
         }
-
         \moonland\phpexcel\Excel::export([
             'models' => $infoExport,
             'fileName' => 'export '.date('Y-m-d H:i:s'),

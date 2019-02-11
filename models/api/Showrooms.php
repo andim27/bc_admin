@@ -15,7 +15,7 @@ class Showrooms
 
     public $email,$skype,$phone,$dataAdmin,$status,$showroomAddress,$created_at;
     public $showroomPhone,$showroomWorkTime;
-    public $messenger,$delivery;
+    public $messenger,$delivery,$listAdmin;
     public $userIdFiledRequest,$userLoginFiledRequest,$userFirstNameFiledRequest,$userSecondNameFiledRequest,
         $userAddressFiledRequest,$userPhoneFiledRequest;
     public $userLoginOtherLogin;
@@ -56,6 +56,25 @@ class Showrooms
         return $result ? $result : false;
     }
 
+    public static function getListForFilter()
+    {
+        $list = '';
+
+        $showrooms = self::getList();
+
+        if(!empty($showrooms)){
+            foreach ($showrooms as $itemShowroom){
+                $list[$itemShowroom->id] = $itemShowroom->countryName->ru . ' / ' .
+                    $itemShowroom->cityName->ru . ' / ' .
+                    $itemShowroom->userLoginFiledRequest . ' / ' .
+                    $itemShowroom->userSecondNameFiledRequest . ' ' . $itemShowroom->userFirstNameFiledRequest;
+            }
+        }
+
+        return $list;
+    }
+
+
     /**
      * Add showroom
      *
@@ -85,52 +104,7 @@ class Showrooms
 
         return (!isset($response->error) ? 'OK' : '');
     }
-//
-//    /**
-//     * get file in request opening
-//     *
-//     * @param $data
-//     * @return mixed|string
-//     */
-//    public static function getFile($data)
-//    {
-//        $apiClient = new ApiClient('showrooms/file-request-open?'.http_build_query($data));
-//
-//        $response = $apiClient->get(true);
-//
-//        return (!isset($response->error) ? $response : '');
-//    }
-//
-//    /**
-//     * add file in request opening
-//     *
-//     * @param $data
-//     * @return string
-//     */
-//    public static function addFile($data)
-//    {
-//        $apiClient = new ApiClient('showrooms/file-request-open');
-//
-//        $response = $apiClient->post($data, true);
-//
-//        return (!isset($response->error) ? $response : '');
-//    }
-//
-//    /**
-//     * delete file in request opening
-//     *
-//     * @param $data
-//     * @return mixed|string
-//     */
-//    public static function deleteFile($data)
-//    {
-//        $apiClient = new ApiClient('showrooms/file-request-open');
-//
-//        $response = $apiClient->delete($data, true);
-//
-//        return (!isset($response->error) ? $response : '');
-//    }
-//
+
     /**
      * @return array
      */
@@ -191,6 +165,7 @@ class Showrooms
 
                 $item->messenger        = $object->messenger;
                 $item->delivery         = $object->delivery;
+                $item->listAdmin        = $object->listAdmin;
 
                 $item->userIdFiledRequest           = $object->user->_id;
                 $item->userLoginFiledRequest        = $object->user->login;

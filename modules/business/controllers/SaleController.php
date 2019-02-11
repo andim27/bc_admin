@@ -6,12 +6,14 @@ use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api;
 use app\models\LogWarehouse;
+use app\models\Order;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
 use app\models\ReviewsSale;
 use app\models\Sales;
 use app\models\SetSales;
+use app\models\Showrooms;
 use app\models\StatusSales;
 use app\models\Users;
 use app\models\Warehouse;
@@ -248,7 +250,162 @@ class SaleController extends BaseController {
         }
 
     }
-    
+
+    public function actionGetSale(){
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $request = Yii::$app->request->post();
+            $response = [];
+
+            if(!empty($request['orderId'])){
+                $order = Order::findOne(['orderId'=>(int)$request['orderId']]);
+                if(!empty($order)){
+                    $sale = Sales::findOne(['orderId'=>$order->_id]);
+                }
+
+            } else if(!empty($request['saleId'])) {
+                $sale = Sales::findOne(['_id'=>new ObjectId($request['saleId'])]);
+            }
+
+            if(!empty($sale)){
+
+                $dateCreateY = $sale->dateCreate->toDateTime()->format('Y');
+                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+
+                $products = [];
+                if($sale->productData['products']) {
+                    foreach ($sale->productData['products'] as $itemProduct) {
+                        $products[] = [
+                            '_id' => strval($itemProduct['_id']),
+                            'name' => $itemProduct['productName'],
+                            'status' => 0
+                        ];
+                    }
+                }
+
+                $orderId = '';
+                if(!empty($sale->orderId)){
+                    $orderId = strval($sale->orderId);
+                }
+
+                $showroomIdSale = '';
+                if(!empty($sale->showroomId)){
+                    $showroomIdSale = strval($sale->showroomId);
+                }
+
+
+                $typeDelivery = $dateDelivery = '-';
+                if(isset($sale->delivery)){
+                    $typeDelivery = $sale->delivery['type'];
+
+                    if(!empty($sale->delivery['params']['date'])){
+                        $dateDelivery = date('Y-m-d', strtotime($dateCreate. ' + '.(int)$sale->delivery['params']['date'].' days'));
+                    }
+                }
+
+                $response = [
+                    'error'         => '',
+                    'saleId'        => strval($sale->_id),
+                    'orderId'       => $orderId,
+                    'showroomId'    => $showroomIdSale,
+                    'pack'          => $sale->productData['productName'],
+                    'dateCreate'    => $dateCreate,
+                    'dateCreateY'   => $dateCreateY,
+                    'dateFinish'    => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
+                    'login'         => $sale->infoUser->username,
+                    'secondName'    => $sale->infoUser->secondName,
+                    'firstName'     => $sale->infoUser->firstName,
+                    'phone1'        => $sale->infoUser->phoneNumber,
+                    'phone2'        => $sale->infoUser->phoneNumber2,
+                    'statusShowroom'=> (isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING),
+                    'typeDelivery'  => $typeDelivery,
+                    'dateDelivery'  => $dateDelivery,
+                    'addressDelivery'=> (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
+                    'products'      => $products
+                ];
+            } else {
+                $response = ['error'=>'not order'];
+            }
+
+            return $response;
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
+    public function actionSetShowroomSale()
+    {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $response = [
+                'typeAlert'     => 'danger',
+                'message'       => 'Шоурум не привязан'
+            ];
+
+            $request = Yii::$app->request->post();
+
+            $showroomId = Showrooms::getIdMyShowroom();
+
+            if(!empty($request['saleId']) && !empty($showroomId)){
+                $sale = Sales::findOne(['_id'=>new ObjectID($request['saleId'])]);
+
+                if(!empty($sale)){
+                    $sale->showroomId = $showroomId;
+
+                    if($sale->save()){
+                        $response = [
+                            'typeAlert'     =>  'success',
+                            'message'       =>  'Шоурум привязан'
+                        ];
+                    }
+                }
+            }
+
+            return $response;
+
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
+    public function actionChangeStatusShowroomSale()
+    {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $response = [
+                'typeAlert'     => 'danger',
+                'message'       => 'Статус заказа не изменен'
+            ];
+
+            $request = Yii::$app->request->post();
+
+            $showroomId = Showrooms::getIdMyShowroom();
+
+            if(!empty($request['saleId']) && !empty($showroomId)){
+                $sale = Sales::findOne(['_id'=>new ObjectID($request['saleId']),'showroomId'=>$showroomId]);
+
+                if(!empty($sale)){
+                    $sale->statusShowroom = $request['statusShowroom'];
+
+                    if($sale->save()){
+                        $response = [
+                            'typeAlert' => 'success',
+                            'message'   => 'Статус заказа изменен'
+                        ];
+                    }
+                }
+            }
+
+            return $response;
+
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
     public static function cancellationGoodsInOrder($orderID,$goodsName='')
     {
         $model = StatusSales::findOne(['idSale'=>new ObjectID($orderID)]);

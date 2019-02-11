@@ -5,6 +5,7 @@ use yii\widgets\Pjax;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use kartik\file\FileInput;
+use app\models\PartsAccessories;
 ?>
 
 <!--<form role="form">-->
@@ -115,6 +116,16 @@ use kartik\file\FileInput;
                         <?php } ?>
 
                     </select>
+
+               
+                <label for="product-connect-to-natural" class="m-t-sm product-connect-to-natural"><?= THelper::t('product_connect_to_natural') ?>:</label>
+
+                    <?=Html::dropDownList('product-connect-to-natural',(!empty($product->product_connect_to_natural) ? $product->product_connect_to_natural : false),PartsAccessories::getListPartsAccessoriesForSaLe(),[
+                    'class' => 'form-control product-connect-to-natural',
+                    'id' => 'product-connect-to-natural',
+                    'prompt' => 'Выберите товар для связи'
+                    ])?>
+
                 <div class="row" id="product-complect-block" <?=($product->productType <= 1)?'style="display:none"':'' ?> >
                     <div class="col-md-offset-1" style="background-color: lightcyan;padding-left: 5px;padding-right:5px;margin-right: 15px">
                         <table width="100%">
@@ -760,4 +771,23 @@ ActiveForm::end();
         $('#history-add-date').val('');
         $('#'+h_block).hide();
     }
+
+    function checkConnectToNatural() {
+       
+        if (($('#product-natural').is(':checked')) && ($('#product-type').val() == 1)) {
+            $('.product-connect-to-natural').show();
+        } else {
+            $('.product-connect-to-natural').hide();
+        }
+
+    }
+
+    $('.modal').on('change','#product-natural, #product-type',function () {
+        checkConnectToNatural();
+    });
+
+    $( document ).ready(function() {
+        checkConnectToNatural();
+    });
+
 </script>

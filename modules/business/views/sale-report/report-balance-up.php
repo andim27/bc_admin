@@ -136,8 +136,8 @@ function statusIcon($status_str) {
                              if (isset($p_key)) {
                         ?>
                         <td>
-                         <button id="btn-apply-<?=$item['_id'] ?>"  <?=($item['status']=='done')?'disabled':'' ?>  type="button" class="btn btn-success btn-sm" onclick="applyBalance('<?=$item['_id'] ?>')">Apply</button>
-                         <button id="btn-cancel-<?=$item['_id'] ?>" <?=($item['status']=='done')?'disabled':'' ?>  type="button" class="btn btn-danger  btn-sm" onclick="cancelBalance('<?=$item['_id'] ?>')">Cancel</button>
+                         <button id="btn-apply-<?=$item['_id'] ?>"  <?=($item['status']=='done'||$item['status']=='cancel')?'disabled':'' ?>  type="button" class="btn btn-success btn-sm" onclick="applyBalance('<?=$item['_id'] ?>')">Apply</button>
+                         <button id="btn-cancel-<?=$item['_id'] ?>" <?=($item['status']=='done'||$item['status']=='cancel')?'disabled':'' ?>  type="button" class="btn btn-danger  btn-sm" onclick="cancelBalance('<?=$item['_id'] ?>')">Cancel</button>
                         </td>
 
                         <?php } ?>
@@ -186,6 +186,7 @@ if (isset($p_key)) {
                 changeStatusBalance(data);
                 if (data.action == 'cancel') {
                     $('#btn-apply-'+data.id).attr('disabled',true);
+                    $('#btn-cancel-'+data.id).attr('disabled',true);
                 }
                 if (data.action == 'done') {
                     $('#btn-apply-'+data.id).attr('disabled',true);

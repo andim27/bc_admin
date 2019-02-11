@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\components\THelper;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use yii\mongodb\ActiveRecord;
@@ -17,6 +18,9 @@ use yii\mongodb\ActiveRecord;
  */
 class Sales extends ActiveRecord
 {
+    const STATUS_SHOWROOM_DELIVERING = 'delivering';
+    const STATUS_SHOWROOM_DELIVERED = 'delivered';
+
     /**
      * @return string
      */
@@ -34,6 +38,7 @@ class Sales extends ActiveRecord
             '_id',
             'idUser',
             'warehouseId',
+            'productData',
             'price',
             'product',
             'project',
@@ -49,6 +54,12 @@ class Sales extends ActiveRecord
             '__v',
             'dateReduce',
             'dateCreate',
+            'shippingAddress',
+            'dateCloseSale',
+            'showroomId',
+            'delivery',
+            'orderId',
+            'statusShowroom',
             'formPayment',
             'comment',
             'comment_user_name',
@@ -126,5 +137,26 @@ class Sales extends ActiveRecord
     public static function  getAllSalesUser($userID)
     {
         return self::find()->where(['idUser'=>new ObjectID($userID)])->all();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getStatusShowroom()
+    {
+        return [
+            self::STATUS_SHOWROOM_DELIVERING    => THelper::t('status_showroom_delivering'),
+            self::STATUS_SHOWROOM_DELIVERED     => THelper::t('status_showroom_delivered')
+        ];
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public static function getStatusShowroomValue($key)
+    {
+        $aStatus = self::getStatusShowroom();
+        return isset($aStatus[$key]) ? $aStatus[$key] : '';
     }
 }
