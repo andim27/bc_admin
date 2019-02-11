@@ -2,6 +2,7 @@
     use app\components\THelper;
     use yii\helpers\Html;
     use yii\widgets\ActiveForm;
+
 ?>
 
 <div class="m-b-md">
@@ -10,12 +11,16 @@
 <section class="panel panel-default">
     <div class="row">
         <div class="col-md-6">
-            <select name="compensationSelect" class="compensationSelect form-control m"> 
-                <option value="null">Страна / Город / Логин / ФИО</option> 
-                <option value="1">Россия / Москва / firely / Вильховая ИИ</option> 
-                <option value="2" >Россия / Москва / firely / Вильховая ИИ</option> 
-                <option value="3">Россия / Москва / firely / Вильховая ИИ</option>
-            </select>
+            <div class="m">
+                <span class="m-r">С</span>
+                <input id="mainFrom" class="input-s datepicker-input inline input-showroom form-control text-center filterInfo"
+                       size="16" type="text" value="<?=$filter['dateFrom']?>" data-date-format="yyyy-mm" data-filter="dateFrom"
+                       data-date-viewMode="months" data-date-minViewMode="months" data-date-maxViewMode="months" >
+                <span class="m-r m-l">ПО</span>
+                <input id="mainTo" class="input-s datepicker-input inline input-showroom form-control text-center filterInfo"
+                       size="16" type="text" value="<?=$filter['dateTo']?>" data-date-format="yyyy-mm" data-filter="dateTo"
+                       data-date-viewMode="months" data-date-minViewMode="months" data-date-maxViewMode="months">
+            </div>
         </div>
     </div>
 
@@ -34,10 +39,6 @@
                         <!-- Выдача -->
                         <div class="row">
                             <div class="col-md-12 m-b">
-                                <span class="m-r">С</span>
-                                <input id="issueFrom" class="input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="12-02-2013" data-date-format="dd-mm-yyyy">
-                                <span class="m-r m-l">ПО</span>
-                                <input id="issueTo" class="input-s datepicker-input inline input-showroom form-control text-center  m-r" size="16" type="text" value="22-01-2019" data-date-format="dd-mm-yyyy">
                                 <input type="checkbox" id="showOnlyNotIssue">
                                 <span class="m-l-xs">Отобразить только невыданные</span>
                             </div>
@@ -47,10 +48,7 @@
                                 <thead>
                                     <tr>
                                         <th>
-                                            Дата
-                                        </th>
-                                        <th>
-                                            Время
+                                            Дата создания
                                         </th>
                                         <th>
                                             Логин
@@ -68,6 +66,9 @@
                                             Статус
                                         </th>
                                         <th>
+                                            Даты закрытия заказ
+                                        </th>
+                                        <th>
                                             Будет доставлен ориентировочно
                                         </th>
                                         <th>
@@ -79,42 +80,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td>7</td>
-                                        <td>8</td>
-                                        <td>9</td>
-                                        <td><a class="editIssue" href="#"><i class="fa fa-pencil"></i></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td>7</td>
-                                        <td>8</td>
-                                        <td>9</td>
-                                        <td><a class="editIssue" href="#"><i class="fa fa-pencil"></i></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td>7</td>
-                                        <td>8</td>
-                                        <td>9</td>
-                                        <td><a class="editIssue" href="#"><i class="fa fa-pencil"></i></a></td>
-                                    </tr>
+                                    <?php if(!empty($salesShowroom)){ ?>
+                                        <?php foreach ($salesShowroom as $saleItem) { ?>
+                                            <tr>
+                                                <td><?=$saleItem['dateCreate']?></td>
+                                                <td><?=$saleItem['login']?></td>
+                                                <td>
+                                                    <?=$saleItem['secondName']?><br>
+                                                    <?=$saleItem['firstName']?>
+                                                </td>
+                                                <td>
+                                                    <?=$saleItem['phone1']?><br>
+                                                    <?=$saleItem['phone2']?>
+                                                </td>
+                                                <td><?=$saleItem['pack']?></td>
+                                                <td><?=$saleItem['statusShowroom']?></td>
+                                                <td><?=$saleItem['dateFinish']?></td>
+                                                <td><?=$saleItem['dateDelivery']?></td>
+                                                <td><?=$saleItem['addressDelivery']?></td>
+                                                <td>
+                                                    <a class="editIssue" href="javascript:void(0);" data-id="<?=$saleItem['saleId']?>">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -132,7 +123,7 @@
                                         <p>Дата заявки:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-date m-l m-r">14.02.2019</span>
+                                        <span class="font-bold issue-date m-l m-r"></span>
                                     </div>
                                 </div>
 
@@ -141,7 +132,7 @@
                                         <p>Логин:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-login m-l m-r">mai</span>
+                                        <span class="font-bold issue-login m-l m-r"></span>
                                     </div>
                                 </div>
 
@@ -150,7 +141,7 @@
                                         <p>ФИО:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-FIO m-l m-r">Сидоров Иван</span>
+                                        <span class="font-bold issue-FIO m-l m-r"></span>
                                     </div>
                                 </div>
 
@@ -159,7 +150,7 @@
                                         <p>Телефоны:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-phones m-l m-r">+54545454545, +5454545454</span>
+                                        <span class="font-bold issue-phones m-l m-r"></span>
                                     </div>
                                 </div>
 
@@ -183,10 +174,9 @@
                                         <p class="m-t">Статус:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <select name="issueSelect" class="issueSelect w-50 form-control m"> 
-                                            <option value="null">Доставлено</option> 
-                                            <option value="1">Отгружено</option> 
-                                        </select>
+                                        <?=Html::dropDownList('',false,\app\models\Sales::getStatusShowroom(),[
+                                            'class' => 'issueSelect w-50 form-control m'
+                                        ])?>
                                     </div>
                                 </div>
 
@@ -195,7 +185,7 @@
                                         <p>Дата доставки:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-dateDelivery m-l m-r">10.12.18</span>
+                                        <span class="font-bold issue-dateDelivery m-l m-r"></span>
                                     </div>
                                 </div>
 
@@ -204,13 +194,15 @@
                                         <p>Адрес:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-address m-l m-r">Архитектора бекетова 23</span>
+                                        <span class="font-bold issue-address m-l m-r"></span>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input type="button" class="btn btn-sm btn-success pull-right saveEditedIssue m-n" value="Сохранить">
+                                        <button type="button" class="btn btn-sm btn-success pull-right saveEditedIssue m-n">
+                                            Сохранить
+                                        </button>
                                     </div>
 
                                 </div>
@@ -220,27 +212,32 @@
                         <div class="panel panel-default issueOrderRow">
                             <div class="panel-body">
                                 <div class="row">
+                                    <div class="col-md-12 blError"></div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-4">
-                                        <input type="text" class="form-control" placeholder="Номер накладной">
+                                        <input type="text" class="form-control orderId" placeholder="Номер накладной">
                                     </div>
                                     <div class="col-md-4">
                                         <input type="button" class="btn btn-success checkIssue m-n" value="Подобрать заказ">
-                                        
                                     </div>
                                 </div>
-                                
                             </div>
                         </div>
 
                         <div class="panel panel-default issueOrderDetail">
                             <div class="panel-body">
-                                
+
+                                <div class="row">
+                                    <div class="col-md-12 blError"></div>
+                                </div>
+
                                 <div class="row">
                                     <div class="col-md-3">
                                         <p>Дата заявки:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-date m-l m-r">14.02.2019</span>
+                                        <span class="font-bold issue-date m-l m-r"></span>
                                     </div>
                                 </div>
 
@@ -249,7 +246,7 @@
                                         <p>Логин:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-login m-l m-r">mai</span>
+                                        <span class="font-bold issue-login m-l m-r"></span>
                                     </div>
                                 </div>
 
@@ -258,7 +255,7 @@
                                         <p>ФИО:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-FIO m-l m-r">Сидоров Иван</span>
+                                        <span class="font-bold issue-FIO m-l m-r"></span>
                                     </div>
                                 </div>
 
@@ -267,7 +264,7 @@
                                         <p>Телефоны:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-phones m-l m-r">+54545454545, +5454545454</span>
+                                        <span class="font-bold issue-phones m-l m-r"></span>
                                     </div>
                                 </div>
 
@@ -279,10 +276,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <ul class="issue-order list-unstyled">
-                                            <li>Набор Life Balanсe 2 шт. <a href="#" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>
-                                            <li>Life Expert 2 шт. <a href="#" class="fromBalnce issued pull-right">Отменить</a> <span class="spanIssued pull-right m-r">Выдано с баланса</span></li>
-                                        </ul>
+                                        <ul class="issue-order list-unstyled"></ul>
                                     </div>
                                 </div>
 
@@ -291,10 +285,9 @@
                                         <p class="m-t">Статус:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <select name="issueSelect" class="issueSelect w-50 form-control m"> 
-                                            <option value="null">Доставлено</option> 
-                                            <option value="1">Отгружено</option> 
-                                        </select>
+                                        <?=Html::dropDownList('',false,\app\models\Sales::getStatusShowroom(),[
+                                            'class' => 'issueSelect w-50 form-control m'
+                                        ])?>
                                     </div>
                                 </div>
 
@@ -303,7 +296,7 @@
                                         <p>Дата доставки:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-dateDelivery m-l m-r">10.12.18</span>
+                                        <span class="font-bold issue-dateDelivery m-l m-r"></span>
                                     </div>
                                 </div>
 
@@ -312,17 +305,17 @@
                                         <p>Адрес:</p>
                                     </div>
                                     <div class="col-md-9">
-                                        <span class="font-bold issue-address m-l m-r">Архитектора бекетова 23</span>
+                                        <span class="font-bold issue-address m-l m-r"></span>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input type="button" class="btn btn-sm btn-success pull-right checkLogin m-n" value="Подобрать заказ">
+                                        <button type="button" class="btn btn-sm btn-success pull-right checkLogin m-n" disabled="disabled">
+                                            Подобрать заказ
+                                        </button>
                                     </div>
-
                                 </div>
-                                
                             </div>
                         </div>
 
@@ -331,10 +324,6 @@
                         <!-- Приём -->
                         <div class="row">
                             <div class="col-md-12 m-b">
-                                <span class="m-r">С</span>
-                                <input id="receptionFrom" class="input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="12-02-2013" data-date-format="dd-mm-yyyy">
-                                <span class="m-r m-l">ПО</span>
-                                <input id="receptionTo" class="input-s datepicker-input inline input-showroom form-control text-center m-r" size="16" type="text" value="22-01-2019" data-date-format="dd-mm-yyyy">
                                 <input type="checkbox" id="showOnlyNotReception">
                                 <span class="m-l-xs">Отобразить только невыданные</span>
                             </div>
@@ -373,45 +362,45 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td>7</td>
-                                        <td>8</td>
-                                        <td><a class="editReceiptedGoods" href="#editReceiptedGoods" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td>7</td>
-                                        <td>8</td>
-                                        <td><a class="editReceiptedGoods" href="#editReceiptedGoods" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td>7</td>
-                                        <td>8</td>
-                                        <td><a class="editReceiptedGoods" href="#editReceiptedGoods" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                    </tr>
+<!--                                    <tr>-->
+<!--                                        <td>1</td>-->
+<!--                                        <td>2</td>-->
+<!--                                        <td>3</td>-->
+<!--                                        <td>4</td>-->
+<!--                                        <td>5</td>-->
+<!--                                        <td>6</td>-->
+<!--                                        <td>7</td>-->
+<!--                                        <td>8</td>-->
+<!--                                        <td><a class="editReceiptedGoods" href="#editReceiptedGoods" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>1</td>-->
+<!--                                        <td>2</td>-->
+<!--                                        <td>3</td>-->
+<!--                                        <td>4</td>-->
+<!--                                        <td>5</td>-->
+<!--                                        <td>6</td>-->
+<!--                                        <td>7</td>-->
+<!--                                        <td>8</td>-->
+<!--                                        <td><a class="editReceiptedGoods" href="#editReceiptedGoods" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>1</td>-->
+<!--                                        <td>2</td>-->
+<!--                                        <td>3</td>-->
+<!--                                        <td>4</td>-->
+<!--                                        <td>5</td>-->
+<!--                                        <td>6</td>-->
+<!--                                        <td>7</td>-->
+<!--                                        <td>8</td>-->
+<!--                                        <td><a class="editReceiptedGoods" href="#editReceiptedGoods" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>-->
+<!--                                    </tr>-->
                                 </tbody>
                             </table>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <input type="button" class="btn btn-success pull-right receiptGoods m-sm" value="Принять товар">
+<!--                                <input type="button" class="btn btn-success pull-right receiptGoods m-sm" value="Принять товар">-->
                             </div>
                         </div>
 
@@ -538,33 +527,33 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td><a class="infoOrder" href="#">Просмотр</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td><a class="infoOrder" href="#">Просмотр</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td><a class="infoOrder" href="#">Просмотр</a></td>
-                                    </tr>
+<!--                                    <tr>-->
+<!--                                        <td>1</td>-->
+<!--                                        <td>2</td>-->
+<!--                                        <td>3</td>-->
+<!--                                        <td>4</td>-->
+<!--                                        <td>5</td>-->
+<!--                                        <td>6</td>-->
+<!--                                        <td><a class="infoOrder" href="#">Просмотр</a></td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>1</td>-->
+<!--                                        <td>2</td>-->
+<!--                                        <td>3</td>-->
+<!--                                        <td>4</td>-->
+<!--                                        <td>5</td>-->
+<!--                                        <td>6</td>-->
+<!--                                        <td><a class="infoOrder" href="#">Просмотр</a></td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>1</td>-->
+<!--                                        <td>2</td>-->
+<!--                                        <td>3</td>-->
+<!--                                        <td>4</td>-->
+<!--                                        <td>5</td>-->
+<!--                                        <td>6</td>-->
+<!--                                        <td><a class="infoOrder" href="#">Просмотр</a></td>-->
+<!--                                    </tr>-->
                                 </tbody>
                             </table>
                         </div>
@@ -823,7 +812,6 @@
 </div>
 
 <?php $this->registerCssFile('/js/datepicker/datepicker.css', ['position' => yii\web\View::POS_HEAD]); ?>
-<?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js', ['position' => yii\web\View::POS_END]); ?>
 
 <script>
 
@@ -831,17 +819,17 @@
         $('.mainLi, .historyLi').toggleClass('active');
     });
 
-   
-
     $('.modal').on('click','.addTopUpCompensation',function(){
         // сохраняем пополнение
-    });   
+    });
 
     $('.modal').on('click','.editHistoryCompensation',function(){
         // редактируем историю
     });
 
     $('.issueInfo').on('click','.fromBalnce',function(){
+
+        return true;
 
         if ($(this).hasClass('issued')) {
             //товар был выдан с баланса нажали отменить
@@ -867,36 +855,159 @@
         $('#editReceiptedGoods').modal('hide');
     });
 
-
     $('.modal').on('click','.receptionSave',function(){
         // сохраняем приём товара
 
         $('#receiptionGoodsEdit').modal('hide');
     });
 
-    $('table').on('click','.editIssue',function(){ 
-        // и отображаем выдачу товара
-        //$('.issueInfo').val('Изменить');
+    $('table').on('click','.editIssue',function(){
         $('.issueOrderRow').hide();
         $('.issueOrderDetail').hide();
+
+        clearIssueInfo();
+
+        var blInfo = $('.issueInfo');
+
+        $.ajax({
+            url: '/ru/business/sale/get-sale',
+            type: 'POST',
+            data: {saleId:$(this).data('id')},
+            success: function(msg){
+                if(msg.error === ''){
+                    blInfo.find('.issue-date').text(msg.dateCreate);
+                    blInfo.find('.issue-login').text(msg.login);
+                    blInfo.find('.issue-FIO').text(msg.secondName + ' ' + msg.firstName);
+                    blInfo.find('.issue-phones').text(msg.phone1 + ' ' + msg.phone2);
+
+                    blInfo.find('.issueSelect').val(msg.statusShowroom);
+
+                    blInfo.find('.issue-dateDelivery').text(msg.dateDelivery);
+                    blInfo.find('.issue-address').text(msg.addressDelivery);
+
+
+
+                    if(msg.statusShowroom === 'delivered'){
+                        blInfo.find('.saveEditedIssue').data({id:''}).prop('disabled',true);
+                        blInfo.find('.issueSelect').prop('disabled',true);
+                    } else {
+                        blInfo.find('.saveEditedIssue').data({id:msg.saleId}).prop('disabled',false);
+                        blInfo.find('.issueSelect').prop('disabled',false);
+                    }
+
+                    var blOrder = blInfo.find('.issue-order');
+                    blOrder.html('');
+                    $.each(msg.products, function( k, v ) {
+
+                        blProduct = '<li>'+v.name;
+
+                        if(msg.typeDelivery == '-' || msg.typeDelivery == 'showroom'){
+                            //blProduct += '<a href="javascript:void(0);" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>'
+                        }
+
+                        blOrder.append(blProduct);
+                    });
+                }
+            }
+        });
+
         $('.issueInfo').show();
-    })
+    });
 
-    $('#content').on('click','.checkIssue',function(){ 
+    $('.issueInfo').on('click','.saveEditedIssue',function () {
+        $(this).prop('disabled', true);
+        var saleId = $(this).data('id');
+        var statusShowroom = $(this).closest('.issueInfo').find('.issueSelect').val();
 
-    // нажимаем на подобрать заказа
-        $('.issueOrderDetail').toggle();
-    })
+        $.ajax({
+            url: '/ru/business/sale/change-status-showroom-sale',
+            type: 'POST',
+            data: {saleId:saleId,statusShowroom:statusShowroom},
+            success: function(msg){
+                $('.issueOrderDetail .blError').html(
+                    '<div class="alert alert-'+msg.typeAlert+' fade in">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                    msg.message +
+                    '</div>'
+                );
+            }
+        });
+    });
 
-    
-
-    $('#content').on('click','.issueOrder',function(){ 
-        
-        
+    $('#content').on('click','.issueOrder',function(){
         $('.issueOrderDetail').hide();
         $('.issueInfo').hide();
         $('.issueOrderRow').toggle();
-    })
+    });
+
+    $('#content').on('click','.checkIssue',function(){
+
+        var orderId = $(this).closest('.issueOrderRow').find('.orderId').val();
+        var blInfo = $('.issueOrderDetail');
+
+        clearIssueOrderDetail();
+
+        $.ajax({
+            url: '/ru/business/sale/get-sale',
+            type: 'POST',
+            data: {orderId:orderId},
+            success: function(msg){
+                if(msg.error === ''){
+
+                    blInfo.find('.issue-date').text(msg.dateCreate);
+                    blInfo.find('.issue-login').text(msg.login);
+                    blInfo.find('.issue-FIO').text(msg.secondName + ' ' + msg.firstName);
+                    blInfo.find('.issue-phones').text(msg.phone1 + ' ' + msg.phone2);
+
+                    blInfo.find('.issueSelect').prop( "disabled", true ).val(msg.statusShowroom);
+
+                    blInfo.find('.issue-dateDelivery').text(msg.dateDelivery);
+                    blInfo.find('.issue-address').text(msg.addressDelivery);
+
+                    var blOrder = blInfo.find('.issue-order');
+                    blOrder.html('');
+                    $.each(msg.products, function( k, v ) {
+                        blOrder.append('<li>'+v.name+'</li>');
+                    });
+
+                    if(msg.showroomId === ''){
+                        blInfo.find('.checkLogin').data({id:msg.saleId}).prop('disabled', false);
+                    } else {
+                        blInfo.find('.blError').html(
+                            '<div class="alert alert-danger fade in">' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                            'Данный заказ уже привязан к шоу-руму' +
+                            '</div>'
+                        );
+
+                        blInfo.find('.checkLogin').data({id:''}).prop('disabled', true);
+                    }
+
+                    if(msg.dateCreateY < 2019){
+                        blInfo.find('.blError').html(
+                            '<div class="alert alert-danger fade in">' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                            'Данный заказ создан в 2018 году' +
+                            '</div>'
+                        );
+
+                        blInfo.find('.checkLogin').data({id:''}).prop('disabled', true);
+                    }
+
+                    $('.issueOrderDetail').show();
+                } else {
+                    $('.issueOrderRow .blError').html(
+                        '<div class="alert alert-danger fade in">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                        'Данной заказ не существует' +
+                        '</div>'
+                    );
+                }
+
+            }
+        });
+
+    });
 
     $('#content').on('click','.receiptGoods',function(){ 
 
@@ -909,9 +1020,88 @@
         //ищем товар в БД и выдаём в таблицу ниже
 
         $('.table-reception-goods').toggle();
-    })
+    });
 
+    $('#content').on('click','.checkLogin',function () {
+        $(this).prop('disabled', true);
+        var saleId = $(this).data('id');
 
-    
+        $.ajax({
+            url: '/ru/business/sale/set-showroom-sale',
+            type: 'POST',
+            data: {saleId:saleId},
+            success: function(msg){
+                $('.issueOrderDetail .blError').html(
+                    '<div class="alert alert-'+msg.typeAlert+' fade in">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                    msg.message +
+                    '</div>'
+                );
+
+            }
+        });
+    });
+
+    $('.filterInfo').datepicker().on('changeDate',function (e) {
+
+        console.log(e)
+
+        var link = window.location.href;
+
+        $('.filterInfo').each(function () {
+            link = updateQueryStringParameter(link,$(this).data('filter'),$(this).val());
+        });
+
+        document.location.href = link;
+    });
+
+    function updateQueryStringParameter(uri, key, value) {
+        var re = new RegExp("([?&])" + key + "=.*?(&|#|$)", "i");
+        if( value === undefined ) {
+            if (uri.match(re)) {
+                return uri.replace(re, '$1$2');
+            } else {
+                return uri;
+            }
+        } else {
+            if (uri.match(re)) {
+                return uri.replace(re, '$1' + key + "=" + value + '$2');
+            } else {
+                var hash =  '';
+                if( uri.indexOf('#') !== -1 ){
+                    hash = uri.replace(/.*#/, '#');
+                    uri = uri.replace(/#.*/, '');
+                }
+                var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+                return uri + separator + key + "=" + value + hash;
+            }
+        }
+    }
+
+    function clearIssueOrderDetail() {
+        var blInfo = $('.issueOrderDetail');
+
+        blInfo.find('.issue-date').text('');
+        blInfo.find('.issue-login').text('');
+        blInfo.find('.issue-FIO').text('');
+        blInfo.find('.issue-phones').text('');
+        blInfo.find('.issueSelect').prop( "disabled", false ).val('');
+        blInfo.find('.issue-dateDelivery').text('');
+        blInfo.find('.issue-address').text('');
+        blInfo.find('.issue-order').html('');
+        blInfo.find('.checkLogin').data({id:''}).prop('disabled', true);
+    }
+    function clearIssueInfo() {
+        var blInfo = $('.issueInfo');
+
+        blInfo.find('.issue-date').text('');
+        blInfo.find('.issue-login').text('');
+        blInfo.find('.issue-FIO').text('');
+        blInfo.find('.issue-phones').text('');
+        blInfo.find('.issueSelect').prop( "disabled", false ).val('');
+        blInfo.find('.issue-dateDelivery').text('');
+        blInfo.find('.issue-address').text('');
+        blInfo.find('.issue-order').html('');
+    }
 
 </script>

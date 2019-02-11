@@ -2,11 +2,13 @@
     use app\components\THelper;
     use yii\helpers\Html;
     use app\models\api\Showrooms;
-
+    use app\models\Users;
     use app\components\AlertWidget;
+
 
     /** @var $itemShoroom \app\models\api\Showrooms */
 
+    $userArray = Users::getListAdmin();
     $alert = Yii::$app->session->getFlash('alert', '', true);
 ?>
 
@@ -114,7 +116,6 @@
         <form class="showroomForm" name="showroomForm" method="POST" action="/business/showrooms/add-edit-showroom">
 
             <input type="hidden" name="Showroom[id]" value="">
-
             <input type="hidden" name="Showroom[cityId]" value="">
             <input type="hidden" name="Showroom[countryId]" value="">
 
@@ -205,6 +206,26 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-md-12 m-t-md">
+                        <div class="highlight selectListAdmin">
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-10">
+                        <?=Html::dropDownList('',false,$userArray,[
+                            'class'=>'form-control w100 listAdmin',
+                            'id'=>'listAdmin',
+                            'options' => [
+                                'placeh' => ['disabled' => true],
+                            ]
+                        ])?>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-default btn-block addUser">+</button>
+                    </div>
+
                 </div>
 
                 <div class="col-md-4">
@@ -364,6 +385,7 @@
 </div>
 
 <script>
+    var listAdmin = JSON.parse('<?=json_encode($userArray)?>');
 
     $('.addShowroom').on('click',function(){
 
@@ -403,7 +425,7 @@
 
     $('table').on('click','.editShowroom',function(){
 
-        blShowroom = $('.showroomInfo')
+        blShowroom = $('.showroomInfo');
 
         $.ajax({
             url: '/ru/business/showrooms/get-showroom',
@@ -418,6 +440,7 @@
                     .html('<option value="'+msg.userIdFiledRequest+'" data-city-id="'+msg.cityId+'" data-city-title="'+msg.cityName.ru+'" data-country-id="'+msg.countryId+'" >' +
                         msg.userLoginFiledRequest+' ('+msg.userSecondNameFiledRequest+' '+msg.userFirstNameFiledRequest+')</option>');
 
+                blShowroom.find('.showroomCity').text(msg.cityName.ru);
                 blShowroom.find('input[name="Showroom[id]"]').val(msg.id);
                 blShowroom.find('input[name="Showroom[cityId]"]').val(msg.cityId);
                 blShowroom.find('input[name="Showroom[countryId]"]').val(msg.countryId);
@@ -441,6 +464,10 @@
 
                 blShowroom.find('.blDelivery').each(function (indx) {
                     if(typeof(msg.delivery[indx]) != "undefined"){
+
+                        if(indx === 0){
+                            msg.delivery[indx].title = 'courier';
+                        }
                         $(this).find('.deliveryTitle').val(msg.delivery[indx].title);
                         $(this).find('.deliveryPrice').val(msg.delivery[indx].price);
                         $(this).find('.deliveryDays').val(msg.delivery[indx].day);
@@ -468,89 +495,23 @@
                     }
                 });
 
+                $.each(msg.listAdmin,function (k,v) {
+                    blShowroom.find('.selectListAdmin').append(
+                        '<span>' +
+                            listAdmin[v.$oid] +
+                            '<input type="hidden" name="Showroom[listAdmin][]" value="'+v.$oid+'" />' +
+                            '<button type="button" class="btn btn-default deleteUser">del</button>' +
+                        '</span>'
+                    );
+                });
+
                 console.log(msg);
 
 
                 $('.showroomInfo').show();
             }
         });
-
-
-       //  // console.log($(this).parents('tr')[0].rowIndex);
-       //  // ну тут подгружаем данные по шоуруму из БД
-       //
-       //  // кто подал заявку
-       //  $('.showroomApplied').val(dataShowroom.applied);
-       //
-       //  // емаил
-       //  $('.emailConfirmation').val(dataShowroom.email);
-       //
-       //  // скайп
-       //  $('.skypeShowroom').val(dataShowroom.skype);
-       //
-       //  // телефон
-       //  $('.phoneUserShowroom').val(dataShowroom.phone);
-       //
-       //  // мессенджеры
-       //  $('.messenger1login').val(dataShowroom.messenger1.login);
-       //  $('.messenger2login').val(dataShowroom.messenger2.login);
-       //
-       //  $(".messenger1 option").filter(function() {
-       //      return this.text == dataShowroom.messenger1.name;
-       //  }).attr('selected', true);
-       //  $(".messenger2 option").filter(function() {
-       //      return this.text == dataShowroom.messenger2.name;
-       //  }).attr('selected', true);
-       //
-       //  // данные администратора
-       //  $('.shoowroomAdminText').val(dataShowroom.adminData);
-       //
-       //  // тут закинули инфо в доставку
-       //
-       //  $('.delivery1').val(dataShowroom.delivery1.cost);
-       //  $('.delivery1Days').val(dataShowroom.delivery1.days);
-       //
-       //  $('.delivery2Text').val(dataShowroom.delivery2.name);
-       //  $('.delivery2').val(dataShowroom.delivery2.cost);
-       //  $('.delivery2Days').val(dataShowroom.delivery2.days);
-       //
-       //  $('.delivery3Text').val(dataShowroom.delivery3.name);
-       //  $('.delivery3').val(dataShowroom.delivery3.cost);
-       //  $('.delivery3Days').val(dataShowroom.delivery3.days);
-       //
-       //  // тут закинули инфо в часы работы выходные
-       //  for (const key in dataShowroom.webData.workHours) {
-       //      if (dataShowroom.webData.workHours.hasOwnProperty(key)) {
-       //          const element = dataShowroom.webData.workHours[key];
-       //          if (key.includes('Holiday')) {
-       //              $(`.${ key }`).prop( "checked", element );
-       //          } else {
-       //              $(`.${ key }`).val(element);
-       //          }
-       //      }
-       //  }
-       //
-       //  // город
-       //  $('.showroomCity').val(dataShowroom.webData.city);
-       //
-       //  // адрес
-       //  $('.shoowroomAddress').val(dataShowroom.webData.address);
-       //
-       //  // телефон 1
-       //  $('.phoneShowroom1').val(dataShowroom.webData.phoneShowroom1);
-       //
-       //  // телефон 2
-       //  $('.phoneShowroom2').val(dataShowroom.webData.phoneShowroom2);
-       //
-       //  // Статус
-       //  $('.stateShowroom').val(dataShowroom.state);
-       //
-       //
-       // // и отображаем её
-       //  $('.saveShowroom').val('Изменить');
-       //
-
-    } );
+    });
 
     $('.showroomInfo').on('click','.anotherCheckbox',function () {
         showHideBlOtherLogin($(this));
@@ -590,6 +551,23 @@
         });
     });
 
+    $('.showroomInfo').on('click','.addUser',function () {
+        var adminId = $('.showroomInfo').find('.listAdmin').val();
+        var adminName = $('.showroomInfo').find('.listAdmin option:selected').text();
+
+        $('.showroomInfo').find('.selectListAdmin').append(
+            '<span>' +
+                adminName +
+                '<input type="hidden" name="Showroom[listAdmin][]" value="'+adminId+'" />' +
+                '<button type="button" class="btn btn-default deleteUser">del</button>' +
+            '</span>'
+        );
+    });
+
+    $('.showroomInfo').on('click','.deleteUser',function () {
+        $(this).closest('span').remove();
+    });
+
     function getListRequest() {
         var list;
 
@@ -621,24 +599,29 @@
         form.find('.messenger2login').val('');
         form.find('.shoowroomAdminText').val('');
 
-        form.find('.worktimeShowroom').each(function (indx) {
+        form.find('.worktimeShowroom').each(function () {
             $(this).find('.worktimeTimeFrom').val('');
             $(this).find('.worktimeTimeTo').val('');
             $(this).find('.worktimeTimeHoliday').prop( "checked", false );
         });
 
-        form.find('.blMessenger').each(function (indx) {
+        form.find('.blMessenger').each(function () {
             $(this).find('select').val('');
             $(this).find('input').val('');
         });
 
         form.find('.blDelivery').each(function (indx) {
-            $(this).find('.deliveryTitle').val('');
+            if(indx === 0){
+                $(this).find('.deliveryTitle').val('courier');
+            } else {
+                $(this).find('.deliveryTitle').val('');
+            }
+
             $(this).find('.deliveryPrice').val('');
             $(this).find('.deliveryDays').val('');
         });
 
-        form.find('.phoneShowroom').each(function (indx) {
+        form.find('.phoneShowroom').each(function () {
             $(this).find('input').val('');
         });
 
@@ -646,10 +629,12 @@
         form.find('.checkLogin').prop("disabled", true);
         form.find('.anotherCheckbox').prop( "checked", false );
 
-        form.find('.showroomCity').val('');
+        form.find('.showroomCity').text('');
         form.find('.shoowroomAddress').val('');
         form.find('.stateShowroom').val('');
         form.find('.saveShowroom').val('Добавить');
+
+        form.find('.selectListAdmin').html('');
     }
 
     function showHideBlOtherLogin(bl) {

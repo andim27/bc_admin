@@ -46,7 +46,8 @@ class AppAsset extends AssetBundle
         '/js/sortable/jquery.sortable.js',
         '/js/datatables/jquery.dataTables.min.js',
         '/js/fileinput.min.js',
-        '/js/main/date.js'
+        '/js/main/date.js',
+        '/js/datepicker/bootstrap-datepicker.js'
     ];
     public $jsOptions = ['position' => yii\web\View::POS_HEAD];
     public $depends = [
