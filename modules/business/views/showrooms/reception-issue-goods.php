@@ -763,7 +763,7 @@
 
 <script>
 
-<<<<<<< HEAD
+
     $('table').on('click','.historyCompensation',function(){
         $('.mainLi, .historyLi').toggleClass('active');
     });
@@ -776,8 +776,6 @@
         // редактируем историю
     });
 
-=======
->>>>>>> origin/dev
     $('.issueInfo').on('click','.fromBalnce',function(){
 
         return true;
@@ -833,7 +831,6 @@
 
                     blInfo.find('.issueSelect').val(msg.statusShowroom);
 
-<<<<<<< HEAD
                     blInfo.find('.issue-dateDelivery').text(msg.dateDelivery);
                     blInfo.find('.issue-address').text(msg.addressDelivery);
 
@@ -887,11 +884,6 @@
     });
 
     $('#content').on('click','.issueOrder',function(){
-=======
-    $('#content').on('click','.issueOrder',function(){ 
-        
-
->>>>>>> origin/dev
         $('.issueOrderDetail').hide();
         $('.issueInfo').hide();
         $('.issueOrderRow').toggle();

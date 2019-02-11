@@ -513,8 +513,6 @@ class ShowroomsController extends BaseController
         ]);
     }
 
-<<<<<<< HEAD
-=======
     public function actionRepair()
     {
         return $this->render('repair',[]);
@@ -529,11 +527,9 @@ class ShowroomsController extends BaseController
     {
         return $this->render('repair-service',[]);
     }
-
     
     public function actionOrders()
     {
         return $this->render('orders',[]);
     }
->>>>>>> origin/dev
 }
