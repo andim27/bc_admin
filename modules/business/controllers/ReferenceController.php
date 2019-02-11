@@ -498,6 +498,7 @@ class ReferenceController extends BaseController
                     return $res;
                 }
                 $product_natural    =$request->post('product-natural');
+                $product_connect_to_natural    =$request->post('product-connect-to-natural');
                 $product_category   =$request->post('product-category') ?? 0;
                 $product_categories =$request->post('product-categories');
                 if (empty($product_categories)) {
@@ -615,6 +616,7 @@ class ReferenceController extends BaseController
                         $product->productName = '???('.$product_lang.') Product:'.$product_name;
                     }
                     $product->productNatural =(int)$product_natural;
+                    $product->product_connect_to_natural = $product_connect_to_natural;
                     $product->product     =(int)$product_id;
                     $product->products     =[];//--depends on productType
                     $product->idInMarket  =(int)$product_idInMarket;

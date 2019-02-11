@@ -5,55 +5,60 @@ body {
 
 .wrap {
     min-height: 100%;
-    height:     auto;
-    margin:     0 auto -60px;
-    padding:    0 0 60px;
+    height: auto;
+    margin: 0 auto -60px;
+    padding: 0 0 60px;
 }
 
-.wrap > .container {
+.wrap>.container {
     padding: 70px 15px 20px;
 }
 
 .footer {
-    height:           60px;
+    height: 60px;
     background-color: #f5f5f5;
-    border-top:       1px solid #ddd;
-    padding-top:      20px;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
 }
 
 .jumbotron {
-    text-align:       center;
+    text-align: center;
     background-color: transparent;
 }
 
 .jumbotron .btn {
     font-size: 21px;
-    padding:   14px 24px;
+    padding: 14px 24px;
 }
 
 .not-set {
-    color:      #c55;
+    color: #c55;
     font-style: italic;
 }
 
 /* add sorting icons to gridview sort links */
-a.asc:after, a.desc:after {
-    position:     relative;
-    top:          1px;
-    display:      inline-block;
-    font-family:  'Glyphicons Halflings';
-    font-style:   normal;
-    font-weight:  normal;
-    line-height:  1;
+a.asc:after,
+a.desc:after {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
     padding-left: 5px;
 }
 
 a.asc:after {
-    content: /*"\e113"*/ "\e151";
+    content:
+        /*"\e113"*/
+        "\e151";
 }
 
 a.desc:after {
-    content: /*"\e114"*/ "\e152";
+    content:
+        /*"\e114"*/
+        "\e152";
 }
 
 .sort-numerical a.asc:after {
@@ -77,9 +82,9 @@ a.desc:after {
 }
 
 .hint-block {
-    display:    block;
+    display: block;
     margin-top: 5px;
-    color:      #999;
+    color: #999;
 }
 
 .block {
@@ -87,11 +92,11 @@ a.desc:after {
 }
 
 .error-summary {
-    color:       #a94442;
-    background:  #fdf7f7;
+    color: #a94442;
+    background: #fdf7f7;
     border-left: 3px solid #eed3d7;
-    padding:     10px 20px;
-    margin:      0 0 15px 0;
+    padding: 10px 20px;
+    margin: 0 0 15px 0;
 }
 
 section.panel.panel-default {
@@ -144,22 +149,22 @@ section.panel.panel-default {
 }
 
 .input_invalid .help-block {
-    position:      absolute;
-    z-index:       9;
+    position: absolute;
+    z-index: 9;
     margin-bottom: 0;
-    bottom:        -18px;
-    width:         100%;
-    overflow:      hidden;
+    bottom: -18px;
+    width: 100%;
+    overflow: hidden;
     text-overflow: ellipsis;
-    white-space:   nowrap;
+    white-space: nowrap;
 }
 
 .modal-footer.form-group {
-    padding:       15px 0px 0px;
+    padding: 15px 0px 0px;
     margin-bottom: 0px;
 }
 
-#menu_primary ul.nav > li > a {
+#menu_primary ul.nav>li>a {
     overflow: hidden;
 }
 
@@ -188,42 +193,42 @@ section.panel.panel-default {
 }
 
 .change_color {
-    text-decoration:  none;
+    text-decoration: none;
     background-color: #eee;
 }
 
 #success {
-    display:          none;
-    position:         absolute;
-    border:           1px solid;
-    padding:          5px;
+    display: none;
+    position: absolute;
+    border: 1px solid;
+    padding: 5px;
     background-color: #eee;
-    color:            black;
-    top:              30%;
-    left:             40%;
+    color: black;
+    top: 30%;
+    left: 40%;
 }
 
 .dataTables_wrapper .sort:after {
     content: " ";
-    color:   #ccc;
+    color: #ccc;
 }
 
-.table > thead > tr > th {
+.table>thead>tr>th {
     vertical-align: top;
-    position:       relative;
+    position: relative;
 }
 
 .select_all {
-    margin:     0;
-    padding:    0;
-    border:     none;
+    margin: 0;
+    padding: 0;
+    border: none;
     background: none;
 }
 
 .remove_all {
-    margin:     0;
-    padding:    0;
-    border:     none;
+    margin: 0;
+    padding: 0;
+    border: none;
     background: none;
 }
 
@@ -243,41 +248,44 @@ section.panel.panel-default {
     margin: 0 0 5px;
 }
 
-#viewing, #editing {
+#viewing,
+#editing {
     max-height: 90px;
 }
 
-input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCommand[user_registration_txt]"] {
-    min-width:  200px;
-    padding:    0px 5px;
+input[name="EmergencyCommand[user_authorization_txt]"],
+input[name="EmergencyCommand[user_registration_txt]"] {
+    min-width: 200px;
+    padding: 0px 5px;
     text-align: center;
 }
 
-.none_h, .none_d {
+.none_h,
+.none_d {
     display: none;
 }
 
 .padding {
-    padding:       6px 20px;
+    padding: 6px 20px;
     margin-bottom: 5px;
 }
 
 .line_t {
-    height:           2px;
-    font-size:        0;
-    overflow:         hidden;
+    height: 2px;
+    font-size: 0;
+    overflow: hidden;
     background-color: transparent;
-    border-width:     0;
-    border-top:       1px solid #e8e8e8;
+    border-width: 0;
+    border-top: 1px solid #e8e8e8;
 }
 
 .img-circle {
-    width:  200px;
+    width: 200px;
     height: 200px;
 }
 
 .controls_edit {
-    margin-top:  25px;
+    margin-top: 25px;
     margin-left: 40px;
 }
 
@@ -290,7 +298,7 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 }
 
 .for_btn_center {
-    text-align:     center;
+    text-align: center;
     padding-bottom: 20px;
 }
 
@@ -299,31 +307,31 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 }
 
 .switch-center {
-    float:         left;
-    padding-top:   6px;
+    float: left;
+    padding-top: 6px;
     padding-right: 5px;
 }
 
 .fa_calendar {
-    position:  absolute;
-    top:       8px;
-    right:     25px;
+    position: absolute;
+    top: 8px;
+    right: 25px;
     font-size: 16px;
-    cursor:    pointer;
+    cursor: pointer;
 }
 
 .center {
-    float:  none;
+    float: none;
     margin: 0 auto;
 }
 
 .children {
-    margin:        0 auto;
-    width:         50%;
-    max-width:     240px;
+    margin: 0 auto;
+    width: 50%;
+    max-width: 240px;
     margin-bottom: 20px;
-    font-size:     1em;
-    padding:       5px 5px 0;
+    font-size: 1em;
+    padding: 5px 5px 0;
 }
 
 .children:hover {
@@ -339,22 +347,22 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 }
 
 #contextMenu {
-    display:          block;
-    position:         static;
-    margin-bottom:    5px;
-    padding:          2px 8px;
+    display: block;
+    position: static;
+    margin-bottom: 5px;
+    padding: 2px 8px;
     background-color: #fff;
-    background-clip:  padding-box;
-    font-size:        12px;
-    border-radius:    2px;
-    box-shadow:       0 2px 6px rgba(0, 0, 0, 0.1);
-    border:           1px solid #ddd;
+    background-clip: padding-box;
+    font-size: 12px;
+    border-radius: 2px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
 }
 
 #contextMenu ul {
     list-style: none;
-    margin:     0;
-    padding:    0;
+    margin: 0;
+    padding: 0;
 }
 
 #contextMenu li span {
@@ -367,11 +375,11 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 }
 
 .waiting-nonfluid-element {
-    margin:           0 2px 0 0;
+    margin: 0 2px 0 0;
     background-color: #ccc;
-    width:            10px;
-    height:           20px;
-    display:          inline-block;
+    width: 10px;
+    height: 20px;
+    display: inline-block;
     vertical-align: bottom;
 }
 
@@ -386,17 +394,18 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 
 #content_tree {
     max-height: 510px;
-    overflow:   hidden;
+    overflow: hidden;
 }
 
 .control_tree {
     position: absolute;
-    left:     0;
-    top:      0;
-    z-index:  999;
+    left: 0;
+    top: 0;
+    z-index: 999;
 }
 
-#tree, #circle {
+#tree,
+#circle {
     position: relative;
 }
 
@@ -409,7 +418,7 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 }
 
 #sunburst {
-    display:    inline-block;
+    display: inline-block;
     text-align: center;
 }
 
@@ -419,8 +428,8 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 
 #contextMenu {
     position: absolute;
-    display:  none;
-    z-index:  99999;
+    display: none;
+    z-index: 99999;
 }
 
 #tree {
@@ -438,20 +447,23 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 }
 
 /* Information module*/
-.document > article > header h1{
+.document>article>header h1 {
     margin: 10px 0;
     font-size: 22px;
 }
-.document > article > .panel-body > .document-meta{
+
+.document>article>.panel-body>.document-meta {
     margin-bottom: 20px;
 }
-.document > article > .panel-body > .document-meta address,
-.document > article > .panel-body > .document-meta p{
+
+.document>article>.panel-body>.document-meta address,
+.document>article>.panel-body>.document-meta p {
     display: block;
     margin: 0;
     color: #888;
 }
-.document > article > .panel-body > .document-meta strong{
+
+.document>article>.panel-body>.document-meta strong {
     color: #666;
 }
 
@@ -468,8 +480,8 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
     position: relative;
 }
 
-.requestInfo .loader div{
-    margin-top:200px;
+.requestInfo .loader div {
+    margin-top: 200px;
 }
 
 .showroomInfo {
@@ -503,7 +515,8 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
 .filestyle {
     left: -1500px;
 }
-.bootstrap-filestyle > label {
+
+.bootstrap-filestyle>label {
     padding: 6px 19px;
 }
 
@@ -537,6 +550,7 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
     height: 27px;
     margin-top: 2px;
 }
+
 .m-t--9 {
     margin-top: -9px;
 }
@@ -571,14 +585,23 @@ input[name="EmergencyCommand[user_authorization_txt]"], input[name="EmergencyCom
     width: 120px;
 }
 
-.showroomInfo{
+.showroomInfo {
     position: relative;
 }
 
+<<<<<<< HEAD
 .highlight {
     padding: 9px 14px;
     margin-bottom: 14px;
     background-color: #f7f7f9;
     border: 1px solid #e1e1e8;
     border-radius: 4px;
+=======
+.datepicker.dropdown-menu {
+    z-index: 10000;
+}
+
+.product-connect-to-natural {
+    display: none;
+>>>>>>> origin/dev
 }
