@@ -142,10 +142,11 @@ class DefaultController extends BaseController
             '10'    => 'VipCoin',
         ];
         $typeCat = [
-          '5b4c46149ed4eb000b34b232'=>'WebWellness',
-          '5b4c46359ed4eb0009049f62'=>'VipVip',
-          '5b4c46469ed4eb002a683891'=>'VipCoin',
-          '5b60b9e58d6b9e00050dee14'=>'Business support'
+            'WebWellness'      =>'5b4c46149ed4eb000b34b232',
+            'VipVip'           =>'5b4c46359ed4eb0009049f62',
+            'VipCoin'          =>'5b4c46469ed4eb002a683891',
+            'Business_support' =>'5b60b9e58d6b9e00050dee14',
+            'Balance_top_up'   =>'5b60bf3e8d6b9e000904477d'
         ];
         $listProductsType = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','type');
         $listProductsTitle = ArrayInfoHelper::getArrayKeyValue($listProducts,'product','productName');
@@ -226,22 +227,34 @@ class DefaultController extends BaseController
                 //Приход по программе VipVip
                 'generalReceiptMoney_VipVip' => 0,
 
-                'generalReceiptMoney_BalanceTopUp' => 0,
+                'generalReceiptMoney_BalanceTopUp'    => 0,
                 'generalReceiptMoney_BusinessSupport' => 0,
                 //Приход за деньги по программе vipcoin
                 'receiptMoney_VipCoin'          => 0,
+                'receiptMoney_VipCoin_cnt'      => 0,
                 //Приход за деньги по программе Wellness
                 'receiptMoney_Wellness'         => 0,
+                'receiptMoney_Wellness_cnt'     => 0,
                 //Приход за деньги по программе VipVip
                 'receiptMoney_VipVip'           => 0,
+                'receiptMoney_VipVip_cnt'       => 0,
 
                 'receiptMoney_Projects'         => 0,
 
-                'receiptMoney_BalanceTopUp'     => 0,
-                'receiptMoney_BusinessSupport'  => 0,
+                'receiptMoney_BalanceTopUp'       => 0,
+                'receiptMoney_BalanceTopUp_f'     => 0,
+                'receiptMoney_BalanceTopUp_cnt'     => 0,
+                'receiptMoney_BalanceTopUp_f_cnt'   => 0,
+                'receiptMoney_BusinessSupport'      => 0,
+                'receiptMoney_BusinessSupport_cnt'  => 0,
+                'receiptMoney_Composite'      => 0,
+                'receiptMoney_Composite_cnt'  => 0,
+                'receiptMoney_cat_empty'      => 0,
+                'receiptMoney_cat_empty_cnt'  => 0,
             ];
             //--Balance top-up(f)-----------------------------------------------------
-            $statisticInfo['receiptMoney_BalanceTopUp'] = self::calcMoneyBalanceTopUp($queryDateFrom,$queryDateTo);
+            $statisticInfo['receiptMoney_BalanceTopUp_f'] = self::calcMoneyBalanceTopUp($queryDateFrom,$queryDateTo);
+            $p_set_arr     = Products::productIDWithSet();
             $model = (new \yii\mongodb\Query())
                 ->select(['dateCreate', 'price', 'product','productData.categories','productName', 'username', 'project'])
                 ->from('sales')
@@ -255,6 +268,7 @@ class DefaultController extends BaseController
                     ],
                     //'productType' => ['$nin' => [0, 4]],
                     'product' => ['$gt' => 999],
+                    //'product' =>['$in' => $p_set_arr],
                     'username' => [
                         '$ne' => 'main'
                     ]
@@ -272,85 +286,124 @@ class DefaultController extends BaseController
                     //$statisticInfo['generalReceiptMoney'] += $item['price'];
 
                     //if (!empty($typeProject[$listProductsType[$item['product']]])) {
-                    //--WebWellness--
-                    if (preg_match('/Фирменная сумка|Life Transfer/',$item['productName'] ) ) {
-                        $statisticInfo['receiptMoney_Wellness']+=$item['price'];
-                    }
-                    if (preg_match('/Life balance*Life expert*пополнение баланса на 100/',$item['productName'] ) ) {
-                        $statisticInfo['receiptMoney_Wellness']+=100;
-                    }
-                    if (preg_match('/WebWellness/',$item['productName'] ) ) {
-                        if ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
-                            $statisticInfo['receiptMoney_Wellness']+=$item['price'];
-                        } else {
-                            if (preg_match('/150/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_Wellness']+=150;
-                            }
-                            if (preg_match('/200/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_Wellness']+=200;
-                            }
-                            if (preg_match('/50/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_Wellness']+=50;
-                            }
-                            if (preg_match('/€10/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_Wellness']+=10;
-                            }
-                            if (preg_match('/Life Balance" и пополнение баланса на 300/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_Wellness']+=300;
-                            }
-                            if (preg_match('/Life Expert Profi" и пополнение баланса WebWellness на 200/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_Wellness']+=200;
-                            }
-                            if (preg_match('/активность бизнес-места на 12 месяцев - 150€/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_Wellness']+=120;
-                            }
-                            if (preg_match('/Life Watch/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_Wellness']+=$item['price'];
-                            }
-                        }
-                    }
-                    //--VIPVIP-----------------------------------------------------
-                    if (preg_match('/VIPVIP/',$item['productName'] ) ) {
-                        if  ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
-                            $statisticInfo['receiptMoney_VipVip']+=$item['price'];
-                        } else {
-                            if (preg_match('/100/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_VipVip']+=100;
-                            }
-                            if (preg_match('/10/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_VipVip']+=10;
-                            }
-                            if (preg_match('/310/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_VipVip']+=250;
-                            }  else {
-                                if (preg_match('/пополнение баланса/',$item['productName'])) {
-                                    $statisticInfo['receiptMoney_VipVip']+=$item['price'];
-                                }
-                            }
 
-                        }
-                    }
-                    //--VIPCOIN-------------------------------------------------------
-                    if (preg_match('/VipCoin/',$item['productName'] ) ) {
-                        if ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
-                            $statisticInfo['receiptMoney_VipCoin']+=$item['price'];
-                        } else {
-                            if (preg_match('/VIPCOIN (стандарт)/',$item['productName'] )){
-                                $statisticInfo['receiptMoney_VipCoin']+=330;
+                    //----------b:Composite-------
+                    if (!empty($item['productData']['categories'])) {
+                        if ((count($item['productData']['categories']) >1)) {
+                            $statisticInfo['receiptMoney_Composite']+=$item['price'];
+                            $statisticInfo['receiptMoney_Composite_cnt']+=1;
+                        } else {//--by one cat
+                            //--WebWellness-----------------------------------------------
+                            if (in_array($typeCat['WebWellness'],$item['productData']['categories'])) {
+                                $statisticInfo['receiptMoney_Wellness']+=$item['price'];
+                                $statisticInfo['receiptMoney_Wellness_cnt']+=1;//$item['price'];
                             }
-                            if (preg_match('/VipCoin активность/',$item['productName'])) {
+                            //--VIPVIP-----------------------------------------------------
+                            if (in_array($typeCat['VipVip'],$item['productData']['categories'])) {
+                                $statisticInfo['receiptMoney_VipVip']+=$item['price'];
+                                $statisticInfo['receiptMoney_VipVip_cnt']+=1;//$item['price'];
+                            }
+                            //--VIPCoin-----------------------------------------------------
+                            if (in_array($typeCat['VipCoin'],$item['productData']['categories'])) {
                                 $statisticInfo['receiptMoney_VipCoin']+=$item['price'];
+                                $statisticInfo['receiptMoney_VipCoin_cnt']+=1;//$item['price'];
+                            }
+                            //--Business support----------------------------------------------------
+                            if (in_array($typeCat['Business_support'],$item['productData']['categories'])) {
+                                $statisticInfo['receiptMoney_BusinessSupport']+=$item['price'];
+                                $statisticInfo['receiptMoney_BusinessSupport_cnt']+=1;//$item['price'];
+                            }
+                            //--Balance_top_up------------------------------------------------------
+                            if (in_array($typeCat['Balance_top_up'],$item['productData']['categories'])) {
+                                $statisticInfo['receiptMoney_BalanceTopUp']+=$item['price'];
+                                $statisticInfo['receiptMoney_BalanceTopUp_cnt']+=1;//$item['price'];
                             }
                         }
+                    } else {
+                        $statisticInfo['receiptMoney_cat_empty']+=$item['price'];
+                        $statisticInfo['receiptMoney_cat_empty_cnt']+=1;//$item['price'];
                     }
+                    //----------e:Composite-------
+
+                    //--WebWellness--
+//                    if (preg_match('/Фирменная сумка|Life Transfer/',$item['productName'] ) ) {
+//                        $statisticInfo['receiptMoney_Wellness']+=$item['price'];
+//                    }
+//                    if (preg_match('/Life balance*Life expert*пополнение баланса на 100/',$item['productName'] ) ) {
+//                        $statisticInfo['receiptMoney_Wellness']+=100;
+//                    }
+//                    if (preg_match('/WebWellness/',$item['productName'] ) ) {
+//                        if ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
+//                            $statisticInfo['receiptMoney_Wellness']+=$item['price'];
+//                        } else {
+//                            if (preg_match('/150/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_Wellness']+=150;
+//                            }
+//                            if (preg_match('/200/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_Wellness']+=200;
+//                            }
+//                            if (preg_match('/50/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_Wellness']+=50;
+//                            }
+//                            if (preg_match('/€10/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_Wellness']+=10;
+//                            }
+//                            if (preg_match('/Life Balance" и пополнение баланса на 300/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_Wellness']+=300;
+//                            }
+//                            if (preg_match('/Life Expert Profi" и пополнение баланса WebWellness на 200/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_Wellness']+=200;
+//                            }
+//                            if (preg_match('/активность бизнес-места на 12 месяцев - 150€/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_Wellness']+=120;
+//                            }
+//                            if (preg_match('/Life Watch/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_Wellness']+=$item['price'];
+//                            }
+//                        }
+//                    }
+                    //--VIPVIP-----------------------------------------------------
+//                    if (preg_match('/VIPVIP/',$item['productName'] ) ) {
+//                        if  ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
+//                            $statisticInfo['receiptMoney_VipVip']+=$item['price'];
+//                        } else {
+//                            if (preg_match('/100/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_VipVip']+=100;
+//                            }
+//                            if (preg_match('/10/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_VipVip']+=10;
+//                            }
+//                            if (preg_match('/310/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_VipVip']+=250;
+//                            }  else {
+//                                if (preg_match('/пополнение баланса/',$item['productName'])) {
+//                                    $statisticInfo['receiptMoney_VipVip']+=$item['price'];
+//                                }
+//                            }
+//
+//                        }
+//                    }
+//                    //--VIPCOIN-------------------------------------------------------
+//                    if (preg_match('/VipCoin/',$item['productName'] ) ) {
+//                        if ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
+//                            $statisticInfo['receiptMoney_VipCoin']+=$item['price'];
+//                        } else {
+//                            if (preg_match('/VIPCOIN (стандарт)/',$item['productName'] )){
+//                                $statisticInfo['receiptMoney_VipCoin']+=330;
+//                            }
+//                            if (preg_match('/VipCoin активность/',$item['productName'])) {
+//                                $statisticInfo['receiptMoney_VipCoin']+=$item['price'];
+//                            }
+//                        }
+//                    }
                     //--Business support----------------------------------------------------
-                    if (preg_match('/активность бизнес|Сопровождение бизнеса/',$item['productName'] ) ) {
-                        $statisticInfo['receiptMoney_BusinessSupport']+=$item['price'];
-                    }
+//                    if (preg_match('/активность бизнес|Сопровождение бизнеса/',$item['productName'] ) ) {
+//                        $statisticInfo['receiptMoney_BusinessSupport']+=$item['price'];
+//                    }
                     //--Balance top-up-------------------------------------------------------
-                    if (preg_match('/Balance top-up/',$item['productName'])) {
-                        //$statisticInfo['receiptMoney_BalanceTopUp']+=$item['price'];
-                    }
+//                    if (preg_match('/Balance top-up/',$item['productName'])) {
+//                        //$statisticInfo['receiptMoney_BalanceTopUp']+=$item['price'];
+//                    }
 
                     //-----from old stat methods---------------------------------------------
                     if (array_key_exists($item['product'], $listProductsType)) {

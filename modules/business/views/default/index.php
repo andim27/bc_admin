@@ -118,6 +118,8 @@ function totalDetailsSum($statisticInfo) {
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#" onclick="getDetailsBlock('turnover-details')">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesTurnover']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('goods_turnover'); ?> (general)</small>
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['salesTurnoverDetails']['packs']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock"><?= THelper::t('goods_turnover'); ?> (packs)</small>
                 </a>
