@@ -251,10 +251,13 @@ class DefaultController extends BaseController
                 'receiptMoney_Composite_cnt'  => 0,
                 'receiptMoney_cat_empty'      => 0,
                 'receiptMoney_cat_empty_cnt'  => 0,
+                'receiptMoney_Product_old'    => 0,
+                'receiptMoney_Product_old_cnt'=> 0,
+                'receiptMoney_Product_old_str'=> '',
             ];
             //--Balance top-up(f)-----------------------------------------------------
             $statisticInfo['receiptMoney_BalanceTopUp_f'] = self::calcMoneyBalanceTopUp($queryDateFrom,$queryDateTo);
-            $p_set_arr     = Products::productIDWithSet();
+            //$p_set_arr     = Products::productIDWithSet();
             $model = (new \yii\mongodb\Query())
                 ->select(['dateCreate', 'price', 'product','productData.categories','productName', 'username', 'project'])
                 ->from('sales')
@@ -267,7 +270,7 @@ class DefaultController extends BaseController
                         '$ne' => -1
                     ],
                     //'productType' => ['$nin' => [0, 4]],
-                    'product' => ['$gt' => 999],
+                    //'product' => ['$gt' => 999],
                     //'product' =>['$in' => $p_set_arr],
                     'username' => [
                         '$ne' => 'main'
@@ -277,55 +280,57 @@ class DefaultController extends BaseController
 
             if (!empty($model)) {
                 foreach ($model as $item) {
-                    $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
+                    if ($item['product'] > 999) {
 
-                    if (empty($statisticInfo['generalReceiptMoneyMonth'][$dateCreate])) {
-                        $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] = 0;
-                    }
-                    $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] += $item['price'];
-                    //$statisticInfo['generalReceiptMoney'] += $item['price'];
+                        $dateCreate = $item['dateCreate']->toDateTime()->format('Y-m');
 
-                    //if (!empty($typeProject[$listProductsType[$item['product']]])) {
-
-                    //----------b:Composite-------
-                    if (!empty($item['productData']['categories'])) {
-                        if ((count($item['productData']['categories']) >1)) {
-                            $statisticInfo['receiptMoney_Composite']+=$item['price'];
-                            $statisticInfo['receiptMoney_Composite_cnt']+=1;
-                        } else {//--by one cat
-                            //--WebWellness-----------------------------------------------
-                            if (in_array($typeCat['WebWellness'],$item['productData']['categories'])) {
-                                $statisticInfo['receiptMoney_Wellness']+=$item['price'];
-                                $statisticInfo['receiptMoney_Wellness_cnt']+=1;//$item['price'];
-                            }
-                            //--VIPVIP-----------------------------------------------------
-                            if (in_array($typeCat['VipVip'],$item['productData']['categories'])) {
-                                $statisticInfo['receiptMoney_VipVip']+=$item['price'];
-                                $statisticInfo['receiptMoney_VipVip_cnt']+=1;//$item['price'];
-                            }
-                            //--VIPCoin-----------------------------------------------------
-                            if (in_array($typeCat['VipCoin'],$item['productData']['categories'])) {
-                                $statisticInfo['receiptMoney_VipCoin']+=$item['price'];
-                                $statisticInfo['receiptMoney_VipCoin_cnt']+=1;//$item['price'];
-                            }
-                            //--Business support----------------------------------------------------
-                            if (in_array($typeCat['Business_support'],$item['productData']['categories'])) {
-                                $statisticInfo['receiptMoney_BusinessSupport']+=$item['price'];
-                                $statisticInfo['receiptMoney_BusinessSupport_cnt']+=1;//$item['price'];
-                            }
-                            //--Balance_top_up------------------------------------------------------
-                            if (in_array($typeCat['Balance_top_up'],$item['productData']['categories'])) {
-                                $statisticInfo['receiptMoney_BalanceTopUp']+=$item['price'];
-                                $statisticInfo['receiptMoney_BalanceTopUp_cnt']+=1;//$item['price'];
-                            }
+                        if (empty($statisticInfo['generalReceiptMoneyMonth'][$dateCreate])) {
+                            $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] = 0;
                         }
-                    } else {
-                        $statisticInfo['receiptMoney_cat_empty']+=$item['price'];
-                        $statisticInfo['receiptMoney_cat_empty_cnt']+=1;//$item['price'];
-                    }
-                    //----------e:Composite-------
+                        $statisticInfo['generalReceiptMoneyMonth'][$dateCreate] += $item['price'];
+                        //$statisticInfo['generalReceiptMoney'] += $item['price'];
 
-                    //--WebWellness--
+                        //if (!empty($typeProject[$listProductsType[$item['product']]])) {
+
+                        //----------b:Composite-------
+                        if (!empty($item['productData']['categories'])) {
+                            if ((count($item['productData']['categories']) > 1)) {
+                                $statisticInfo['receiptMoney_Composite'] += $item['price'];
+                                $statisticInfo['receiptMoney_Composite_cnt'] += 1;
+                            } else {//--by one cat
+                                //--WebWellness-----------------------------------------------
+                                if (in_array($typeCat['WebWellness'], $item['productData']['categories'])) {
+                                    $statisticInfo['receiptMoney_Wellness'] += $item['price'];
+                                    $statisticInfo['receiptMoney_Wellness_cnt'] += 1;//$item['price'];
+                                }
+                                //--VIPVIP-----------------------------------------------------
+                                if (in_array($typeCat['VipVip'], $item['productData']['categories'])) {
+                                    $statisticInfo['receiptMoney_VipVip'] += $item['price'];
+                                    $statisticInfo['receiptMoney_VipVip_cnt'] += 1;//$item['price'];
+                                }
+                                //--VIPCoin-----------------------------------------------------
+                                if (in_array($typeCat['VipCoin'], $item['productData']['categories'])) {
+                                    $statisticInfo['receiptMoney_VipCoin'] += $item['price'];
+                                    $statisticInfo['receiptMoney_VipCoin_cnt'] += 1;//$item['price'];
+                                }
+                                //--Business support----------------------------------------------------
+                                if (in_array($typeCat['Business_support'], $item['productData']['categories'])) {
+                                    $statisticInfo['receiptMoney_BusinessSupport'] += $item['price'];
+                                    $statisticInfo['receiptMoney_BusinessSupport_cnt'] += 1;//$item['price'];
+                                }
+                                //--Balance_top_up------------------------------------------------------
+                                if (in_array($typeCat['Balance_top_up'], $item['productData']['categories'])) {
+                                    $statisticInfo['receiptMoney_BalanceTopUp'] += $item['price'];
+                                    $statisticInfo['receiptMoney_BalanceTopUp_cnt'] += 1;//$item['price'];
+                                }
+                            }
+                        } else {
+                            $statisticInfo['receiptMoney_cat_empty'] += $item['price'];
+                            $statisticInfo['receiptMoney_cat_empty_cnt'] += 1;//$item['price'];
+                        }
+                        //----------e:Composite-------
+
+                        //--WebWellness--
 //                    if (preg_match('/Фирменная сумка|Life Transfer/',$item['productName'] ) ) {
 //                        $statisticInfo['receiptMoney_Wellness']+=$item['price'];
 //                    }
@@ -362,7 +367,7 @@ class DefaultController extends BaseController
 //                            }
 //                        }
 //                    }
-                    //--VIPVIP-----------------------------------------------------
+                        //--VIPVIP-----------------------------------------------------
 //                    if (preg_match('/VIPVIP/',$item['productName'] ) ) {
 //                        if  ((!empty($item['productData']['categories'])) && (count($item['productData']['categories']) <=1)) {//cat len=1
 //                            $statisticInfo['receiptMoney_VipVip']+=$item['price'];
@@ -396,26 +401,32 @@ class DefaultController extends BaseController
 //                            }
 //                        }
 //                    }
-                    //--Business support----------------------------------------------------
+                        //--Business support----------------------------------------------------
 //                    if (preg_match('/активность бизнес|Сопровождение бизнеса/',$item['productName'] ) ) {
 //                        $statisticInfo['receiptMoney_BusinessSupport']+=$item['price'];
 //                    }
-                    //--Balance top-up-------------------------------------------------------
+                        //--Balance top-up-------------------------------------------------------
 //                    if (preg_match('/Balance top-up/',$item['productName'])) {
 //                        //$statisticInfo['receiptMoney_BalanceTopUp']+=$item['price'];
 //                    }
 
-                    //-----from old stat methods---------------------------------------------
-                    if (array_key_exists($item['product'], $listProductsType)) {
-                        try {
-                            $statisticInfo['generalReceiptMoney_' . $typeProject[$listProductsType[$item['product']]]] += $item['price'];
-                        } catch (\Exception $e) {
-                            $statisticInfo['generalReceiptMoney_VipCoin'] = 0;
-                            $statisticInfo['generalReceiptMoney_Wellness'] = 0;
-                            $statisticInfo['generalReceiptMoney_VipVip'] = 0;
+                        //-----from old stat methods---------------------------------------------
+                        if (array_key_exists($item['product'], $listProductsType)) {
+                            try {
+                                $statisticInfo['generalReceiptMoney_' . $typeProject[$listProductsType[$item['product']]]] += $item['price'];
+                            } catch (\Exception $e) {
+                                $statisticInfo['generalReceiptMoney_VipCoin'] = 0;
+                                $statisticInfo['generalReceiptMoney_Wellness'] = 0;
+                                $statisticInfo['generalReceiptMoney_VipVip'] = 0;
+
+                            }
+
 
                         }
-
+                    } else {//--product old
+                        $statisticInfo['receiptMoney_Product_old'] += $item['price'];
+                        $statisticInfo['receiptMoney_Product_old_cnt'] += 1;
+                        $statisticInfo['receiptMoney_Product_old_str'] .= strval($item['product']).'-'.$item['username'].';';
 
                     }
                 }//--foreach--

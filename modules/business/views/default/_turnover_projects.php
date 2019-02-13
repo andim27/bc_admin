@@ -21,4 +21,5 @@ use app\components\THelper;
 <table style="width:100%">
     <tr><td  width="25%"><span title="Факт выполнения">BALANCETOPUP(f):</span></td><td align="right"><span class="h4 m-t-xs"><?=number_format(round($statisticInfo['receiptMoney_BalanceTopUp_f']), 0, ',', ' ');?></span></td></tr>
     <tr><td  width="50%"><span title="Продукты без категорий">Products(no cat):(<span><?=$statisticInfo['receiptMoney_cat_empty_cnt']?></span>):</span></td><td align="right"><span class="h4 m-t-xs"><?=number_format(round($statisticInfo['receiptMoney_cat_empty']), 0, ',', ' ');?></span></td></tr>
+    <tr><td  width="50%"><span title="Продукты старые:<?=$statisticInfo['receiptMoney_Product_old_str'] ?>">Products(old):(<span><?=$statisticInfo['receiptMoney_Product_old_cnt']?></span>):</span></td><td align="right"><span class="h4 m-t-xs"><?=number_format(round($statisticInfo['receiptMoney_Product_old']), 0, ',', ' ');?></span></td></tr>
 </table>
