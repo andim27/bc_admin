@@ -12,6 +12,7 @@ use app\models\Repayment;
 use app\models\RepaymentAmounts;
 use app\models\Sales;
 use app\models\PreUp;
+use app\models\Users;
 use app\models\SendingWaitingParcel;
 use app\models\Settings;
 use app\models\StatusSales;
@@ -1737,6 +1738,10 @@ class SaleReportController extends BaseController
             ])
             ->orderBy(['created_at' => SORT_DESC]) //SORT_ASC//SORT_DESC//
             ->all();
+        foreach ($infoSale as $info_item) {
+            $info_user = @Users::find()->where(['_id'=>new ObjectID($info_item['author_id'])])->one();
+            $info_item['author_name']  = @$info_user->username;
+        }
         if ($p_key !=(date('d')+1)) {
             $p_key = null;
         }

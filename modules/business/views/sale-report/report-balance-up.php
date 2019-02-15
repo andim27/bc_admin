@@ -107,6 +107,7 @@ function statusIcon($status_str) {
                 <th><?=THelper::t('user')?></th>
                 <th><?=THelper::t('sum')?></th>
                 <th><?=THelper::t('kind')?></th>
+                <th><?=THelper::t('author')?></th>
                 <th width="25%"><?=THelper::t('comments')?></th>
                 <th><?=THelper::t('status')?></th>
                 <?php
@@ -129,6 +130,7 @@ function statusIcon($status_str) {
                         <td><?=$item['username']?></td>
                         <td><?=$item['amount']?></td>
                         <td><?=isset($item['kind'])?THelper::kindTranslate($item['kind']) :'?'//balanceMesssage('kind',$item['whenceSale']);?></td>
+                        <td width="15%"><?= $item['author_name'] ?? '...';?></td>
                         <td width="25%"><?= $item['comment'] ?? '...'//balanceMesssage('comment',$item['whenceSale']);?></td>
                         <td id="status-<?=$item['_id'] ?>"><?=statusIcon(($item['status'] ?? ''));?></td>
 
