@@ -260,6 +260,7 @@ class SaleController extends BaseController {
 
             if(!empty($request['orderId'])){
                 $order = Order::findOne(['orderId'=>(int)$request['orderId']]);
+               
                 if(!empty($order)){
                     $sale = Sales::findOne(['orderId'=>$order->_id]);
                 }
@@ -389,6 +390,7 @@ class SaleController extends BaseController {
 
                 if(!empty($sale)){
                     $sale->statusShowroom = $request['statusShowroom'];
+                    $sale->dateCloseSale = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
 
                     if($sale->save()){
                         $response = [

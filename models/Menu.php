@@ -625,20 +625,20 @@ Class Menu
                     [
                         'key'   =>  'compensation_table',
                         'label' => THelper::t('compensation_table'),
-                        'url' => ['showrooms/compensation-table'],
-                        'action' => 'compensation-table',
+                        'url' => ['showrooms/compensation-table-consolidated'],
+                        'action' => 'compensation-table-consolidated',
                     ],
                     [
                         'key'   =>  'charge_compensation',
                         'label' => THelper::t('charge_compensation'),
-                        'url' => ['showrooms/charge-compensation'],
-                        'action' => 'charge-compensation',
+                        'url' => ['showrooms/charge-compensation-consolidated'],
+                        'action' => 'charge-compensation-consolidated',
                     ],
                     [
                         'key'   =>  'reception_issue_goods',
                         'label' => THelper::t('reception_issue_goods'),
-                        'url' => ['showrooms/reception-issue-goods'],
-                        'action' => 'reception-issue-goods',
+                        'url' => ['showrooms/reception-issue-goods-issue'],
+                        'action' => 'reception-issue-goods-issue',
                     ],
                     [
                         'key'   =>  'showrooms_repair',
