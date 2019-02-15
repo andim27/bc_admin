@@ -993,8 +993,6 @@
 
     $('.filterInfo').datepicker().on('changeDate',function (e) {
 
-        console.log(e)
-
         var link = window.location.href;
 
         $('.filterInfo').each(function () {

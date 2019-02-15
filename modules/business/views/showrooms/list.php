@@ -122,9 +122,11 @@
             <div class="row m-b-sm">
                 <div class="col-md-4">
                     <span class="inline p-t-3p">Подал заявку</span>
-                    <select name="Showroom[userId]" class="form-control m-b-none showroomApplied pull-right w-50 messengerDiv h-27p" required="required">
-                        <option>Кто подал заявку</option>
-                    </select>
+                    <?=Html::dropDownList('Showroom[userId]',false,[],[
+                        'class'     => 'form-control m-b-none showroomApplied pull-right w-50 messengerDiv h-27p',
+                        'required'  => true,
+                        'prompt'     => 'Кто подал заявку'
+                    ])?>
                 </div>
                 <div class="col-md-4 p-t-3p">
                     <input type="checkbox" class="anotherCheckbox">
@@ -177,7 +179,7 @@
                         <div class="row m-b-sm blDelivery" >
                             <input type="hidden" name="Showroom[delivery][0][title]" value="Курьером" class="deliveryTitle">
                             <div class="col-md-6">
-                                <span class="w-195p inline m-t--9">Стоисость доставки курьером </span>
+                                <span class="w-195p inline m-t--9">Стоимость доставки курьером </span>
                                 <input type="text" name="Showroom[delivery][0][price]" class="deliveryPrice pull-right w-69 text-center" placeholder="EUR">
                             </div>
                             <div class="col-md-6">
@@ -374,7 +376,9 @@
             <div class="row">
         <div class="col-sm-4 pull-right">
             <?=Html::dropDownList('Showroom[status]',false,Showrooms::getStatus(),[
-                'class' => 'form-control m-b w-45 inline m-b-none stateShowroom'
+                'class'     => 'form-control m-b w-45 inline m-b-none stateShowroom',
+                'required'  => true,
+                'prompt'     => 'Выберите статус шоу-рума'
             ])?>
 
             <input type="submit" class="btn btn-success pull-right" value="Сохранить">
@@ -393,7 +397,7 @@
 
         var listRequest = getListRequest();
 
-        $('.showroomInfo').find('.showroomApplied').html('<option>Кто подал заявку</option>');
+        $('.showroomInfo').find('.showroomApplied').html('<option value>Кто подал заявку</option>');
         $.each(listRequest, function(key, item) {
             $('.showroomInfo')
                 .find('.showroomApplied')

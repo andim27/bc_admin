@@ -28,6 +28,8 @@ use app\components\THelper;
  *
  * @property Countries $countryInfo
  * @property Cities $cityInfo
+ * @property Users $infoUser
+ * @property Users $infoOtherUser
  *
  * Class Showrooms
  * @package app\models
@@ -74,12 +76,29 @@ class Showrooms extends \yii2tech\embedded\mongodb\ActiveRecord
     {
         return $this->hasOne(Countries::className(),['_id'=>'countryId']);
     }
+
     /**
      * @return \yii\db\ActiveQueryInterface
      */
     public function getCityInfo()
     {
         return $this->hasOne(Cities::className(),['_id'=>'cityId']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getInfoUser()
+    {
+        return $this->hasOne(Users::className(),['_id'=>'userId']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getInfoOtherUser()
+    {
+        return $this->hasOne(Users::className(),['username'=>'otherLogin']);
     }
 
 

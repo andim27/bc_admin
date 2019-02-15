@@ -10,8 +10,8 @@
 <section class="panel panel-default">
     <div class="row">
         <div class="col-md-6">
-            <?=Html::dropDownList('',$filter['showroomId'],Showrooms::getListForFilter(),[
-                'class'     => 'filterInfo form-control m',
+            <?=Html::dropDownList('',$filter['showroomId'],$listShowroomsForSelect,[
+                'class'     => 'filterInfoSelect form-control m',
                 'prompt'    => 'Список активных шоурумов',
                 'data'      => [
                     'filter'    => 'showroomId'
@@ -21,9 +21,14 @@
         <div class="col-md-6">
             <div class="m">
                 <span class="m-r">С</span>
-                <input id="mainFrom" class="input-s datepicker-input inline input-showroom form-control text-center filterInfo" size="16" type="text" value="<?=$filter['dateFrom']?>" data-date-format="yyyy-mm-dd" data-filter="dateFrom">
+                <input id="mainFrom" class="input-s datepicker-input inline input-showroom form-control text-center filterInfoDate"
+                       size="16" type="text" value="<?=$filter['dateFrom']?>" data-date-format="yyyy-mm" data-filter="dateFrom"
+                       data-date-viewMode="months" data-date-minViewMode="months" data-date-maxViewMode="months"
+                       >
                 <span class="m-r m-l">ПО</span>
-                <input id="mainTo" class="input-s datepicker-input inline input-showroom form-control text-center filterInfo" size="16" type="text" value="<?=$filter['dateTo']?>" data-date-format="yyyy-mm-dd" data-filter="dateTo">
+                <input id="mainTo" class="input-s datepicker-input inline input-showroom form-control text-center filterInfoDate"
+                       size="16" type="text" value="<?=$filter['dateTo']?>" data-date-format="yyyy-mm" data-filter="dateTo"
+                       data-date-viewMode="months" data-date-minViewMode="months" data-date-maxViewMode="months">
             </div>
         </div>
     </div>
@@ -32,10 +37,10 @@
         <div class="col-md-12">
             <header class="panel-heading bg-light">
                 <ul class="nav nav-tabs nav-justified">
-                    <li class="active"><a href="#main" data-toggle="tab">Сводная</a></li>
-                    <li><a href="#profit" data-toggle="tab">Начисления</a></li>
-                    <li><a href="#purchases" data-toggle="tab">Покупки</a></li>
-                    <li><a href="#onBalance" data-toggle="tab">Товар на балансе</a></li>
+                    <li class="active"><a href="javascript:void(0)">Сводная</a></li>
+                    <li><a href="/ru/business/showrooms/compensation-table-accruals" >Начисления</a></li>
+                    <li><a href="/ru/business/showrooms/compensation-table-purchases" >Покупки</a></li>
+                    <li><a href="/ru/business/showrooms/compensation-table-on-balance" >Товар на балансе</a></li>
                 </ul>
             </header>
             <div class="panel-body">
@@ -56,15 +61,6 @@
                                             Общий оборот
                                         </th>
                                         <th>
-                                            Webwellness
-                                        </th>
-                                        <th>
-                                            Vipcoin
-                                        </th>
-                                        <th>
-                                            VIPVIP
-                                        </th>
-                                        <th>
                                             Начислений
                                         </th>
                                         <th>
@@ -82,15 +78,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if(!empty($compensationСonsolidate)){ ?>
-                                        <?php foreach ($compensationСonsolidate as $kCompensationСonsolidate=>$itemCompensationСonsolidate) { ?>
+                                    <?php if(!empty($compensationConsolidate)){ ?>
+                                        <?php foreach ($compensationConsolidate as $kCompensationСonsolidate=>$itemCompensationСonsolidate) { ?>
                                             <tr>
                                                 <td><?=$itemCompensationСonsolidate['country']?></td>
                                                 <td><?=$itemCompensationСonsolidate['city']?></td>
                                                 <td><?=$itemCompensationСonsolidate['turnoverTotal']?></td>
-                                                <td><?=$itemCompensationСonsolidate['turnoverWebWellness']?></td>
-                                                <td><?=$itemCompensationСonsolidate['turnoverVipCoin']?></td>
-                                                <td><?=$itemCompensationСonsolidate['turnoverVipVip']?></td>
                                                 <td><?=$itemCompensationСonsolidate['profit']?></td>
                                                 <td><?=$itemCompensationСonsolidate['paidOffBankTransfer']?></td>
                                                 <td><?=$itemCompensationСonsolidate['paidOffBC']?></td>
@@ -107,187 +100,10 @@
                             </table>
                         </div>
                     </div>
-                    <div class="tab-pane" id="profit">
-                        <!-- Начисления -->
-                        <div class="row">
-                            <div class="col-md-12 m-b">
-                                <span class="m-r m-l">Логин</span>
-                                <span class="font-bold loginProfit">Main</span>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table id="table-profit" class="table table-users table-striped datagrid m-b-sm">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            Дата выплаты
-                                        </th>
-                                        <th>
-                                            Выплачено безналом
-                                        </th>
-                                        <th>
-                                            Скидки на лиц.сч.
-                                        </th>
-                                        <th>
-                                            Оплата ремонта
-                                        </th>
-                                        <th>
-                                            Остаток
-                                        </th>
-                                        <th>
-                                            Комментарий
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="purchases">
-                        <!-- Покупки -->
-                        <div class="table-responsive">
-                            <table id="table-purchases" class="table table-users table-striped datagrid m-b-sm">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            Дата
-                                        </th>
-                                        <th>
-                                            Время
-                                        </th>
-                                        <th>
-                                            Логин
-                                        </th>
-                                        <th>
-                                            ФИО
-                                        </th>
-                                        <th>
-                                            Телефон
-                                        </th>
-                                        <th>
-                                            Название продукта
-                                        </th>
-                                        <th>
-                                            Статус
-                                        </th>
-                                        <th>
-                                            Начисление
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td>7</td>                                        
-                                        <td>8</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td>7</td>                                        
-                                        <td>8</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
-                                        <td>6</td>
-                                        <td>7</td>                                        
-                                        <td>8</td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-                    <div class="tab-pane" id="onBalance">
-                        <!-- Товар на балансе -->
-                        <div class="table-responsive">
-                            <table id="table-onBalance" class="table table-users table-striped datagrid m-b-sm">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            Название товара
-                                        </th>
-                                        <th>
-                                            Отправлено
-                                        </th>
-                                        <th>
-                                            В наличие
-                                        </th>
-                                        <th>
-                                            Стоимость
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-   
-
 </section>
 
 <div class="modal fade" id="showroomData">
@@ -467,15 +283,6 @@
 
 <script>
 
-    $('.filterInfo').on('change',function () {
-        var link = window.location.href;
-
-        $('.filterInfo').each(function () {
-            link = updateQueryStringParameter(link,$(this).data('filter'),$(this).val());
-        });
-
-        document.location.href = link;
-    });
 
     $('table').on('click','.editShowroomData',function(){
 
@@ -548,6 +355,51 @@
         });
     });
 
+    function clearShowroomForm() {
+        var form = $('.showroomForm');
+
+        form.find('input[name="Showroom[id]"]').val('');
+        form.find('input[name="Showroom[cityId]"]').val('');
+        form.find('input[name="Showroom[countryId]"]').val('');
+
+        form.find('.worktimeShowroom').each(function () {
+            $(this).find('.worktimeTimeFrom').val('');
+            $(this).find('.worktimeTimeTo').val('');
+            $(this).find('.worktimeTimeHoliday').prop( "checked", false );
+        });
+
+        form.find('.phoneShowroom').each(function (indx) {
+            $(this).find('input').val('');
+        });
+
+        form.find('.showroomCity').text('');
+        form.find('.shoowroomAddress').val('');
+    }
+
+    $('.filterInfoSelect').on('change',function () {
+        var link = window.location.href;
+
+        link = updateQueryStringParameter(link,$(this).data('filter'),$(this).val());
+
+        document.location.href = link;
+    });
+
+    $('.filterInfoDate').datepicker().on('changeDate', function (e) {
+        var link = window.location.href;
+        var date = new Date(e.date);
+        var newDate = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2);
+        var newFilter = e.currentTarget.dataset.filter;
+
+        $('.filterInfoDate').each(function () {
+            link = updateQueryStringParameter(link,$(this).data('filter'),$(this).datepicker({ dateFormat: 'yy-mm' }).val());
+        });
+
+        link = updateQueryStringParameter(link,newFilter,newDate);
+
+        document.location.href = link;
+
+    });
+
     function updateQueryStringParameter(uri, key, value) {
         var re = new RegExp("([?&])" + key + "=.*?(&|#|$)", "i");
         if( value === undefined ) {
@@ -569,27 +421,6 @@
                 return uri + separator + key + "=" + value + hash;
             }
         }
-    }
-
-    function clearShowroomForm() {
-        var form = $('.showroomForm');
-
-        form.find('input[name="Showroom[id]"]').val('');
-        form.find('input[name="Showroom[cityId]"]').val('');
-        form.find('input[name="Showroom[countryId]"]').val('');
-
-        form.find('.worktimeShowroom').each(function () {
-            $(this).find('.worktimeTimeFrom').val('');
-            $(this).find('.worktimeTimeTo').val('');
-            $(this).find('.worktimeTimeHoliday').prop( "checked", false );
-        });
-
-        form.find('.phoneShowroom').each(function (indx) {
-            $(this).find('input').val('');
-        });
-
-        form.find('.showroomCity').text('');
-        form.find('.shoowroomAddress').val('');
     }
 
 </script>

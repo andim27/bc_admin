@@ -28,6 +28,7 @@ class PreUp extends ActiveRecord
             'created_at',
             'name',
             'author_id',
+            'author_name',
             'product',
             'amount',
             'iduser',
