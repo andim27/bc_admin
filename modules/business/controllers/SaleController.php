@@ -323,7 +323,8 @@ class SaleController extends BaseController {
                     'typeDelivery'  => $typeDelivery,
                     'dateDelivery'  => $dateDelivery,
                     'addressDelivery'=> (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
-                    'products'      => $products
+                    'products'      => $products,
+                    'flHasAccruals' => ((!empty($sale->infoProduct->paymentsToRepresentive) && !empty($sale->infoProduct->paymentsToStock)) ? true : false)
                 ];
             } else {
                 $response = ['error'=>'not order'];

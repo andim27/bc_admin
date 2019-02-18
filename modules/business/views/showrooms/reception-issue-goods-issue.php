@@ -655,48 +655,57 @@
             data: {orderId:orderId},
             success: function(msg){
                 if(msg.error === ''){
+                    if(msg.flHasAccruals === true){
+                        blInfo.find('.issue-date').text(msg.dateCreate);
+                        blInfo.find('.issue-login').text(msg.login);
+                        blInfo.find('.issue-FIO').text(msg.secondName + ' ' + msg.firstName);
+                        blInfo.find('.issue-phones').text(msg.phone1 + ' ' + msg.phone2);
 
-                    blInfo.find('.issue-date').text(msg.dateCreate);
-                    blInfo.find('.issue-login').text(msg.login);
-                    blInfo.find('.issue-FIO').text(msg.secondName + ' ' + msg.firstName);
-                    blInfo.find('.issue-phones').text(msg.phone1 + ' ' + msg.phone2);
+                        blInfo.find('.issueSelect').prop( "disabled", true ).val(msg.statusShowroom);
 
-                    blInfo.find('.issueSelect').prop( "disabled", true ).val(msg.statusShowroom);
+                        blInfo.find('.issue-dateDelivery').text(msg.dateDelivery);
+                        blInfo.find('.issue-address').text(msg.addressDelivery);
 
-                    blInfo.find('.issue-dateDelivery').text(msg.dateDelivery);
-                    blInfo.find('.issue-address').text(msg.addressDelivery);
+                        var blOrder = blInfo.find('.issue-order');
+                        blOrder.html('');
+                        $.each(msg.products, function( k, v ) {
+                            blOrder.append('<li>'+v.name+'</li>');
+                        });
 
-                    var blOrder = blInfo.find('.issue-order');
-                    blOrder.html('');
-                    $.each(msg.products, function( k, v ) {
-                        blOrder.append('<li>'+v.name+'</li>');
-                    });
+                        if(msg.showroomId === ''){
+                            blInfo.find('.checkLogin').data({id:msg.saleId}).prop('disabled', false);
+                        } else {
+                            blInfo.find('.blError').html(
+                                '<div class="alert alert-danger fade in">' +
+                                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                                'Данный заказ уже привязан к шоу-руму' +
+                                '</div>'
+                            );
 
-                    if(msg.showroomId === ''){
-                        blInfo.find('.checkLogin').data({id:msg.saleId}).prop('disabled', false);
+                            blInfo.find('.checkLogin').data({id:''}).prop('disabled', true);
+                        }
+
+                        if(msg.dateCreateY < 2019){
+                            blInfo.find('.blError').html(
+                                '<div class="alert alert-danger fade in">' +
+                                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                                'Данный заказ создан в 2018 году' +
+                                '</div>'
+                            );
+
+                            blInfo.find('.checkLogin').data({id:''}).prop('disabled', true);
+                        }
+
+                        $('.issueOrderDetail').show();
                     } else {
-                        blInfo.find('.blError').html(
+                        $('.issueOrderRow .blError').html(
                             '<div class="alert alert-danger fade in">' +
                             '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
-                            'Данный заказ уже привязан к шоу-руму' +
+                            'Данный заказ не возможно подобрать' +
                             '</div>'
                         );
-
-                        blInfo.find('.checkLogin').data({id:''}).prop('disabled', true);
                     }
 
-                    if(msg.dateCreateY < 2019){
-                        blInfo.find('.blError').html(
-                            '<div class="alert alert-danger fade in">' +
-                            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
-                            'Данный заказ создан в 2018 году' +
-                            '</div>'
-                        );
-
-                        blInfo.find('.checkLogin').data({id:''}).prop('disabled', true);
-                    }
-
-                    $('.issueOrderDetail').show();
                 } else {
                     $('.issueOrderRow .blError').html(
                         '<div class="alert alert-danger fade in">' +
