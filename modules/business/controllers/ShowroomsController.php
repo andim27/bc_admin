@@ -586,51 +586,55 @@ class ShowroomsController extends BaseController
             /** @var Sales $sale */
             foreach ($sales as $sale) {
 
-                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
-                $dateCreateM = $sale->dateCreate->toDateTime()->format('Y-m');
+                if(!empty($sale->infoProduct->paymentsToRepresentive) && !empty($sale->infoProduct->paymentsToStock)){
+                    $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+                    $dateCreateM = $sale->dateCreate->toDateTime()->format('Y-m');
 
-                $dateCloseSaleM = '';
-                if(!empty($sale->dateCloseSale)){
-                    $dateCloseSaleM = $sale->dateCloseSale->toDateTime()->format('Y-m');
-                }
-
-                if(!empty($sale->showroomId)){
-                    $showroomId = strval($sale->showroomId);
-                    $showroomName = $listShowroomsForSelect[$showroomId];
-
-                    if(empty($turnoverShowroom[$showroomId][$dateCreateM])){
-                        $turnoverShowroom[$showroomId][$dateCreateM] = 0;
+                    $dateCloseSaleM = '';
+                    if(!empty($sale->dateCloseSale)){
+                        $dateCloseSaleM = $sale->dateCloseSale->toDateTime()->format('Y-m');
                     }
-                    $turnoverShowroom[$showroomId][$dateCreateM] += $sale->price;
-                } else {
-                    $showroomId = '';
-                    $showroomName = '';
-                }
 
-                $accrual = '';
-                if(!empty($sale->statusShowroom) && $sale->statusShowroom == Sales::STATUS_SHOWROOM_DELIVERED){
-                    if($arrayTurnoverAccruals[$showroomId]['turnoverTotal'] > 10000 && !empty($sale->infoProduct->paymentsToRepresentive)){
-                        $accrual = $sale->infoProduct->paymentsToRepresentive;
-                    } else if(!empty($sale->infoProduct->paymentsToStock)) {
-                        $accrual = $sale->infoProduct->paymentsToStock;
+                    if(!empty($sale->showroomId)){
+                        $showroomId = strval($sale->showroomId);
+                        $showroomName = $listShowroomsForSelect[$showroomId];
+
+                        if(empty($turnoverShowroom[$showroomId][$dateCreateM])){
+                            $turnoverShowroom[$showroomId][$dateCreateM] = 0;
+                        }
+                        $turnoverShowroom[$showroomId][$dateCreateM] += $sale->price;
+                    } else {
+                        $showroomId = '';
+                        $showroomName = '';
                     }
+
+                    $accrual = '';
+                    if(!empty($sale->statusShowroom) && $sale->statusShowroom == Sales::STATUS_SHOWROOM_DELIVERED){
+                        if($arrayTurnoverAccruals[$showroomId]['turnoverTotal'] > 10000 && !empty($sale->infoProduct->paymentsToRepresentive)){
+                            $accrual = $sale->infoProduct->paymentsToRepresentive;
+                        } else if(!empty($sale->infoProduct->paymentsToStock)) {
+                            $accrual = $sale->infoProduct->paymentsToStock;
+                        }
+                    }
+
+                    $salesShowroom[strval($sale->_id)] = [
+                        'saleId'        => strval($sale->_id),
+                        'dateCreate'    => $dateCreate,
+                        'dateCloseSale' => $dateCloseSaleM,
+                        'login'         => $sale->infoUser->username,
+                        'secondName'    => $sale->infoUser->secondName,
+                        'firstName'     => $sale->infoUser->firstName,
+                        'phone1'        => $sale->infoUser->phoneNumber,
+                        'phone2'        => $sale->infoUser->phoneNumber2,
+                        'productName'   => $sale->productName,
+                        'showroom'      => $showroomName,
+                        'showroomId'    => $showroomId,
+                        'status'        => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
+                        'accrual'       => $accrual
+                    ];
                 }
 
-                $salesShowroom[strval($sale->_id)] = [
-                    'saleId'        => strval($sale->_id),
-                    'dateCreate'    => $dateCreate,
-                    'dateCloseSale' => $dateCloseSaleM,
-                    'login'         => $sale->infoUser->username,
-                    'secondName'    => $sale->infoUser->secondName,
-                    'firstName'     => $sale->infoUser->firstName,
-                    'phone1'        => $sale->infoUser->phoneNumber,
-                    'phone2'        => $sale->infoUser->phoneNumber2,
-                    'productName'   => $sale->productName,
-                    'showroom'      => $showroomName,
-                    'showroomId'    => $showroomId,
-                    'status'        => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
-                    'accrual'       => $accrual
-                ];
+
             }
         }
 
