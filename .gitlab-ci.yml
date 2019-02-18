@@ -9,7 +9,7 @@ stages:
 variables:
   CONTAINER_REGISTRY: eu.gcr.io/bpt-core
   PROD_NS: bpt
-  DEV_NS: bpt-dev
+  DEV_NS: bpt
   DEV_URL: admin-dev.bpt.ooo.ua
   STAGE_URL: admin-stage.bpt.ooo.ua
   PROD_URL: admin.businessprocess.biz
@@ -82,10 +82,10 @@ deploy_dev:
     only:
         - dev
     script:
-        - echo "${KUBE_CA_PEM}" > kube_ca.pem
-        - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
-        - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
-        - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
+        - echo "${API_CA_DEV}" > kube_ca.pem
+        - kubectl config set-cluster default-cluster --server=${API_URL_DEV} --certificate-authority="$(pwd)/kube_ca.pem"
+        - kubectl config set-credentials default-admin --token=${API_TOKEN_DEV}
+        - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace $PROD_NS
         - kubectl config use-context default-system
         - cd kube
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml ingress.yaml
@@ -106,10 +106,10 @@ deploy_stage:
     only:
         - master
     script:
-        - echo "${KUBE_CA_PEM}" > kube_ca.pem
-        - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
-        - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
-        - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
+        - echo "${API_CA_PROD}" > kube_ca.pem
+        - kubectl config set-cluster default-cluster --server=${API_URL_PROD} --certificate-authority="$(pwd)/kube_ca.pem"
+        - kubectl config set-credentials default-admin --token=${API_TOKEN_PROD}
+        - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace $PROD_NS
         - kubectl config use-context default-system
         - cd kube
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml ingress.yaml
@@ -130,10 +130,10 @@ deploy_prod:
         - master
     when: manual
     script:
-        - echo "${KUBE_CA_PEM}" > kube_ca.pem
-        - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
-        - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
-        - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
+        - echo "${API_CA_PROD}" > kube_ca.pem
+        - kubectl config set-cluster default-cluster --server=${API_URL_PROD} --certificate-authority="$(pwd)/kube_ca.pem"
+        - kubectl config set-credentials default-admin --token=${API_TOKEN_PROD}
+        - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace $PROD_NS
         - kubectl config use-context default-system
         - cd kube
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml ingress.yaml
