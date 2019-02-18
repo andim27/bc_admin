@@ -82,7 +82,7 @@ $config = [
         // for mongodb
         'mongodb' => [
             'class' => '\yii\mongodb\Connection',
-            'dsn' => 'mongodb://velton-1.ooo.ua/gnc',
+            'dsn' => 'mongodb://10.10.1.9/gnc',
         ],
 
         'urlManager' => [

@@ -6,6 +6,9 @@ use app\components\THelper;
 use MongoDB\BSON\ObjectID;
 
 /**
+ * @inheritdoc
+ * @property PartsAccessories $partsAccessory
+ *
  * Class PartsAccessoriesInWarehouse
  * @package app\models
  */
@@ -31,6 +34,14 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
             'warehouse_id',            
             'number',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getPartsAccessory()
+    {
+        return $this->hasOne(PartsAccessories::className(),['_id'=>'parts_accessories_id']);
     }
 
 

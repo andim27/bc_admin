@@ -2,6 +2,8 @@
 
 namespace app\modules\business\controllers;
 
+use app\models\PartsAccessoriesInWarehouse;
+use app\models\Products;
 use app\models\Sales;
 use app\models\ShowroomsCompensation;
 use app\models\Showrooms;
@@ -667,23 +669,90 @@ class ShowroomsController extends BaseController
         } else{
             $filter['showroomId'] = false;
         }
+        
+        if(!empty($request['showroomId'])){
+            $filter['showroomId'] = $request['showroomId'];
+        }
+        
+
+        $partsAccessories = [];
+        $modelPartsAccessories = PartsAccessoriesInWarehouse::find()
+            ->filterWhere((!empty($filter['showroomId']) ? ['warehouse_id'=>new ObjectId($filter['showroomId'])] : []))
+            ->all();
+        if(!empty($modelPartsAccessories)){
+            /** @var PartsAccessoriesInWarehouse $itemPartsAccessory */
+            foreach ($modelPartsAccessories as $itemPartsAccessory) {
+
+                $number = $priceTotal = 0;
+                if(!empty($itemPartsAccessory->number)){
+                    $number = $itemPartsAccessory->number;
+                    $modelInfoProduct = Products::findOne(['product_connect_to_natural'=>strval($itemPartsAccessory->parts_accessories_id)]);
+
+                    if(!empty($modelInfoProduct)){
+                        $priceTotal = number_format($modelInfoProduct->price * $number, 2, ',', ' ');
+                    }
+
+                }
+
+                $partsAccessories[] = [
+                    'title'                     => $itemPartsAccessory->partsAccessory->title,
+                    'number'                    => $number,
+                    'numberDelivering'          => '-',
+                    'priceTotal'                => $priceTotal
+                ];
+            }
+        }
 
 
         if(!empty($request['showroomId'])){
             $filter['showroomId'] = $request['showroomId'];
         }
 
-        $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : '2019-01');
-        $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
-        $infoDateTo = explode("-",$filter['dateTo']);
-        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
-        
+
         return $this->render('compensation-table-on-balance', [
             'filter'                    =>  $filter,
-            'listShowroomsForSelect'    =>  $listShowroomsForSelect
+            'listShowroomsForSelect'    =>  $listShowroomsForSelect,
+            'partsAccessories'          =>  $partsAccessories
         ]);
     }
 
+    //TODO:KAA remove after link showroom with warehouse
+    public function actionTempBalance($fromWarehouseId,$toShowroomId)
+    {
+
+        $response = [];
+        $modelShowroom = PartsAccessoriesInWarehouse::find()
+            ->where(['warehouse_id'=>new ObjectId($toShowroomId)])
+            ->all();
+
+        if(empty($modelShowroom)){
+            $modelWarehouse = PartsAccessoriesInWarehouse::find()
+                ->where(['warehouse_id'=>new ObjectId($fromWarehouseId)])
+                ->all();
+
+            if(!empty($modelWarehouse)){
+                foreach ($modelWarehouse as $item) {
+                    $item->warehouse_id = new ObjectId($toShowroomId);
+
+                    if($item->save()){
+                        $response[] = [
+                            'product'   => $item->parts_accessories_id,
+                            'number'    => $item->number
+                        ];
+                    }
+                }
+
+
+            }
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r($response);
+        echo '</xmp>';
+        die();
+
+    }
 
     /**
      * Charge Compensation
@@ -955,44 +1024,47 @@ class ShowroomsController extends BaseController
             /** @var Sales $sale */
             foreach ($sales as $sale) {
 
-                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+                if(!empty($sale->infoProduct->paymentsToRepresentive) && !empty($sale->infoProduct->paymentsToStock)) {
 
-                $orderId = '';
-                if(!empty($sale->orderId)){
-                    $orderId = strval($sale->orderId);
-                }
+                    $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
 
-                $showroomIdSale = '';
-                if(!empty($sale->showroomId)){
-                    $showroomIdSale = strval($sale->showroomId);
-                }
-
-                $typeDelivery = $dateDelivery = '-';
-                if(isset($sale->delivery)){
-                    $typeDelivery = $sale->delivery['type'];
-
-                    if(!empty($sale->delivery['params']['date'])){
-                        $dateDelivery = date('Y-m-d', strtotime($dateCreate. ' + '.(int)$sale->delivery['params']['date'].' days'));
+                    $orderId = '';
+                    if (!empty($sale->orderId)) {
+                        $orderId = strval($sale->orderId);
                     }
-                }
 
-                $salesShowroom[strval($sale->_id)] = [
-                    'saleId'        => strval($sale->_id),
-                    'orderId'       => $orderId,
-                    'showroomId'    => $showroomIdSale,
-                    'pack'          => $sale->productData['productName'],
-                    'dateCreate'    => $dateCreate,
-                    'dateFinish'    => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
-                    'login'         => $sale->infoUser->username,
-                    'secondName'    => $sale->infoUser->secondName,
-                    'firstName'     => $sale->infoUser->firstName,
-                    'phone1'        => $sale->infoUser->phoneNumber,
-                    'phone2'        => $sale->infoUser->phoneNumber2,
-                    'statusShowroom'=> Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom  : Sales::STATUS_SHOWROOM_DELIVERING)),
-                    'typeDelivery'  => $typeDelivery,
-                    'dateDelivery'  => $dateDelivery,
-                    'addressDelivery'=> (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
-                ];
+                    $showroomIdSale = '';
+                    if (!empty($sale->showroomId)) {
+                        $showroomIdSale = strval($sale->showroomId);
+                    }
+
+                    $typeDelivery = $dateDelivery = '-';
+                    if (isset($sale->delivery)) {
+                        $typeDelivery = $sale->delivery['type'];
+
+                        if (!empty($sale->delivery['params']['date'])) {
+                            $dateDelivery = date('Y-m-d', strtotime($dateCreate . ' + ' . (int)$sale->delivery['params']['date'] . ' days'));
+                        }
+                    }
+
+                    $salesShowroom[strval($sale->_id)] = [
+                        'saleId' => strval($sale->_id),
+                        'orderId' => $orderId,
+                        'showroomId' => $showroomIdSale,
+                        'pack' => $sale->productData['productName'],
+                        'dateCreate' => $dateCreate,
+                        'dateFinish' => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
+                        'login' => $sale->infoUser->username,
+                        'secondName' => $sale->infoUser->secondName,
+                        'firstName' => $sale->infoUser->firstName,
+                        'phone1' => $sale->infoUser->phoneNumber,
+                        'phone2' => $sale->infoUser->phoneNumber2,
+                        'statusShowroom' => Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
+                        'typeDelivery' => $typeDelivery,
+                        'dateDelivery' => $dateDelivery,
+                        'addressDelivery' => (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
+                    ];
+                }
 
             }
         }
