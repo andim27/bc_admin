@@ -17,6 +17,7 @@ spec:
     spec:
       nodeSelector:
             ntype: bpt
+            app: admin
       containers:
       - name: admin
         image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
