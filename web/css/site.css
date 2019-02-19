@@ -492,9 +492,6 @@ input[name="EmergencyCommand[user_registration_txt]"] {
     display: none;
 }
 
-.issueOrderRow {
-    display: none;
-}
 
 .receiptGoodsRow {
     display: none;
@@ -596,6 +593,7 @@ input[name="EmergencyCommand[user_registration_txt]"] {
     border: 1px solid #e1e1e8;
     border-radius: 4px;
 }
+
 .datepicker.dropdown-menu {
     z-index: 10000;
 }
@@ -604,6 +602,6 @@ input[name="EmergencyCommand[user_registration_txt]"] {
     display: none;
 }
 
-.overflowXScroll{
+.overflowXScroll {
     overflow-x: scroll;
 }
