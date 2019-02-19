@@ -18,19 +18,6 @@
                 ]
             ])?>
         </div>
-        <div class="col-md-6">
-            <div class="m">
-                <span class="m-r">С</span>
-                <input id="mainFrom" class="input-s datepicker-input inline input-showroom form-control text-center filterInfoDate"
-                       size="16" type="text" value="<?=$filter['dateFrom']?>" data-date-format="yyyy-mm" data-filter="dateFrom"
-                       data-date-viewMode="months" data-date-minViewMode="months" data-date-maxViewMode="months"
-                >
-                <span class="m-r m-l">ПО</span>
-                <input id="mainTo" class="input-s datepicker-input inline input-showroom form-control text-center filterInfoDate"
-                       size="16" type="text" value="<?=$filter['dateTo']?>" data-date-format="yyyy-mm" data-filter="dateTo"
-                       data-date-viewMode="months" data-date-minViewMode="months" data-date-maxViewMode="months">
-            </div>
-        </div>
     </div>
 
     <div class="row">
@@ -66,7 +53,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    <?php if(!empty($partsAccessories)){ ?>
+                                        <?php foreach($partsAccessories as $item){ ?>
+                                            <tr>
+                                                <td><?=$item['title']?></td>
+                                                <td><?=$item['numberDelivering']?></td>
+                                                <td><?=$item['number']?></td>
+                                                <td><?=$item['priceTotal']?></td>
+                                            </tr>
+                                        <?php } ?>
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -76,13 +72,7 @@
             </div>
         </div>
     </div>
-   
-
 </section>
-
-
-<?php $this->registerCssFile('/js/datepicker/datepicker.css', ['position' => yii\web\View::POS_HEAD]); ?>
-<?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js', ['position' => yii\web\View::POS_END]); ?>
 
 <script>
 
@@ -92,22 +82,6 @@
         link = updateQueryStringParameter(link,$(this).data('filter'),$(this).val());
 
         document.location.href = link;
-    });
-
-    $('.filterInfoDate').datepicker().on('changeDate', function (e) {
-        var link = window.location.href;
-        var date = new Date(e.date);
-        var newDate = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2);
-        var newFilter = e.currentTarget.dataset.filter;
-
-        $('.filterInfoDate').each(function () {
-            link = updateQueryStringParameter(link,$(this).data('filter'),$(this).datepicker({ dateFormat: 'yy-mm' }).val());
-        });
-
-        link = updateQueryStringParameter(link,newFilter,newDate);
-
-        document.location.href = link;
-
     });
 
     function updateQueryStringParameter(uri, key, value) {
