@@ -244,13 +244,13 @@
             </div>
             <div class="modal-body">
 
-                <div class="panel panel-default issueOrderRow">
-                    <div class="panel-body">
+                <div class="issueOrderRow">
+                    <div>
                         <div class="row">
                             <div class="col-md-12 blError"></div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-4 col-md-offset-2">
                                 <input type="text" class="form-control orderId" placeholder="Номер накладной">
                             </div>
                             <div class="col-md-4">
@@ -346,7 +346,6 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <a class="btn btn-danger" data-dismiss="modal">Закрыть</a>
                                 <button type="button" class="btn btn-sm btn-success pull-right checkLogin m-n" disabled="disabled">
                                     Подобрать заказ
                                 </button>
@@ -355,6 +354,13 @@
                     </div>
                 </div>
 
+                <div class="row m-t-lg">
+                    <div class="col-md-12 text-center">
+                        <div class="col-sm-8 col-sm-offset-2 form-group">
+                            <a class="btn btn-danger" data-dismiss="modal">Закрыть</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
