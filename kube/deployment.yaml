@@ -22,5 +22,11 @@ spec:
         image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
         ports:
         - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
       imagePullSecrets:
         - name: gitlab-registry
