@@ -19,6 +19,17 @@ use app\models\api;
 
 class DefaultController extends BaseController
 {
+    public function actions() {
+
+        return [
+            'error' => [
+
+                'class' => 'yii\web\ErrorAction',
+                //'layout' => '@app/modules/business/views/layouts/start',
+            ]
+        ];
+    }
+
     public function actionIndex()
     {
         $statisticInfo = [];

@@ -2,9 +2,11 @@
 
 namespace app\modules\business\controllers;
 
+use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
 use app\models\Sales;
+use app\models\SendingWaitingParcel;
 use app\models\ShowroomsCompensation;
 use app\models\Showrooms;
 use app\models\Users;
@@ -694,20 +696,40 @@ class ShowroomsController extends BaseController
 
                 }
 
-                $partsAccessories[] = [
+                $partsAccessories[strval($itemPartsAccessory->parts_accessories_id)] = [
                     'title'                     => $itemPartsAccessory->partsAccessory->title,
                     'number'                    => $number,
-                    'numberDelivering'          => '-',
+                    'numberDelivering'          => 0,
                     'priceTotal'                => $priceTotal
                 ];
             }
         }
 
 
-        if(!empty($request['showroomId'])){
-            $filter['showroomId'] = $request['showroomId'];
-        }
+        $modelSendingWaitingParcel = SendingWaitingParcel::find()
+            ->where(['where_sent'=>strval($showroomId)])
+            ->andWhere(['is_posting'=>0])
+            ->all();
 
+        if(!empty($modelSendingWaitingParcel)){
+            foreach ($modelSendingWaitingParcel as $itemSendingWaitingParcel) {
+                foreach ($itemSendingWaitingParcel->part_parcel as $item) {
+                    if(!empty($partsAccessories[$item['goods_id']])){
+                        $partsAccessories[$item['goods_id']]['numberDelivering'] += $item['goods_count'];
+                    } else {
+
+                        $modelPartsAccessories = PartsAccessories::findOne(['_id'=>new ObjectId($item['goods_id'])]);
+
+                        $partsAccessories[$item['goods_id']] = [
+                            'title'                     => (!empty($modelPartsAccessories->title) ? $modelPartsAccessories->title : '???'),
+                            'number'                    => 0,
+                            'numberDelivering'          => $item['goods_count'],
+                            'priceTotal'                => 0
+                        ];
+                    }
+                }
+            }
+        }
 
         return $this->render('compensation-table-on-balance', [
             'filter'                    =>  $filter,
@@ -752,6 +774,58 @@ class ShowroomsController extends BaseController
         echo '</xmp>';
         die();
 
+    }
+
+    public function actionTemp()
+    {
+        $sales = Sales::find()
+            ->where([
+                'type' => [
+                    '$ne'   =>  -1
+                ],
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
+                    '$lte' => new UTCDateTime(strtotime('2019-02-28 23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere(['IN','username',["olok", "morgana88", "tatyana172", "lifestream", "sahab", "irinstar" ,
+                "nikaksua92", "simplyscarab", "chybchik777", "nadegda1", "marta888", "liliy888",  "marfusha08",
+                "yarik", " bigi777", "04051992", "terevale","panacea","azbuka1985", "irena888", "dimetries",
+                "valyonochka","great3","irena777","542630vk","freedom777","shumyuriy","duche","stilaga",
+                "starzapototskiy","skosarev66", "kivareyna"]])
+            ->with(['infoUser','infoProduct'])
+            ->orderBy(['dateCreate'=>SORT_DESC])
+            ->all();
+
+        $table = '
+            <table>
+                <tr>
+                    <td>login
+                    <td>new city
+                    <td>OrderId
+                    <td>Product
+                    <td>DateCreate
+                    <td>CheckShowroom
+        ';
+        foreach ($sales as $sale){
+            if(!empty($sale->infoProduct->paymentsToRepresentive) && !empty($sale->infoProduct->paymentsToStock)
+                /*&& ($sale->infoUser->country == 'ru' || (!empty($sale->infoUser->countryData)
+                        && $sale->infoUser->countryData['code']=='ru'))*/) {
+                $table .= '
+                    <tr>
+                        <td>' . $sale->username . '
+                        <td>' . (!empty($sale->infoUser->cityData) ? $sale->infoUser->cityData['name']['ru'] : '-'). '
+                        <td>' . (!empty($sale->order->orderId) ? $sale->order->orderId : '-') . '
+                        <td>' . $sale->productData['productName'] . '
+                        <td>' . $sale->dateCreate->toDateTime()->format('Y-m-d H:i') . '
+                        <td>' . (!empty($sale->showroomId) ? 'шоурум - ' . $sale->showroom->cityInfo->name['ru'] : '-');
+            }
+        }
+        $table .= '<table>';
+
+
+        echo $table;
+        die();
     }
 
     /**

@@ -49,7 +49,10 @@ class Users extends ActiveRecord
             'address',
             'moneys',
             'avatar',
-            'firstPurchase'
+            'firstPurchase',
+            'countryData',
+            'cityData',
+            'city'
         ];
     }
 

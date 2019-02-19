@@ -12,6 +12,8 @@ use yii\mongodb\ActiveRecord;
  * @property StatusSales $statusSale
  * @property Users $infoUser
  * @property Products $infoProduct
+ * @property Order $order
+ * @property Showrooms $showroom
  *
  * Class Sales
  * @package app\models
@@ -127,6 +129,19 @@ class Sales extends ActiveRecord
     public function getInfoProduct()
     {
         return $this->hasOne(Products::className(),['product' => 'product']);
+    }
+
+    public function getShowroom()
+    {
+        return $this->hasOne(Showrooms::className(),['_id' => 'showroomId']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getOrder()
+    {
+        return $this->hasOne(Order::className(),['_id' => 'orderId']);
     }
 
     /**
