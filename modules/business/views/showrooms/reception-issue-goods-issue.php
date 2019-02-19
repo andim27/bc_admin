@@ -102,7 +102,9 @@
                                                 <td><?=$saleItem['dateDelivery']?></td>
                                                 <td><?=$saleItem['addressDelivery']?></td>
                                                 <td>
-                                                    <a class="editIssue" href="javascript:void(0);" data-id="<?=$saleItem['saleId']?>">
+                                                    <a class="editIssue" href="#issueInfo" data-id="<?=$saleItem['saleId']?>"
+                                                    data-toggle="modal"
+                                                    >
                                                         <i class="fa fa-pencil"></i>
                                                     </a>
                                                 </td>
@@ -115,102 +117,6 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <input type="button" class="btn btn-success pull-right issueOrder m-sm" value="Подобрать заказ">
-                            </div>
-                        </div>
-
-                        <div class="panel panel-default issueInfo">
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-md-12 blError"></div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Дата заявки:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-date m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Логин:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-login m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>ФИО:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-FIO m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Телефоны:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-phones m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Заказано:</p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <ul class="issue-order list-unstyled">
-                                            <li>Набор Life Balanсe 2 шт. <a href="#" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>
-                                            <li>Life Expert 2 шт. <a href="#" class="fromBalnce issued pull-right">Отменить</a> <span class="spanIssued pull-right m-r">Выдано с баланса</span></li>
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p class="m-t">Статус:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <?=Html::dropDownList('',false,\app\models\Sales::getStatusShowroom(),[
-                                            'class' => 'issueSelect w-50 form-control m'
-                                        ])?>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Дата доставки:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-dateDelivery m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Адрес:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-address m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <button type="button" class="btn btn-sm btn-success pull-right saveEditedIssue m-n">
-                                            Сохранить
-                                        </button>
-                                    </div>
-
-                                </div>
                             </div>
                         </div>
 
@@ -330,6 +236,114 @@
         </div>
     </div>
 </section>
+
+
+<div class="modal fade issueInfo" id="issueInfo">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Выдача товара</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12 blError"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Дата заявки:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-date m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Логин:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-login m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>ФИО:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-FIO m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Телефоны:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-phones m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Заказано:</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="issue-order list-unstyled">
+                            <li>Набор Life Balanсe 2 шт. <a href="#" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>
+                            <li>Life Expert 2 шт. <a href="#" class="fromBalnce issued pull-right">Отменить</a> <span class="spanIssued pull-right m-r">Выдано с баланса</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="m-t">Статус:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <?=Html::dropDownList('',false,\app\models\Sales::getStatusShowroom(),[
+                            'class' => 'issueSelect w-50 form-control m'
+                        ])?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Дата доставки:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-dateDelivery m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Адрес:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-address m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="col-sm-8 col-sm-offset-2 form-group">
+                            <a class="btn btn-danger" data-dismiss="modal">Закрыть</a>
+                            <button type="button" class="btn btn-success saveEditedIssue m-n">
+                            Сохранить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 <!--<div class="modal fade" id="receiptionGoodsEdit">-->
 <!--    <div class="modal-dialog" >-->
@@ -560,8 +574,8 @@
     });
 
     $('table').on('click','.editIssue',function(){
-        $('.issueOrderRow').hide();
-        $('.issueOrderDetail').hide();
+      //  $('.issueOrderRow').hide();
+      //  $('.issueOrderDetail').hide();
 
         clearIssueInfo();
 
