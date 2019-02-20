@@ -489,7 +489,8 @@ class DefaultController extends BaseController
             $view_name = '_commission_details';
             // infoBonus
            // return "month1=".$statisticInfo['request']['from'].' month2='.$statisticInfo['request']['to'];
-            $listBonus = ['worldBonus','propertyBonus'];
+            //$listBonus = ['worldBonus','propertyBonus'];
+            $listBonus = ['propertyBonus'];
             foreach ($listBonus as $itemBonus) {
                 $statisticInfo['bonus'][$itemBonus] = (new \yii\mongodb\Query())
                     ->select(['statistics.'.$itemBonus])
@@ -501,6 +502,23 @@ class DefaultController extends BaseController
                     ])
                     ->sum('statistics.'.$itemBonus);
             }
+            $statisticInfo['bonus']['worldBonus'] = Transaction::find()
+                ->select(['amount'])
+                ->where([
+                    'dateCreate' => [
+                        '$gte' => new UTCDatetime($queryDateFrom),
+                        '$lte' => new UTCDateTime($queryDateTo)
+                    ],
+                    'forWhat' => [
+                        '$regex' => 'World bonus'
+                    ],
+                    'reduced'=>true,
+                    'idTo' => [
+                        '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
+                    ],
+                    'type'=>11,
+                ])
+                ->sum('amount');
             $statisticInfo['bonus']['autoBonus'] = Transaction::find()
                 ->select(['amount'])
                 ->where([
@@ -530,7 +548,7 @@ class DefaultController extends BaseController
                     'idTo' => [
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
-                    'type'=>1,
+                    'type'=>10,
                 ])
                 ->sum('amount');
 
@@ -547,7 +565,7 @@ class DefaultController extends BaseController
                     'idTo' => [
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
-                    'type'=>1,
+                    'type'=>12,
                 ])
                 ->sum('amount');
 
@@ -564,7 +582,8 @@ class DefaultController extends BaseController
                     'idTo' => [
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
-                    'type'=>1,
+                    'reduced'=>true,
+                    'type'=>9,
                 ])
                 ->sum('amount');
 
@@ -593,13 +612,16 @@ class DefaultController extends BaseController
                         '$gte' => new UTCDatetime($queryDateFrom),
                         '$lte' => new UTCDateTime($queryDateTo)
                     ],
-                    'forWhat' => [
-                        '$regex' => 'Closing steps'
-                    ],
+//                    'forWhat' => [
+//                        '$regex' => 'Closing steps'
+//                    ],
+                    'forWhat'=>'Closing steps',
                     'idTo' => [
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
-                    'type'=>1,
+                    'side'=>0,
+                    'reduced'=>true,
+                    'type'=>2,
                 ])
                 ->sum('amount');
 
