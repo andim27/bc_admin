@@ -412,6 +412,40 @@ class SaleController extends BaseController {
         }
     }
 
+    public function actionChangeShowroom()
+    {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $response = [
+                'typeAlert'     => 'danger',
+                'message'       => 'Шоу-рум не изменен'
+            ];
+
+            $request = Yii::$app->request->post();
+
+            if(!empty($request['saleIdShowroom']) && !empty($request['newShowroom'])){
+                $sale = Sales::findOne(['_id'=>new ObjectID($request['saleIdShowroom'])]);
+
+                if(!empty($sale)){
+                    $sale->showroomId = new ObjectID($request['newShowroom']);
+
+                    if($sale->save()){
+                        $response = [
+                            'typeAlert' => 'success',
+                            'message'   => 'Шоу-рум изменен'
+                        ];
+                    }
+                }
+            }
+
+            return $response;
+
+        } else {
+            return $this->redirect('/','301');
+        }
+    }
+
     public static function cancellationGoodsInOrder($orderID,$goodsName='')
     {
         $model = StatusSales::findOne(['idSale'=>new ObjectID($orderID)]);

@@ -555,8 +555,10 @@ class ShowroomsController extends BaseController
             $listShowroomsForSelect = [
                 $filter['showroomId'] => $listShowroomsForSelect[$filter['showroomId']]
             ];
+            $btnChangeShowroom = 0;
         } else{
             $filter['showroomId'] = false;
+            $btnChangeShowroom = 1;
         }
 
         if(!empty($request['showroomId'])){
@@ -648,6 +650,7 @@ class ShowroomsController extends BaseController
             'filter'                    =>  $filter,
             'salesShowroom'             =>  $salesShowroom,
             'turnoverShowroom'          =>  $turnoverShowroom,
+            'btnChangeShowroom'         =>  $btnChangeShowroom,
         ]);
     }
 
