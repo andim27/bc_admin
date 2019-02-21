@@ -97,7 +97,7 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <input type="button" class="btn btn-success pull-right addShowroom m-sm" value="+">
+            <a class="btn btn-success pull-right addShowroom m-sm" href="javascript:void(0);">+</a>
         </div>
     </div>
 </section>
@@ -105,286 +105,291 @@
 <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
 
-<div class="row">
-    <div class="col-md-12 blError">
-
-    </div>
-</div>
-
-<div class="panel panel-default showroomInfo">
-    <div class="panel-body">
-        <form class="showroomForm" name="showroomForm" method="POST" action="/business/showrooms/add-edit-showroom">
-
-            <input type="hidden" name="Showroom[id]" value="">
-            <input type="hidden" name="Showroom[cityId]" value="">
-            <input type="hidden" name="Showroom[countryId]" value="">
-
-            <div class="row m-b-sm">
-                <div class="col-md-4">
-                    <span class="inline p-t-3p">Подал заявку</span>
-                    <?=Html::dropDownList('Showroom[userId]',false,[],[
-                        'class'     => 'form-control m-b-none showroomApplied pull-right w-50 messengerDiv h-27p',
-                        'required'  => true,
-                        'prompt'     => 'Кто подал заявку'
-                    ])?>
-                </div>
-                <div class="col-md-4 p-t-3p">
-                    <input type="checkbox" class="anotherCheckbox">
-                    <span class="inline p-t-3p">Подключить другой логин для компенсации</span>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" name="Showroom[otherLogin]" class="anotherLogin" disabled="disabled">
-                    <input type="button" class="btn btn-sm btn-success checkLogin m-n" value="Проверить" disabled="disabled">
-                </div>
+<div class="modal fade showroomInfo o-a" id="showroomInfo">
+    <div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Шоурум</h4>
             </div>
-            <div class="row">
-                <div class="col-md-8 no-padder">
-                    <div class="col-md-6 no-padder">
-                        <div class="col-md-12 m-b-20">
-                            Email для  оповещений
-                            <input type="text" name="Showroom[email]" class="emailConfirmation pull-right w-50">
-                        </div>
-                        <div class="col-md-12 m-b-20">
-                            Skype
-                            <input type="text" name="Showroom[skype]" class="skypeShowroom pull-right w-50">
-                        </div>
-                        <div class="col-md-12 m-b-20">
-                            Телефон
-                            <input type="text" name="Showroom[phone]" class="phoneUserShowroom pull-right w-50">
-                        </div>
-                        <div class="col-md-12 m-b-20 blMessenger">
-                            <select name="Showroom[messenger][0][title]" class="form-control m-b messenger1 w-45 m-b-none messengerDiv">
-                                <option value="null">Мессенджер</option>
-                                <option value="1">Viber</option>
-                                <option value="2" >Whatsapp</option>
-                                <option value="3">Telegram</option>
-                            </select>
-                            <input type="text" name="Showroom[messenger][0][value]" class="messenger1login pull-right w-50">
-                        </div>
-                        <div class="col-md-12 m-b-20 blMessenger">
-                            <select name="Showroom[messenger][1][title]" class="form-control m-b messenger2 w-45 messengerDiv">
-                                <option value="null">Мессенджер</option>
-                                <option value="1">Viber</option>
-                                <option value="2" >Whatsapp</option>
-                                <option value="3">Telegram</option>
-                            </select>
-                            <input type="text" name="Showroom[messenger][1][value]" class="messenger2login pull-right w-50">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <p>Данные администратора шоу-рума</p>
-                        <textarea name="Showroom[dataAdmin]" class="form-control shoowroomAdminText" rows="7" placeholder="Тут данные администратора..."></textarea>
-                    </div>
-                    <div class="col-md-12 m-t-md">
-                        <div class="row m-b-sm blDelivery" >
-                            <input type="hidden" name="Showroom[delivery][0][title]" value="Курьером" class="deliveryTitle">
-                            <div class="col-md-6">
-                                <span class="w-195p inline m-t--9">Стоимость доставки курьером </span>
-                                <input type="text" name="Showroom[delivery][0][price]" class="deliveryPrice pull-right w-69 text-center" placeholder="EUR">
-                            </div>
-                            <div class="col-md-6">
-                                До скольки дней
-                                <input type="text" name="Showroom[delivery][0][day]" class="deliveryDays w-69 m-l text-center" placeholder="дней">
-                            </div>
-                        </div>
-                        <div class="row m-b-sm blDelivery">
-                            <div class="col-md-6">
-                                <input type="text" name="Showroom[delivery][1][title]" class="deliveryTitle pull-left w-195p padder" placeholder="Название доставки">
-                                <input type="text" name="Showroom[delivery][1][price]" class="deliveryPrice pull-right w-69 text-center" placeholder="EUR">
-                            </div>
-                            <div class="col-md-6">
-                                До скольки дней
-                                <input type="text" name="Showroom[delivery][1][day]" class="deliveryDays w-69 m-l text-center" placeholder="дней">
-                            </div>
-                        </div>
-                        <div class="row m-b-sm blDelivery">
-                            <div class="col-md-6">
-                                <input type="text" name="Showroom[delivery][2][title]" class="deliveryTitle pull-left w-195p padder" placeholder="Название доставки">
-                                <input type="text" name="Showroom[delivery][2][price]" class="deliveryPrice pull-right w-69 text-center" placeholder="EUR">
-                            </div>
-                            <div class="col-md-6">
-                                До скольки дней
-                                <input type="text" name="Showroom[delivery][2][day]" class="deliveryDays w-69 m-l text-center" placeholder="дней">
-                            </div>
-                        </div>
-                    </div>
+            <div class="modal-body">    
+                <div class="row">
+                    <div class="col-md-12 blError">
 
-                    <div class="col-md-12 m-t-md">
-                        <div class="highlight selectListAdmin">
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-10">
-                        <?=Html::dropDownList('',false,$userArray,[
-                            'class'=>'form-control w100 listAdmin',
-                            'id'=>'listAdmin',
-                            'options' => [
-                                'placeh' => ['disabled' => true],
-                            ]
-                        ])?>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-default btn-block addUser">+</button>
-                    </div>
-
-                </div>
-
-                <div class="col-md-4">
-                    <div class="col-md-12 showroomWebData m-b-sm">
-                        <div class="col-md-12 m-t-sm">
-                            <p>
-                                Данные ШОУ-РУМА отображаемые на сайтах
-                            </p>
-                            <p>
-                                Адрес в городе <b class="showroomCity"></b>:
-                            </p>
-                            <input type="text" name="Showroom[address]" class="shoowroomAddress w-100">
-                        </div>
-                        <div class="col-md-12">
-                            <div class="row m-t-xs">
-                                <div class="col-md-5">
-                                    День
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    С
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    До
-                                </div>
-                                <div class="col-md-3 no-padder text-center">
-                                    Выходной
-                                </div>
-                            </div>
-                            <div class="row m-t-xs worktimeShowroom">
-                                <input type="hidden" name="Showroom[worktime][0][title]" value="monday" class="worktimeTitle">
-                                <div class="col-md-5">
-                                    Понедельник
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][0][from]" class="mondayFrom w-85 worktimeTimeFrom">
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][0][to]" class="mondayTo w-85 worktimeTimeTo">
-                                </div>
-                                <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][0][holiday]" class="mondayHoliday w-85 worktimeTimeHoliday">
-                                </div>
-                            </div>
-                            <div class="row m-t-xs worktimeShowroom">
-                                <input type="hidden" name="Showroom[worktime][1][title]" value="thuesday" class="worktimeTitle">
-                                <div class="col-md-5">
-                                    Вторник
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][1][from]" class=" thuesdayFrom w-85 worktimeTimeFrom">
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][1][to]" class="thuesdayTo w-85 worktimeTimeTo">
-                                </div>
-                                <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][1][holiday]" class="thuesdayHoliday w-85 worktimeTimeHoliday">
-                                </div>
-                            </div>
-                            <div class="row m-t-xs worktimeShowroom">
-                                <input type="hidden" name="Showroom[worktime][2][title]" value="wednesday" class="worktimeTitle">
-                                <div class="col-md-5">
-                                    Среда
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][2][from]" class="wednesdayFrom w-85 worktimeTimeFrom">
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][2][to]" class="wednesdayTo w-85 worktimeTimeTo">
-                                </div>
-                                <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][2][holiday]" class="wednesdayHoliday w-85 worktimeTimeHoliday">
-                                </div>
-                            </div>
-                            <div class="row m-t-xs worktimeShowroom">
-                                <input type="hidden" name="Showroom[worktime][3][title]" value="thursday" class="worktimeTitle">
-                                <div class="col-md-5">
-                                    Четверг
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][3][from]" class="thursdayFrom w-85 worktimeTimeFrom">
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][3][to]" class="thursdayTo w-85 worktimeTimeTo">
-                                </div>
-                                <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][3][holiday]" class="thursdayHoliday w-85 worktimeTimeHoliday">
-                                </div>
-                            </div>
-                            <div class="row m-t-xs worktimeShowroom">
-                                <input type="hidden" name="Showroom[worktime][4][title]" value="friday" class="worktimeTitle">
-                                <div class="col-md-5">
-                                    Пятница
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][4][from]" class="fridayFrom w-85 worktimeTimeFrom">
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][4][to]" class="fridayTo w-85 worktimeTimeTo">
-                                </div>
-                                <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][4][holiday]" class="fridayHoliday w-85 worktimeTimeHoliday">
-                                </div>
-                            </div>
-                            <div class="row m-t-xs worktimeShowroom">
-                                <input type="hidden" name="Showroom[worktime][5][title]" value="saturday" class="worktimeTitle">
-                                <div class="col-md-5">
-                                    Суббота
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][5][from]" class="saturdayFrom w-85 worktimeTimeFrom">
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][5][to]" class="saturdayTo w-85 worktimeTimeTo">
-                                </div>
-                                <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][5][holiday]" class="saturdayHoliday w-85 worktimeTimeHoliday">
-                                </div>
-                            </div>
-                            <div class="row m-t-xs worktimeShowroom">
-                                <input type="hidden" name="Showroom[worktime][6][title]" value="sunday" class="worktimeTitle worktimeTimeHoliday">
-                                <div class="col-md-5">
-                                    Воскресенье
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][6][from]" class="sundayFrom w-85 worktimeTimeFrom">
-                                </div>
-                                <div class="col-md-2 no-padder text-center">
-                                    <input type="text" name="Showroom[worktime][6][to]" class="sundayTo w-85 worktimeTimeTo">
-                                </div>
-                                <div class="col-md-3 no-padder text-center">
-                                    <input type="checkbox" name="Showroom[worktime][6][holiday]" class="sundayHoliday w-85 worktimeTimeHoliday">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 m-b-20 m-t phoneShowroom">
-                            Телефон
-                            <input type="text" name="Showroom[phoneShowroom][]" class="pull-right w-50">
-                        </div>
-                        <div class="col-md-12 m-b-20 phoneShowroom">
-                            Телефон
-                            <input type="text" name="Showroom[phoneShowroom][]" class="pull-right w-50">
-                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-        <div class="col-sm-4 pull-right">
-            <?=Html::dropDownList('Showroom[status]',false,Showrooms::getStatus(),[
-                'class'     => 'form-control m-b w-45 inline m-b-none stateShowroom',
-                'required'  => true,
-                'prompt'     => 'Выберите статус шоу-рума'
-            ])?>
+                <form class="showroomForm" name="showroomForm" method="POST" action="/business/showrooms/add-edit-showroom">
 
-            <input type="submit" class="btn btn-success pull-right" value="Сохранить">
+                    <input type="hidden" name="Showroom[id]" value="">
+                    <input type="hidden" name="Showroom[cityId]" value="">
+                    <input type="hidden" name="Showroom[countryId]" value="">
+
+                    <div class="row m-b-sm">
+                        <div class="col-md-4">
+                            <span class="inline p-t-3p">Подал заявку</span>
+                            <?=Html::dropDownList('Showroom[userId]',false,[],[
+                                'class'     => 'form-control m-b-none showroomApplied pull-right w-50 messengerDiv h-27p',
+                                'required'  => true,
+                                'prompt'     => 'Кто подал заявку'
+                            ])?>
+                        </div>
+                        <div class="col-md-4 p-t-3p">
+                            <input type="checkbox" class="anotherCheckbox">
+                            <span class="inline p-t-3p">Подключить другой логин для компенсации</span>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="Showroom[otherLogin]" class="anotherLogin" disabled="disabled">
+                            <input type="button" class="btn btn-sm btn-success checkLogin m-n" value="Проверить" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 no-padder">
+                            <div class="col-md-6 no-padder">
+                                <div class="col-md-12 m-b-20">
+                                    Email для  оповещений
+                                    <input type="text" name="Showroom[email]" class="emailConfirmation pull-right w-50">
+                                </div>
+                                <div class="col-md-12 m-b-20">
+                                    Skype
+                                    <input type="text" name="Showroom[skype]" class="skypeShowroom pull-right w-50">
+                                </div>
+                                <div class="col-md-12 m-b-20">
+                                    Телефон
+                                    <input type="text" name="Showroom[phone]" class="phoneUserShowroom pull-right w-50">
+                                </div>
+                                <div class="col-md-12 m-b-20 blMessenger">
+                                    <select name="Showroom[messenger][0][title]" class="form-control m-b messenger1 w-45 m-b-none messengerDiv">
+                                        <option value="null">Мессенджер</option>
+                                        <option value="1">Viber</option>
+                                        <option value="2" >Whatsapp</option>
+                                        <option value="3">Telegram</option>
+                                    </select>
+                                    <input type="text" name="Showroom[messenger][0][value]" class="messenger1login pull-right w-50">
+                                </div>
+                                <div class="col-md-12 m-b-20 blMessenger">
+                                    <select name="Showroom[messenger][1][title]" class="form-control m-b messenger2 w-45 messengerDiv">
+                                        <option value="null">Мессенджер</option>
+                                        <option value="1">Viber</option>
+                                        <option value="2" >Whatsapp</option>
+                                        <option value="3">Telegram</option>
+                                    </select>
+                                    <input type="text" name="Showroom[messenger][1][value]" class="messenger2login pull-right w-50">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <p>Данные администратора шоу-рума</p>
+                                <textarea name="Showroom[dataAdmin]" class="form-control shoowroomAdminText" rows="7" placeholder="Тут данные администратора..."></textarea>
+                            </div>
+                            <div class="col-md-12 m-t-md">
+                                <div class="row m-b-sm blDelivery" >
+                                    <input type="hidden" name="Showroom[delivery][0][title]" value="Курьером" class="deliveryTitle">
+                                    <div class="col-md-6">
+                                        <span class="w-195p inline m-t--9">Стоимость доставки курьером </span>
+                                        <input type="text" name="Showroom[delivery][0][price]" class="deliveryPrice pull-right w-69 text-center" placeholder="EUR">
+                                    </div>
+                                    <div class="col-md-6">
+                                        До скольки дней
+                                        <input type="text" name="Showroom[delivery][0][day]" class="deliveryDays w-69 m-l text-center" placeholder="дней">
+                                    </div>
+                                </div>
+                                <div class="row m-b-sm blDelivery">
+                                    <div class="col-md-6">
+                                        <input type="text" name="Showroom[delivery][1][title]" class="deliveryTitle pull-left w-195p padder" placeholder="Название доставки">
+                                        <input type="text" name="Showroom[delivery][1][price]" class="deliveryPrice pull-right w-69 text-center" placeholder="EUR">
+                                    </div>
+                                    <div class="col-md-6">
+                                        До скольки дней
+                                        <input type="text" name="Showroom[delivery][1][day]" class="deliveryDays w-69 m-l text-center" placeholder="дней">
+                                    </div>
+                                </div>
+                                <div class="row m-b-sm blDelivery">
+                                    <div class="col-md-6">
+                                        <input type="text" name="Showroom[delivery][2][title]" class="deliveryTitle pull-left w-195p padder" placeholder="Название доставки">
+                                        <input type="text" name="Showroom[delivery][2][price]" class="deliveryPrice pull-right w-69 text-center" placeholder="EUR">
+                                    </div>
+                                    <div class="col-md-6">
+                                        До скольки дней
+                                        <input type="text" name="Showroom[delivery][2][day]" class="deliveryDays w-69 m-l text-center" placeholder="дней">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 m-t-md">
+                                <div class="highlight selectListAdmin">
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-10">
+                                <?=Html::dropDownList('',false,$userArray,[
+                                    'class'=>'form-control w100 listAdmin',
+                                    'id'=>'listAdmin',
+                                    'options' => [
+                                        'placeh' => ['disabled' => true],
+                                    ]
+                                ])?>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-default btn-block addUser">+</button>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="col-md-12 showroomWebData m-b-sm">
+                                <div class="col-md-12 m-t-sm">
+                                    <p>
+                                        Данные ШОУ-РУМА отображаемые на сайтах
+                                    </p>
+                                    <p>
+                                        Адрес в городе <b class="showroomCity"></b>:
+                                    </p>
+                                    <input type="text" name="Showroom[address]" class="shoowroomAddress w-100">
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row m-t-xs">
+                                        <div class="col-md-5">
+                                            День
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            С
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            До
+                                        </div>
+                                        <div class="col-md-3 no-padder text-center">
+                                            Выходной
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-xs worktimeShowroom">
+                                        <input type="hidden" name="Showroom[worktime][0][title]" value="monday" class="worktimeTitle">
+                                        <div class="col-md-5">
+                                            Понедельник
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][0][from]" class="mondayFrom w-85 worktimeTimeFrom">
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][0][to]" class="mondayTo w-85 worktimeTimeTo">
+                                        </div>
+                                        <div class="col-md-3 no-padder text-center">
+                                            <input type="checkbox" name="Showroom[worktime][0][holiday]" class="mondayHoliday w-85 worktimeTimeHoliday">
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-xs worktimeShowroom">
+                                        <input type="hidden" name="Showroom[worktime][1][title]" value="thuesday" class="worktimeTitle">
+                                        <div class="col-md-5">
+                                            Вторник
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][1][from]" class=" thuesdayFrom w-85 worktimeTimeFrom">
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][1][to]" class="thuesdayTo w-85 worktimeTimeTo">
+                                        </div>
+                                        <div class="col-md-3 no-padder text-center">
+                                            <input type="checkbox" name="Showroom[worktime][1][holiday]" class="thuesdayHoliday w-85 worktimeTimeHoliday">
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-xs worktimeShowroom">
+                                        <input type="hidden" name="Showroom[worktime][2][title]" value="wednesday" class="worktimeTitle">
+                                        <div class="col-md-5">
+                                            Среда
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][2][from]" class="wednesdayFrom w-85 worktimeTimeFrom">
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][2][to]" class="wednesdayTo w-85 worktimeTimeTo">
+                                        </div>
+                                        <div class="col-md-3 no-padder text-center">
+                                            <input type="checkbox" name="Showroom[worktime][2][holiday]" class="wednesdayHoliday w-85 worktimeTimeHoliday">
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-xs worktimeShowroom">
+                                        <input type="hidden" name="Showroom[worktime][3][title]" value="thursday" class="worktimeTitle">
+                                        <div class="col-md-5">
+                                            Четверг
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][3][from]" class="thursdayFrom w-85 worktimeTimeFrom">
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][3][to]" class="thursdayTo w-85 worktimeTimeTo">
+                                        </div>
+                                        <div class="col-md-3 no-padder text-center">
+                                            <input type="checkbox" name="Showroom[worktime][3][holiday]" class="thursdayHoliday w-85 worktimeTimeHoliday">
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-xs worktimeShowroom">
+                                        <input type="hidden" name="Showroom[worktime][4][title]" value="friday" class="worktimeTitle">
+                                        <div class="col-md-5">
+                                            Пятница
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][4][from]" class="fridayFrom w-85 worktimeTimeFrom">
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][4][to]" class="fridayTo w-85 worktimeTimeTo">
+                                        </div>
+                                        <div class="col-md-3 no-padder text-center">
+                                            <input type="checkbox" name="Showroom[worktime][4][holiday]" class="fridayHoliday w-85 worktimeTimeHoliday">
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-xs worktimeShowroom">
+                                        <input type="hidden" name="Showroom[worktime][5][title]" value="saturday" class="worktimeTitle">
+                                        <div class="col-md-5">
+                                            Суббота
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][5][from]" class="saturdayFrom w-85 worktimeTimeFrom">
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][5][to]" class="saturdayTo w-85 worktimeTimeTo">
+                                        </div>
+                                        <div class="col-md-3 no-padder text-center">
+                                            <input type="checkbox" name="Showroom[worktime][5][holiday]" class="saturdayHoliday w-85 worktimeTimeHoliday">
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-xs worktimeShowroom">
+                                        <input type="hidden" name="Showroom[worktime][6][title]" value="sunday" class="worktimeTitle worktimeTimeHoliday">
+                                        <div class="col-md-5">
+                                            Воскресенье
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][6][from]" class="sundayFrom w-85 worktimeTimeFrom">
+                                        </div>
+                                        <div class="col-md-2 no-padder text-center">
+                                            <input type="text" name="Showroom[worktime][6][to]" class="sundayTo w-85 worktimeTimeTo">
+                                        </div>
+                                        <div class="col-md-3 no-padder text-center">
+                                            <input type="checkbox" name="Showroom[worktime][6][holiday]" class="sundayHoliday w-85 worktimeTimeHoliday">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-20 m-t phoneShowroom">
+                                    Телефон
+                                    <input type="text" name="Showroom[phoneShowroom][]" class="pull-right w-50">
+                                </div>
+                                <div class="col-md-12 m-b-20 phoneShowroom">
+                                    Телефон
+                                    <input type="text" name="Showroom[phoneShowroom][]" class="pull-right w-50">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 pull-right">
+                            <?=Html::dropDownList('Showroom[status]',false,Showrooms::getStatus(),[
+                                'class'     => 'form-control m-b w-45 inline m-b-none stateShowroom',
+                                'required'  => true,
+                                'prompt'     => 'Выберите статус шоу-рума'
+                            ])?>
+                        <a class="btn btn-danger m-b-xs m-l" data-dismiss="modal">Закрыть</a>
+                        <input type="submit" class="btn btn-success pull-right" value="Сохранить">
+                        </div>
+                    </div>
+                 </form>
         </div>
-    </div>
-        </form>
     </div>
 </div>
 
@@ -405,7 +410,7 @@
                     item.userLogin+' ('+item.userSecondName+' '+item.userFirstName+')</option>');
         });
 
-        $('.showroomInfo').show();
+        $('.showroomInfo').modal();
 
     });
 
@@ -511,8 +516,7 @@
 
                 console.log(msg);
 
-
-                $('.showroomInfo').show();
+                $('.showroomInfo').modal();
             }
         });
     });
