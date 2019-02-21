@@ -476,8 +476,11 @@ input[name="EmergencyCommand[user_registration_txt]"] {
 }
 
 .requestInfo {
-    display: none;
-    position: relative;
+    /*display: none;
+    position: relative;*/
+    top: 10%;
+    max-width: 80%;
+    left: 10%;
 }
 
 .requestInfo .loader div {
@@ -510,7 +513,7 @@ input[name="EmergencyCommand[user_registration_txt]"] {
 }
 
 .filestyle {
-    left: -1500px;
+    left: -1500px !important;
 }
 
 .bootstrap-filestyle>label {
@@ -583,7 +586,10 @@ input[name="EmergencyCommand[user_registration_txt]"] {
 }
 
 .showroomInfo {
-    position: relative;
+    /*  position: relative;*/
+    top: 10%;
+    max-width: 80%;
+    left: 10%;
 }
 
 .highlight {
