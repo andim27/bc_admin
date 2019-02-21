@@ -606,6 +606,12 @@
             url: '/ru/business/sale/get-sale',
             type: 'POST',
             data: {saleId:$(this).data('id')},
+            beforeSend: function () {
+                blInfo.find('.modal-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                blInfo.find('.loader').remove();
+            },
             success: function(msg){
                 if(msg.error === ''){
                     blInfo.find('.issue-date').text(msg.dateCreate);
@@ -656,6 +662,12 @@
             url: '/ru/business/sale/change-status-showroom-sale',
             type: 'POST',
             data: {saleId:saleId,statusShowroom:statusShowroom},
+            beforeSend: function () {
+                $('.issueInfo').find('.modal-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                $('.issueInfo').find('.loader').remove();
+            },
             success: function(msg){
                 $('.issueInfo .blError').html(
                     '<div class="alert alert-'+msg.typeAlert+' fade in">' +
@@ -688,6 +700,12 @@
             url: '/ru/business/sale/get-sale',
             type: 'POST',
             data: {orderId:orderId},
+            beforeSend: function () {
+                $('#issueOrder').find('.modal-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                $('#issueOrder').find('.loader').remove();
+            },
             success: function(msg){
                 if(msg.error === ''){
                     if(msg.flHasAccruals === true){
@@ -776,6 +794,12 @@
             url: '/ru/business/sale/set-showroom-sale',
             type: 'POST',
             data: {saleId:saleId},
+            beforeSend: function () {
+                $('#issueOrder').find('.modal-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                $('#issueOrder').find('.loader').remove();
+            },
             success: function(msg){
                 $('.issueOrderDetail .blError').html(
                     '<div class="alert alert-'+msg.typeAlert+' fade in">' +
