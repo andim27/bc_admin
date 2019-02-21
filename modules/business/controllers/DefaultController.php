@@ -516,7 +516,7 @@ class DefaultController extends BaseController
                     'idTo' => [
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
-                    'type'=>11,
+                    'type'=>1,//11
                 ])
                 ->sum('amount');
             $statisticInfo['bonus']['autoBonus'] = Transaction::find()
@@ -532,7 +532,7 @@ class DefaultController extends BaseController
                     'idTo' => [
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
-                    'type'=>4,
+                    'type'=>1,//4
                 ])
                 ->sum('amount');
             $statisticInfo['bonus']['executiveBonus'] = Transaction::find()
@@ -548,7 +548,7 @@ class DefaultController extends BaseController
                     'idTo' => [
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
-                    'type'=>10,
+                    'type'=>1,//10
                 ])
                 ->sum('amount');
 
@@ -565,7 +565,7 @@ class DefaultController extends BaseController
                     'idTo' => [
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
-                    'type'=>12,
+                    'type'=>1,//12
                 ])
                 ->sum('amount');
 
@@ -612,16 +612,15 @@ class DefaultController extends BaseController
                         '$gte' => new UTCDatetime($queryDateFrom),
                         '$lte' => new UTCDateTime($queryDateTo)
                     ],
-//                    'forWhat' => [
-//                        '$regex' => 'Closing steps'
-//                    ],
+                    //'forWhat' => [
+                    //    '$regex' => 'Closing steps'
+                    //],
                     'forWhat'=>'Closing steps',
                     'idTo' => [
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
-                    'side'=>0,
                     'reduced'=>true,
-                    'type'=>2,
+                    'type'=>1,
                 ])
                 ->sum('amount');
 
@@ -632,10 +631,9 @@ class DefaultController extends BaseController
                         '$gte' => new UTCDatetime($queryDateFrom),
                         '$lte' => new UTCDateTime($queryDateTo)
                     ],
-//                'forWhat' => [
-//                    '$regex' => 'Purchase for a partner'
-//                ],
-                    'forWhat' => 'Purchase for a partner',
+                    'forWhat' => [
+                        '$regex' => 'Purchase for a partner'
+                    ],
                     'idTo' => [
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
@@ -651,9 +649,9 @@ class DefaultController extends BaseController
                         '$lte' => new UTCDateTime($queryDateTo)
                     ],
                     'forWhat'=>'Cancellation purchase for a partner',
-                    'idTo' => [
-                        '$ne' => new ObjectID('000000000000000000000001')
-                    ],
+                    //'idTo' => [
+                    //    '$ne' => new ObjectID('000000000000000000000001')
+                    //],
                     'type'=>1,
                 ])
                 ->sum('amount');
@@ -710,8 +708,8 @@ class DefaultController extends BaseController
                         '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                     ],
                     'type' => 1,
-                    'forWhat' => [
-                        '$regex' => 'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement|Cancellation purchase for a partner|Auto bonus'
+                    'forWhat' => [//Cancellation purchase for a partner
+                        '$regex' => 'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement|Auto bonus'
                     ]
                 ])
                 ->all();
@@ -1443,7 +1441,7 @@ class DefaultController extends BaseController
                     '$ne' => new ObjectID('573a0d76965dd0fb16f60bfe')
                 ],
                 'type'=>1,
-                'forWhat'=>['$regex'=>'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement|Auto bonus']
+                'forWhat'=>['$regex'=>'Purchase for|Closing steps|Mentor bonus|For stocks|Executive bonus|Bonus per the achievement|Auto bonus|World bonus']
             ])
             ->all();
 
@@ -1486,16 +1484,7 @@ class DefaultController extends BaseController
                 'type'=>[1],
             ])
             //->andWhere(['forWhat' =>'Cancellation purchase for a partner'])
-            //->andWhere(['forWhat' => ['$regex'=>'Cancellation purchase for a partner']])
-            ->andWhere([
-                '$or' =>[
-                    [
-                        'forWhat' => ['$regex'=>'Cancellation purchase']
-                        //'forWhat' =>'Cancellation purchase for a partner'
-
-                    ]
-                ]
-            ])
+            ->andWhere(['forWhat' => ['$regex'=>'Cancellation purchase for a partner']])
             ->all();
 
 
