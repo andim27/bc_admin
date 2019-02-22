@@ -283,6 +283,12 @@
 
 <script>
 
+    
+    $('#table-main').dataTable({
+        language: TRANSLATION,
+        lengthMenu: [ 25, 50, 75, 100 ]
+    });
+
 
     $('table').on('click','.editShowroomData',function(){
 
