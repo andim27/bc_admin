@@ -76,6 +76,14 @@
 
 <script>
 
+    $('#table-onBalance').dataTable({
+        language: TRANSLATION,
+        lengthMenu: [ 25, 50, 75, 100 ],        
+        lengthChange: false,
+        info: false,
+        "order": [[ 0, "desc" ]]
+    });
+
     $('.filterInfoSelect').on('change',function () {
         var link = window.location.href;
 

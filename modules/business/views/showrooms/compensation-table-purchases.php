@@ -157,6 +157,14 @@
 
 <script>
 
+    $('#table-purchases').dataTable({
+        language: TRANSLATION,
+        lengthMenu: [ 25, 50, 75, 100 ],
+        lengthChange: false,
+        info: false,
+        order: [[ 0, "desc" ]]
+    });
+        
     $('table').on('click','.changeShowroom',function(){
         var modal =  $('.modalChangeShowroom');
         var lineShowroom = $(this).closest('tr');

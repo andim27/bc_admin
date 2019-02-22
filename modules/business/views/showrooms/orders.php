@@ -5,7 +5,7 @@
 ?>
 
 <div class="m-b-md">
-    <h3 class="m-b-none">Заказы</h3>
+    <h3 class="m-b-none">Обработка заказов</h3>
 </div>
 <section class="panel panel-default">
 
@@ -23,7 +23,7 @@
                         <!-- Заказы -->
                         <div class="table-responsive">
                             <table id="table-orders" class="table table-orders table-striped datagrid m-b-sm">
-                                <thead>
+                               <thead>
                                     <tr>
                                         <th>
                                             Дата заказа
@@ -35,7 +35,7 @@
                                             Количество
                                         </th>
                                         <th>
-                                            Остатки в шоуруме
+                                            Статус
                                         </th>
                                         <th>
                                             Шоурум
@@ -47,16 +47,15 @@
                                             Город
                                         </th>
                                         <th>
-                                            Статус
+                                            Куда отправляем
+                                        </th>
+                                        <th>
+                                            Покупатель
                                         </th>
                                         <th>
                                             Дата отправки
                                         </th>
                                         <th>
-                                            Количество
-                                        </th>
-                                        <th>
-                                            Комментарий
                                         </th>
                                     </tr>
                                 </thead>
@@ -65,71 +64,66 @@
                                         <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
-                                        <td>4</td>
+                                        <td>Ожидает <a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                         <td>5</td>
                                         <td>6</td>
                                         <td>7</td>
-                                        <td>ожидает обработки<a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                        <td>9</td>
+                                        <td>Курьер, Москва, Калугина 23</td>
+                                        <td>Иванов И.И.</td>
                                         <td>10</td>
-                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a>
-                                       <a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
+                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>
                                     </tr>
                                     <tr>
                                         <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
-                                        <td>4</td>
+                                        <td>Доставляется компанией <a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                         <td>5</td>
                                         <td>6</td>
                                         <td>7</td>
-                                        <td>ожидает обработки<a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                        <td>9</td>
+                                        <td>Курьер, Москва, Калугина 23</td>
+                                        <td>Иванов И.И.</td>
                                         <td>10</td>
-                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a>
-                                       <a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
+                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>
                                     </tr>
-                                     <tr>
+                                    <tr>
                                         <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
-                                        <td>4</td>
+                                        <td>Выдан шоу-румом <a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                         <td>5</td>
                                         <td>6</td>
                                         <td>7</td>
-                                        <td>ожидает обработки<a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                        <td>9</td>
+                                        <td>Курьер, Москва, Калугина 23</td>
+                                        <td>Иванов И.И.</td>
                                         <td>10</td>
-                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a>
-                                       <a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
+                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>
                                     </tr>
-                                     <tr>
+                                    <tr>
                                         <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
-                                        <td>4</td>
+                                        <td>Делегирован на компанию <a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                         <td>5</td>
                                         <td>6</td>
                                         <td>7</td>
-                                        <td>ожидает обработки<a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                        <td>9</td>
+                                        <td>Курьер, Москва, Калугина 23</td>
+                                        <td>Иванов И.И.</td>
                                         <td>10</td>
-                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a>
-                                       <a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
+                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>
                                     </tr>
-                                     <tr>
+                                    <tr>
                                         <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
-                                        <td>4</td>
+                                        <td>Доставлено</td>
                                         <td>5</td>
                                         <td>6</td>
                                         <td>7</td>
-                                        <td>отказано <a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                        <td>9</td>
+                                        <td>Курьер, Москва, Калугина 23</td>
+                                        <td>Иванов И.И.</td>
                                         <td>10</td>
-                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a>
-                                       <a class="editOrder m-l" href="#editOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
+                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -151,7 +145,7 @@
                                             Количество
                                         </th>
                                         <th>
-                                            Остатки
+                                            Статус
                                         </th>
                                         <th>
                                             Шоурум
@@ -163,16 +157,15 @@
                                             Город
                                         </th>
                                         <th>
-                                            Статус
+                                            Куда отправляем
+                                        </th>
+                                        <th>
+                                            Покупатель
                                         </th>
                                         <th>
                                             Дата отправки
                                         </th>
                                         <th>
-                                            Количество
-                                        </th>
-                                        <th>
-                                            Комментарий
                                         </th>
                                     </tr>
                                 </thead>
@@ -181,175 +174,76 @@
                                         <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
-                                        <td>4</td>
+                                        <td>Ожидает</td>
                                         <td>назначить <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                         <td>6</td>
                                         <td>7</td>
-                                        <td>ожидает обработки</td>
-                                        <td>9</td>
+                                        <td>Курьер, Москва, Калугина 23</td>
+                                        <td>Иванов И.И.</td>
                                         <td>10</td>
-                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a>
-                                       <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
+                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>
                                     </tr>
                                     <tr>
                                         <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
-                                        <td>4</td>
+                                        <td>Ожидает</td>
                                         <td>назначить <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                         <td>6</td>
                                         <td>7</td>
-                                        <td>ожидает обработки</td>
-                                        <td>9</td>
+                                        <td>Курьер, Москва, Калугина 23</td>
+                                        <td>Иванов И.И.</td>
                                         <td>10</td>
-                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a>
-                                        <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
+                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>
                                     </tr>
                                     <tr>
                                         <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
-                                        <td>4</td>
+                                        <td>Ожидает</td>
                                         <td>назначить <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                         <td>6</td>
                                         <td>7</td>
-                                        <td>ожидает обработки</td>
-                                        <td>9</td>
+                                        <td>Курьер, Москва, Калугина 23</td>
+                                        <td>Иванов И.И.</td>
                                         <td>10</td>
-                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a>
-                                        <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
+                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>
                                     </tr>
                                     <tr>
                                         <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
-                                        <td>4</td>
+                                        <td>Ожидает</td>
                                         <td>назначить <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                         <td>6</td>
                                         <td>7</td>
-                                        <td>ожидает обработки</td>
-                                        <td>9</td>
+                                        <td>Курьер, Москва, Калугина 23</td>
+                                        <td>Иванов И.И.</td>
                                         <td>10</td>
-                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a>
-                                        <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
+                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>
                                     </tr>
                                     <tr>
                                         <td>1</td>
                                         <td>2</td>
                                         <td>3</td>
-                                        <td>4</td>
+                                        <td>Ожидает</td>
                                         <td>назначить <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
                                         <td>6</td>
                                         <td>7</td>
-                                        <td>ожидает обработки</td>
-                                        <td>9</td>
+                                        <td>Курьер, Москва, Калугина 23</td>
+                                        <td>Иванов И.И.</td>
                                         <td>10</td>
-                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a>
-                                        <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
+                                        <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                       
-                        <div class="panel panel-default receiptGoodsRow">
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <input type="text" class="form-control" placeholder="Логин">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <input type="text" class="form-control" placeholder="Телефон">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="text" class="form-control" placeholder="Серийный номер">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="button" class="btn btn-success findReceiptOrder m-n" value="Найти">
-                                        
-                                    </div>
-                                </div>
 
-                                <div class="row">
-                                    <div class="table-responsive m-t">
-                                        <table id="table-reception-goods" class="table table-reception-goods table-striped datagrid m-b-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th>
-                                                        Дата покупки
-                                                    </th>
-                                                    <th>
-                                                        Название продукта
-                                                    </th>
-                                                    <th>
-                                                        Серийный номер
-                                                    </th>
-                                                    <th>
-                                                        Статус
-                                                    </th>
-                                                    <th>
-                                                        Был в ремонте раз
-                                                    </th>
-                                                    <th>
-                                                        Дата принятия в ремонт
-                                                    </th>
-                                                    <th>
-                                                        Гарантия
-                                                    </th>
-                                                    <th>
-                                                        Требуеться оплата
-                                                    </th>
-                                                    <th>
-                                                    
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>2</td>
-                                                    <td>3</td>
-                                                    <td>4</td>
-                                                    <td>5</td>
-                                                    <td>6</td>
-                                                    <td>7</td>
-                                                    <td>8</td>
-                                                    <td><a class="receiptionGoodsEdit" href="#receiptionGoodsEdit"  data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>2</td>
-                                                    <td>3</td>
-                                                    <td>4</td>
-                                                    <td>5</td>
-                                                    <td>6</td>
-                                                    <td>7</td>
-                                                    <td>8</td>
-                                                    <td><a class="receiptionGoodsEdit" href="#receiptionGoodsEdit"  data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>2</td>
-                                                    <td>3</td>
-                                                    <td>4</td>
-                                                    <td>5</td>
-                                                    <td>6</td>
-                                                    <td>7</td>
-                                                    <td>8</td>
-                                                    <td><a class="receiptionGoodsEdit" href="#receiptionGoodsEdit"  data-toggle="modal"><i class="fa fa-pencil"></i></a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>                                
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-   
-
 </section>
 
 <div class="modal fade" id="editOrder">
@@ -359,8 +253,151 @@
                 <h4 class="modal-title">Заказ</h4>
             </div>
             <div class="modal-body">
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Дата заказа:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderDate">12-03-2013</span>
+                    </div>
+                </div>
 
-                <div class="row m-t m-b">
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Название продукта:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderItemName">набор Life Balance</span>
+                    </div>
+                </div>
+
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Количество:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderItemCount">2</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Шоу-рум:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderShowroom">трайнова ю п</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Страна:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCountry">Россия</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Город:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCity">Москва</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Куда отправляем:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderDeliveryAddress">Москва, Калугина 23</span>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p>Покупатель:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCustomer">Иванов Иван Иванович</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон1:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerPhone1">+78854555454</span>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Логин:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerLogin">ivanov</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон2:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerPhone2">+78854555454</span>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Скайп:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerSkype">ivanov</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон3:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerPhone3">+78854555454</span>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Email:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerEmail">ivanov@loshara.com</span>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон4:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCustomerPhone4">+78854555454</span>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p>Заказано:</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="list-unstiled orderItemDetails">
+                            <li>Два прибора Life Balance</li>
+                            <li>Два прибора Life Balance</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row m-b">
                     <div class="col-md-3">
                         <p class="m-t-xs">Статус:</p>
                     </div>
@@ -372,55 +409,50 @@
                     </div>
                 </div>
 
-                <div class="row m-t m-b">
-                    <div class="col-md-3">
-                        <p>Название продукта:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold orderItemName">набор Life Balance</span>
-                    </div>
-                </div>
-
-                <div class="row m-t m-b">
-                    <div class="col-md-3">
-                        <p class="m-t-xs">Количество:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <input type="text" name="editOrderCount" class="form-control w-69 inline editOrderCount">
-                    </div>
-                </div>
-
                 <div class="row">
                     <div class="col-md-3">
                         <p class="m-t-xs">Дата отправки:</p>
                     </div>
                     <div class="col-md-9">
-                        <input id="departureDate" class="departureDate input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="12-02-2013" data-date-format="dd-mm-yyyy">
+                        <span class="font-bold orderDepartureDate">15.04.2016</span>
                     </div>
                 </div>
+                
+                <div class="row m-b">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Способ доставки:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" name="orderlogisticName" class="form-control w-195p inline orderlogisticName">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Номер декларации:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="orderlogisticTTN" class="form-control inline orderlogisticTTN">
+                    </div>
+
+                    <div class="col-md-3">
+                        <a href="#">Добавить фото</a>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Ориентировочная дата доставки:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <input id="orderCommingDate" class="orderCommingDate input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="12-02-2013" data-date-format="dd-mm-yyyy">
+                    </div>
+                </div>                
                 
                 <div class="row">
                     <div class="col-md-12 m-t-xs">
                         Комментарий
                         <textarea class="form-control orderComment m-t m-b" name="orderComment" id="orderComment" rows="5" placeholder=""></textarea>
-                    </div>
-                </div>
-
-                 <div class="row m-t m-b">
-                    <div class="col-md-3">
-                        <p class="m-t-xs">Логистика:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold logisticName">Новая почта</span>
-                    </div>
-                </div>
-
-                 <div class="row m-t">
-                    <div class="col-md-3">
-                        <p class="m-t-xs">ТТН:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold logisticTTN">2100346534442</span>
                     </div>
                 </div>
 
@@ -446,7 +478,18 @@
             </div>
             <div class="modal-body">
 
-                <div class="row m-t m-b">
+            
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Дата заказа:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderDate">12-03-2013</span>
+                    </div>
+                </div>
+
+                
+                <div class="row">
                     <div class="col-md-3">
                         <p>Название продукта:</p>
                     </div>
@@ -455,48 +498,183 @@
                     </div>
                 </div>
 
-                <div class="row m-t m-b">
+                
+                <div class="row">
                     <div class="col-md-3">
                         <p>Количество:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderCount">10</span>
+                        <span class="font-bold orderItemCount">2</span>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-3">
-                        <p>Дата отправки:</p>
+                        <p>Шоу-рум:</p>
                     </div>
                     <div class="col-md-9">
-                        <input id="departureDate" class="departureDate input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="12-02-2013" data-date-format="dd-mm-yyyy">
+                        <span class="font-bold orderShowroom">трайнова ю п</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Страна:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCountry">Россия</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Город:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCity">Москва</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Куда отправляем:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderDeliveryAddress">Москва, Калугина 23</span>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p>Покупатель:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCustomer">Иванов Иван Иванович</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон1:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerPhone1">+78854555454</span>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Логин:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerLogin">ivanov</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон2:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerPhone2">+78854555454</span>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Скайп:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerSkype">ivanov</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон3:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerPhone3">+78854555454</span>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Email:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerEmail">ivanov@loshara.com</span>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон4:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCustomerPhone4">+78854555454</span>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p>Заказано:</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="list-unstiled orderItemDetails">
+                            <li>Два прибора Life Balance</li>
+                            <li>Два прибора Life Balance</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row m-b">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Статус:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderStatus">
+                            Доставлено
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Дата отправки:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderDepartureDate">15.04.2016</span>
                     </div>
                 </div>
                 
-                <div class="row m-t">
+                <div class="row m-b">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Способ доставки:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderLogisticName">Новая почта</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Номер декларации:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderLogisticTTN">2100346534442</span>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Ориентировочная дата доставки:</p>
+                    </div>
+                    <div class="col-md-3">
+                         <span class="font-bold orderCommingDate">12-02-2013</span>
+                    </div>
+                </div>                
+                
+                <div class="row">
                     <div class="col-md-3">
                         <p>Комментарий:</p>
                     </div>
                     <div class="col-md-9">
                         <span class="font-bold orderComment">Тут длинный комментарий</span>
-                    </div>
-                </div>
-
-                 <div class="row m-t m-b">
-                    <div class="col-md-3">
-                        <p>Логистика:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold logisticName">Новая почта</span>
-                    </div>
-                </div>
-
-                 <div class="row m-t m-b">
-                    <div class="col-md-3">
-                        <p>ТТН:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold logisticTTN">2100346534442</span>
                     </div>
                 </div>
 
@@ -521,46 +699,162 @@
                 <h4 class="modal-title">Заказ</h4>
             </div>
             <div class="modal-body">
-
-                <div class="row m-t">
+                
+                <div class="row">
                     <div class="col-md-3">
-                        <p class="m-t-xs">Шоурум:</p>
+                        <p>Дата заказа:</p>
                     </div>
                     <div class="col-md-9">
-                        <select name="editOrderShowroomSelect" class="editLooseOrderShowroomSelect w-195p inline form-control"> 
+                        <span class="font-bold orderDate">12-03-2013</span>
+                    </div>
+                </div>
+
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Название продукта:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderItemName">набор Life Balance</span>
+                    </div>
+                </div>
+
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Количество:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderItemCount">2</span>
+                    </div>
+                </div>
+
+                <div class="row m-b">
+                    <div class="col-md-3">
+                        <p>Шоу-рум:</p>
+                    </div>
+                    <div class="col-md-9">
+                       <select name="looseOrderShowroomSelect" class="looseOrderShowroomSelect w-195p inline form-control"> 
                             <option value="null">siren888</option> 
                             <option value="1">main</option> 
                         </select>
                     </div>
                 </div>
 
-                <div class="row m-t m-b">
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Страна:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCountry">Россия</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Город:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCity">Москва</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Куда отправляем:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderDeliveryAddress">Москва, Калугина 23</span>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p>Покупатель:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCustomer">Иванов Иван Иванович</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон1:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerPhone1">+78854555454</span>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Логин:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerLogin">ivanov</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон2:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerPhone2">+78854555454</span>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Скайп:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerSkype">ivanov</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон3:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerPhone3">+78854555454</span>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Email:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="font-bold orderCustomerEmail">ivanov@loshara.com</span>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p>телефон4:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderCustomerPhone4">+78854555454</span>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p>Заказано:</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="list-unstiled orderItemDetails">
+                            <li>Два прибора Life Balance</li>
+                            <li>Два прибора Life Balance</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row m-b">
                     <div class="col-md-3">
                         <p class="m-t-xs">Статус:</p>
                     </div>
                     <div class="col-md-9">
                         <select name="editLooseOrderStatusSelect" class="editLooseOrderStatusSelect w-195p inline form-control"> 
-                            <option value="null">Ожидает обработки</option> 
+                            <option value="null">Доставлено</option> 
                             <option value="1">Отгружено</option> 
                         </select>
-                    </div>
-                </div>
-
-                <div class="row m-t m-b">
-                    <div class="col-md-3">
-                        <p>Название продукта:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold editLooseOrderItemName">набор Life Balance</span>
-                    </div>
-                </div>
-
-                <div class="row m-t m-b">
-                    <div class="col-md-3">
-                        <p class="m-t-xs">Количество:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <input type="text" name="editLooseOrderCount" class="form-control w-69 inline editLooseOrderCount">
                     </div>
                 </div>
 
@@ -569,32 +863,45 @@
                         <p class="m-t-xs">Дата отправки:</p>
                     </div>
                     <div class="col-md-9">
-                        <input id="departureLooseDate" class="departureLooseDate input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="12-02-2013" data-date-format="dd-mm-yyyy">
+                        <span class="font-bold orderDepartureDate">15.04.2016</span>
                     </div>
                 </div>
+                
+                <div class="row m-b">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Способ доставки:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" name="looseOrderlogisticName" class="form-control w-195p inline looseOrderlogisticName">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Номер декларации:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="looseOrderlogisticTTN" class="form-control inline looseOrderlogisticTTN">
+                    </div>
+
+                    <div class="col-md-3">
+                        <a href="#">Добавить фото</a>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-md-3">
+                        <p class="m-t-xs">Ориентировочная дата доставки:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <input id="orderCommingDate" class="orderCommingDate input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="12-02-2013" data-date-format="dd-mm-yyyy">
+                    </div>
+                </div>                
                 
                 <div class="row">
                     <div class="col-md-12 m-t-xs">
                         Комментарий
-                        <textarea class="form-control editLooseOrderComment m-t m-b" name="editLooseOrderComment" id="editLooseOrderComment" rows="5" placeholder=""></textarea>
-                    </div>
-                </div>
-
-                 <div class="row m-t m-b">
-                    <div class="col-md-3">
-                        <p>Логистика:</p>
-                    </div>
-                    <div class="col-md-9">
-                         <input type="text" name="editLooseOrderlogisticName" class="form-control w-195p inline editLooseOrderlogisticName">
-                    </div>
-                </div>
-
-                 <div class="row m-t m-b">
-                    <div class="col-md-3">
-                        <p>ТТН:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <input type="text" name="editLooseOrderlogisticTTN" class="form-control w-195p inline editLooseOrderlogisticTTN">
+                        <textarea class="form-control looseOrderComment m-t m-b" name="looseOrderComment" id="looseOrderComment" rows="5" placeholder=""></textarea>
                     </div>
                 </div>
 
@@ -616,6 +923,22 @@
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js', ['position' => yii\web\View::POS_END]); ?>
 
 <script>
+
+    $('#table-loose-orders').dataTable({
+        language: TRANSLATION,
+        lengthMenu: [ 25, 50, 75, 100 ],
+        lengthChange: false,
+        info: false
+    });
+
+    
+    $('#table-orders').dataTable({
+        language: TRANSLATION,
+        lengthMenu: [ 25, 50, 75, 100 ],
+        lengthChange: false,
+        info: false
+    });
+
 
     $('#editOrder').on('shown.bs.modal', function(){
         // вызываеться перед открытием модального окна - выдёргиваем заказ из БД и подгружаем в окно
