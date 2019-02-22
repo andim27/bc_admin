@@ -286,7 +286,7 @@
     
     $('#table-main').dataTable({
         language: TRANSLATION,
-        lengthMenu: [ 25, 50, 75, 100 ]
+        lengthMenu: [ 25, 50, 75, 100 ],
         lengthChange: false,
         info: false
     });
