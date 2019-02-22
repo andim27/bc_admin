@@ -263,26 +263,6 @@
                     </div>
                 </div>
 
-                
-                <div class="row">
-                    <div class="col-md-3">
-                        <p>Название продукта:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold orderItemName">набор Life Balance</span>
-                    </div>
-                </div>
-
-                
-                <div class="row">
-                    <div class="col-md-3">
-                        <p>Количество:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold orderItemCount">2</span>
-                    </div>
-                </div>
-
                 <div class="row">
                     <div class="col-md-3">
                         <p>Шоу-рум:</p>
@@ -488,26 +468,6 @@
                     </div>
                 </div>
 
-                
-                <div class="row">
-                    <div class="col-md-3">
-                        <p>Название продукта:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold orderItemName">набор Life Balance</span>
-                    </div>
-                </div>
-
-                
-                <div class="row">
-                    <div class="col-md-3">
-                        <p>Количество:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold orderItemCount">2</span>
-                    </div>
-                </div>
-
                 <div class="row">
                     <div class="col-md-3">
                         <p>Шоу-рум:</p>
@@ -706,26 +666,6 @@
                     </div>
                     <div class="col-md-9">
                         <span class="font-bold orderDate">12-03-2013</span>
-                    </div>
-                </div>
-
-                
-                <div class="row">
-                    <div class="col-md-3">
-                        <p>Название продукта:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold orderItemName">набор Life Balance</span>
-                    </div>
-                </div>
-
-                
-                <div class="row">
-                    <div class="col-md-3">
-                        <p>Количество:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold orderItemCount">2</span>
                     </div>
                 </div>
 
