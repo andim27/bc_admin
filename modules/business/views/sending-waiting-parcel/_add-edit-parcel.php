@@ -8,12 +8,26 @@ use app\models\PartsAccessoriesInWarehouse;
 use app\models\PartsAccessories;
 use kartik\widgets\Select2;
 
-$listWarehouse = Warehouse::getArrayWarehouse();
+
 
 $listGoods = PartsAccessories::getListPartsAccessories();
 
 $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getListGoodsFromMyWarehouse();
 asort($listGoodsFromMyWarehouse);
+
+$listWarehouse = Warehouse::getArrayWarehouse();
+$listShowroom = \app\models\api\Showrooms::getListForFilter();
+
+$listDelivery = [];
+foreach ($listWarehouse as $k=>$item) {
+    $listDelivery[$k] = $item . '(склад)';
+}
+foreach ($listShowroom as $k=>$item) {
+    $listDelivery[$k] = $item . '(шоу-рум)';
+}
+asort($listDelivery);
+
+
 //var_dump($listGoodsFromMyWarehouse);
 
 
@@ -96,8 +110,8 @@ $countGoodsInParcel = json_encode($countGoodsInParcel);
                     <div class="col-md-7">
                         <select class="form-control"  name="where_sent"  id="whereSend">
                             <option value="" selected><?=THelper::t('where_we_ship'); ?></option>
-                            <?php  foreach ($listWarehouse as $key=>$value) { ?>
-                                <option value="<?=$key ?>"><?=$value; ?></option>
+                            <?php  foreach ($listDelivery as $key=>$value) { ?>
+                                <option value="<?=$key?>"><?=$value;?></option>
                             <?php } ?>
                         </select>
 

@@ -8,6 +8,7 @@ use app\models\PartsAccessories;
 $listGoods = PartsAccessories::getListPartsAccessories($language);
 $listWarehouse = Warehouse::getArrayWarehouse();
 $listAdmin = Users::getListAdmin();
+$listShowroom = \app\models\api\Showrooms::getListForFilter();
 ?>
 
 <section class="panel panel-default scrollX">
@@ -39,10 +40,10 @@ $listAdmin = Users::getListAdmin();
                                 <td><?=$item->id?></td>
                                 <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
                                 <td><?=(!empty($listAdmin[(string)$item->who_sent]) ? $listAdmin[(string)$item->who_sent] : 'None');?></td>
-                                <td><?=(!empty($listWarehouse[$item->from_where_send]) ? $listWarehouse[$item->from_where_send] : 'None');?></td>
+                                <td><?=(!empty($listWarehouse[$item->from_where_send]) ? $listWarehouse[$item->from_where_send] : (!empty($listShowroom[$item->from_where_send]) ? $listShowroom[$item->from_where_send] : ''));?></td>
                                 <td><?=$listGoods[$itemParcel['goods_id']]?></td>
                                 <td><?=$itemParcel['goods_count']?></td>
-                                <td><?=$listWarehouse[$item->where_sent]?></td>
+                                <td><?=(!empty($listWarehouse[$item->where_sent]) ? $listWarehouse[$item->where_sent] : (!empty($listShowroom[$item->where_sent]) ? $listShowroom[$item->where_sent] : ''))?></td>
                                 <td><?=(!empty($item->who_gets) ? $item->who_gets : '')?></td>
                                 <td><?=(!empty($item->delivery) ? $item->delivery : '')?></td>
                                 <td>

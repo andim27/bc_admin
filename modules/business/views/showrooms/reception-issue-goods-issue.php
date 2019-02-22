@@ -6,7 +6,7 @@
 ?>
 
 <div class="m-b-md">
-    <h3 class="m-b-none">Прием/выдача товаров</h3>
+    <h3 class="m-b-none">Выдача товаров</h3>
 </div>
 <section class="panel panel-default">
     <div class="row">
@@ -28,9 +28,9 @@
         <div class="col-md-12">
             <header class="panel-heading bg-light">
                 <ul class="nav nav-tabs nav-justified">
-                    <li class="active issueGoods"><a href="javascript:void(0);">Выдача</a></li>
-                    <li class="receptionGoods"><a href="javascript:void(0);">Приём</a></li>
-                    <li class="orderGoods"><a href="javascript:void(0);" >Заказ</a></li>
+<!--                    <li class="active issueGoods"><a href="javascript:void(0);">Выдача</a></li>-->
+<!--                    <li class="receptionGoods"><a href="javascript:void(0);">Приём</a></li>-->
+<!--                    <li class="orderGoods"><a href="javascript:void(0);" >Заказ</a></li>-->
 
 <!--                    <li class="receptionGoods"><a href="/ru/business/showrooms/reception-issue-goods-reception">Приём</a></li>-->
 <!--                    <li class="orderGoods"><a href="/ru/business/showrooms/reception-issue-goods-order">Заказ</a></li>-->
@@ -69,7 +69,7 @@
                                             Статус
                                         </th>
                                         <th>
-                                            Даты закрытия заказ
+                                            Даты закрытия заказа
                                         </th>
                                         <th>
                                             Будет доставлен ориентировочно
@@ -102,7 +102,9 @@
                                                 <td><?=$saleItem['dateDelivery']?></td>
                                                 <td><?=$saleItem['addressDelivery']?></td>
                                                 <td>
-                                                    <a class="editIssue" href="javascript:void(0);" data-id="<?=$saleItem['saleId']?>">
+                                                    <a class="editIssue" href="#issueInfo" data-id="<?=$saleItem['saleId']?>"
+                                                    data-toggle="modal"
+                                                    >
                                                         <i class="fa fa-pencil"></i>
                                                     </a>
                                                 </td>
@@ -114,213 +116,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <input type="button" class="btn btn-success pull-right issueOrder m-sm" value="Подобрать заказ">
-                            </div>
-                        </div>
-
-                        <div class="panel panel-default issueInfo">
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-md-12 blError"></div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Дата заявки:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-date m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Логин:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-login m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>ФИО:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-FIO m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Телефоны:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-phones m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Заказано:</p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <ul class="issue-order list-unstyled">
-                                            <li>Набор Life Balanсe 2 шт. <a href="#" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>
-                                            <li>Life Expert 2 шт. <a href="#" class="fromBalnce issued pull-right">Отменить</a> <span class="spanIssued pull-right m-r">Выдано с баланса</span></li>
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p class="m-t">Статус:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <?=Html::dropDownList('',false,\app\models\Sales::getStatusShowroom(),[
-                                            'class' => 'issueSelect w-50 form-control m'
-                                        ])?>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Дата доставки:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-dateDelivery m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Адрес:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-address m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <button type="button" class="btn btn-sm btn-success pull-right saveEditedIssue m-n">
-                                            Сохранить
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="panel panel-default issueOrderRow">
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-md-12 blError"></div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <input type="text" class="form-control orderId" placeholder="Номер накладной">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="button" class="btn btn-success checkIssue m-n" value="Подобрать заказ">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="panel panel-default issueOrderDetail">
-                            <div class="panel-body">
-
-                                <div class="row">
-                                    <div class="col-md-12 blError"></div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Дата заявки:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-date m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Логин:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-login m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>ФИО:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-FIO m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Телефоны:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-phones m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Заказано:</p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <ul class="issue-order list-unstyled"></ul>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p class="m-t">Статус:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <?=Html::dropDownList('',false,\app\models\Sales::getStatusShowroom(),[
-                                            'class' => 'issueSelect w-50 form-control m'
-                                        ])?>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Дата доставки:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-dateDelivery m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p>Адрес:</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="font-bold issue-address m-l m-r"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <button type="button" class="btn btn-sm btn-success pull-right checkLogin m-n" disabled="disabled">
-                                            Подобрать заказ
-                                        </button>
-                                    </div>
-                                </div>
+                               <a href="#issueOrder" class="btn btn-success pull-right issueOrder m-sm" data-toggle="modal">Подобрать заказ</a>
                             </div>
                         </div>
 
@@ -330,6 +126,244 @@
         </div>
     </div>
 </section>
+
+<div class="modal fade issueInfo" id="issueInfo">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Выдача товара</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12 blError"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Дата заявки:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-date m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Логин:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-login m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>ФИО:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-FIO m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Телефоны:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-phones m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Заказано:</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="issue-order list-unstyled">
+                            <li>Набор Life Balanсe 2 шт. <a href="#" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>
+                            <li>Life Expert 2 шт. <a href="#" class="fromBalnce issued pull-right">Отменить</a> <span class="spanIssued pull-right m-r">Выдано с баланса</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="m-t">Статус:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <?=Html::dropDownList('',false,\app\models\Sales::getStatusShowroom(),[
+                            'class' => 'issueSelect w-50 form-control m'
+                        ])?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Дата доставки:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-dateDelivery m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Адрес:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-address m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="col-sm-8 col-sm-offset-2 form-group">
+                            <a class="btn btn-danger" data-dismiss="modal">Закрыть</a>
+                            <button type="button" class="btn btn-success saveEditedIssue m-n">
+                            Сохранить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade issueOrder" id="issueOrder">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Подобрать заказ</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="issueOrderRow">
+                    <div>
+                        <div class="row">
+                            <div class="col-md-12 blError"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-md-offset-2">
+                                <input type="text" class="form-control orderId" placeholder="Номер накладной">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="button" class="btn btn-success checkIssue m-n" value="Подобрать заказ">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default issueOrderDetail">
+                    <div class="panel-body">
+
+                        <div class="row">
+                            <div class="col-md-12 blError"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Дата заявки:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <span class="font-bold issue-date m-l m-r"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Логин:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <span class="font-bold issue-login m-l m-r"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>ФИО:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <span class="font-bold issue-FIO m-l m-r"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Телефоны:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <span class="font-bold issue-phones m-l m-r"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Заказано:</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="issue-order list-unstyled"></ul>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p class="m-t">Статус:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <?=Html::dropDownList('',false,\app\models\Sales::getStatusShowroom(),[
+                                    'class' => 'issueSelect w-50 form-control m'
+                                ])?>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Дата доставки:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <span class="font-bold issue-dateDelivery m-l m-r"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Адрес:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <span class="font-bold issue-address m-l m-r"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-sm btn-success pull-right checkLogin m-n" disabled="disabled">
+                                    Подобрать заказ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row m-t-lg">
+                    <div class="col-md-12 text-center">
+                        <div class="col-sm-8 col-sm-offset-2 form-group">
+                            <a class="btn btn-danger" data-dismiss="modal">Закрыть</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!--<div class="modal fade" id="receiptionGoodsEdit">-->
 <!--    <div class="modal-dialog" >-->
@@ -524,6 +558,11 @@
 
 <script>
 
+    $('#table-issue').dataTable({
+        language: TRANSLATION,
+        lengthMenu: [ 25, 50, 75, 100 ],
+        "order": [[ 0, "desc" ]]
+    });
 
     $('.issueInfo').on('click','.fromBalnce',function(){
 
@@ -560,8 +599,8 @@
     });
 
     $('table').on('click','.editIssue',function(){
-        $('.issueOrderRow').hide();
-        $('.issueOrderDetail').hide();
+      //  $('.issueOrderRow').hide();
+      //  $('.issueOrderDetail').hide();
 
         clearIssueInfo();
 
@@ -571,6 +610,12 @@
             url: '/ru/business/sale/get-sale',
             type: 'POST',
             data: {saleId:$(this).data('id')},
+            beforeSend: function () {
+                blInfo.find('.modal-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                blInfo.find('.loader').remove();
+            },
             success: function(msg){
                 if(msg.error === ''){
                     blInfo.find('.issue-date').text(msg.dateCreate);
@@ -600,7 +645,7 @@
                         blProduct = '<li>'+v.name;
 
                         if(msg.typeDelivery == '-' || msg.typeDelivery == 'showroom'){
-                            //blProduct += '<a href="javascript:void(0);" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>'
+                            //blProduct += '<a href="javascript:void(0);" class="fromBalnce pull-right">Выдать с с моего шоу-рума демонстрационый образец</a> <span class="spanIssued pull-right m-r"></span></li>'
                         }
 
                         blOrder.append(blProduct);
@@ -621,6 +666,12 @@
             url: '/ru/business/sale/change-status-showroom-sale',
             type: 'POST',
             data: {saleId:saleId,statusShowroom:statusShowroom},
+            beforeSend: function () {
+                $('.issueInfo').find('.modal-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                $('.issueInfo').find('.loader').remove();
+            },
             success: function(msg){
                 $('.issueInfo .blError').html(
                     '<div class="alert alert-'+msg.typeAlert+' fade in">' +
@@ -636,11 +687,11 @@
         });
     });
 
-    $('#content').on('click','.issueOrder',function(){
-        $('.issueOrderDetail').hide();
-        $('.issueInfo').hide();
-        $('.issueOrderRow').toggle();
-    });
+    // $('#content').on('click','.issueOrder',function(){
+    //     $('.issueOrderDetail').hide();
+    //     $('.issueInfo').hide();
+    //     $('.issueOrderRow').toggle();
+    // });
 
     $('#content').on('click','.checkIssue',function(){
 
@@ -653,6 +704,12 @@
             url: '/ru/business/sale/get-sale',
             type: 'POST',
             data: {orderId:orderId},
+            beforeSend: function () {
+                $('#issueOrder').find('.modal-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                $('#issueOrder').find('.loader').remove();
+            },
             success: function(msg){
                 if(msg.error === ''){
                     if(msg.flHasAccruals === true){
@@ -741,6 +798,12 @@
             url: '/ru/business/sale/set-showroom-sale',
             type: 'POST',
             data: {saleId:saleId},
+            beforeSend: function () {
+                $('#issueOrder').find('.modal-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                $('#issueOrder').find('.loader').remove();
+            },
             success: function(msg){
                 $('.issueOrderDetail .blError').html(
                     '<div class="alert alert-'+msg.typeAlert+' fade in">' +

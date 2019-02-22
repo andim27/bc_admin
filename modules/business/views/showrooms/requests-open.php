@@ -80,78 +80,87 @@
     </div>
 </section>
 
-<div class="row">
-    <div class="col-md-12 blError">
 
-    </div>
-</div>
-
-<div class="panel panel-default requestInfo">
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-12 requestMeta">
-                <p class="m-t m-b">Дата заявки: <strong class="request-date"></strong></p>
-                <p class="m-t m-b">Логин: <strong class="request-login"></strong></p>
-                <p class="m-t m-b">ФИО: <strong class="request-fio"></strong></p>
-                <p class="m-t m-b">Страна: <strong class="request-country"></strong></p>
-                <p class="m-t m-b">Город: <strong class="request-city"></strong></p>
-                <p class="m-t m-b">Контакты профиля: <strong class="request-contacts"></strong></p>
-                <p class="m-t m-b">Текст с формы: <strong class="request-text"></strong></p>
-                <p class="m-t m-b">Статус карьеры (регионан.мен): <strong class="request-stateCarrer"></strong></p>
-                <p class="m-t m-b">Условия 10000/3: <strong class="request-conditions"></strong></p>
+<div class="modal fade requestInfo o-a" id="requestInfo">
+    <div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Заявка</h4>
             </div>
-        </div>
+            <div class="modal-body">    
 
-        <div class="row">
-            <div class="col-sm-12 imgRequestsContainer">
-            </div>
-        </div>
+                <div class="row">
+                    <div class="col-md-12 blError">
 
-        <form action="" class="formUpdateRequest">
-
-            <?=Html::hiddenInput('id','',['class'=>'request-id'])?>
-
-            <div class="row m-t-lg">
-                <div class="col-sm-5">
-                    <textarea class="form-control request-comment" rows="9" name="comment" placeholder="Внутренние замечания администрации..."></textarea>
-                </div>
-                <div class="col-sm-4">
-                    <div class="col-sm-12 text-center m-b">
-                        <a href="javascript:void();" class="btnOpenModalAddFile">
-                            <i class="fa fa-cloud-upload text" title="Добавить файл"></i> Добавить файл
-                        </a>
                     </div>
-                    <table class="table datagrid m-b-sm requestsFiles">
-                        <thead>
-                        <tr>
-                            <th colspan="3">Прикреплённые файлы</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
                 </div>
-                <div class="col-sm-3">
-                    <label class="control-label"><strong>Статус заявки</strong></label>
-                    <?=Html::dropDownList('status',false,ShowroomsRequestsOpen::getStatusRequestOpen(),[
-                        'class' => 'form-control m-b requestStateSelect'
-                    ])?>
-
-                    <label class="control-label"><strong>Проверяющий</strong></label>
-                    <?=Html::dropDownList('userHowCheck',false,User::getListUserHighTopManager(),[
-                        'class' => 'form-control m-b requestVerifierSelect'
-                    ])?>
-
+                
+                <div class="row">
+                    <div class="col-sm-12 requestMeta">
+                        <p class="m-t m-b">Дата заявки: <strong class="request-date"></strong></p>
+                        <p class="m-t m-b">Логин: <strong class="request-login"></strong></p>
+                        <p class="m-t m-b">ФИО: <strong class="request-fio"></strong></p>
+                        <p class="m-t m-b">Страна: <strong class="request-country"></strong></p>
+                        <p class="m-t m-b">Город: <strong class="request-city"></strong></p>
+                        <p class="m-t m-b">Контакты профиля: <strong class="request-contacts"></strong></p>
+                        <p class="m-t m-b">Текст с формы: <strong class="request-text"></strong></p>
+                        <p class="m-t m-b">Статус карьеры (регионан.мен): <strong class="request-stateCarrer"></strong></p>
+                        <p class="m-t m-b">Условия 10000/3: <strong class="request-conditions"></strong></p>
+                    </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-sm-12 imgRequestsContainer">
+                    </div>
+                </div>
+
+                <form action="" class="formUpdateRequest">
+
+                    <?=Html::hiddenInput('id','',['class'=>'request-id'])?>
+
+                    <div class="row m-t-lg">
+                        <div class="col-sm-5">
+                            <textarea class="form-control request-comment" rows="9" name="comment" placeholder="Внутренние замечания администрации..."></textarea>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="col-sm-12 text-center m-b">
+                                <a href="javascript:void();" class="btnOpenModalAddFile">
+                                    <i class="fa fa-cloud-upload text" title="Добавить файл"></i> Добавить файл
+                                </a>
+                            </div>
+                            <table class="table datagrid m-b-sm requestsFiles">
+                                <thead>
+                                <tr>
+                                    <th colspan="3">Прикреплённые файлы</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="control-label"><strong>Статус заявки</strong></label>
+                            <?=Html::dropDownList('status',false,ShowroomsRequestsOpen::getStatusRequestOpen(),[
+                                'class' => 'form-control m-b requestStateSelect'
+                            ])?>
+
+                            <label class="control-label"><strong>Проверяющий</strong></label>
+                            <?=Html::dropDownList('userHowCheck',false,User::getListUserHighTopManager(),[
+                                'class' => 'form-control m-b requestVerifierSelect'
+                            ])?>
+
+                        </div>
+                    </div>
+                    <div class="row m-t">
+                        <div class="col-sm-12">
+                            <a class="btn btn-danger m-b-xs m-l" data-dismiss="modal">Закрыть</a>
+                            <input type="submit" class="btn btn-success pull-right updateRequest" value="Сохранить">
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <input type="submit" class="btn btn-success pull-right updateRequest" value="Сохранить">
-                </div>
-            </div>
-        </form>
-
-  </div>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="modalUpload">
@@ -206,7 +215,7 @@
 
         clearRequestInfoForm();
 
-        blInfo.show();
+        //blInfo.show();
 
         $.ajax({
             url: '/ru/business/showrooms/get-requests-open',
@@ -254,6 +263,8 @@
                         `);
                     });
                 }
+
+                $('.requestInfo').modal();
             }
         });
     } );
