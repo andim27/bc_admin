@@ -659,6 +659,12 @@ Class Menu
                         'action' => 'repair-admin',
                     ],
                     [
+                        'key'   =>  'showrooms_emails',
+                        'label' => THelper::t('showrooms_emails'),
+                        'url' => ['showrooms/emails'],
+                        'action' => 'emails',
+                    ],
+                    [
                         'key'   =>  'showrooms_orders',
                         'label' => THelper::t('showrooms_orders'),
                         'url' => ['showrooms/orders'],
