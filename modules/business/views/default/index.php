@@ -256,8 +256,8 @@ function totalDetailsSum($statisticInfo) {
                     <i class="fa fa-money fa-stack-1x text-white"></i>
                 </span>
                 <a class="clear" href="#" onclick="moneyIncomeDetails()">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoney']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('money_income'); ?></small>
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoneyDetails']['income']), 0, ',', ' ');?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('money_income'); ?>(ORDERS)</small>
                 </a>
                 <table id="m_income_details" style="display: none">
                     <tr><td  width="25%"><span>softpay:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['softpay']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['softpay']), 0, ',', ' ')) : 0 ?></span></td></tr>
@@ -275,8 +275,8 @@ function totalDetailsSum($statisticInfo) {
 <!--                    <tr style="border-bottom: dotted darkgreen"></tr>-->
                     <tfoot >
                     <tr style="border-bottom: dotted darkgreen"><td  width="25%"><span>Total:</span></td><td align="right"><span class="h4 m-t-xs"> <?= totalDetailsSum($statisticInfo) ?> </span></td></tr>
-                    <tr><td  width="25%"><span>Income:</span></td><td align="right"><span class="h4 m-t-xs"> <?= isset($statisticInfo['receiptMoneyDetails']['income']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['income']), 0, ',', ' ')) : 0 ?> </span></td></tr>
-                    <tr><td  width="25%"><span>Reloan:</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['reloan']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['reloan']), 0, ',', ' ')) : 0 ?></span></td></tr>
+<!--                    <tr><td  width="25%"><span>Income:</span></td><td align="right"><span class="h4 m-t-xs"> --><?//= isset($statisticInfo['receiptMoneyDetails']['income']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['income']), 0, ',', ' ')) : 0 ?><!-- </span></td></tr>-->
+<!--                    <tr><td  width="25%"><span>Reloan:</span></td><td align="right"><span class="h4 m-t-xs">--><?//= isset($statisticInfo['receiptMoneyDetails']['reloan']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['reloan']), 0, ',', ' ')) : 0 ?><!--</span></td></tr>-->
 
                     </tfoot>
 
@@ -284,6 +284,29 @@ function totalDetailsSum($statisticInfo) {
             </div>
 
             <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+                  <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
+                    <i class="fa fa-usd fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoneyDetails']['loan']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('loan'); ?>(ADMIN)</small>
+                </a>
+
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['receiptMoneyDetails']['reloan']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                    <small class="text-muted text-uc capsLock"><?= THelper::t('sidebar_repayment'); ?></small>
+                </a>
+            </div>
+            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
+<!--                  <span class="fa-stack fa-2x pull-left m-r-sm " style="margin-left: 4%">-->
+<!--                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>-->
+<!--                    <i class="fa fa-money fa-stack-1x text-white"></i>-->
+<!--                  </span>-->
+<!--                <a class="clear" href="#">-->
+<!--                    <span class="h3 block m-t-xs"><strong>--><?//=number_format(round($statisticInfo['refill_vipvip']),0,',',' ')?><!-- <i class="fa fa-eur"></i></strong></span>-->
+<!--                    <small class="text-muted text-uc capsLock">--><?//= THelper::t('replenished'); ?><!-- VipVip</small>-->
+<!--                </a>-->
                 <span class="fa-stack fa-2x pull-left m-r-sm">
                     <i class="fa fa-circle fa-stack-2x text-color-ffe00e"></i>
                     <i class="fa fa-usd fa-stack-1x text-white"></i>
@@ -294,19 +317,6 @@ function totalDetailsSum($statisticInfo) {
                 </a>
             </div>
             <div class="col-sm-3 col-md-3 padder-v b-r b-light">
-                  <span class="fa-stack fa-2x pull-left m-r-sm " style="margin-left: 4%">
-                    <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
-                    <i class="fa fa-money fa-stack-1x text-white"></i>
-                  </span>
-                <a class="clear" href="#">
-                    <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill_vipvip']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
-                    <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?> VipVip</small>
-                </a>
-            </div>
-            <div class="col-sm-3 col-md-3 padder-v b-r b-light">
-<!--                <a class="btn btn-success center-block" title="Детализиция по проектам" onclick="getDetailsBlock('projects')">-->
-<!--                    <span class="glyphicon glyphicon-stats"></span> --><?//= THelper::t('projects'); ?>
-<!--                </a>-->
                 <span class="fa-stack fa-2x pull-left m-r-sm " style="margin-left: 4%">
                     <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>
                     <i class="fa fa-money fa-stack-1x text-white"></i>
@@ -315,6 +325,21 @@ function totalDetailsSum($statisticInfo) {
                     <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill_wellness']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
                     <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?> Wellness</small>
                 </a>
+                <div class="row b-l">
+
+<!--                        <span class="fa-stack fa-2x pull-left m-r-sm " >-->
+<!--                            <i class="fa fa-circle fa-stack-2x text-color-61c14c"></i>-->
+<!--                            <i class="fa fa-money fa-stack-1x text-white"></i>-->
+<!--                        </span>-->
+
+                        <a class="clear" href="#">
+                            <span class="h3 block m-t-xs"><strong><?=number_format(round($statisticInfo['refill_vipvip']),0,',',' ')?> <i class="fa fa-eur"></i></strong></span>
+                            <small class="text-muted text-uc capsLock"><?= THelper::t('replenished'); ?> VipVip</small>
+                        </a>
+
+                </div>
+
+
             </div>
         </div>
     </section>

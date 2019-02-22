@@ -1347,8 +1347,21 @@ class DefaultController extends BaseController
                 $statisticInfo['receiptMoneyDetails']['pb']+=$m_item['amount'];
             }
         }
+        $loan=(new \yii\mongodb\Query())
+            ->select(['amount'])
+            ->from('pre_up')
+            ->where([
+                'created_at' => [
+                    '$gte' => new UTCDatetime($queryDateFrom),
+                    '$lte' => new UTCDateTime($queryDateTo)
+                ],
+                'kind'    =>'loan',
+                'status'  =>'done'
+            ])
+            ->sum('amount');
         $statisticInfo['receiptMoney'] = $loanRep + $income;
         $statisticInfo['receiptMoneyDetails']['income'] = $income;
+        $statisticInfo['receiptMoneyDetails']['loan'] = $loan;
         $statisticInfo['receiptMoneyDetails']['reloan'] = $loanRep;
         //---b:money from admin-----
         $statisticInfo['receiptMoneyDetails']['bank_a'] = 0;
