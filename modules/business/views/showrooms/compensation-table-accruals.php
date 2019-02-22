@@ -113,6 +113,8 @@
     $('#table-profit').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],
+        lengthChange: false,
+        info: false,
         "order": [[ 0, "desc" ]]
     });
 
