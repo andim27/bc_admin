@@ -555,8 +555,10 @@ class ShowroomsController extends BaseController
             $listShowroomsForSelect = [
                 $filter['showroomId'] => $listShowroomsForSelect[$filter['showroomId']]
             ];
+            $btnChangeShowroom = 0;
         } else{
             $filter['showroomId'] = false;
+            $btnChangeShowroom = 1;
         }
 
         if(!empty($request['showroomId'])){
@@ -648,6 +650,7 @@ class ShowroomsController extends BaseController
             'filter'                    =>  $filter,
             'salesShowroom'             =>  $salesShowroom,
             'turnoverShowroom'          =>  $turnoverShowroom,
+            'btnChangeShowroom'         =>  $btnChangeShowroom,
         ]);
     }
 
@@ -826,88 +829,88 @@ class ShowroomsController extends BaseController
 //        die();
 //    }
 
-    public function actionTieShowroomWarehouse()
-    {
-        $array = [
-            '5926aa99dca78744b224ec45'  =>  '5c6bd11c90cf47014a3baf62',
-            '5a44dd8fdca7875f3235e1a7'  =>  '5c6aa7a5cab31d00690969a2',
-            '5aa8e731267a9c00150f243e'  =>  '5c668ebef70884006f7754b2',
-            '5aa8fa39267a9c00050c5f53'	=>  '5c6673ffd537e9007253d862',
-            '590c5b80dca78776693864d2'  =>  '5c666d90d537e9006b6dab2b',
-            '592e9b44dca78714107bc915'  =>	'5c6521e91058ac00793b4315',
-            '5926a902dca7871604279202'	=>  '5c6414825f6dac00c35beeac',
-            '5926ac04dca78744b224ec46'  =>  '5c63e600bc1c6900e9647a62',
-            '59d75ffedca7872daa7a59c4'	=>  '5c62e598bc1c6900aa61a0d3',
-            '592e9a67dca7872e9e17e4e2'	=>  '5c62dc125f6dac009c5a7cbd',
-            '5926aa99dca78744b224ec45'	=>  '5c62dadc5f6dac008c7fb5a9',
-            '592ff500dca7877580068552'	=>  '5c62da2a5f6dac009c5a7cbb',
-            '5a3a2f4ddca7877bdb50a012'	=>  '5c62d7e45f6dac009c5a7c8b',
-            '58ef7af7dca78741546e59a2'  =>	'5c62d4b6bc1c6900a9008730',
-            '5912f1f0dca7875198097b12'  =>	'5c62bff05f6dac008c7fb4e2',
-            '58eb5317dca7871bb210c2b2'	=>  '5c62acea5f6dac008c7fb4be',
-            '5970882ddca7870e16366a32'	=>  '5c6297835f6dac00836724e5',
-            '5926aa48dca78723cd4986a4'	=>  '5c6293925f6dac00836724e4',
-            '59047bd3dca78733db1b2b31'	=>  '5c6289d35f6dac00836724b8',
-            '5b34c84535bd11132731d6e7'	=>  '5c6282e05f6dac008077782e'
-        ];
-
-
-        $sales = Sales::find()
-            ->where([
-                'type' => [
-                    '$ne'   =>  -1
-                ],
-                'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
-                    '$lte' => new UTCDateTime(strtotime('2019-02-28 23:59:59') * 1000)
-                ]
-            ])
-            ->with(['infoUser','infoProduct'])
-            ->orderBy(['dateCreate'=>SORT_DESC])
-            ->all();
-
-        $table = '<table>';
-        foreach ($sales as $sale) {
-
-            $userId = strval($sale->warehouseId);
-
-            if(!empty($userId)){
-                $warehouseId = Warehouse::getIdMyWarehouse($userId);
-
-                $showroomId = strval($sale->showroomId);
-                $saleId = strval($sale->_id);
-
-                if(!empty($warehouseId) && !empty($array[$warehouseId])){
-
-                    if($array[$warehouseId] != $showroomId){
-
-                        $table .= '
-                            <tr>
-                                <td>'.$saleId.'</td>
-                                <td>'.$sale->productName.'</td>
-                                <td>'.$showroomId.'</td>
-                                <td>'.$array[$warehouseId].'</td>
-                            </tr>
-                        ';
-
-                        $sale->showroomId = new ObjectId($array[$warehouseId]);
-
-                        if($sale->save()){
-
-                        }
-                    }
-                }
-            }
-        }
-
-        $table .= '<table>';
-        echo $table;
-
-
-
-        die();
-        
-    }
+//    public function actionTieShowroomWarehouse()
+//    {
+//        $array = [
+//            '5926aa99dca78744b224ec45'  =>  '5c6bd11c90cf47014a3baf62',
+//            '5a44dd8fdca7875f3235e1a7'  =>  '5c6aa7a5cab31d00690969a2',
+//            '5aa8e731267a9c00150f243e'  =>  '5c668ebef70884006f7754b2',
+//            '5aa8fa39267a9c00050c5f53'	=>  '5c6673ffd537e9007253d862',
+//            '590c5b80dca78776693864d2'  =>  '5c666d90d537e9006b6dab2b',
+//            '592e9b44dca78714107bc915'  =>	'5c6521e91058ac00793b4315',
+//            '5926a902dca7871604279202'	=>  '5c6414825f6dac00c35beeac',
+//            '5926ac04dca78744b224ec46'  =>  '5c63e600bc1c6900e9647a62',
+//            '59d75ffedca7872daa7a59c4'	=>  '5c62e598bc1c6900aa61a0d3',
+//            '592e9a67dca7872e9e17e4e2'	=>  '5c62dc125f6dac009c5a7cbd',
+//            '5926aa99dca78744b224ec45'	=>  '5c62dadc5f6dac008c7fb5a9',
+//            '592ff500dca7877580068552'	=>  '5c62da2a5f6dac009c5a7cbb',
+//            '5a3a2f4ddca7877bdb50a012'	=>  '5c62d7e45f6dac009c5a7c8b',
+//            '58ef7af7dca78741546e59a2'  =>	'5c62d4b6bc1c6900a9008730',
+//            '5912f1f0dca7875198097b12'  =>	'5c62bff05f6dac008c7fb4e2',
+//            '58eb5317dca7871bb210c2b2'	=>  '5c62acea5f6dac008c7fb4be',
+//            '5970882ddca7870e16366a32'	=>  '5c6297835f6dac00836724e5',
+//            '5926aa48dca78723cd4986a4'	=>  '5c6293925f6dac00836724e4',
+//            '59047bd3dca78733db1b2b31'	=>  '5c6289d35f6dac00836724b8',
+//            '5b34c84535bd11132731d6e7'	=>  '5c6282e05f6dac008077782e'
+//        ];
+//
+//
+//        $sales = Sales::find()
+//            ->where([
+//                'type' => [
+//                    '$ne'   =>  -1
+//                ],
+//                'dateCreate' => [
+//                    '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
+//                    '$lte' => new UTCDateTime(strtotime('2019-02-28 23:59:59') * 1000)
+//                ]
+//            ])
+//            ->with(['infoUser','infoProduct'])
+//            ->orderBy(['dateCreate'=>SORT_DESC])
+//            ->all();
+//
+//        $table = '<table>';
+//        foreach ($sales as $sale) {
+//
+//            $userId = strval($sale->warehouseId);
+//
+//            if(!empty($userId)){
+//                $warehouseId = Warehouse::getIdMyWarehouse($userId);
+//
+//                $showroomId = strval($sale->showroomId);
+//                $saleId = strval($sale->_id);
+//
+//                if(!empty($warehouseId) && !empty($array[$warehouseId])){
+//
+//                    if($array[$warehouseId] != $showroomId){
+//
+//                        $table .= '
+//                            <tr>
+//                                <td>'.$saleId.'</td>
+//                                <td>'.$sale->productName.'</td>
+//                                <td>'.$showroomId.'</td>
+//                                <td>'.$array[$warehouseId].'</td>
+//                            </tr>
+//                        ';
+//
+//                        $sale->showroomId = new ObjectId($array[$warehouseId]);
+//
+//                        if($sale->save()){
+//
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        $table .= '<table>';
+//        echo $table;
+//
+//
+//
+//        die();
+//
+//    }
 
     /**
      * Charge Compensation
