@@ -1,6 +1,19 @@
 <?php
 
 use app\components\THelper;
+function bonusSum($statisticInfo) {
+    $res=$statisticInfo['bonus']['connectingBonus']
+        +$statisticInfo['bonus']['teamBonus']
+        +$statisticInfo['bonus']['mentorBonus']
+        +$statisticInfo['bonus']['careerBonus']
+        +$statisticInfo['bonus']['executiveBonus']
+        +$statisticInfo['bonus']['worldBonus']
+        +$statisticInfo['bonus']['equityBonus']
+        +$statisticInfo['bonus']['autoBonus']
+        +$statisticInfo['bonus']['propertyBonus']
+        +$statisticInfo['bonus']['representative'];
+    return round($res);
+}
 ?>
 
 <ul class="list-group no-radius">
@@ -55,5 +68,11 @@ use app\components\THelper;
         <span class="pull-right"><?=$statisticInfo['bonus']['representative'] ?></span>
         <span class="label bg-dark">10</span>
         Затраты представителей
+    </li>
+    <hr style="margin-left:15px;border-top: dotted 2px;" >
+    <li class="list-group-item" title="1 or 2 month only">
+        <span class="pull-right"><?=bonusSum($statisticInfo);?></span>
+        <span class="bg-primary"> &sum; </span>
+        <span class="text-primary" style="margin-left:50%;">Total</span>
     </li>
 </ul>

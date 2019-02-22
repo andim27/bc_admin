@@ -5,6 +5,7 @@ namespace app\modules\business\controllers;
 use app\models\LogWarehouse;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\SendingWaitingParcel;
+use app\models\Showrooms;
 use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
@@ -22,6 +23,11 @@ class SendingWaitingParcelController extends BaseController {
     {
 
         $idWarehouse[] = Warehouse::getIdMyWarehouse();
+
+        $showroomId = Showrooms::getIdMyShowroom();
+        if(!empty($showroomId)){
+            $idWarehouse[] = strval($showroomId);
+        }
 
         $modelSending = SendingWaitingParcel::find()
             ->where(['IN','from_where_send',$idWarehouse])
