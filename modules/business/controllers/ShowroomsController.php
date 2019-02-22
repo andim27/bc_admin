@@ -588,6 +588,7 @@ class ShowroomsController extends BaseController
             ->orderBy(['dateCreate'=>SORT_DESC])
             ->all();
 
+        $totalAccrual = 0;
         $salesShowroom = $turnoverShowroom = [];
         if(!empty($sales)){
             /** @var Sales $sale */
@@ -617,12 +618,12 @@ class ShowroomsController extends BaseController
 
                     $countSale = $sale->productData['count'];
 
-                    $accrual = '';
+                    $accrual = 0;
                     if(!empty($sale->statusShowroom) && $sale->statusShowroom == Sales::STATUS_SHOWROOM_DELIVERED){
                         if($arrayTurnoverAccruals[$showroomId]['turnoverTotal'] > 10000 && !empty($sale->infoProduct->paymentsToRepresentive)){
-                            $accrual = ($countSale * $sale->infoProduct->paymentsToRepresentive);
+                            $accrual = $sale->infoProduct->paymentsToRepresentive;
                         } else if(!empty($sale->infoProduct->paymentsToStock)) {
-                            $accrual = ($countSale * $sale->infoProduct->paymentsToStock);
+                            $accrual = $sale->infoProduct->paymentsToStock;
                         }
                     }
 
@@ -640,8 +641,10 @@ class ShowroomsController extends BaseController
                         'showroom'      => $showroomName,
                         'showroomId'    => $showroomId,
                         'status'        => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
-                        'accrual'       => $accrual
+                        'accrual'       => ($countSale * $accrual)
                     ];
+
+
                 }
 
 
@@ -1410,13 +1413,6 @@ class ShowroomsController extends BaseController
             'salesShowroom'             =>  $salesShowroom,
         ]);
     }
-
-
-
-
-
-
-
 
     public function actionRepair()
     {
