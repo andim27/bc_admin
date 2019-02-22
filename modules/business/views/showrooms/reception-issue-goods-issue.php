@@ -127,7 +127,6 @@
     </div>
 </section>
 
-
 <div class="modal fade issueInfo" id="issueInfo">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -559,6 +558,11 @@
 
 <script>
 
+    $('#table-issue').dataTable({
+        language: TRANSLATION,
+        lengthMenu: [ 25, 50, 75, 100 ],
+        "order": [[ 0, "desc" ]]
+    });
 
     $('.issueInfo').on('click','.fromBalnce',function(){
 
