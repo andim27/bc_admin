@@ -68,6 +68,9 @@
                                             Название продукта
                                         </th>
                                         <th>
+                                            Кол.
+                                        </th>
+                                        <th>
                                             Статус
                                         </th>
                                         <th>
@@ -88,6 +91,7 @@
                                                     <?=($btnChangeShowroom == 1 ? '<a href="javascript:void(0);" class="changeShowroom"><i class="fa fa-random"></i></a>' : '')?>
                                                 </td>
                                                 <td><?=$itemSale['productName']?></td>
+                                                <td><?=$itemSale['count']?></td>
                                                 <td><?=$itemSale['status']?></td>
                                                 <td>
                                                     <?=$itemSale['accrual']?>

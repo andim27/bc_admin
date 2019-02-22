@@ -615,12 +615,14 @@ class ShowroomsController extends BaseController
                         $showroomName = '';
                     }
 
+                    $countSale = $sale->productData['count'];
+
                     $accrual = '';
                     if(!empty($sale->statusShowroom) && $sale->statusShowroom == Sales::STATUS_SHOWROOM_DELIVERED){
                         if($arrayTurnoverAccruals[$showroomId]['turnoverTotal'] > 10000 && !empty($sale->infoProduct->paymentsToRepresentive)){
-                            $accrual = $sale->infoProduct->paymentsToRepresentive;
+                            $accrual = ($countSale * $sale->infoProduct->paymentsToRepresentive);
                         } else if(!empty($sale->infoProduct->paymentsToStock)) {
-                            $accrual = $sale->infoProduct->paymentsToStock;
+                            $accrual = ($countSale * $sale->infoProduct->paymentsToStock);
                         }
                     }
 
@@ -634,6 +636,7 @@ class ShowroomsController extends BaseController
                         'phone1'        => $sale->infoUser->phoneNumber,
                         'phone2'        => $sale->infoUser->phoneNumber2,
                         'productName'   => $sale->productName,
+                        'count'         => $countSale,
                         'showroom'      => $showroomName,
                         'showroomId'    => $showroomId,
                         'status'        => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
@@ -1494,12 +1497,14 @@ class ShowroomsController extends BaseController
 
                     $arrayTurnoverAccruals[$showroomId][$dateCreate]['turnoverTotal'] += $sale->price;
 
+                    $countSale = $sale->productData['count'];
+
                     if(!empty($dateCloseSale)){
                         if(!empty($sale->productData['paymentsToRepresentive'])){
-                            $arrayTurnoverAccruals[$showroomId][$dateCloseSale]['accrualsMax'] += $sale->productData['paymentsToRepresentive'];
+                            $arrayTurnoverAccruals[$showroomId][$dateCloseSale]['accrualsMax'] += ($sale->productData['paymentsToRepresentive'] * $countSale);
                         }
                         if(!empty($sale->productData['paymentsToStock'])){
-                            $arrayTurnoverAccruals[$showroomId][$dateCloseSale]['accrualsMin'] += $sale->productData['paymentsToStock'];
+                            $arrayTurnoverAccruals[$showroomId][$dateCloseSale]['accrualsMin'] += ($sale->productData['paymentsToStock'] * $countSale);
                         }
                     }
                 }
