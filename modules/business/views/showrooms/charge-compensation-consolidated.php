@@ -61,15 +61,6 @@
                                             Общий оборот
                                         </th>
                                         <th>
-                                            Webwellness
-                                        </th>
-                                        <th>
-                                            Vipcoin
-                                        </th>
-                                        <th>
-                                            VIPVIP
-                                        </th>
-                                        <th>
                                             Начислений
                                         </th>
                                         <th>
@@ -95,9 +86,6 @@
                                                 <td class="userLogin"><?=$itemShowroom['login']?></td>
                                                 <td class="userFullName"><?=$itemShowroom['fullName']?></td>
                                                 <td><?=$itemShowroom['turnoverTotal']?></td>
-                                                <td><?=$itemShowroom['turnoverWebWellness']?></td>
-                                                <td><?=$itemShowroom['turnoverVipCoin']?></td>
-                                                <td><?=$itemShowroom['turnoverVipVip']?></td>
                                                 <td><?=$itemShowroom['profit']?></td>
                                                 <td><?=$itemShowroom['paidOffBankTransfer']?></td>
                                                 <td><?=$itemShowroom['paidOffBC']?></td>

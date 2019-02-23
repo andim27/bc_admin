@@ -33,6 +33,7 @@ class Users extends ActiveRecord
             'accountId',
             'created',
             'email',
+            'skype',
             'phoneNumber',
             'statistics',
             'phoneNumber2',
