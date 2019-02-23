@@ -9,8 +9,10 @@ use app\models\Sales;
 use app\models\SendingWaitingParcel;
 use app\models\ShowroomsCompensation;
 use app\models\Showrooms;
+use app\models\ShowroomsEmails;
 use app\models\Users;
 use app\models\Warehouse;
+use app\modules\business\models\ShowroomsEmailsForm;
 use app\modules\business\models\ShowroomsOpeningConditionsForm;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
@@ -1456,8 +1458,6 @@ class ShowroomsController extends BaseController
         return $this->render('orders',[]);
     }
 
-
-
     private function getTurnoverAccruals($dateFrom,$dateTo,$showroomId = [])
     {
         $response = [];
@@ -1608,4 +1608,61 @@ class ShowroomsController extends BaseController
 
         return $response;
     }
+
+    public function actionEmails()
+    {
+        $request = Yii::$app->request;
+
+        $languages = api\dictionary\Lang::supported();
+
+        $emailsForm = new ShowroomsEmailsForm();
+
+        $requestLanguage = $request->get('l');
+        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
+
+        if (!$showroomsEmailsForClient = ShowroomsEmails::find()->where([
+            'lang' => $language,
+            'type' => ShowroomsEmails::TYPE_CLIENT
+        ])->one()) {
+            $showroomsEmailsForClient = new ShowroomsEmails();
+            $showroomsEmailsForClient->type = ShowroomsEmails::TYPE_CLIENT;
+            $showroomsEmailsForClient->lang = $language;
+        }
+
+        if (!$showroomsEmailsForShowroom = ShowroomsEmails::find()->where([
+            'lang' => $language,
+            'type' => ShowroomsEmails::TYPE_SHOWROOM
+        ])->one()) {
+            $showroomsEmailsForShowroom = new ShowroomsEmails();
+            $showroomsEmailsForShowroom->type = ShowroomsEmails::TYPE_SHOWROOM;
+            $showroomsEmailsForShowroom->lang = $language;
+        }
+
+        if ($request->isPost) {
+            if ($emailsForm->load($request->post())) {
+                $showroomsEmailsForClient->title = $emailsForm->clientTitle;
+                $showroomsEmailsForClient->body = $emailsForm->clientBody;
+                $showroomsEmailsForShowroom->title = $emailsForm->showroomTitle;
+                $showroomsEmailsForShowroom->body = $emailsForm->showroomBody;
+                if ($showroomsEmailsForClient->save() && $showroomsEmailsForShowroom->save()) {
+                    Yii::$app->session->setFlash('success', 'showrooms_emails_save_success');
+                } else {
+                    Yii::$app->session->setFlash('danger', 'showrooms_emails_save_error');
+                }
+            }
+
+            $this->redirect('/' . Yii::$app->language . '/business/showrooms/emails/?l=' . $language);
+        } else {
+            $emailsForm->clientTitle = $showroomsEmailsForClient->title;
+            $emailsForm->clientBody = $showroomsEmailsForClient->body;
+            $emailsForm->showroomTitle = $showroomsEmailsForShowroom->title;
+            $emailsForm->showroomBody = $showroomsEmailsForShowroom->body;
+            return $this->render('emails', [
+                'emailsForm' => $emailsForm,
+                'language' => $language,
+                'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : [],
+            ]);
+        }
+    }
+
 }
