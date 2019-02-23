@@ -640,10 +640,11 @@ class ShowroomsController extends BaseController
                         'count'         => $countSale,
                         'showroom'      => $showroomName,
                         'showroomId'    => $showroomId,
-                        'status'        => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
+                        'status'        => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_WAITING)),
                         'accrual'       => ($countSale * $accrual)
                     ];
 
+                    $totalAccrual += ($countSale * $accrual);
 
                 }
 
@@ -657,6 +658,7 @@ class ShowroomsController extends BaseController
             'salesShowroom'             =>  $salesShowroom,
             'turnoverShowroom'          =>  $turnoverShowroom,
             'btnChangeShowroom'         =>  $btnChangeShowroom,
+            'totalAccrual'              =>  $totalAccrual,
         ]);
     }
 
@@ -975,9 +977,6 @@ class ShowroomsController extends BaseController
                     'login'                 => $infoUser->username,
                     'fullName'              => $infoUser->secondName . '<br>' .$infoUser->firstName,
                     'turnoverTotal'         => 0,
-                    'turnoverWebWellness'   => 0,
-                    'turnoverVipCoin'       => 0,
-                    'turnoverVipVip'        => 0,
                     'profit'                => 0,
                     'paidOffBankTransfer'   => 0,
                     'paidOffBC'             => 0,
@@ -986,36 +985,59 @@ class ShowroomsController extends BaseController
             }
         }
 
-        // get info compensation payments
-        $modelCompensationPayments = ShowroomsCompensation::find()
-            ->andWhere([
-                'created_at' => [
-                    '$gte' => $dateFrom,
-                    '$lte' => $dateTo
-                ]
-            ])
-            ->andFilterWhere($whereShowroomCompensation)
-            ->all();
+        //get turnover and accruals
+        $arrayTurnoverAccruals = $this->getTurnoverAccruals($filter['date'] . '-01',$filter['date'] .'-'.$countDay,$filter['showroomId']);
+        if(!empty($arrayTurnoverAccruals)){
+            foreach ($arrayTurnoverAccruals as $k=>$itemTurnoverAccrual) {
+                $showrooms[$k]['turnoverTotal'] = $itemTurnoverAccrual['turnoverTotal'];
+//                $showrooms[$k]['profit'] = $itemTurnoverAccrual['accruals'];
+                //$showrooms[$k]['remainder'] = $itemTurnoverAccrual['accruals'];
+                $showrooms[$k]['profit'] = '-';
+                $showrooms[$k]['remainder'] = '-';
 
-        if(!empty($modelCompensationPayments)){
-            /** @var ShowroomsCompensation $itemCompensation */
-            foreach ($modelCompensationPayments as $itemCompensation) {
-                $showroomId = strval($itemCompensation->showroomId);
-                if(!empty($showrooms[$showroomId])){
-
-                    if($itemCompensation->typeOperation == 'refill'){
-                        if($itemCompensation->typeRefill == 'cashless'){
-                            $showrooms[$showroomId]['paidOffBankTransfer'] += $itemCompensation->amount;
-                        } else if($itemCompensation->typeRefill == 'pers_account'){
-                            $showrooms[$showroomId]['paidOffBC'] += $itemCompensation->amount;
-                        }
-                    }
-
-                    $showrooms[$showroomId]['remainder'] -= $itemCompensation->amount;
-
-                }
             }
         }
+
+        // get info compensation payments
+        $arrayCompensation = $this->getCompensation($filter['date'] . '-01',$filter['date'] .'-'.$countDay,$filter['showroomId']);
+        if(!empty($arrayCompensation)){
+            foreach ($arrayCompensation as $k=>$itemCompensation) {
+                $showrooms[$k]['paidOffBankTransfer'] = $itemCompensation['paidOffBankTransfer'];
+                $showrooms[$k]['paidOffBC'] = $itemCompensation['paidOffBC'];
+                //$compensationConsolidate[$k]['remainder'] -= $itemCompensation['accruals'];
+            }
+        }
+
+//        // get info compensation payments
+//        $modelCompensationPayments = ShowroomsCompensation::find()
+//            ->andWhere([
+//                'created_at' => [
+//                    '$gte' => $dateFrom,
+//                    '$lte' => $dateTo
+//                ]
+//            ])
+//            ->andFilterWhere($whereShowroomCompensation)
+//            ->all();
+//
+//        if(!empty($modelCompensationPayments)){
+//            /** @var ShowroomsCompensation $itemCompensation */
+//            foreach ($modelCompensationPayments as $itemCompensation) {
+//                $showroomId = strval($itemCompensation->showroomId);
+//                if(!empty($showrooms[$showroomId])){
+//
+//                    if($itemCompensation->typeOperation == 'refill'){
+//                        if($itemCompensation->typeRefill == 'cashless'){
+//                            $showrooms[$showroomId]['paidOffBankTransfer'] += $itemCompensation->amount;
+//                        } else if($itemCompensation->typeRefill == 'pers_account'){
+//                            $showrooms[$showroomId]['paidOffBC'] += $itemCompensation->amount;
+//                        }
+//                    }
+//
+//                    $showrooms[$showroomId]['remainder'] -= $itemCompensation->amount;
+//
+//                }
+//            }
+//        }
 
 
         return $this->render('charge-compensation-consolidated', [

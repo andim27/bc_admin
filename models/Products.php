@@ -178,6 +178,25 @@ class Products extends ActiveRecord
         return $list;
     }
 
+    public static function getListIdProductForIssue()
+    {
+        $list = [];
+
+        $model = self::find()->select(['_id'])
+            ->where(['product_connect_to_natural'=>[
+                '$ne'=>null
+            ]])
+            ->all();
+
+        if(!empty($model)){
+            foreach ($model as $item) {
+                $list[] = strval($item->_id);
+            }
+        }
+
+        return $list;
+    }
+
     public static function getListGoodsWithKey($product='')
     {
         $list = [];

@@ -611,3 +611,7 @@ input[name="EmergencyCommand[user_registration_txt]"] {
 .overflowXScroll {
     overflow-x: scroll;
 }
+
+.scrollForComment{
+    overflow-y: scroll;
+}

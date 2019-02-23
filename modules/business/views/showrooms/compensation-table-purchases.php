@@ -94,12 +94,18 @@
                                                 <td><?=$itemSale['count']?></td>
                                                 <td><?=$itemSale['status']?></td>
                                                 <td>
-                                                    <?=$itemSale['accrual']?>
+                                                    <?=(!empty($itemSale['accrual']) ? $itemSale['accrual'] : '')?>
                                                 </td>
                                             </tr>
                                         <?php } ?>
                                     <?php } ?>
                                 </tbody>
+                                <tfooter>
+                                    <th>
+                                        <td colspan="7"></td>
+                                        <td><?=$totalAccrual?></td>
+                                    </th>
+                                </tfooter>
                             </table>
                         </div>
 
