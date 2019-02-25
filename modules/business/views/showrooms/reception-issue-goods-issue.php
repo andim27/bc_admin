@@ -3,6 +3,7 @@
     use yii\helpers\Html;
     use yii\widgets\ActiveForm;
 
+    $listStatusShowroom = \app\models\Sales::getStatusShowroom();
 ?>
 
 <div class="m-b-md">
@@ -127,11 +128,11 @@
     </div>
 </section>
 
-<div class="modal fade issueInfo" id="issueInfo">
-    <div class="modal-dialog">
+<div class="modal fade issueInfo " id="issueInfo">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Выдача товара</h4>
+                <h4 class="modal-title">Заказ</h4>
             </div>
             <div class="modal-body">
 
@@ -149,28 +150,94 @@
 
                 <div class="row">
                     <div class="col-md-3">
-                        <p>Логин:</p>
+                        <p>Название продукта:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold issue-login m-l m-r"></span>
+                        <span class="font-bold issue-product-name m-l m-r"></span>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-3">
-                        <p>ФИО:</p>
+                        <p>Количество:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-count m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Шоу-рум:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-showroom m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Куда отправлеям:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-address m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Получатель:</p>
                     </div>
                     <div class="col-md-9">
                         <span class="font-bold issue-FIO m-l m-r"></span>
                     </div>
                 </div>
 
+
                 <div class="row">
-                    <div class="col-md-3">
-                        <p>Телефоны:</p>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p>Телефоны 1:</p>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="font-bold issue-phone-1 m-l m-r"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p>Телефоны 2:</p>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="font-bold issue-phone-2 m-l m-r"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-9">
-                        <span class="font-bold issue-phones m-l m-r"></span>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p>Логин :</p>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="font-bold issue-login m-l m-r"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p>Скайп:</p>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="font-bold issue-skype m-l m-r"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p>Email:</p>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="font-bold issue-email m-l m-r"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -181,10 +248,9 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <ul class="issue-order list-unstyled">
-                            <li>Набор Life Balanсe 2 шт. <a href="#" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>
-                            <li>Life Expert 2 шт. <a href="#" class="fromBalnce issued pull-right">Отменить</a> <span class="spanIssued pull-right m-r">Выдано с баланса</span></li>
+
                         </ul>
                     </div>
                 </div>
@@ -194,27 +260,19 @@
                         <p class="m-t">Статус:</p>
                     </div>
                     <div class="col-md-9">
-                        <?=Html::dropDownList('',false,\app\models\Sales::getStatusShowroom(),[
-                            'class' => 'issueSelect w-50 form-control m'
+                        <?=Html::dropDownList('',false,[],[
+                            'class' => 'issueSelect w-50 form-control m',
                         ])?>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-3">
-                        <p>Дата доставки:</p>
+                    <div class="col-md-12">
+                        <p>Коментарий:</p>
                     </div>
-                    <div class="col-md-9">
-                        <span class="font-bold issue-dateDelivery m-l m-r"></span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-3">
-                        <p>Адрес:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold issue-address m-l m-r"></span>
+                    <div class="col-md-12">
+                        <textarea name="" rows="3" class="form-control issueComment"></textarea>
+                        <textarea rows="3" class="form-control lookComment scrollForComment" disabled="disabled"></textarea>
                     </div>
                 </div>
 
@@ -236,7 +294,7 @@
 
 
 <div class="modal fade issueOrder" id="issueOrder">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Подобрать заказ</h4>
@@ -268,7 +326,7 @@
 
                         <div class="row">
                             <div class="col-md-3">
-                                <p>Дата заявки:</p>
+                                <p>Дата заказа:</p>
                             </div>
                             <div class="col-md-9">
                                 <span class="font-bold issue-date m-l m-r"></span>
@@ -277,28 +335,93 @@
 
                         <div class="row">
                             <div class="col-md-3">
-                                <p>Логин:</p>
+                                <p>Название продукта:</p>
                             </div>
                             <div class="col-md-9">
-                                <span class="font-bold issue-login m-l m-r"></span>
+                                <span class="font-bold issue-product-name m-l m-r"></span>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-3">
-                                <p>ФИО:</p>
+                                <p>Количество:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <span class="font-bold issue-count m-l m-r"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Шоу-рум:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <span class="font-bold issue-showroom m-l m-r"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Куда отправлеям:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <span class="font-bold issue-address m-l m-r"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Получатель:</p>
                             </div>
                             <div class="col-md-9">
                                 <span class="font-bold issue-FIO m-l m-r"></span>
                             </div>
                         </div>
 
+
                         <div class="row">
-                            <div class="col-md-3">
-                                <p>Телефоны:</p>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <p>Телефоны 1:</p>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <span class="font-bold issue-phone-1 m-l m-r"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <p>Телефоны 2:</p>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <span class="font-bold issue-phone-2 m-l m-r"></span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-9">
-                                <span class="font-bold issue-phones m-l m-r"></span>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <p>Логин :</p>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <span class="font-bold issue-login m-l m-r"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <p>Скайп:</p>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <span class="font-bold issue-skype m-l m-r"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <p>Email:</p>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <span class="font-bold issue-email m-l m-r"></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -309,8 +432,10 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
-                                <ul class="issue-order list-unstyled"></ul>
+                            <div class="col-md-12">
+                                <ul class="issue-order list-unstyled">
+
+                                </ul>
                             </div>
                         </div>
 
@@ -322,24 +447,6 @@
                                 <?=Html::dropDownList('',false,\app\models\Sales::getStatusShowroom(),[
                                     'class' => 'issueSelect w-50 form-control m'
                                 ])?>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-3">
-                                <p>Дата доставки:</p>
-                            </div>
-                            <div class="col-md-9">
-                                <span class="font-bold issue-dateDelivery m-l m-r"></span>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-3">
-                                <p>Адрес:</p>
-                            </div>
-                            <div class="col-md-9">
-                                <span class="font-bold issue-address m-l m-r"></span>
                             </div>
                         </div>
 
@@ -558,32 +665,57 @@
 
 <script>
 
+    var listStatusShowroom = JSON.parse('<?=json_encode($listStatusShowroom)?>');
+
+    var availableStatusShowroom = {
+        waiting : ['waiting','delivered','delegate_company'],
+        delivering : ['delivering','delivered_company'],
+        delivered : ['delivered'],
+        delegate_company : ['delegate_company','issue_showroom'],
+        sending_showroom : ['sending_showroom','delivered_company'],
+        delivered_company : ['delivered_company'],
+        issue_part : ['issue_part','delivered']
+    };
+
     $('#table-issue').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],
         "order": [[ 0, "desc" ]]
     });
 
-    $('.issueInfo').on('click','.fromBalnce',function(){
+    $('.issueInfo').on('click','.fromBalance',function(){
 
-        return true;
+        var blInfo = $('.issueInfo');
 
-        if ($(this).hasClass('issued')) {
-            //товар был выдан с баланса нажали отменить
+        var statusSale = blInfo.find('.issueSelect').val();
 
-            // отменяем всё в БД и меняем текст кнопки
-            $(this).removeClass('issued');
-            $(this).text('Выдать с баланса');
-            $(this).next().text('');
+        if(statusSale == 'waiting' || statusSale == 'delegate_company' || statusSale == 'issue_part'){
+            console.log('issue')
         } else {
-            //товар НЕ был выдан с баланса нажали выдать с балнса
-
-            // выдаём с баланса всё в БД и меняем текст кнопки
-            $(this).addClass('issued');
-            $(this).text('Отменить');
-            $(this).next().text('Выдано с баланса');
-
+            blInfo.find('.blError').html(
+                '<div class="alert alert-danger fade in">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                        'При данном статусе выдавать нельзя' +
+                '</div>'
+            );
         }
+
+        // if ($(this).hasClass('issued')) {
+        //     //товар был выдан с баланса нажали отменить
+        //
+        //     // отменяем всё в БД и меняем текст кнопки
+        //     $(this).removeClass('issued');
+        //     $(this).text('Выдать с баланса');
+        //     $(this).next().text('');
+        // } else {
+        //     //товар НЕ был выдан с баланса нажали выдать с балнса
+        //
+        //     // выдаём с баланса всё в БД и меняем текст кнопки
+        //     $(this).addClass('issued');
+        //     $(this).text('Отменить');
+        //     $(this).next().text('Выдано с баланса');
+        //
+        // }
     })
 
     $('.modal').on('click','.editReceptionSave',function(){
@@ -599,8 +731,6 @@
     });
 
     $('table').on('click','.editIssue',function(){
-      //  $('.issueOrderRow').hide();
-      //  $('.issueOrderDetail').hide();
 
         clearIssueInfo();
 
@@ -618,25 +748,37 @@
             },
             success: function(msg){
                 if(msg.error === ''){
-                    blInfo.find('.issue-date').text(msg.dateCreate);
-                    blInfo.find('.issue-login').text(msg.login);
-                    blInfo.find('.issue-FIO').text(msg.secondName + ' ' + msg.firstName);
-                    blInfo.find('.issue-phones').text(msg.phone1 + ' ' + msg.phone2);
+                    blInfo.find('.saveEditedIssue').data({id:msg.saleId});
 
-                    blInfo.find('.issueSelect').val(msg.statusShowroom);
+                    blInfo.find('.issue-date').text(msg.dateCreate);
+                    blInfo.find('.issue-product-name').text(msg.pack);
+                    blInfo.find('.issue-count').text(msg.count);
+                    blInfo.find('.issue-showroom').text(msg.showroomName);
+                    blInfo.find('.issue-FIO').text(msg.secondName + ' ' + msg.firstName);
+                    blInfo.find('.issue-phone-1').text(msg.phone1);
+                    blInfo.find('.issue-phone-2').text(msg.phone2);
+
+                    blInfo.find('.issue-login').text(msg.login);
+                    blInfo.find('.issue-skype').text(msg.skype);
+                    blInfo.find('.issue-email').text(msg.email);
+
+                    var statusShowroomOptions = '';
+                    availableStatusShowroom[msg.statusShowroom].forEach(function(item) {
+                        statusShowroomOptions += '<option value="'+item+'">'+listStatusShowroom[item]+'</option>'
+                    });
+
+                    blInfo.find('.issueSelect').html(statusShowroomOptions).val(msg.statusShowroom);
+                    blInfo.find('.saveEditedIssue').prop('disabled',false);
+
+                    if(msg.statusShowroom == 'delivered_company'
+                        || msg.statusShowroom == 'delivered') {
+                        blInfo.find('.saveEditedIssue').prop('disabled',true);
+                    }
 
                     blInfo.find('.issue-dateDelivery').text(msg.dateDelivery);
                     blInfo.find('.issue-address').text(msg.addressDelivery);
 
-
-
-                    if(msg.statusShowroom === 'delivered'){
-                        blInfo.find('.saveEditedIssue').data({id:''}).prop('disabled',true);
-                        blInfo.find('.issueSelect').prop('disabled',true);
-                    } else {
-                        blInfo.find('.saveEditedIssue').data({id:msg.saleId}).prop('disabled',false);
-                        blInfo.find('.issueSelect').prop('disabled',false);
-                    }
+                    blInfo.find('.lookComment').text(msg.commentShowroom);
 
                     var blOrder = blInfo.find('.issue-order');
                     blOrder.html('');
@@ -644,8 +786,8 @@
 
                         blProduct = '<li>'+v.name;
 
-                        if(msg.typeDelivery == '-' || msg.typeDelivery == 'showroom'){
-                            //blProduct += '<a href="javascript:void(0);" class="fromBalnce pull-right">Выдать с с моего шоу-рума демонстрационый образец</a> <span class="spanIssued pull-right m-r"></span></li>'
+                        if(msg.statusShowroom == 'waiting' || msg.statusShowroom == 'sending_showroom'){
+                            //blProduct += '<a href="javascript:void(0);" class="fromBalance pull-right" data-product-id="'+v.id+'">Выдать с моего шоу-рума демонстрационый образец</a><span class="spanIssued pull-right m-r"></span></li>'
                         }
 
                         blOrder.append(blProduct);
@@ -661,11 +803,12 @@
         $(this).prop('disabled', true);
         var saleId = $(this).data('id');
         var statusShowroom = $(this).closest('.issueInfo').find('.issueSelect').val();
+        var commentShowroom = $(this).closest('.issueInfo').find('.issueComment').val();
 
         $.ajax({
             url: '/ru/business/sale/change-status-showroom-sale',
             type: 'POST',
-            data: {saleId:saleId,statusShowroom:statusShowroom},
+            data: {saleId:saleId,statusShowroom:statusShowroom,comment:commentShowroom},
             beforeSend: function () {
                 $('.issueInfo').find('.modal-body').append('<div class="loader"><div></div></div>');
             },
@@ -714,9 +857,13 @@
                 if(msg.error === ''){
                     if(msg.flHasAccruals === true){
                         blInfo.find('.issue-date').text(msg.dateCreate);
+                        blInfo.find('.issue-product-name').text(msg.pack);
+                        blInfo.find('.issue-count').text(msg.count);
+                        blInfo.find('.issue-showroom').text(msg.showroomName);
                         blInfo.find('.issue-login').text(msg.login);
                         blInfo.find('.issue-FIO').text(msg.secondName + ' ' + msg.firstName);
-                        blInfo.find('.issue-phones').text(msg.phone1 + ' ' + msg.phone2);
+                        blInfo.find('.issue-phone-1').text(msg.phone1);
+                        blInfo.find('.issue-phone-2').text(msg.phone2);
 
                         blInfo.find('.issueSelect').prop( "disabled", true ).val(msg.statusShowroom);
 
@@ -862,22 +1009,37 @@
         var blInfo = $('.issueOrderDetail');
 
         blInfo.find('.issue-date').text('');
+        blInfo.find('.issue-product-name').text('');
+        blInfo.find('.issue-count').text('');
+        blInfo.find('.issue-showroom').text('');
         blInfo.find('.issue-login').text('');
         blInfo.find('.issue-FIO').text('');
-        blInfo.find('.issue-phones').text('');
-        blInfo.find('.issueSelect').prop( "disabled", false ).val('');
+        blInfo.find('.issue-phone-1').text('');
+        blInfo.find('.issue-phone-2').text('');
+        blInfo.find('.issue-login').text('');
+        blInfo.find('.issue-skype').text('');
+        blInfo.find('.issue-email').text('');
+        blInfo.find('.issueSelect').html('');
         blInfo.find('.issue-dateDelivery').text('');
         blInfo.find('.issue-address').text('');
         blInfo.find('.issue-order').html('');
         blInfo.find('.checkLogin').data({id:''}).prop('disabled', true);
+        blInfo.find('.lookComment').val('');
     }
     function clearIssueInfo() {
         var blInfo = $('.issueInfo');
 
         blInfo.find('.issue-date').text('');
+        blInfo.find('.issue-product-name').text('');
+        blInfo.find('.issue-count').text('');
+        blInfo.find('.issue-showroom').text('');
         blInfo.find('.issue-login').text('');
         blInfo.find('.issue-FIO').text('');
-        blInfo.find('.issue-phones').text('');
+        blInfo.find('.issue-phone-1').text('');
+        blInfo.find('.issue-phone-2').text('');
+        blInfo.find('.issue-login').text('');
+        blInfo.find('.issue-skype').text('');
+        blInfo.find('.issue-email').text('');
         blInfo.find('.issueSelect').prop( "disabled", false ).val('');
         blInfo.find('.issue-dateDelivery').text('');
         blInfo.find('.issue-address').text('');

@@ -256,7 +256,10 @@ class SaleController extends BaseController {
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
             $request = Yii::$app->request->post();
+
             $response = [];
+
+            $listGoodsForIssue = Products::getListIdProductForIssue();
 
             if(!empty($request['orderId'])){
                 $order = Order::findOne(['orderId'=>(int)$request['orderId']]);
@@ -274,14 +277,20 @@ class SaleController extends BaseController {
                 $dateCreateY = $sale->dateCreate->toDateTime()->format('Y');
                 $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
 
+                $statusShowroom = (isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_WAITING);
+
+
                 $products = [];
                 if($sale->productData['products']) {
                     foreach ($sale->productData['products'] as $itemProduct) {
-                        $products[] = [
-                            '_id' => strval($itemProduct['_id']),
-                            'name' => $itemProduct['productName'],
-                            'status' => 0
-                        ];
+                        $productId = strval($itemProduct['_id']);
+                        if(in_array($productId,$listGoodsForIssue)){
+                            $products[] = [
+                                'id' => $productId,
+                                'name' => $itemProduct['productName'],
+                                'status' => 0
+                            ];
+                        }
                     }
                 }
 
@@ -290,9 +299,13 @@ class SaleController extends BaseController {
                     $orderId = strval($sale->orderId);
                 }
 
-                $showroomIdSale = '';
+                $showroomIdSale = $showroomName = '';
                 if(!empty($sale->showroomId)){
                     $showroomIdSale = strval($sale->showroomId);
+
+                    $listShowroom = api\Showrooms::getListForFilter();
+
+                    $showroomName = $listShowroom[$showroomIdSale];
                 }
 
 
@@ -310,16 +323,21 @@ class SaleController extends BaseController {
                     'saleId'        => strval($sale->_id),
                     'orderId'       => $orderId,
                     'showroomId'    => $showroomIdSale,
+                    'showroomName'  => $showroomName,
                     'pack'          => $sale->productData['productName'],
+                    'count'         => $sale->productData['count'],
                     'dateCreate'    => $dateCreate,
                     'dateCreateY'   => $dateCreateY,
                     'dateFinish'    => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
                     'login'         => $sale->infoUser->username,
+                    'email'         => $sale->infoUser->email,
+                    'skype'         => $sale->infoUser->skype,
                     'secondName'    => $sale->infoUser->secondName,
                     'firstName'     => $sale->infoUser->firstName,
                     'phone1'        => $sale->infoUser->phoneNumber,
                     'phone2'        => $sale->infoUser->phoneNumber2,
-                    'statusShowroom'=> (isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING),
+                    'statusShowroom'=> $statusShowroom,
+                    'commentShowroom'=>$sale->commentShowroom,
                     'typeDelivery'  => $typeDelivery,
                     'dateDelivery'  => $dateDelivery,
                     'addressDelivery'=> (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
@@ -390,6 +408,18 @@ class SaleController extends BaseController {
                 $sale = Sales::findOne(['_id'=>new ObjectID($request['saleId']),'showroomId'=>$showroomId]);
 
                 if(!empty($sale)){
+
+                    if(!empty($request['comment'])){
+                        $sale->commentShowroom =
+                            date('Y-m-d H:i:s') . ' - ' . $this->user->username .
+                            PHP_EOL .
+                            $request['comment'] .
+                            PHP_EOL .
+                            '-------------------------------------' .
+                            PHP_EOL .
+                            $sale->commentShowroom;
+                    }
+
                     $sale->statusShowroom = $request['statusShowroom'];
 
                     if($sale->statusShowroom == Sales::STATUS_SHOWROOM_DELIVERED){
