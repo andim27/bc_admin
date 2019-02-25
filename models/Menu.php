@@ -437,6 +437,12 @@ Class Menu
                 'controller' => 'sale-report',
                 'items' => [
                     [
+                        'key'   =>  'sidebar_main_stat',
+                        'label' => THelper::t('sidebar_report_main_stat'),
+                        'url' => ['sale-report/main-stat'],
+                        'action' => 'main-stat',
+                    ],
+                    [
                         'key'   =>  'sidebar_sale_wait',
                         'label' => THelper::t('sidebar_report_not_issued_sales'),
                         'url' => ['sale-report/info-wait-sale-by-user'],
