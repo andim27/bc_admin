@@ -113,12 +113,6 @@ Class Menu
                         'action' => 'career',
                     ],
                     [
-                        'key'   =>  'sidebar_backoffice_price',
-                        'label' => THelper::t('sidebar_backoffice_price'),
-                        'url' => ['/business/backoffice/price'],
-                        'action' => 'price',
-                    ],
-                    [
                         'key'   =>  'sidebar_backoffice_charity',
                         'label' => THelper::t('sidebar_backoffice_charity'),
                         'url' => ['/business/backoffice/charity'],
