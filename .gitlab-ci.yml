@@ -137,7 +137,7 @@ deploy_prod:
         - kubectl config use-context default-system
         - cd kube
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml ingress.yaml
-        - sed -i "s/__ADMIN-REPLICA__/3/" deployment.yaml
+        - sed -i "s/__ADMIN-REPLICA__/6/" deployment.yaml
         - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__URL__/$PROD_URL/" ingress.yaml

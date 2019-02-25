@@ -9,8 +9,10 @@ use app\models\Sales;
 use app\models\SendingWaitingParcel;
 use app\models\ShowroomsCompensation;
 use app\models\Showrooms;
+use app\models\ShowroomsEmails;
 use app\models\Users;
 use app\models\Warehouse;
+use app\modules\business\models\ShowroomsEmailsForm;
 use app\modules\business\models\ShowroomsOpeningConditionsForm;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
@@ -588,6 +590,7 @@ class ShowroomsController extends BaseController
             ->orderBy(['dateCreate'=>SORT_DESC])
             ->all();
 
+        $totalAccrual = 0;
         $salesShowroom = $turnoverShowroom = [];
         if(!empty($sales)){
             /** @var Sales $sale */
@@ -615,7 +618,9 @@ class ShowroomsController extends BaseController
                         $showroomName = '';
                     }
 
-                    $accrual = '';
+                    $countSale = $sale->productData['count'];
+
+                    $accrual = 0;
                     if(!empty($sale->statusShowroom) && $sale->statusShowroom == Sales::STATUS_SHOWROOM_DELIVERED){
                         if($arrayTurnoverAccruals[$showroomId]['turnoverTotal'] > 10000 && !empty($sale->infoProduct->paymentsToRepresentive)){
                             $accrual = $sale->infoProduct->paymentsToRepresentive;
@@ -634,11 +639,15 @@ class ShowroomsController extends BaseController
                         'phone1'        => $sale->infoUser->phoneNumber,
                         'phone2'        => $sale->infoUser->phoneNumber2,
                         'productName'   => $sale->productName,
+                        'count'         => $countSale,
                         'showroom'      => $showroomName,
                         'showroomId'    => $showroomId,
-                        'status'        => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
-                        'accrual'       => $accrual
+                        'status'        => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_WAITING)),
+                        'accrual'       => ($countSale * $accrual)
                     ];
+
+                    $totalAccrual += ($countSale * $accrual);
+
                 }
 
 
@@ -651,6 +660,7 @@ class ShowroomsController extends BaseController
             'salesShowroom'             =>  $salesShowroom,
             'turnoverShowroom'          =>  $turnoverShowroom,
             'btnChangeShowroom'         =>  $btnChangeShowroom,
+            'totalAccrual'              =>  $totalAccrual,
         ]);
     }
 
@@ -969,9 +979,6 @@ class ShowroomsController extends BaseController
                     'login'                 => $infoUser->username,
                     'fullName'              => $infoUser->secondName . '<br>' .$infoUser->firstName,
                     'turnoverTotal'         => 0,
-                    'turnoverWebWellness'   => 0,
-                    'turnoverVipCoin'       => 0,
-                    'turnoverVipVip'        => 0,
                     'profit'                => 0,
                     'paidOffBankTransfer'   => 0,
                     'paidOffBC'             => 0,
@@ -980,36 +987,59 @@ class ShowroomsController extends BaseController
             }
         }
 
-        // get info compensation payments
-        $modelCompensationPayments = ShowroomsCompensation::find()
-            ->andWhere([
-                'created_at' => [
-                    '$gte' => $dateFrom,
-                    '$lte' => $dateTo
-                ]
-            ])
-            ->andFilterWhere($whereShowroomCompensation)
-            ->all();
+        //get turnover and accruals
+        $arrayTurnoverAccruals = $this->getTurnoverAccruals($filter['date'] . '-01',$filter['date'] .'-'.$countDay,$filter['showroomId']);
+        if(!empty($arrayTurnoverAccruals)){
+            foreach ($arrayTurnoverAccruals as $k=>$itemTurnoverAccrual) {
+                $showrooms[$k]['turnoverTotal'] = $itemTurnoverAccrual['turnoverTotal'];
+//                $showrooms[$k]['profit'] = $itemTurnoverAccrual['accruals'];
+                //$showrooms[$k]['remainder'] = $itemTurnoverAccrual['accruals'];
+                $showrooms[$k]['profit'] = '-';
+                $showrooms[$k]['remainder'] = '-';
 
-        if(!empty($modelCompensationPayments)){
-            /** @var ShowroomsCompensation $itemCompensation */
-            foreach ($modelCompensationPayments as $itemCompensation) {
-                $showroomId = strval($itemCompensation->showroomId);
-                if(!empty($showrooms[$showroomId])){
-
-                    if($itemCompensation->typeOperation == 'refill'){
-                        if($itemCompensation->typeRefill == 'cashless'){
-                            $showrooms[$showroomId]['paidOffBankTransfer'] += $itemCompensation->amount;
-                        } else if($itemCompensation->typeRefill == 'pers_account'){
-                            $showrooms[$showroomId]['paidOffBC'] += $itemCompensation->amount;
-                        }
-                    }
-
-                    $showrooms[$showroomId]['remainder'] -= $itemCompensation->amount;
-
-                }
             }
         }
+
+        // get info compensation payments
+        $arrayCompensation = $this->getCompensation($filter['date'] . '-01',$filter['date'] .'-'.$countDay,$filter['showroomId']);
+        if(!empty($arrayCompensation)){
+            foreach ($arrayCompensation as $k=>$itemCompensation) {
+                $showrooms[$k]['paidOffBankTransfer'] = $itemCompensation['paidOffBankTransfer'];
+                $showrooms[$k]['paidOffBC'] = $itemCompensation['paidOffBC'];
+                //$compensationConsolidate[$k]['remainder'] -= $itemCompensation['accruals'];
+            }
+        }
+
+//        // get info compensation payments
+//        $modelCompensationPayments = ShowroomsCompensation::find()
+//            ->andWhere([
+//                'created_at' => [
+//                    '$gte' => $dateFrom,
+//                    '$lte' => $dateTo
+//                ]
+//            ])
+//            ->andFilterWhere($whereShowroomCompensation)
+//            ->all();
+//
+//        if(!empty($modelCompensationPayments)){
+//            /** @var ShowroomsCompensation $itemCompensation */
+//            foreach ($modelCompensationPayments as $itemCompensation) {
+//                $showroomId = strval($itemCompensation->showroomId);
+//                if(!empty($showrooms[$showroomId])){
+//
+//                    if($itemCompensation->typeOperation == 'refill'){
+//                        if($itemCompensation->typeRefill == 'cashless'){
+//                            $showrooms[$showroomId]['paidOffBankTransfer'] += $itemCompensation->amount;
+//                        } else if($itemCompensation->typeRefill == 'pers_account'){
+//                            $showrooms[$showroomId]['paidOffBC'] += $itemCompensation->amount;
+//                        }
+//                    }
+//
+//                    $showrooms[$showroomId]['remainder'] -= $itemCompensation->amount;
+//
+//                }
+//            }
+//        }
 
 
         return $this->render('charge-compensation-consolidated', [
@@ -1408,13 +1438,6 @@ class ShowroomsController extends BaseController
         ]);
     }
 
-
-
-
-
-
-
-
     public function actionRepair()
     {
         return $this->render('repair',[]);
@@ -1434,8 +1457,6 @@ class ShowroomsController extends BaseController
     {
         return $this->render('orders',[]);
     }
-
-
 
     private function getTurnoverAccruals($dateFrom,$dateTo,$showroomId = [])
     {
@@ -1494,12 +1515,14 @@ class ShowroomsController extends BaseController
 
                     $arrayTurnoverAccruals[$showroomId][$dateCreate]['turnoverTotal'] += $sale->price;
 
+                    $countSale = $sale->productData['count'];
+
                     if(!empty($dateCloseSale)){
                         if(!empty($sale->productData['paymentsToRepresentive'])){
-                            $arrayTurnoverAccruals[$showroomId][$dateCloseSale]['accrualsMax'] += $sale->productData['paymentsToRepresentive'];
+                            $arrayTurnoverAccruals[$showroomId][$dateCloseSale]['accrualsMax'] += ($sale->productData['paymentsToRepresentive'] * $countSale);
                         }
                         if(!empty($sale->productData['paymentsToStock'])){
-                            $arrayTurnoverAccruals[$showroomId][$dateCloseSale]['accrualsMin'] += $sale->productData['paymentsToStock'];
+                            $arrayTurnoverAccruals[$showroomId][$dateCloseSale]['accrualsMin'] += ($sale->productData['paymentsToStock'] * $countSale);
                         }
                     }
                 }
@@ -1585,4 +1608,61 @@ class ShowroomsController extends BaseController
 
         return $response;
     }
+
+    public function actionEmails()
+    {
+        $request = Yii::$app->request;
+
+        $languages = api\dictionary\Lang::supported();
+
+        $emailsForm = new ShowroomsEmailsForm();
+
+        $requestLanguage = $request->get('l');
+        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
+
+        if (!$showroomsEmailsForClient = ShowroomsEmails::find()->where([
+            'lang' => $language,
+            'type' => ShowroomsEmails::TYPE_CLIENT
+        ])->one()) {
+            $showroomsEmailsForClient = new ShowroomsEmails();
+            $showroomsEmailsForClient->type = ShowroomsEmails::TYPE_CLIENT;
+            $showroomsEmailsForClient->lang = $language;
+        }
+
+        if (!$showroomsEmailsForShowroom = ShowroomsEmails::find()->where([
+            'lang' => $language,
+            'type' => ShowroomsEmails::TYPE_SHOWROOM
+        ])->one()) {
+            $showroomsEmailsForShowroom = new ShowroomsEmails();
+            $showroomsEmailsForShowroom->type = ShowroomsEmails::TYPE_SHOWROOM;
+            $showroomsEmailsForShowroom->lang = $language;
+        }
+
+        if ($request->isPost) {
+            if ($emailsForm->load($request->post())) {
+                $showroomsEmailsForClient->title = $emailsForm->clientTitle;
+                $showroomsEmailsForClient->body = $emailsForm->clientBody;
+                $showroomsEmailsForShowroom->title = $emailsForm->showroomTitle;
+                $showroomsEmailsForShowroom->body = $emailsForm->showroomBody;
+                if ($showroomsEmailsForClient->save() && $showroomsEmailsForShowroom->save()) {
+                    Yii::$app->session->setFlash('success', 'showrooms_emails_save_success');
+                } else {
+                    Yii::$app->session->setFlash('danger', 'showrooms_emails_save_error');
+                }
+            }
+
+            $this->redirect('/' . Yii::$app->language . '/business/showrooms/emails/?l=' . $language);
+        } else {
+            $emailsForm->clientTitle = $showroomsEmailsForClient->title;
+            $emailsForm->clientBody = $showroomsEmailsForClient->body;
+            $emailsForm->showroomTitle = $showroomsEmailsForShowroom->title;
+            $emailsForm->showroomBody = $showroomsEmailsForShowroom->body;
+            return $this->render('emails', [
+                'emailsForm' => $emailsForm,
+                'language' => $language,
+                'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : [],
+            ]);
+        }
+    }
+
 }

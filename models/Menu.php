@@ -113,12 +113,6 @@ Class Menu
                         'action' => 'career',
                     ],
                     [
-                        'key'   =>  'sidebar_backoffice_price',
-                        'label' => THelper::t('sidebar_backoffice_price'),
-                        'url' => ['/business/backoffice/price'],
-                        'action' => 'price',
-                    ],
-                    [
                         'key'   =>  'sidebar_backoffice_charity',
                         'label' => THelper::t('sidebar_backoffice_charity'),
                         'url' => ['/business/backoffice/charity'],
@@ -657,6 +651,12 @@ Class Menu
                         'label' => THelper::t('showrooms_repair_admin'),
                         'url' => ['showrooms/repair-admin'],
                         'action' => 'repair-admin',
+                    ],
+                    [
+                        'key'   =>  'showrooms_emails',
+                        'label' => THelper::t('showrooms_emails'),
+                        'url' => ['showrooms/emails'],
+                        'action' => 'emails',
                     ],
                     [
                         'key'   =>  'showrooms_orders',

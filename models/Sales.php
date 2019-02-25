@@ -20,8 +20,13 @@ use yii\mongodb\ActiveRecord;
  */
 class Sales extends ActiveRecord
 {
+    const STATUS_SHOWROOM_WAITING = 'waiting';
     const STATUS_SHOWROOM_DELIVERING = 'delivering';
     const STATUS_SHOWROOM_DELIVERED = 'delivered';
+    const STATUS_SHOWROOM_DELEGATE_COMPANY = 'delegate_company';
+    const STATUS_SHOWROOM_SENDING_SHOWROOM = 'sending_showroom';
+    const STATUS_SHOWROOM_DELIVERED_COMPANY = 'delivered_company';
+    const STATUS_SHOWROOM_ISSUE_PART = 'issue_part';
 
     /**
      * @return string
@@ -65,6 +70,7 @@ class Sales extends ActiveRecord
             'formPayment',
             'comment',
             'comment_user_name',
+            'commentShowroom',
             'updated_at',
             'whenceSale'
         ];
@@ -160,8 +166,13 @@ class Sales extends ActiveRecord
     public static function getStatusShowroom()
     {
         return [
-            self::STATUS_SHOWROOM_DELIVERING    => THelper::t('status_showroom_delivering'),
-            self::STATUS_SHOWROOM_DELIVERED     => THelper::t('status_showroom_delivered')
+            self::STATUS_SHOWROOM_WAITING           => THelper::t('status_showroom_waiting'),
+            self::STATUS_SHOWROOM_DELIVERING        => THelper::t('status_showroom_delivering'),
+            self::STATUS_SHOWROOM_ISSUE_PART        => THelper::t('status_showroom_issue_part'),
+            self::STATUS_SHOWROOM_DELIVERED         => THelper::t('status_showroom_delivered'),
+            self::STATUS_SHOWROOM_DELEGATE_COMPANY  => THelper::t('status_showroom_delegate_company'),
+            self::STATUS_SHOWROOM_SENDING_SHOWROOM  => THelper::t('status_showroom_sending_showroom'),
+            self::STATUS_SHOWROOM_DELIVERED_COMPANY => THelper::t('status_showroom_delivered_company')
         ];
     }
 
