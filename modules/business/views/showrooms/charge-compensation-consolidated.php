@@ -72,7 +72,7 @@
                                         <th>
                                             Остаток
                                         </th>
-                                        <th colspan="3">
+                                        <th>
                                             Действие
                                         </th>
                                     </tr>
@@ -90,9 +90,11 @@
                                                 <td><?=$itemShowroom['paidOffBankTransfer']?></td>
                                                 <td><?=$itemShowroom['paidOffBC']?></td>
                                                 <td><?=$itemShowroom['remainder']?></td>
-                                                <td class="text-center"><a href="/ru/business/showrooms/charge-compensation-history?showroomId=<?=$kShowroom?>" class="historyCompensation">История</a></td>
-                                                <td class="text-center"><a href="#topUpCompensation" data-toggle="modal" class="topUpCompensation" data-showroom-id="<?=$kShowroom?>" data-user-id="<?=$itemShowroom['userId']?>">Пополнить</a></td>
-                                                <td class="text-center"><a href="#chargeCompensation" data-toggle="modal" class="chargeCompensation" data-showroom-id="<?=$kShowroom?>" data-user-id="<?=$itemShowroom['userId']?>">Списать</a></td>
+                                                <td class="text-center">
+                                                    <a href="/ru/business/showrooms/charge-compensation-history?showroomId=<?=$kShowroom?>" class="historyCompensation">История</a>
+                                                    <a href="#topUpCompensation" data-toggle="modal" class="topUpCompensation" data-showroom-id="<?=$kShowroom?>" data-user-id="<?=$itemShowroom['userId']?>">Пополнить</a>
+                                                    <a href="#chargeCompensation" data-toggle="modal" class="chargeCompensation" data-showroom-id="<?=$kShowroom?>" data-user-id="<?=$itemShowroom['userId']?>">Списать</a>
+                                                </td>
                                             </tr>
                                         <?php } ?>
                                     <?php } ?>
@@ -218,6 +220,13 @@
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js', ['position' => yii\web\View::POS_END]); ?>
 
 <script>
+    $('#table-main').dataTable({
+        language: TRANSLATION,
+        lengthMenu: [ 25, 50, 75, 100 ],
+        lengthChange: false,
+        info: false
+    });
+
     $('.filterInfoSelect').on('change',function () {
         var link = window.location.href;
 

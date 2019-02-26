@@ -51,7 +51,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table id="table-profit" class="table table-users table-striped datagrid m-b-sm">
+                            <table id="table-main" class="table table-users table-striped datagrid m-b-sm">
                                 <thead>
                                     <tr>
                                         <th>
@@ -177,6 +177,14 @@
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js', ['position' => yii\web\View::POS_END]); ?>
 
 <script>
+
+    $('#table-main').dataTable({
+        language: TRANSLATION,
+        lengthMenu: [ 25, 50, 75, 100 ],
+        lengthChange: false,
+        info: false
+    });
+
     $('.filterInfoSelect').on('change',function () {
         var link = window.location.href;
 
