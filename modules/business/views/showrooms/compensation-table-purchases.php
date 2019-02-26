@@ -50,7 +50,10 @@
                                 <thead>
                                     <tr>
                                         <th>
-                                            Дата
+                                            Дата создания
+                                        </th>
+                                        <th>
+                                            Дата закрытия
                                         </th>
                                         <th>
                                             Логин
@@ -83,6 +86,7 @@
                                         <?php foreach ($salesShowroom as $itemSale) { ?>
                                             <tr data-id="<?=$itemSale['saleId']?>">
                                                 <td><?=$itemSale['dateCreate']?></td>
+                                                <td><?=$itemSale['dateCloseSale']?></td>
                                                 <td><?=$itemSale['login']?></td>
                                                 <td><?=$itemSale['secondName']?> <?=$itemSale['firstName']?></td>
                                                 <td><?=$itemSale['phone1']?><br><?=$itemSale['phone2']?></td>
@@ -102,7 +106,7 @@
                                 </tbody>
                                 <tfooter>
                                     <th>
-                                        <td colspan="7"></td>
+                                        <td colspan="8"></td>
                                         <td><?=$totalAccrual?></td>
                                     </th>
                                 </tfooter>

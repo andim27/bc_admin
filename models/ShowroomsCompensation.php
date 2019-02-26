@@ -16,6 +16,7 @@ use app\components\THelper;
  * @property string $typeOperation
  * @property string $typeRefill
  * @property float $amount
+ * @property float $remainder
  * @property string $comment
  * @property array $historyEdit
  * @property object $updated_at
@@ -53,6 +54,7 @@ class ShowroomsCompensation extends \yii2tech\embedded\mongodb\ActiveRecord
             'typeOperation',
             'typeRefill',
             'amount',
+            'remainder',
             'comment',
             'historyEdit',
             'updated_at',

@@ -21,6 +21,7 @@ use app\controllers\BaseController;
 use Yii;
 use app\models\api;
 
+
 class ShowroomsController extends BaseController
 {
     /**
@@ -399,7 +400,6 @@ class ShowroomsController extends BaseController
             foreach ($arrayTurnoverAccruals as $k=>$itemTurnoverAccrual) {
                 $compensationConsolidate[$k]['turnoverTotal'] = $itemTurnoverAccrual['turnoverTotal'];
                 $compensationConsolidate[$k]['profit'] = $itemTurnoverAccrual['accruals'];
-                $compensationConsolidate[$k]['remainder'] = $itemTurnoverAccrual['accruals'];
             }
         }
         
@@ -409,7 +409,14 @@ class ShowroomsController extends BaseController
             foreach ($arrayCompensation as $k=>$itemCompensation) {
                 $compensationConsolidate[$k]['paidOffBankTransfer'] = $itemCompensation['paidOffBankTransfer'];
                 $compensationConsolidate[$k]['paidOffBC'] = $itemCompensation['paidOffBC'];
-                //$compensationConsolidate[$k]['remainder'] -= $itemCompensation['accruals'];
+            }
+        }
+
+        // get remainder for showrooms
+        $arrayTotalRemainder = $this->getTotalRemainder($filter['showroomId']);
+        if(!empty($arrayTotalRemainder)){
+            foreach ($arrayTotalRemainder as $k=>$itemTotalRemainder) {
+                $compensationConsolidate[$k]['remainder'] = $itemTotalRemainder['remainder'];
             }
         }
 
@@ -512,8 +519,8 @@ class ShowroomsController extends BaseController
                         'paidOffBankTransfer'   => 0,
                         'paidOffBC'             => 0,
                         'chargeOff'             => 0,
-                        'paidRepair'            => 0,
-                        'remainder'             => 0,
+                        'paidRepair'            => '-',
+                        'remainder'             => isset($itemCompensation->remainder) ? $itemCompensation->remainder : '-',
                         'comment'               => $itemCompensation->comment,
                         'historyEdit'           => '...',
                         'dateCreate'            => $itemCompensation->created_at->toDateTime()->format('Y-m-d H:i')
@@ -572,24 +579,39 @@ class ShowroomsController extends BaseController
         $infoDateTo = explode("-",$filter['dateTo']);
         $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
 
-        //get turnover and accruals
-        $arrayTurnoverAccruals = $this->getTurnoverAccruals($filter['dateFrom'] . '-01',$filter['dateTo'] .'-'.$countDay,$filter['showroomId']);
 
         $sales = Sales::find()
             ->andWhere([
                 'type' => [
                     '$ne'   =>  -1
-                ],
-                'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
-                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
                 ]
             ])
+            ->andWhere(
+                [
+                    '$or' => [
+                        [
+                            'dateCreate' => [
+                                '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+                                '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
+                            ]
+                        ],
+                        [
+                            'dateCloseSale' => [
+                                '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+                                '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
+                            ]
+                        ]
+                    ]
+                ]
+
+
+            )
             ->andFilterWhere((!empty($filter['showroomId']) ? ['showroomId'=>new ObjectId($filter['showroomId'])] : []))
             ->with(['infoUser','infoProduct'])
             ->orderBy(['dateCreate'=>SORT_DESC])
             ->all();
 
+        $arrayTurnoverAccruals = [];
         $totalAccrual = 0;
         $salesShowroom = $turnoverShowroom = [];
         if(!empty($sales)){
@@ -600,8 +622,9 @@ class ShowroomsController extends BaseController
                     $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
                     $dateCreateM = $sale->dateCreate->toDateTime()->format('Y-m');
 
-                    $dateCloseSaleM = '';
+                    $dateCloseSale = $dateCloseSaleM = '';
                     if(!empty($sale->dateCloseSale)){
+                        $dateCloseSale = $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i');
                         $dateCloseSaleM = $sale->dateCloseSale->toDateTime()->format('Y-m');
                     }
 
@@ -621,18 +644,33 @@ class ShowroomsController extends BaseController
                     $countSale = $sale->productData['count'];
 
                     $accrual = 0;
-                    if(!empty($sale->statusShowroom) && $sale->statusShowroom == Sales::STATUS_SHOWROOM_DELIVERED){
-                        if($arrayTurnoverAccruals[$showroomId]['turnoverTotal'] > 10000 && !empty($sale->infoProduct->paymentsToRepresentive)){
-                            $accrual = $sale->infoProduct->paymentsToRepresentive;
-                        } else if(!empty($sale->infoProduct->paymentsToStock)) {
-                            $accrual = $sale->infoProduct->paymentsToStock;
+                    if(!empty($sale->statusShowroom) && in_array($sale->statusShowroom,[Sales::STATUS_SHOWROOM_DELIVERED,Sales::STATUS_SHOWROOM_DELIVERED_COMPANY])){
+
+
+                        if(empty($arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM])){
+
+                            $infoDateToTemp = explode("-",$dateCreateM);
+                            $countDayTemp = cal_days_in_month(CAL_GREGORIAN, $infoDateToTemp['1'], $infoDateToTemp['0']);
+                            $tempTurnover = $this->getTurnoverAccruals($dateCreateM . '-01',$dateCreateM .'-'.$countDayTemp,$showroomId);
+
+                            if(!empty($tempTurnover[$showroomId]['turnover'][$dateCreateM])){
+                                $arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM] = $tempTurnover[$showroomId]['turnover'][$dateCreateM];
+                            } else {
+                                $arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM] = 0;
+                            }
+                        }
+
+                        if($arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM] > 10000 && !empty($sale->productData['paymentsToRepresentive'])){
+                            $accrual = $sale->productData['paymentsToRepresentive'];
+                        } else if(!empty($sale->productData['paymentsToStock'])) {
+                            $accrual = $sale->productData['paymentsToStock'];
                         }
                     }
 
                     $salesShowroom[strval($sale->_id)] = [
                         'saleId'        => strval($sale->_id),
                         'dateCreate'    => $dateCreate,
-                        'dateCloseSale' => $dateCloseSaleM,
+                        'dateCloseSale' => $dateCloseSale,
                         'login'         => $sale->infoUser->username,
                         'secondName'    => $sale->infoUser->secondName,
                         'firstName'     => $sale->infoUser->firstName,
@@ -651,7 +689,9 @@ class ShowroomsController extends BaseController
                 }
 
 
+
             }
+
         }
 
         return $this->render('compensation-table-purchases', [
@@ -821,7 +861,7 @@ class ShowroomsController extends BaseController
 //        foreach ($sales as $sale){
 //            if(!empty($sale->infoProduct->paymentsToRepresentive) && !empty($sale->infoProduct->paymentsToStock)
 //                && ($sale->infoUser->country == 'ru' || (!empty($sale->infoUser->countryData)
-//                        && $sale->infoUser->countryData['code']=='ru'))) {
+//                        && $sale->infoUser->countryData['code']=='ru')) && strval($sale->showroomId) !== '5c618a38f7cd95007c64fba2') {
 //                $table .= '
 //                    <tr>
 //                        <td>' . $sale->username . '
@@ -922,6 +962,72 @@ class ShowroomsController extends BaseController
 //
 //    }
 
+//    public function actionGetOldOrder()
+//    {
+//        $model = \app\models\StatusSales::find()
+//            ->where(['setSales.status'=>'status_sale_issued'])
+//            ->andWhere([
+//                'setSales.dateChange' => [
+//                    '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
+//                    '$lte' => new UTCDateTime(strtotime('2019-01-31 23:59:59') * 1000)
+//                ],
+//            ])
+//            ->all();
+//
+//        $table = '
+//            <table>
+//                <tr>
+//                    <td> Дата заказа
+//                    <td> Дата выдачи
+//                    <td> Что Выдали
+//                    <td> кто закзал
+//                    <td> Скалад
+//                    <td> кто выдал
+//            ';
+//
+//        foreach ($model as $item){
+//
+//            $saleCreate = $item->sales->dateCreate->toDateTime()->getTimestamp();
+//
+//            $newYear = strtotime(date('2019-01-01 00:00:00'));
+//
+//            if($saleCreate < $newYear){
+//
+//                foreach($item->setSales as $itemSet){
+//                    $changeStatus = $itemSet['dateChange']->toDateTime()->getTimestamp();
+//
+//
+//
+//                    if($changeStatus > $newYear && $itemSet['status'] == 'status_sale_issued'){
+//                        $infoUser =  \app\models\Users::findOne(['_id'=>$itemSet['idUserChange']]);
+//
+//                        $infoWarehouse = \app\models\Warehouse::getInfoWarehouse(strval($itemSet['idUserChange']));
+//
+//
+//                        $table .= '
+//                            <tr>
+//                                <td> '.date('Y-m-d',$saleCreate).'
+//                                <td> '.date('Y-m-d',$changeStatus).'
+//                                <td> '.$item->sales->productName.'
+//                                <td> '.$item->sales->username.'
+//                                <td> '.$infoWarehouse->title.'
+//                                <td> '.$infoUser->username.'
+//                        ';
+//                    }
+//                }
+//
+//
+//
+//            }
+//
+//        }
+//        $table .= '</table>';
+//
+//        echo $table;
+//        die();
+//
+//    }
+
     /**
      * Charge Compensation
      */
@@ -992,10 +1098,7 @@ class ShowroomsController extends BaseController
         if(!empty($arrayTurnoverAccruals)){
             foreach ($arrayTurnoverAccruals as $k=>$itemTurnoverAccrual) {
                 $showrooms[$k]['turnoverTotal'] = $itemTurnoverAccrual['turnoverTotal'];
-//                $showrooms[$k]['profit'] = $itemTurnoverAccrual['accruals'];
-                //$showrooms[$k]['remainder'] = $itemTurnoverAccrual['accruals'];
-                $showrooms[$k]['profit'] = '-';
-                $showrooms[$k]['remainder'] = '-';
+                $showrooms[$k]['profit'] = $itemTurnoverAccrual['accruals'];
 
             }
         }
@@ -1006,40 +1109,16 @@ class ShowroomsController extends BaseController
             foreach ($arrayCompensation as $k=>$itemCompensation) {
                 $showrooms[$k]['paidOffBankTransfer'] = $itemCompensation['paidOffBankTransfer'];
                 $showrooms[$k]['paidOffBC'] = $itemCompensation['paidOffBC'];
-                //$compensationConsolidate[$k]['remainder'] -= $itemCompensation['accruals'];
             }
         }
 
-//        // get info compensation payments
-//        $modelCompensationPayments = ShowroomsCompensation::find()
-//            ->andWhere([
-//                'created_at' => [
-//                    '$gte' => $dateFrom,
-//                    '$lte' => $dateTo
-//                ]
-//            ])
-//            ->andFilterWhere($whereShowroomCompensation)
-//            ->all();
-//
-//        if(!empty($modelCompensationPayments)){
-//            /** @var ShowroomsCompensation $itemCompensation */
-//            foreach ($modelCompensationPayments as $itemCompensation) {
-//                $showroomId = strval($itemCompensation->showroomId);
-//                if(!empty($showrooms[$showroomId])){
-//
-//                    if($itemCompensation->typeOperation == 'refill'){
-//                        if($itemCompensation->typeRefill == 'cashless'){
-//                            $showrooms[$showroomId]['paidOffBankTransfer'] += $itemCompensation->amount;
-//                        } else if($itemCompensation->typeRefill == 'pers_account'){
-//                            $showrooms[$showroomId]['paidOffBC'] += $itemCompensation->amount;
-//                        }
-//                    }
-//
-//                    $showrooms[$showroomId]['remainder'] -= $itemCompensation->amount;
-//
-//                }
-//            }
-//        }
+        // get remainder for showrooms
+        $arrayTotalRemainder = $this->getTotalRemainder($filter['showroomId']);
+        if(!empty($arrayTotalRemainder)){
+            foreach ($arrayTotalRemainder as $k=>$itemTotalRemainder) {
+                $showrooms[$k]['remainder'] = $itemTotalRemainder['remainder'];
+            }
+        }
 
 
         return $this->render('charge-compensation-consolidated', [
@@ -1152,12 +1231,17 @@ class ShowroomsController extends BaseController
         $request = Yii::$app->request->post();
 
         if(!empty($request)){
+
+            $totalRemainder = $this->getTotalRemainder($request['ShowroomsCompensation']['showroomId']);
+            $totalRemainder = $totalRemainder[$request['ShowroomsCompensation']['showroomId']]['remainder'];
+
             $modelShowroomCompensation = new ShowroomsCompensation();
             $modelShowroomCompensation->showroomId = new ObjectId($request['ShowroomsCompensation']['showroomId']);
             $modelShowroomCompensation->userId = new ObjectId($request['ShowroomsCompensation']['userId']);
             $modelShowroomCompensation->typeOperation = $request['ShowroomsCompensation']['typeOperation'];
             $modelShowroomCompensation->typeRefill = (!empty($request['ShowroomsCompensation']['typeRefill']) ? $request['ShowroomsCompensation']['typeRefill'] : '');
             $modelShowroomCompensation->amount = (float)$request['ShowroomsCompensation']['amount'];
+            $modelShowroomCompensation->remainder = (float)($totalRemainder - $request['ShowroomsCompensation']['amount']);
             $modelShowroomCompensation->comment = $request['ShowroomsCompensation']['comment'];
             $modelShowroomCompensation->updated_at = new UTCDateTime(strtotime(date("Y-m-d H:i:s")) * 1000);
             $modelShowroomCompensation->created_at = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
@@ -1468,16 +1552,16 @@ class ShowroomsController extends BaseController
         }
 
         $sales = Sales::find()
-            ->andWhere([
+            ->where([
                 'type' => [
                     '$ne'   =>  -1
+                ],
+                'showroomId' => [
+                    '$ne'   => null
                 ],
                 'dateCreate' => [
                     '$gte' => new UTCDateTime(strtotime($dateFrom . ' 00:00:00') * 1000),
                     '$lte' => new UTCDateTime(strtotime($dateTo.' 23:59:59') * 1000)
-                ],
-                'showroomId' => [
-                    '$ne'   => null
                 ]
             ])
             ->andFilterWhere($whereShowroomId)
@@ -1517,12 +1601,12 @@ class ShowroomsController extends BaseController
 
                     $countSale = $sale->productData['count'];
 
-                    if(!empty($dateCloseSale)){
+                    if(!empty($dateCloseSale) && in_array($sale->statusShowroom,[Sales::STATUS_SHOWROOM_DELIVERED,Sales::STATUS_SHOWROOM_DELIVERED_COMPANY])){
                         if(!empty($sale->productData['paymentsToRepresentive'])){
-                            $arrayTurnoverAccruals[$showroomId][$dateCloseSale]['accrualsMax'] += ($sale->productData['paymentsToRepresentive'] * $countSale);
+                            $arrayTurnoverAccruals[$showroomId][$dateCreate]['accrualsMax'] += ($sale->productData['paymentsToRepresentive'] * $countSale);
                         }
                         if(!empty($sale->productData['paymentsToStock'])){
-                            $arrayTurnoverAccruals[$showroomId][$dateCloseSale]['accrualsMin'] += ($sale->productData['paymentsToStock'] * $countSale);
+                            $arrayTurnoverAccruals[$showroomId][$dateCreate]['accrualsMin'] += ($sale->productData['paymentsToStock'] * $countSale);
                         }
                     }
                 }
@@ -1543,6 +1627,8 @@ class ShowroomsController extends BaseController
 
                 if(!empty($arrayTurnoverAccruals[$itemShowroomId][$date]['turnoverTotal'])){
                     $response[$itemShowroomId]['turnoverTotal'] += $arrayTurnoverAccruals[$itemShowroomId][$date]['turnoverTotal'];
+
+                    $response[$itemShowroomId]['turnover'][$date] = $arrayTurnoverAccruals[$itemShowroomId][$date]['turnoverTotal'];
 
                     if($arrayTurnoverAccruals[$itemShowroomId][$date]['turnoverTotal'] >= 10000 && !empty($arrayTurnoverAccruals[$itemShowroomId][$date]['accrualsMax'])){
                         $response[$itemShowroomId]['accruals'] += $arrayTurnoverAccruals[$itemShowroomId][$date]['accrualsMax'];
@@ -1607,6 +1693,39 @@ class ShowroomsController extends BaseController
         }
 
         return $response;
+    }
+
+    private function getTotalRemainder($showroomId = [])
+    {
+        $yearNow = date('Y');
+        $monthNow = date('m');
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $monthNow, $yearNow);
+
+        $response = [];
+
+        $arrayTurnoverAccruals = $this->getTurnoverAccruals('2019-01-01',$yearNow . '-' . $monthNow . '-' . $countDay,$showroomId);
+        if(!empty($arrayTurnoverAccruals)){
+            foreach ($arrayTurnoverAccruals as $k=>$itemTurnoverAccrual) {
+                if(empty($response[$k]['remainder'])) {
+                    $response[$k]['remainder'] = 0;
+                }
+                $response[$k]['remainder'] += $itemTurnoverAccrual['accruals'];
+            }
+        }
+
+        $arrayCompensation = $this->getCompensation('2019-01-01',$yearNow . '-' . $monthNow . '-' . $countDay,$showroomId);
+        if(!empty($arrayCompensation)){
+            foreach ($arrayCompensation as $k=>$itemCompensation) {
+                if(empty($response[$k]['remainder'])) {
+                    $response[$k]['remainder'] = 0;
+                }
+                $response[$k]['remainder'] -= $itemCompensation['total'];
+            }
+        }
+
+        return $response;
+
+
     }
 
     public function actionEmails()

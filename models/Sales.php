@@ -85,6 +85,12 @@ class Sales extends ActiveRecord
 
         if ($model === null) {
 
+            $countPack = $this->productData['count'];
+            if(empty($count)){
+                $count = 1;
+            }
+
+
             /** get info about product */
             $infoProduct = Products::find()
                 ->where(['product' => $this->product])
@@ -97,17 +103,14 @@ class Sales extends ActiveRecord
                 $model->idSale = $this->_id;
 
                 foreach ($infoProduct->set as $itemSet){
-                    $modelSet = new SetSales();
 
-                    $modelSet->title = $itemSet->setName;
-                    $modelSet->status = StatusSales::$listStatus['0'];
-                    $modelSet->dateChange = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
-
-                    if(!empty($this->warehouseId)){
-                        $modelSet->idUserChange = $this->warehouseId;
+                    for($i=1; $i<=$countPack; $i++){
+                        $modelSet = new SetSales();
+                        $modelSet->title = $itemSet->setName;
+                        $modelSet->status = StatusSales::$listStatus['0'];
+                        $modelSet->dateChange = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                        $model->set[] = $modelSet;
                     }
-
-                    $model->set[] = $modelSet;
                 }
 
                 $model->refreshFromEmbedded();
