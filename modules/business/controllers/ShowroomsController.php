@@ -1037,20 +1037,16 @@ class ShowroomsController extends BaseController
 
         $filter = [];
 
-        $whereShowroom = $whereShowroomCompensation = [];
+        $whereShowroom = [];
         $filter['showroomId'] = false;
         if(!empty($request['showroomId'])){
             $filter['showroomId'] = $request['showroomId'];
             $whereShowroom = ['_id'=>new ObjectId($filter['showroomId'])];
-            $whereShowroomCompensation = ['showroomId'=>new ObjectId($filter['showroomId'])];
         }
         $filter['date'] = (!empty($request['date']) ? $request['date'] : date('Y-m'));
 
         $infoDateTo = explode("-",$filter['date']);
         $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
-
-        $dateFrom = new UTCDateTime(strtotime($filter['date'] . '-01 00:00:00') * 1000);
-        $dateTo = new UTCDateTime(strtotime($filter['date'] .'-'.$countDay.' 23:59:59') * 1000);
 
         // get info showrooms
         $listShowrooms = Showrooms::find()
@@ -1188,8 +1184,35 @@ class ShowroomsController extends BaseController
 
                 if ($dateFrom <= $dateCreate){
 
-                    //TODO:KAA
-                    //$itemCompensation->historyEdit
+                    $historyEdit = '';
+                    if(!empty($itemCompensation->historyEdit)){
+                        $historyEdit = [
+                            'dateCreate'            => $itemCompensation->historyEdit[0]['updated_at']->toDateTime()->format('Y-m-d H:i'),
+                            'paidOffBankTransfer'   => 0,
+                            'paidOffBC'             => 0,
+                            'chargeOff'             => 0,
+                            'remainder'             => $itemCompensation->historyEdit[0]['remainder'],
+                        ];
+
+                        if($itemCompensation->historyEdit[0]['typeOperation'] == 'refill'){
+                            if($itemCompensation->historyEdit[0]['typeRefill'] == 'cashless'){
+                                $historyEdit['paidOffBankTransfer'] = $itemCompensation->amount;
+                            } else if($itemCompensation->historyEdit[0]['typeRefill'] == 'pers_account'){
+                                $historyEdit['paidOffBC'] = $itemCompensation->amount;
+                            }
+                        } else {
+                            $historyEdit['chargeOff'] = $itemCompensation->amount;
+                        }
+
+                        $infoEditUser = Users::findOne(['_id'=>$itemCompensation->userIdMakeTransaction]);
+
+                        $historyEdit['fullNameEditUser'] = 'Отредактировано ';
+                        if(!empty($infoEditUser)){
+                            $historyEdit['fullNameEditUser'] .= ' ' . $infoEditUser->secondName . ' ' . $infoEditUser->firstName;
+                        }
+
+                    }
+
 
                     //TODO:KAA
                     //remainder
@@ -1201,12 +1224,14 @@ class ShowroomsController extends BaseController
                         'userId'                => $infoShowroom[$showroomId]['userId'],
                         'login'                 => $infoShowroom[$showroomId]['login'],
                         'fullName'              => $infoShowroom[$showroomId]['fullName'],
+                        'typeOperation'         => $itemCompensation->typeOperation,
                         'paidOffBankTransfer'   => 0,
                         'paidOffBC'             => 0,
-                        'remainder'             => 0,
+                        'chargeOff'             => 0,
+                        'remainder'             => $itemCompensation->remainder,
                         'comment'               => $itemCompensation->comment,
-                        'historyEdit'           => '...',
-                        'dateCreate'            => $itemCompensation->created_at->toDateTime()->format('Y-m-d H:i')
+                        'historyEdit'           => $historyEdit,
+                        'dateCreate'            => $itemCompensation->updated_at->toDateTime()->format('Y-m-d H:i')
                     ];
 
                     if($itemCompensation->typeOperation == 'refill'){
@@ -1215,6 +1240,8 @@ class ShowroomsController extends BaseController
                         } else if($itemCompensation->typeRefill == 'pers_account'){
                             $compensation[$compensationId]['paidOffBC'] = $itemCompensation->amount;
                         }
+                    } else {
+                        $compensation[$compensationId]['chargeOff'] = $itemCompensation->amount;
                     }
                 }
             }
@@ -1238,6 +1265,7 @@ class ShowroomsController extends BaseController
             $modelShowroomCompensation = new ShowroomsCompensation();
             $modelShowroomCompensation->showroomId = new ObjectId($request['ShowroomsCompensation']['showroomId']);
             $modelShowroomCompensation->userId = new ObjectId($request['ShowroomsCompensation']['userId']);
+            $modelShowroomCompensation->userIdMakeTransaction = new ObjectId($this->user->id);
             $modelShowroomCompensation->typeOperation = $request['ShowroomsCompensation']['typeOperation'];
             $modelShowroomCompensation->typeRefill = (!empty($request['ShowroomsCompensation']['typeRefill']) ? $request['ShowroomsCompensation']['typeRefill'] : '');
             $modelShowroomCompensation->amount = (float)$request['ShowroomsCompensation']['amount'];
@@ -1248,6 +1276,53 @@ class ShowroomsController extends BaseController
 
             if($modelShowroomCompensation->save()){
                 return $this->redirect(['charge-compensation-consolidated'],301);
+            }
+
+        }
+
+        return $this->redirect('/',301);
+    }
+
+    public function actionEditCompensation()
+    {
+        $request = Yii::$app->request->post();
+
+        if(!empty($request)){
+
+            $modelShowroomCompensation = ShowroomsCompensation::findOne(['_id'=>new ObjectId($request['ShowroomsCompensation']['_id'])]);
+
+            $historyEditItem = [
+                'userIdMakeTransaction' => $modelShowroomCompensation->userIdMakeTransaction,
+                'typeOperation'         => $modelShowroomCompensation->typeOperation,
+                'typeRefill'            => (!empty($modelShowroomCompensation->typeRefill) ? $modelShowroomCompensation->typeRefill : ''),
+                'amount'                => $modelShowroomCompensation->amount,
+                'remainder'             => $modelShowroomCompensation->remainder,
+                'comment'               => $modelShowroomCompensation->comment,
+                'updated_at'            => $modelShowroomCompensation->updated_at
+            ];
+
+            $totalRemainder = $modelShowroomCompensation->remainder + $modelShowroomCompensation->amount;
+
+            $historyEdit = $modelShowroomCompensation->historyEdit;
+
+            if(!empty($historyEdit)){
+                array_unshift($historyEdit, $historyEditItem);
+            } else {
+                $historyEdit[] = $historyEditItem;
+            }
+
+            $modelShowroomCompensation->historyEdit = $historyEdit;
+
+            $modelShowroomCompensation->userIdMakeTransaction = new ObjectId($this->user->id);
+            $modelShowroomCompensation->typeOperation = $request['ShowroomsCompensation']['typeOperation'];
+            $modelShowroomCompensation->typeRefill = (!empty($request['ShowroomsCompensation']['typeRefill']) ? $request['ShowroomsCompensation']['typeRefill'] : '');
+            $modelShowroomCompensation->amount = (float)$request['ShowroomsCompensation']['amount'];
+            $modelShowroomCompensation->remainder = (float)($totalRemainder - $request['ShowroomsCompensation']['amount']);
+            $modelShowroomCompensation->comment = $request['ShowroomsCompensation']['comment'];
+            $modelShowroomCompensation->updated_at = new UTCDateTime(strtotime(date("Y-m-d H:i:s")) * 1000);
+
+            if($modelShowroomCompensation->save()){
+                return $this->redirect(['charge-compensation-history','showroomId'=>strval($modelShowroomCompensation->showroomId)],301);
             }
 
         }
@@ -1712,6 +1787,7 @@ class ShowroomsController extends BaseController
                 $response[$k]['remainder'] += $itemTurnoverAccrual['accruals'];
             }
         }
+
 
         $arrayCompensation = $this->getCompensation('2019-01-01',$yearNow . '-' . $monthNow . '-' . $countDay,$showroomId);
         if(!empty($arrayCompensation)){

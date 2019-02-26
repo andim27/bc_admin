@@ -3,6 +3,7 @@
     use yii\helpers\Html;
     use yii\widgets\ActiveForm;
     use app\models\api\Showrooms;
+    use app\models\ShowroomsCompensation;
 ?>
 
 <div class="m-b-md">
@@ -76,6 +77,9 @@
                                             Скидка на лиц.сч.
                                         </th>
                                         <th>
+                                            Списание
+                                        </th>
+                                        <th>
                                             Остаток
                                         </th>
                                         <th>
@@ -92,20 +96,51 @@
                                     <?php if(!empty($compensation)){ ?>
                                         <?php foreach ($compensation as $kCompensation=>$itemCompensation) { ?>
                                             <tr>
-                                                <td><?=$itemCompensation['country']?></td>
-                                                <td><?=$itemCompensation['city']?></td>
-                                                <td><?=$itemCompensation['login']?></td>
-                                                <td><?=$itemCompensation['fullName']?></td>
-                                                <td><?=$itemCompensation['dateCreate']?></td>
-                                                <td><?=$itemCompensation['paidOffBankTransfer']?></td>
-                                                <td><?=$itemCompensation['paidOffBC']?></td>
-                                                <td><?=$itemCompensation['remainder']?></td>
-                                                <td><?=$itemCompensation['comment']?></td>
-                                                <td><?=$itemCompensation['historyEdit']?></td>
+                                                <td class="showroomCountry"><?=$itemCompensation['country']?></td>
+                                                <td class="showroomCity"><?=$itemCompensation['city']?></td>
+                                                <td class="userLogin"><?=$itemCompensation['login']?></td>
+                                                <td class="fullName"><?=$itemCompensation['fullName']?></td>
                                                 <td>
-                                                    <a class="editHistory" href="#historyEditCompensation" data-toggle="modal" data-compensation-id="<?=$kCompensation?>">
-                                                        <i class="fa fa-pencil"></i>
-                                                    </a>
+                                                    <?=$itemCompensation['dateCreate']?>
+
+                                                    <?=(!empty($itemCompensation['historyEdit']) ? '<div class="tdHistory">' .$itemCompensation['historyEdit']['dateCreate'].'</div>' : '')?>
+                                                </td>
+                                                <td>
+                                                    <?=$itemCompensation['paidOffBankTransfer']?>
+
+                                                    <?=(!empty($itemCompensation['historyEdit']) ? '<div class="tdHistory">' .$itemCompensation['historyEdit']['paidOffBankTransfer'].'</div>' : '')?>
+                                                </td>
+                                                <td>
+                                                    <?=$itemCompensation['paidOffBC']?>
+
+                                                    <?=(!empty($itemCompensation['historyEdit']) ? '<div class="tdHistory">' .$itemCompensation['historyEdit']['paidOffBC'].'</div>' : '')?>
+                                                </td>
+                                                <td>
+                                                    <?=$itemCompensation['chargeOff']?>
+
+                                                    <?=(!empty($itemCompensation['historyEdit']) ? '<div class="tdHistory">' .$itemCompensation['historyEdit']['chargeOff'].'</div>' : '')?>
+                                                </td>
+                                                <td>
+                                                    <?=$itemCompensation['remainder']?>
+
+                                                    <?=(!empty($itemCompensation['historyEdit']) ? '<div class="tdHistory">' .$itemCompensation['historyEdit']['remainder'].'</div>' : '')?>
+                                                </td>
+                                                <td><?=$itemCompensation['comment']?></td>
+                                                <td>
+                                                    <?=(!empty($itemCompensation['historyEdit']['fullNameEditUser']) ? $itemCompensation['historyEdit']['fullNameEditUser'] : '');?>
+                                                </td>
+                                                <td>
+                                                    <?=Html::a(
+                                                        '<i class="fa fa-pencil"></i>',
+                                                        ($itemCompensation['typeOperation'] == 'refill' ? '#editCompensationRefill' : '#editCompensationChargeOff'),
+                                                        [
+                                                            'class' => 'editHistory',
+                                                            'data'  => [
+                                                                'toggle' => 'modal',
+                                                                'compensation-id' => $kCompensation,
+                                                                'compensation-type' => $itemCompensation['typeOperation']
+                                                            ]
+                                                        ])?>
                                                 </td>
                                             </tr>
                                         <?php } ?>
@@ -122,52 +157,104 @@
 
 </section>
 
-<div class="modal fade" id="historyEditCompensation">
+<div class="modal fade" id="editCompensationRefill">
     <div class="modal-dialog" >
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Редактирование</h4>
+                <h4 class="modal-title">Изменение пополнения</h4>
             </div>
             <div class="modal-body">
-<!--                <div class="row">-->
-<!--                    <div class="col-md-12">-->
-<!--                       <p>Шоу-рум <span class="font-bold cityShowroom m-l m-r">Новосибирск</span> Логин <span class="font-bold loginShowroom  m-l m-r">main</span>-->
-<!--                       </p> -->
-<!--                    </div>-->
-<!--                    <div class="col-md-12 m-b-sm">-->
-<!--                        <h4>Иванов Иван Иванович</h4>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                -->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-6">-->
-<!--                        <select name="compensationHistoryTypeSelect" class="compensationHistoryTypeSelect form-control m-b"> -->
-<!--                            <option value="1">Безнал</option> -->
-<!--                            <option value="2">Нал</option> -->
-<!--                            <option value="3">Бонусы</option> -->
-<!--                            <option value="4" selected>Тугрики</option>-->
-<!--                            <option value="5">Виртуальное "Спасибо"</option>-->
-<!--                            <option value="6">Хер вам а не пополнение</option>-->
-<!--                        </select>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-6">-->
-<!--                        <input type="text" class="form-control" name="compensationHistoryEditAmount" id="compensationHistoryEditAmount" placeholder="Сумма">-->
-<!--                    </div>-->
-<!--                    <div class="col-md-12">-->
-<!--                        Комментарий-->
-<!--                        <textarea class="form-control compensationHistoryEditComment m-t m-b" name="compensationHistoryEditComment" id="compensationHistoryEditComment" rows="5" placeholder=""></textarea>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-12 text-center">-->
-<!--                        <div class="col-sm-8 col-sm-offset-2 form-group">-->
-<!--                            <a class="btn btn-danger" data-dismiss="modal">Отмена</a>-->
-<!--                            <a class="btn btn-success editHistoryCompensation">Сохранить</a>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <form class="editRefillForm" name="editRefillForm" method="POST" action="/business/showrooms/edit-compensation">
+                    <input type="hidden" name="ShowroomsCompensation[_id]">
+                    <input type="hidden" name="ShowroomsCompensation[typeOperation]" value="<?=ShowroomsCompensation::TYPE_OPERATION_REFILL?>">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>
+                                Шоу-рум <span class="font-bold m-l m-r editInfoShowroom"></span>
+                                Логин <span class="font-bold m-l m-r editInfoLogin"></span>
+                            </p>
+                        </div>
+                        <div class="col-md-12 m-b-sm">
+                            <h4 class="editInfoFullName"></h4>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?=Html::dropDownList('ShowroomsCompensation[typeRefill]',
+                                false,
+                                ShowroomsCompensation::getTypeRefill(),[
+                                    'class'     => 'compensationTypeSelect form-control m-b',
+                                    'required'  => true,
+                                    'prompt'    => 'Выберите тип пополнения'
+                                ])?>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" name="ShowroomsCompensation[amount]" id="compensationTopUpAmount" placeholder="Сумма" required="required" min="1">
+                        </div>
+                        <div class="col-md-12">
+                            Комментарий
+                            <textarea class="form-control compensationTopUpComment m-t m-b" name="ShowroomsCompensation[comment]" id="compensationTopUpComment" rows="5" placeholder=""></textarea>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <div class="col-sm-8 col-sm-offset-2 form-group">
+                                <a class="btn btn-danger" data-dismiss="modal">Отмена</a>
+                                <button type="submit" class="btn btn-success">Начислить</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editCompensationChargeOff">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Изменение списания</h4>
+            </div>
+            <div class="modal-body">
+                <form class="editChargeOffForm" name="editChargeOffForm" method="POST" action="/business/showrooms/edit-compensation">
+                    <input type="hidden" name="ShowroomsCompensation[_id]">
+                    <input type="hidden" name="ShowroomsCompensation[typeOperation]" value="<?=ShowroomsCompensation::TYPE_OPERATION_CHARGE_OFF?>">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>
+                                Шоу-рум <span class="font-bold m-l m-r editInfoShowroom"></span>
+                                Логин <span class="font-bold m-l m-r editInfoLogin"></span>
+                            </p>
+                        </div>
+                        <div class="col-md-12 m-b-sm">
+                            <h4 class="editInfoFullName"></h4>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="number" class="form-control m-b" name="ShowroomsCompensation[amount]"  id="compensationСhargeAmount" placeholder="Сумма" required="required" min="1">
+                        </div>
+                        <div class="col-md-12">
+                            Комментарий
+                            <textarea class="form-control  m-t m-b" name="ShowroomsCompensation[comment]" id="compensationChargeComment" rows="5" required="required"></textarea>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <div class="col-sm-8 col-sm-offset-2 form-group">
+                                <a class="btn btn-danger" data-dismiss="modal">Отмена</a>
+                                <button type="submit" class="btn btn-success">Списать</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -232,7 +319,56 @@
         }
     }
 
-    $('document').on('click','.editHistory',function(){
+    $(document).on('click','.editHistory',function(){
+        var blShowroom = $(this).closest('tr');
+        var transactionId = $(this).data('compensation-id');
+        var transactionType = $(this).data('compensation-type');
+        var country = blShowroom.find('.showroomCountry').text();
+        var city = blShowroom.find('.showroomCity').text();
+        var login = blShowroom.find('.userLogin').text();
+        var fullName = blShowroom.find('.fullName').text();
+
+        if(transactionType == 'refill'){
+            var blForm = $('.editRefillForm');
+
+            blForm.find('[name="ShowroomsCompensation[typeRefill]"]').val('');
+        } else {
+            var blForm = $('.editChargeOffForm');
+        }
+
+
+        blForm.find('[name="ShowroomsCompensation[_id]"]').val(transactionId);
+
+        blForm.find('.editInfoShowroom').text(country + ', ' + city);
+        blForm.find('.editInfoLogin').text(login);
+        blForm.find('.editInfoFullName').text(fullName);
+
+        blForm.find('[name="ShowroomsCompensation[amount]"]').val(0);
+        blForm.find('[name="ShowroomsCompensation[comment]"]').val('');
+    });
+
+    $(document).on('click','.topUpCompensation',function(){
+        var blShowroom = $(this).closest('tr');
+
+        var showroomId = $(this).data('showroom-id');
+        var userId = $(this).data('userId');
+        var country = blShowroom.find('.showroomCountry').text();
+        var city = blShowroom.find('.showroomCity').text();
+        var login = blShowroom.find('.userLogin').text();
+        var fullName = blShowroom.find('.fullName').text();
+
+        var blForm = $('.refillShowroomForm');
+
+        blForm.find('[name="ShowroomsCompensation[showroomId]"]').val(showroomId);
+        blForm.find('[name="ShowroomsCompensation[userId]"]').val(userId);
+
+        blForm.find('.refillShowroom').text(country + ', ' + city);
+        blForm.find('.refillLogin').text(login);
+        blForm.find('.refillFullName').text(fullName);
+
+        blForm.find('[name="ShowroomsCompensation[typeRefill]"]').val('');
+        blForm.find('[name="ShowroomsCompensation[amount]"]').val(0);
+        blForm.find('[name="ShowroomsCompensation[comment]"]').val('');
 
     });
 

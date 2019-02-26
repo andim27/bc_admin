@@ -86,9 +86,23 @@ class Sales extends ActiveRecord
         if ($model === null) {
 
             $countPack = $this->productData['count'];
-            if(empty($count)){
-                $count = 1;
+            if(empty($countPack)){
+                $countPack = 1;
             }
+
+
+//            $model = new StatusSales();
+//            $model->idSale = $this->_id;
+//
+//            for(){
+//
+//            }
+//            'idSale':ObjectId('5c71a6c62a1f3e006a059528'
+//            if($model->save()){
+//
+//            }
+
+
 
 
             /** get info about product */
