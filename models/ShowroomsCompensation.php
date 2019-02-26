@@ -13,6 +13,7 @@ use app\components\THelper;
  * @property object $_id
  * @property object $showroomId
  * @property object $userId
+ * @property object $userIdMakeTransaction
  * @property string $typeOperation
  * @property string $typeRefill
  * @property float $amount
@@ -51,6 +52,7 @@ class ShowroomsCompensation extends \yii2tech\embedded\mongodb\ActiveRecord
             '_id',
             'showroomId',
             'userId',
+            'userIdMakeTransaction',
             'typeOperation',
             'typeRefill',
             'amount',

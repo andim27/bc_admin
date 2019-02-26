@@ -281,7 +281,21 @@ class SaleController extends BaseController {
 
 
                 $products = [];
+
+//                header('Content-Type: text/html; charset=utf-8');
+//                echo '<xmp>';
+//                print_r($sale->statusSale);
+//                echo '</xmp>';
+//                die();
+
                 if($sale->productData['products']) {
+
+//                    header('Content-Type: text/html; charset=utf-8');
+//                    echo '<xmp>';
+//                    print_r($sale->productData['products']);
+//                    echo '</xmp>';
+//                    die();
+
                     foreach ($sale->productData['products'] as $itemProduct) {
                         $productId = strval($itemProduct['_id']);
                         if(in_array($productId,$listGoodsForIssue)){

@@ -615,3 +615,9 @@ input[name="EmergencyCommand[user_registration_txt]"] {
 .scrollForComment{
     overflow-y: scroll;
 }
+
+.tdHistory{
+    border-top: 1px solid #000;
+    margin-top: 20px;
+    opacity: 0.5;
+}

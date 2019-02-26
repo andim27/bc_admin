@@ -15,6 +15,9 @@
 <div class="m-b-md">
     <h3 class="m-b-none">Список шоу-румов</h3>
 </div>
+
+<?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
+
 <section class="panel panel-default">
     <div class="table-responsive">
         <table id="table-requests" class="table table-users table-striped datagrid m-b-sm">
@@ -102,7 +105,7 @@
     </div>
 </section>
 
-<?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
+
 
 
 <div class="modal fade showroomInfo o-a" id="showroomInfo">
@@ -137,6 +140,8 @@
                             <span class="inline p-t-3p">Подключить другой логин для компенсации</span>
                         </div>
                         <div class="col-md-4">
+                            <input type="hidden" name="Showroom[otherLogin]" value="">
+
                             <input type="text" name="Showroom[otherLogin]" class="anotherLogin" disabled="disabled">
                             <input type="button" class="btn btn-sm btn-success checkLogin m-n" value="Проверить" disabled="disabled">
                         </div>
