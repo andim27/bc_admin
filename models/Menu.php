@@ -113,12 +113,6 @@ Class Menu
                         'action' => 'career',
                     ],
                     [
-                        'key'   =>  'sidebar_backoffice_price',
-                        'label' => THelper::t('sidebar_backoffice_price'),
-                        'url' => ['/business/backoffice/price'],
-                        'action' => 'price',
-                    ],
-                    [
                         'key'   =>  'sidebar_backoffice_charity',
                         'label' => THelper::t('sidebar_backoffice_charity'),
                         'url' => ['/business/backoffice/charity'],
@@ -442,6 +436,12 @@ Class Menu
                 'url' => '#',
                 'controller' => 'sale-report',
                 'items' => [
+                    [
+                        'key'   =>  'sidebar_main_stat',
+                        'label' => THelper::t('sidebar_report_main_stat'),
+                        'url' => ['sale-report/main-stat'],
+                        'action' => 'main-stat',
+                    ],
                     [
                         'key'   =>  'sidebar_sale_wait',
                         'label' => THelper::t('sidebar_report_not_issued_sales'),
