@@ -711,10 +711,20 @@ class ManufacturingSuppliersController extends BaseController {
         if(!empty($id)){
             $model = $model::findOne(['_id' => new ObjectID($id)]);
         }
-
+        $request = Yii::$app->request->get();
+        $action  = $request['action'];
+        $part_title = $sup_title = '??';
+        if ($action =='edit') {
+            $part_title = @$model->getPartsAccessories()->one()->title;
+            $sup_title  = @SuppliersPerformers::findOne(['_id' => new ObjectID((string)$model->suppliers_performers_id)])->title;
+            //$sup_title  = @SuppliersPerformers::getNameSuppliersPerformers((string)$model->suppliers_performers_id);
+        }
         return $this->renderAjax('_add-update-parts-ordering', [
             'language' => Yii::$app->language,
-            'model' => $model,
+            'model'    => $model,
+            'action'   => $action,
+            'part_title' => $part_title,
+            'sup_title'  => $sup_title
         ]);
     }
 
@@ -734,40 +744,82 @@ class ManufacturingSuppliersController extends BaseController {
 
         if(!empty($request)){
 
-            $model = new PartsOrdering();
 
-            if(!empty($request['id'])) {
-                $model = $model::findOne(['_id' => new ObjectID($request['id'])]);
-            }
 
-            $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
-            $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
-            $model->number = (int)$request['number'];
-            $model->price = (double)$request['price'];
-            $model->currency = $request['currency'];
-            $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);
-            $model->dateCreate = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
 
-            if($model->save()){
-                Yii::$app->session->setFlash('alert' ,[
-                        'typeAlert'=>'success',
-                        'message'=>'Сохранения применились!!!'
-                    ]
-                );
+            //----add || edit ---
+            if (is_array($request['parts_accessories_id'])) {
+                $part_items = $request['parts_accessories_id'];
+                $cnt = 0;
+                foreach ($part_items as $part_id) {
+                    //if(!empty($request['id'])) {
+                        $model = new PartsOrdering();
+                        $model->parts_accessories_id = new ObjectID($part_id);
+                        $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
+                        $model->number = (int)$request['number'];
+                        $model->price = (double)$request['price'];
+                        $model->currency = $request['currency'];
+                        $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);
+                        $model->dateCreate = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                        $save_res = $model->save();
+                    //}
+                    if ($save_res) {
+                        $cnt++;
+                        $ActualCurrency = CurrencyRate::getActualCurrency();
+                        // add log
+                        LogWarehouse::setInfoLog([
+                            'action' => (empty($request['id']) ? 'parts_ordering' : 'update_parts_ordering'),
+                            'parts_accessories_id' => $part_id,
+                            'number' => $request['number'],
 
-                $ActualCurrency = CurrencyRate::getActualCurrency();
-                // add log
-                LogWarehouse::setInfoLog([
-                    'action'                    =>  (empty($request['id']) ? 'parts_ordering' : 'update_parts_ordering'),
-                    'parts_accessories_id'      =>  $request['parts_accessories_id'],
-                    'number'                    =>  $request['number'],
+                            'suppliers_performers_id' => $request['suppliers_performers_id'],
 
-                    'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
+                            'money' => round($request['price'] / $ActualCurrency[$request['currency']], 2),
+                        ]);
+                    }
 
-                    'money'                     =>  round($request['price'] / $ActualCurrency[$request['currency']],2),
-                ]);
-            }
+                }//--foreach
+                if ($save_res) {
+                    Yii::$app->session->setFlash('alert', [
+                            'typeAlert' => 'success',
+                            'message' => "Сохранения применились!!!Сохранено {$cnt} позиций."
+                        ]
+                    );
+                }
+            } else {//--edit
+                if(!empty($request['id'])) {
+                    $model = new PartsOrdering();
+                    $model = $model::findOne(['_id' => new ObjectID($request['id'])]);
+                    $part_id = $request['parts_accessories_id'];
+                    $model->parts_accessories_id = new ObjectID($part_id);
+                    $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
+                    $model->number = (int)$request['number'];
+                    $model->price = (double)$request['price'];
+                    $model->currency = $request['currency'];
+                    $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);
+                    $model->dateCreate = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                    $save_res = $model->save();
+                }
+                if ($save_res) {
+                    Yii::$app->session->setFlash('alert' ,[
+                            'typeAlert'=>'success',
+                            'message'=>'Сохранения применились!!!'
+                        ]
+                    );
 
+                    $ActualCurrency = CurrencyRate::getActualCurrency();
+                    // add log
+                    LogWarehouse::setInfoLog([
+                        'action' => (empty($request['id']) ? 'parts_ordering' : 'update_parts_ordering'),
+                        'parts_accessories_id' => $part_id,
+                        'number' => $request['number'],
+
+                        'suppliers_performers_id' => $request['suppliers_performers_id'],
+
+                        'money' => round($request['price'] / $ActualCurrency[$request['currency']], 2),
+                    ]);
+                }
+            }//--is array ->add
 
         }
 
