@@ -1143,7 +1143,7 @@ class ShowroomsController extends BaseController
 
         $modelCompensationPayments = ShowroomsCompensation::find()
             ->andWhere([
-                'created_at' => [
+                'updated_at' => [
                     '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
                     '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
                 ]
@@ -1151,13 +1151,23 @@ class ShowroomsController extends BaseController
             ->andFilterWhere($whereShowroom)
             ->all();
 
-        $compensation = $infoShowroom = [];
+        $compensation = $infoShowroom = $lastCompensationPayments = [];
         if(!empty($modelCompensationPayments)){
             /** @var ShowroomsCompensation $itemCompensation */
             foreach ($modelCompensationPayments as $itemCompensation) {
                 $showroomId = strval($itemCompensation->showroomId);
                 $compensationId = strval($itemCompensation->_id);
                 $dateCreate = $itemCompensation->created_at->toDateTime()->getTimestamp();
+
+                if(empty($lastCompensationPayments[$showroomId])){
+                    $tempCompensation = ShowroomsCompensation::find()
+                        ->select(['_id'])
+                        ->where(['showroomId'=>new ObjectId($showroomId)])
+                        ->orderBy(['updated_at'=>SORT_DESC])
+                        ->one();
+
+                    $lastCompensationPayments[$showroomId] = strval($tempCompensation->_id);
+                }
 
                 if(empty($infoShowroom[$showroomId])){
                     $modelShowroom = Showrooms::findOne(['_id'=>$itemCompensation->showroomId]);
@@ -1219,6 +1229,7 @@ class ShowroomsController extends BaseController
                     // доделать остаток считается с 2019-01 по всем транзакицям в режиме реал тайм
 
                     $compensation[$compensationId] = [
+                        'showroomId'            => $showroomId,
                         'country'               => $infoShowroom[$showroomId]['country'],
                         'city'                  => $infoShowroom[$showroomId]['city'],
                         'userId'                => $infoShowroom[$showroomId]['userId'],
@@ -1246,10 +1257,10 @@ class ShowroomsController extends BaseController
                 }
             }
         }
-
         return $this->render('charge-compensation-history', [
             'filter'                    =>  $filter,
             'compensation'              =>  $compensation,
+            'lastCompensationPayments'  =>  $lastCompensationPayments,
         ]);
     }
 
