@@ -130,17 +130,21 @@
                                                     <?=(!empty($itemCompensation['historyEdit']['fullNameEditUser']) ? $itemCompensation['historyEdit']['fullNameEditUser'] : '');?>
                                                 </td>
                                                 <td>
-                                                    <?=Html::a(
-                                                        '<i class="fa fa-pencil"></i>',
-                                                        ($itemCompensation['typeOperation'] == 'refill' ? '#editCompensationRefill' : '#editCompensationChargeOff'),
-                                                        [
-                                                            'class' => 'editHistory',
-                                                            'data'  => [
-                                                                'toggle' => 'modal',
-                                                                'compensation-id' => $kCompensation,
-                                                                'compensation-type' => $itemCompensation['typeOperation']
+                                                    <?=(!empty($lastCompensationPayments[$itemCompensation['showroomId']]) && $lastCompensationPayments[$itemCompensation['showroomId']] == $kCompensation ?
+                                                        Html::a(
+                                                            '<i class="fa fa-pencil"></i>',
+                                                            ($itemCompensation['typeOperation'] == 'refill' ? '#editCompensationRefill' : '#editCompensationChargeOff'),
+                                                            [
+                                                                'class' => 'editHistory',
+                                                                'data'  => [
+                                                                    'toggle' => 'modal',
+                                                                    'compensation-id' => $kCompensation,
+                                                                    'compensation-type' => $itemCompensation['typeOperation']
+                                                                ]
                                                             ]
-                                                        ])?>
+                                                        ) :
+                                                        '');
+                                                    ?>
                                                 </td>
                                             </tr>
                                         <?php } ?>
