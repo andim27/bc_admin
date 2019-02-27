@@ -72,9 +72,15 @@ class LoanController extends BaseController {
                 $infoLoad[(string)$item->user_id]['amountRepayment'] += $item->amount;
             }
         }
-
+        //--filter--
+        $infoLoad_filtered = [];
+        foreach ($infoLoad as $item) {
+            if ($item['amountRepayment'] <> $item['amountLoan']) {// --<>0
+                array_push($infoLoad_filtered,$item);
+            }
+        }
         return $this->render('loans',[
-            'infoLoad'  => $infoLoad,
+            'infoLoad'  => $infoLoad_filtered,
             'alert'     => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }
