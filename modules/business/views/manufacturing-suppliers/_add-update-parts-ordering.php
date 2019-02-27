@@ -21,6 +21,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
             <h4 class="modal-title"><?= THelper::t('sidebar_parts_ordering') ?></h4>
+            <h5>(<?=$action ?? '?' ?>)</h5>
         </div>
 
         <div class="modal-body">
@@ -36,20 +37,39 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
             <div class="row">
                 <div class="col-md-12">
                     <?=Html::label(THelper::t('goods'))?>
-                    <?= Select2::widget([
-                        'name' => 'parts_accessories_id',
-                        'data' => $listGoods,
-                        'options' => [
-                            'placeholder' => 'Выберите товар',
-                        ]
-                    ]);
-                    ?>
+                    <?php if ($action =='edit') {?>
+                        <input type="text" class="form-control" name="part_title" value="<?=$part_title ?>" disabled min="1" step="1">
+                        <?=(!empty($model->parts_accessories_id) ? Html::hiddenInput('parts_accessories_id', $model->parts_accessories_id,['class'=>'form-control']) : '')?>
+                    <?php } else { ?>
+                        <?= Select2::widget([
+                            'name' => 'parts_accessories_id',
+                            'data' => $listGoods,
+                            'options' => [
+                                'placeholder' => 'Выберите товар',
+                                'multiple' => true
+                            ]
+                        ]);
+                        ?>
+
+<!--                        <select class="form-control"  id="part-accessors" name="parts_accessories_ids" multiple="multiple" >-->
+<!--                            --><?php //foreach ($listGoods as $key=>$value) { ?>
+<!--                                --><?php //if ($key!= '') { ?>
+<!--                                        <option  value="--><?//=$key ?><!--">--><?//=$value ?><!--</option>-->
+<!--                                --><?php //} ?>
+<!--                            --><?php //} ?>
+<!---->
+<!--                        </select>-->
+                    <?php } ?>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-12">
                     <?=Html::label(THelper::t('sidebar_suppliers_performers'))?>
+                    <?php if ($action =='edit') {?>
+                        <input type="text" class="form-control" name="sup_title" value="<?=$sup_title ?>" disabled min="1" step="1">
+                        <?=(!empty($model->suppliers_performers_id) ? Html::hiddenInput('suppliers_performers_id', $model->suppliers_performers_id,['class'=>'form-control']) : '')?>
+                    <?php } else { ?>
                     <?=Html::dropDownList('suppliers_performers_id',
                         (!empty((string)$model->suppliers_performers_id) ? (string)$model->suppliers_performers_id: ''),
                         $listSuppliersPerformers,[
@@ -60,6 +80,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
                                 '' => ['disabled' => true]
                             ]
                         ])?>
+                    <?php }?>
                 </div>
             </div>
 
@@ -123,6 +144,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
     $(".datepicker-input").datepicker();
 
     arrayGoodsComposite = <?=json_encode($listGoodsWithComposite)?>;
+    $('#part-accessors').multiselect();
     $("#partsAccessoriesId").on("change",function () {
 
         clearError();

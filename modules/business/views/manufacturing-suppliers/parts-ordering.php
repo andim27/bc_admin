@@ -12,7 +12,7 @@ use app\components\AlertWidget;
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
     <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-parts-ordering'],['class'=>'btn btn-default btn-block addPartsOrdering','data-toggle'=>'ajaxModal'])?>
+        <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-parts-ordering?action=add'],['class'=>'btn btn-default btn-block addPartsOrdering','data-toggle'=>'ajaxModal'])?>
     </div>
 </div>
 
@@ -59,7 +59,7 @@ use app\components\AlertWidget;
                         <td><?=$item->price?></td>
                         <td><?=$item->dateReceipt->toDateTime()->format('Y-m-d')?></td>
                         <td>
-                            <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-parts-ordering','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']) ?>
+                            <?= Html::a('<i class="fa fa-pencil"></i>', ['/business/manufacturing-suppliers/add-update-parts-ordering','id'=>$item->_id->__toString(),'action'=>'edit'], ['data-toggle'=>'ajaxModal']) ?>
                         </td>
                         <td>
                             <?= Html::a('<i class="fa fa-trash-o"></i>', ['/business/manufacturing-suppliers/remove-parts-ordering','id'=>$item->_id->__toString()],['data' =>['confirm'=>'Вы действительно хотите удалить?','method'=>'post']]) ?>
