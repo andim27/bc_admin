@@ -23,6 +23,25 @@ spec:
         image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
         ports:
         - containerPort: 80
+        env:
+        - name: ENABLE_MONITORING
+          value: '1'
+        - name: NGINX_WEB_ROOT
+          value: '/var/www/html'
+        - name: ENVIRONMENT
+          value: 'production'
+        - name: ATATUS_LICENSE_KEY
+          value: 'lic_apm_745449bffe0a444492f65bde195937a8'
+        - name: ATATUS_APP_NAME
+          value: 'six-app'
+        - name: ATATUS_FRAMEWORK
+          value: 'Yii2'
+        - name: MAX_EXECUTION_TIME
+          value: '60'
+        - name: PHP_SESSION_TIME
+          value: '86400'
+        - name: PHP_MEMORY_MAX
+          value: '256'
         livenessProbe:
           httpGet:
             path: /
