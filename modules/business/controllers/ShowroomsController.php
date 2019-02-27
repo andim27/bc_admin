@@ -1166,7 +1166,7 @@ class ShowroomsController extends BaseController
 
                         /** @var $infoUser Users */
                         if(!empty($modelShowroom->otherLogin)){
-                            $infoUser = $modelShowroom->infoOrherUser;
+                            $infoUser = $modelShowroom->infoOtherUser;
                         } else {
                             $infoUser = $modelShowroom->infoUser;
                         }
