@@ -667,8 +667,8 @@ Class Menu
                     [
                         'key'   =>  'showrooms_orders',
                         'label' => THelper::t('showrooms_orders'),
-                        'url' => ['showrooms/orders'],
-                        'action' => 'orders',
+                        'url' => ['showrooms/orders-company'],
+                        'action' => 'orders-company',
                     ]
                 ]
             ]

@@ -1206,12 +1206,12 @@ class ShowroomsController extends BaseController
 
                         if($itemCompensation->historyEdit[0]['typeOperation'] == 'refill'){
                             if($itemCompensation->historyEdit[0]['typeRefill'] == 'cashless'){
-                                $historyEdit['paidOffBankTransfer'] = $itemCompensation->amount;
+                                $historyEdit['paidOffBankTransfer'] = $itemCompensation->historyEdit[0]['amount'];
                             } else if($itemCompensation->historyEdit[0]['typeRefill'] == 'pers_account'){
-                                $historyEdit['paidOffBC'] = $itemCompensation->amount;
+                                $historyEdit['paidOffBC'] = $itemCompensation->historyEdit[0]['amount'];
                             }
                         } else {
-                            $historyEdit['chargeOff'] = $itemCompensation->amount;
+                            $historyEdit['chargeOff'] = $itemCompensation->historyEdit[0]['amount'];
                         }
 
                         $infoEditUser = Users::findOne(['_id'=>$itemCompensation->userIdMakeTransaction]);
@@ -1622,10 +1622,156 @@ class ShowroomsController extends BaseController
     {
         return $this->render('repair-service',[]);
     }
-    
-    public function actionOrders()
+
+    public function actionOrdersCompany()
     {
-        return $this->render('orders',[]);
+
+        $request = Yii::$app->request->get();
+
+        $filter = [];
+
+        $listShowroomsForSelect = api\Showrooms::getListForFilter();
+
+
+        $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : '2019-01');
+        $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
+        $infoDateTo = explode("-",$filter['dateTo']);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+
+        $sales = Sales::find()
+            ->where([
+                'type' => [
+                    '$ne'   =>  -1
+                ],
+                'productData.productNatural' => 1,
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'].'-'.$countDay.' 23:59:59') * 1000)
+                ]
+            ])
+            ->andWhere([
+                'statusShowroom' => [
+                    '$nin' => [Sales::STATUS_SHOWROOM_DELIVERED,Sales::STATUS_SHOWROOM_DELIVERED]
+                ]
+            ])
+            ->with(['infoUser'])
+            ->orderBy(['dateCreate'=>SORT_ASC])
+            ->all();
+
+        $salesShowroom = [];
+        if(!empty($sales)){
+            /** @var Sales $sale */
+            foreach ($sales as $sale) {
+
+                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+
+                $showroomId = $showroomName = '';
+                if(!empty($sale->showroomId)){
+                    $showroomId = strval($sale->showroomId);
+                    $showroomName = $listShowroomsForSelect[$showroomId];
+                }
+
+                $addressDelivery = $country = $city = '';
+                if(!empty($sale->delivery)){
+                    if($sale->delivery['type'] == 'showroom'){
+                        $addressDelivery = 'Шон-рум: ' . $sale->showroom->address;
+                        $country = $sale->showroom->countryInfo->name['ru'];
+                        $city = $sale->showroom->cityInfo->name['ru'];
+                    } else if($sale->delivery['type'] == 'courier'){
+                        $addressDelivery = 'Курьер: ' . $sale->delivery['address'];
+                        $country = $sale->infoUser->countryData['name']['ru'];
+                        $city = $sale->infoUser->cityData['name']['ru'];
+                    }
+                }
+
+
+                $salesShowroom[strval($sale->_id)] = [
+                    'saleId'        => strval($sale->_id),
+                    'showroomId'    => $showroomId,
+                    'showroomName'  => $showroomName,
+                    'pack'          => $sale->productData['productName'],
+                    'countPack'     => $sale->productData['count'],
+                    'dateCreate'    => $dateCreate,
+                    'country'       => $country,
+                    'city'          => $city,
+                    'dateSend'      => '***',
+                    'login'         => $sale->infoUser->username,
+                    'secondName'    => $sale->infoUser->secondName,
+                    'firstName'     => $sale->infoUser->firstName,
+                    'statusShowroom'=> Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom  : Sales::STATUS_SHOWROOM_WAITING)),
+                    'addressDelivery'=> $addressDelivery,
+                ];
+
+            }
+        }
+
+        return $this->render('orders-company',[
+            'filter' => $filter,
+            'salesShowroom' => $salesShowroom
+        ]);
+    }
+    public function actionOrdersNonDistributed()
+    {
+
+
+        return $this->render('orders-non-distributed',[]);
+    }
+
+
+    public function actionEmails()
+    {
+        $request = Yii::$app->request;
+
+        $languages = api\dictionary\Lang::supported();
+
+        $emailsForm = new ShowroomsEmailsForm();
+
+        $requestLanguage = $request->get('l');
+        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
+
+        if (!$showroomsEmailsForClient = ShowroomsEmails::find()->where([
+            'lang' => $language,
+            'type' => ShowroomsEmails::TYPE_CLIENT
+        ])->one()) {
+            $showroomsEmailsForClient = new ShowroomsEmails();
+            $showroomsEmailsForClient->type = ShowroomsEmails::TYPE_CLIENT;
+            $showroomsEmailsForClient->lang = $language;
+        }
+
+        if (!$showroomsEmailsForShowroom = ShowroomsEmails::find()->where([
+            'lang' => $language,
+            'type' => ShowroomsEmails::TYPE_SHOWROOM
+        ])->one()) {
+            $showroomsEmailsForShowroom = new ShowroomsEmails();
+            $showroomsEmailsForShowroom->type = ShowroomsEmails::TYPE_SHOWROOM;
+            $showroomsEmailsForShowroom->lang = $language;
+        }
+
+        if ($request->isPost) {
+            if ($emailsForm->load($request->post())) {
+                $showroomsEmailsForClient->title = $emailsForm->clientTitle;
+                $showroomsEmailsForClient->body = $emailsForm->clientBody;
+                $showroomsEmailsForShowroom->title = $emailsForm->showroomTitle;
+                $showroomsEmailsForShowroom->body = $emailsForm->showroomBody;
+                if ($showroomsEmailsForClient->save() && $showroomsEmailsForShowroom->save()) {
+                    Yii::$app->session->setFlash('success', 'showrooms_emails_save_success');
+                } else {
+                    Yii::$app->session->setFlash('danger', 'showrooms_emails_save_error');
+                }
+            }
+
+            $this->redirect('/' . Yii::$app->language . '/business/showrooms/emails/?l=' . $language);
+        } else {
+            $emailsForm->clientTitle = $showroomsEmailsForClient->title;
+            $emailsForm->clientBody = $showroomsEmailsForClient->body;
+            $emailsForm->showroomTitle = $showroomsEmailsForShowroom->title;
+            $emailsForm->showroomBody = $showroomsEmailsForShowroom->body;
+            return $this->render('emails', [
+                'emailsForm' => $emailsForm,
+                'language' => $language,
+                'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : [],
+            ]);
+        }
     }
 
     private function getTurnoverAccruals($dateFrom,$dateTo,$showroomId = [])
@@ -1815,60 +1961,5 @@ class ShowroomsController extends BaseController
 
     }
 
-    public function actionEmails()
-    {
-        $request = Yii::$app->request;
-
-        $languages = api\dictionary\Lang::supported();
-
-        $emailsForm = new ShowroomsEmailsForm();
-
-        $requestLanguage = $request->get('l');
-        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-
-        if (!$showroomsEmailsForClient = ShowroomsEmails::find()->where([
-            'lang' => $language,
-            'type' => ShowroomsEmails::TYPE_CLIENT
-        ])->one()) {
-            $showroomsEmailsForClient = new ShowroomsEmails();
-            $showroomsEmailsForClient->type = ShowroomsEmails::TYPE_CLIENT;
-            $showroomsEmailsForClient->lang = $language;
-        }
-
-        if (!$showroomsEmailsForShowroom = ShowroomsEmails::find()->where([
-            'lang' => $language,
-            'type' => ShowroomsEmails::TYPE_SHOWROOM
-        ])->one()) {
-            $showroomsEmailsForShowroom = new ShowroomsEmails();
-            $showroomsEmailsForShowroom->type = ShowroomsEmails::TYPE_SHOWROOM;
-            $showroomsEmailsForShowroom->lang = $language;
-        }
-
-        if ($request->isPost) {
-            if ($emailsForm->load($request->post())) {
-                $showroomsEmailsForClient->title = $emailsForm->clientTitle;
-                $showroomsEmailsForClient->body = $emailsForm->clientBody;
-                $showroomsEmailsForShowroom->title = $emailsForm->showroomTitle;
-                $showroomsEmailsForShowroom->body = $emailsForm->showroomBody;
-                if ($showroomsEmailsForClient->save() && $showroomsEmailsForShowroom->save()) {
-                    Yii::$app->session->setFlash('success', 'showrooms_emails_save_success');
-                } else {
-                    Yii::$app->session->setFlash('danger', 'showrooms_emails_save_error');
-                }
-            }
-
-            $this->redirect('/' . Yii::$app->language . '/business/showrooms/emails/?l=' . $language);
-        } else {
-            $emailsForm->clientTitle = $showroomsEmailsForClient->title;
-            $emailsForm->clientBody = $showroomsEmailsForClient->body;
-            $emailsForm->showroomTitle = $showroomsEmailsForShowroom->title;
-            $emailsForm->showroomBody = $showroomsEmailsForShowroom->body;
-            return $this->render('emails', [
-                'emailsForm' => $emailsForm,
-                'language' => $language,
-                'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : [],
-            ]);
-        }
-    }
 
 }
