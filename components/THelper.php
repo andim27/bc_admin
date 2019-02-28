@@ -33,6 +33,7 @@ class THelper
         $stringValue = Yii::$app->cache->get(md5($language . '_' . $key));
 
         if (!$stringValue) {
+            echo 'xz';
             $all = api\Lang::all($language, true);
 
             foreach ($all as $k => $value) {

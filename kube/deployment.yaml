@@ -16,8 +16,8 @@ spec:
         env: __CI_ENVIRONMENT_SLUG__
     spec:
       nodeSelector:
-            ntype: bpt
-            app: admin
+            nodetype: bpt
+            apptype: admin
       containers:
       - name: admin
         image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
