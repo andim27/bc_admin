@@ -484,6 +484,15 @@ use yii\widgets\ActiveForm;
 
 <script>
 
+    var availableStatusShowroom = {
+        waiting : ['waiting','delivered','delegate_company'],
+        delivering : ['delivering','delivered_company'],
+        delivered : ['delivered'],
+        delegate_company : ['delegate_company','issue_showroom'],
+        sending_showroom : ['sending_showroom','delivered_company'],
+        delivered_company : ['delivered_company'],
+        issue_part : ['issue_part','delivered']
+    };
 
     $('#table-orders').dataTable({
         language: TRANSLATION,
@@ -526,8 +535,23 @@ use yii\widgets\ActiveForm;
                     blForm.find('.orderCustomerSkype').text(msg.skype);
                     blForm.find('.orderCustomerEmail').text(msg.email);
 
-                    blForm.find('.orderItemDetails').html('');
+                    var blOrder = blForm.find('.orderItemDetails');
+                    blOrder.html('');
+                    $.each(msg.products, function( k, v ) {
 
+                        blProduct = '<li>'+v.name;
+
+                        if(msg.statusShowroom == 'waiting' || msg.statusShowroom == 'sending_showroom'){
+                            //blProduct += '<a href="javascript:void(0);" class="fromBalance pull-right" data-product-id="'+v.id+'">Выдать с моего шоу-рума демонстрационый образец</a><span class="spanIssued pull-right m-r"></span></li>'
+                        }
+
+                        blOrder.append(blProduct);
+                    });
+
+                    var statusShowroomOptions = '';
+                    availableStatusShowroom[msg.statusShowroom].forEach(function(item) {
+                        statusShowroomOptions += '<option value="'+item+'">'+listStatusShowroom[item]+'</option>'
+                    });
                     blForm.find('.editOrderStatusSelect').val('');
 
                     blForm.find('.orderDepartureDate').text('');
@@ -586,7 +610,7 @@ use yii\widgets\ActiveForm;
             }
         });
 
-        $('#editOrder').show();
+        blInfo.modal('show');
     });
 
 

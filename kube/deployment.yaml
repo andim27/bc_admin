@@ -42,11 +42,11 @@ spec:
           value: '86400'
         - name: PHP_MEMORY_MAX
           value: '256'
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 10
-          periodSeconds: 10
+#        livenessProbe:
+#          httpGet:
+#            path: /
+#            port: 80
+#          initialDelaySeconds: 10
+#          periodSeconds: 10
       imagePullSecrets:
         - name: gitlab-registry
