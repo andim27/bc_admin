@@ -81,7 +81,7 @@ use yii\widgets\ActiveForm;
                                             <td><?=$itemSale['countPack']?></td>
                                             <td>
                                                 <?=$itemSale['statusShowroom']?>
-                                                <a class="editOrder m-l"><i class="fa fa-pencil"></i></a>
+                                                <a class="editOrder m-l" href="javascript:void(0);"><i class="fa fa-pencil"></i></a>
                                             </td>
                                             <td><?=$itemSale['showroomName']?></td>
                                             <td><?=$itemSale['country']?></td>

@@ -13,8 +13,8 @@ use yii\widgets\ActiveForm;
         <div class="col-md-12">
             <header class="panel-heading bg-light">
                 <ul class="nav nav-tabs nav-justified">
-                    <li class="active orders"><a href="/ru/business/showrooms/orders-company">Заказы</a></li>
-                    <li class="looseOrders"><a href="javascript:void(0);">Незакреплённые заказы</a></li>
+                    <li class="orders"><a href="/ru/business/showrooms/orders-company">Заказы</a></li>
+                    <li class="active looseOrders"><a href="javascript:void(0);">Незакреплённые заказы</a></li>
                 </ul>
             </header>
             <div class="panel-body">
