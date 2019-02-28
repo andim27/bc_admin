@@ -58,7 +58,7 @@ class Showrooms
 
     public static function getListForFilter()
     {
-        $list = '';
+        $list = [];
 
         $showrooms = self::getList();
 

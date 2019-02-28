@@ -14,6 +14,5 @@ RUN apk add --no-cache \
 RUN pecl install mongodb \
     && pecl clear-cache
 RUN echo "extension=mongodb.so" > /etc/php7/conf.d/mongodb.ini
-ADD . /var/www/html/
-WORKDIR /var/www/html/
+#ADD . /var/www/html/
 ADD ./nginx-app.conf /etc/nginx/sites-enabled/site.conf
