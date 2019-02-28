@@ -493,11 +493,11 @@ use yii\widgets\ActiveForm;
         order: [[0, 'asc']]
     });
 
-    $('table').on('click','.editIssue',function(){
+    $('table').on('click','.editOrder',function(){
 
         clearEditOrderForm();
 
-        var blForm = $('.editOrderForm');
+        var blInfo = $('#editOrder');
 
         $.ajax({
             url: '/ru/business/sale/get-sale',
