@@ -9,8 +9,6 @@ class ApiClient {
     private $_ch;
     private $_baseApiUrl;
 
-    protected $startTimeWork;
-
     /**
      * Constructor
      *
@@ -28,9 +26,6 @@ class ApiClient {
         if ($cookies->has('auth_cookie')) {
             curl_setopt($this->_ch, CURLOPT_COOKIE, $cookies->get('auth_cookie'));
         }
-
-        $this->startTimeWork = microtime(true);
-        echo $this->_baseApiUrl . $url . ' ';
 
         curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->_ch, CURLOPT_URL, $this->_baseApiUrl . $url);
@@ -91,9 +86,6 @@ class ApiClient {
         $response = curl_exec($this->_ch);
 
         curl_close($this->_ch);
-
-        $time = microtime(true) - $this->startTimeWork;
-        echo ' - Время выполнения скрипта: '.round($time, 4).' сек. <br>';
 
         return $json ? json_decode($response) : $response;
     }
