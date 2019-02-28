@@ -1,19 +1,15 @@
-#FROM bulich/bpt-php-7
-FROM bulich/php7lx:latest
-RUN apk add --no-cache \
-  gcc \
-  g++ \
-  make \
-  pcre-dev \
-  openssl-dev \
-  autoconf \
-  php7-openssl \
-  php7-dev \
-  php7-pear
+FROM bulich/bpt-php-7
 
-RUN pecl install mongodb \
-    && pecl clear-cache
-RUN echo "extension=mongodb.so" > /etc/php7/conf.d/mongodb.ini
-ADD . /var/www/html/
-WORKDIR /var/www/html/
-ADD ./nginx-app.conf /etc/nginx/sites-enabled/site.conf
+EXPOSE 80
+
+ADD cfg/vhost.conf /etc/apache2/sites-enabled/
+COPY ./cfg/php.ini /etc/php/7.0/apache2/
+COPY . /var/www/code/
+WORKDIR /var/www/code/
+#RUN chown -hR www-data:www-data /var/www/code/
+#RUN mv ./vendor/bower-asset ./vendor/bower/
+
+CMD ["/run.sh"]
+
+# grr, ENTRYPOINT resets CMD now
+ENTRYPOINT ["/bin/bash"]
