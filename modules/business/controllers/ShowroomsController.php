@@ -1722,9 +1722,71 @@ class ShowroomsController extends BaseController
 
     public function actionOrdersNonDistributed()
     {
+        $request = Yii::$app->request->get();
 
+        $filter = [];
 
-        return $this->render('orders-non-distributed',[]);
+        $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : '2019-01');
+        $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
+        $infoDateTo = explode("-",$filter['dateTo']);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+
+        $sales = Sales::find()
+            ->where([
+                'type' => [
+                    '$ne'   =>  -1
+                ],
+                'productData.productNatural' => 1,
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'].'-'.$countDay.' 23:59:59') * 1000)
+                ],
+                'showroomId' => [
+                    '$in' => [null,'']
+                ]
+            ])
+            ->with(['infoUser'])
+            ->orderBy(['dateCreate'=>SORT_ASC])
+            ->all();
+
+        $salesShowroom = [];
+        if(!empty($sales)){
+            /** @var Sales $sale */
+            foreach ($sales as $sale) {
+
+                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+
+                $addressDelivery = $country = $city = '';
+                if(!empty($sale->delivery)){
+                    if($sale->delivery['type'] == 'courier'){
+                        $addressDelivery = 'Курьер: ' . $sale->delivery['address'];
+                        $country = $sale->infoUser->countryData['name']['ru'];
+                        $city = $sale->infoUser->cityData['name']['ru'];
+                    }
+                }
+
+                $salesShowroom[strval($sale->_id)] = [
+                    'saleId'        => strval($sale->_id),
+                    'pack'          => $sale->productData['productName'],
+                    'countPack'     => $sale->productData['count'],
+                    'dateCreate'    => $dateCreate,
+                    'country'       => $country,
+                    'city'          => $city,
+                    'dateSend'      => (!empty($sale->deliveryCompany['dateSend']) ? $sale->deliveryCompany['dateSend']->toDateTime()->format('Y-m-d H:i') : ''),
+                    'login'         => $sale->infoUser->username,
+                    'secondName'    => $sale->infoUser->secondName,
+                    'firstName'     => $sale->infoUser->firstName,
+                    'statusShowroom'=> Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom  : Sales::STATUS_SHOWROOM_WAITING)),
+                    'addressDelivery'=> $addressDelivery,
+                ];
+
+            }
+        }
+
+        return $this->render('orders-non-distributed',[
+            'filter' => $filter,
+            'salesShowroom' => $salesShowroom
+        ]);
     }
 
     public function actionOrderCompanyEdit()
@@ -1752,6 +1814,10 @@ class ShowroomsController extends BaseController
                 $deliveryCompany['comment'] = (!empty($request['Sale']['deliveryCompany']['comment']) ? $request['Sale']['deliveryCompany']['comment'] : '');
 
                 $modelSale->statusShowroom = $request['Sale']['statusShowroom'];
+
+                if(!empty($request['Sale']['showroomId'])){
+                    $modelSale->showroomId = new ObjectId($request['Sale']['showroomId']);
+                }
 
                 $modelSale->deliveryCompany = $deliveryCompany;
 
