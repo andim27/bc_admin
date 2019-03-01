@@ -321,7 +321,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p>Дата заказа:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderDate">12-03-2013</span>
+                        <span class="font-bold orderDate"></span>
                     </div>
                 </div>
 
@@ -330,7 +330,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p>Шоу-рум:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderShowroom">трайнова ю п</span>
+                        <span class="font-bold orderShowroom"></span>
                     </div>
                 </div>
 
@@ -339,7 +339,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p>Страна:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderCountry">Россия</span>
+                        <span class="font-bold orderCountry"></span>
                     </div>
                 </div>
 
@@ -348,7 +348,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p>Город:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderCity">Москва</span>
+                        <span class="font-bold orderCity"></span>
                     </div>
                 </div>
 
@@ -357,7 +357,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p>Куда отправляем:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderDeliveryAddress">Москва, Калугина 23</span>
+                        <span class="font-bold orderDeliveryAddress"></span>
                     </div>
                 </div>
 
@@ -366,7 +366,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p>Покупатель:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderCustomer">Иванов Иван Иванович</span>
+                        <span class="font-bold orderCustomer"></span>
                     </div>
                 </div>
 
@@ -375,13 +375,13 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p>телефон1:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCustomerPhone1">+78854555454</span>
+                        <span class="font-bold orderCustomerPhone1"></span>
                     </div>
                     <div class="col-md-2">
                         <p>Логин:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCustomerLogin">ivanov</span>
+                        <span class="font-bold orderCustomerLogin"></span>
                     </div>
                 </div>
 
@@ -390,13 +390,13 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p>телефон2:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCustomerPhone2">+78854555454</span>
+                        <span class="font-bold orderCustomerPhone2"></span>
                     </div>
                     <div class="col-md-2">
                         <p>Скайп:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCustomerSkype">ivanov</span>
+                        <span class="font-bold orderCustomerSkype"></span>
                     </div>
                 </div>
 
@@ -405,7 +405,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p>Email:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCustomerEmail">ivanov@loshara.com</span>
+                        <span class="font-bold orderCustomerEmail"></span>
                     </div>
                 </div>
 
@@ -419,8 +419,6 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="list-unstiled orderItemDetails">
-                            <li>Два прибора Life Balance</li>
-                            <li>Два прибора Life Balance</li>
                         </ul>
                     </div>
                 </div>
@@ -430,9 +428,9 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p class="m-t-xs">Статус:</p>
                     </div>
                     <div class="col-md-9">
-                                    <span class="font-bold orderStatus">
-                                        Доставлено
-                                    </span>
+                        <span class="font-bold orderStatus">
+                            Доставлено
+                        </span>
                     </div>
                 </div>
 
@@ -441,7 +439,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p class="m-t-xs">Дата отправки:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderDepartureDate">15.04.2016</span>
+                        <span class="font-bold orderDepartureDate"></span>
                     </div>
                 </div>
 
@@ -450,7 +448,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p class="m-t-xs">Способ доставки:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderLogisticName">Новая почта</span>
+                        <span class="font-bold orderLogisticName"></span>
                     </div>
                 </div>
 
@@ -459,7 +457,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p class="m-t-xs">Номер декларации:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderLogisticTTN">2100346534442</span>
+                        <span class="font-bold orderLogisticTTN"></span>
                     </div>
                 </div>
 
@@ -468,7 +466,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p class="m-t-xs">Ориентировочная дата доставки:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCommingDate">12-02-2013</span>
+                        <span class="font-bold orderCommingDate"></span>
                     </div>
                 </div>
 
@@ -477,7 +475,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <p>Комментарий:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderComment">Тут длинный комментарий</span>
+                        <span class="font-bold orderComment"></span>
                     </div>
                 </div>
 

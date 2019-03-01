@@ -1,14 +1,34 @@
 <?php
-use app\components\THelper;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use app\components\AlertWidget;
+
+$listStatusShowroom = \app\models\Sales::getStatusShowroom();
+$listShowroomsForSelect = \app\models\api\Showrooms::getListForFilter();
+
+$alert = Yii::$app->session->getFlash('alert', '', true);
 ?>
 
 <div class="m-b-md">
     <h3 class="m-b-none">Незакреплённые заказы</h3>
 </div>
-<section class="panel panel-default">
 
+<?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
+
+<section class="panel panel-default">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="m">
+                <span class="m-r">С</span>
+                <input id="mainFrom" class="input-s datepicker-input inline input-showroom form-control text-center filterInfoDate"
+                       size="16" type="text" value="<?=$filter['dateFrom']?>" data-date-format="yyyy-mm" data-filter="dateFrom"
+                       data-date-viewMode="months" data-date-minViewMode="months" data-date-maxViewMode="months">
+                <span class="m-r m-l">ПО</span>
+                <input id="mainTo" class="input-s datepicker-input inline input-showroom form-control text-center filterInfoDate"
+                       size="16" type="text" value="<?=$filter['dateTo']?>" data-date-format="yyyy-mm" data-filter="dateTo"
+                       data-date-viewMode="months" data-date-minViewMode="months" data-date-maxViewMode="months">
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <header class="panel-heading bg-light">
@@ -38,9 +58,6 @@ use yii\widgets\ActiveForm;
                                         Статус
                                     </th>
                                     <th>
-                                        Шоурум
-                                    </th>
-                                    <th>
                                         Страна
                                     </th>
                                     <th>
@@ -60,71 +77,29 @@ use yii\widgets\ActiveForm;
                                 </tr>
                                 </thead>
                                 <tbody>
-<!--                                <tr>-->
-<!--                                    <td>1</td>-->
-<!--                                    <td>2</td>-->
-<!--                                    <td>3</td>-->
-<!--                                    <td>Ожидает</td>-->
-<!--                                    <td>назначить <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>-->
-<!--                                    <td>6</td>-->
-<!--                                    <td>7</td>-->
-<!--                                    <td>Курьер, Москва, Калугина 23</td>-->
-<!--                                    <td>Иванов И.И.</td>-->
-<!--                                    <td>10</td>-->
-<!--                                    <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>1</td>-->
-<!--                                    <td>2</td>-->
-<!--                                    <td>3</td>-->
-<!--                                    <td>Ожидает</td>-->
-<!--                                    <td>назначить <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>-->
-<!--                                    <td>6</td>-->
-<!--                                    <td>7</td>-->
-<!--                                    <td>Курьер, Москва, Калугина 23</td>-->
-<!--                                    <td>Иванов И.И.</td>-->
-<!--                                    <td>10</td>-->
-<!--                                    <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>1</td>-->
-<!--                                    <td>2</td>-->
-<!--                                    <td>3</td>-->
-<!--                                    <td>Ожидает</td>-->
-<!--                                    <td>назначить <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>-->
-<!--                                    <td>6</td>-->
-<!--                                    <td>7</td>-->
-<!--                                    <td>Курьер, Москва, Калугина 23</td>-->
-<!--                                    <td>Иванов И.И.</td>-->
-<!--                                    <td>10</td>-->
-<!--                                    <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>1</td>-->
-<!--                                    <td>2</td>-->
-<!--                                    <td>3</td>-->
-<!--                                    <td>Ожидает</td>-->
-<!--                                    <td>назначить <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>-->
-<!--                                    <td>6</td>-->
-<!--                                    <td>7</td>-->
-<!--                                    <td>Курьер, Москва, Калугина 23</td>-->
-<!--                                    <td>Иванов И.И.</td>-->
-<!--                                    <td>10</td>-->
-<!--                                    <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>1</td>-->
-<!--                                    <td>2</td>-->
-<!--                                    <td>3</td>-->
-<!--                                    <td>Ожидает</td>-->
-<!--                                    <td>назначить <a class="editLooseOrder m-l" href="#editLooseOrder" data-toggle="modal"><i class="fa fa-pencil"></i></a></td>-->
-<!--                                    <td>6</td>-->
-<!--                                    <td>7</td>-->
-<!--                                    <td>Курьер, Москва, Калугина 23</td>-->
-<!--                                    <td>Иванов И.И.</td>-->
-<!--                                    <td>10</td>-->
-<!--                                    <td><a class="showComment m-l" href="#showComment" data-toggle="modal"><i class="fa fa-eye"></i></a></td>-->
-<!--                                </tr>-->
+                                <?php if(!empty($salesShowroom)){ ?>
+                                    <?php foreach($salesShowroom as $itemSale){ ?>
+                                        <tr data-sale-id="<?=$itemSale['saleId']?>">
+                                            <td><?=$itemSale['dateCreate']?></td>
+                                            <td><?=$itemSale['pack']?></td>
+                                            <td><?=$itemSale['countPack']?></td>
+                                            <td>
+                                                <?=$itemSale['statusShowroom']?>
+                                                <a class="editOrder m-l" href="javascript:void(0);"><i class="fa fa-pencil"></i></a>
+                                            </td>
+                                            <td><?=$itemSale['country']?></td>
+                                            <td><?=$itemSale['city']?></td>
+                                            <td><?=$itemSale['addressDelivery']?></td>
+                                            <td><?=$itemSale['secondName']?> <?=$itemSale['firstName']?> (<?=$itemSale['login']?>)</td>
+                                            <td><?=$itemSale['dateSend']?></td>
+                                            <td>
+                                                <a class="viewOrder m-l" href="javascript:void(0);">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                <?php } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -136,32 +111,209 @@ use yii\widgets\ActiveForm;
     </div>
 </section>
 
-<div class="modal fade" id="editLooseOrder">
+<div class="modal fade" id="editOrder">
     <div class="modal-dialog" >
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Заказ</h4>
             </div>
             <div class="modal-body">
+                <form action="/ru/business/showrooms/order-company-edit" name="editOrderForm" class="editOrderForm" method="POST">
+                    <input type="hidden" name="Sale[id]" class="saleId" value="">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Дата заказа:</p>
+                        </div>
+                        <div class="col-md-9">
+                            <span class="font-bold orderDate"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Шоу-рум:</p>
+                        </div>
+                        <div class="col-md-9">
+                            <?=Html::dropDownList('Sale[showroomId]','',$listShowroomsForSelect,[
+                                'class'     => 'looseOrderShowroomSelect w-195p inline form-control',
+                                'prompt'    => 'Список активных шоурумов'
+                            ])?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Страна:</p>
+                        </div>
+                        <div class="col-md-9">
+                            <span class="font-bold orderCountry"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Город:</p>
+                        </div>
+                        <div class="col-md-9">
+                            <span class="font-bold orderCity"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Куда отправляем:</p>
+                        </div>
+                        <div class="col-md-9">
+                            <span class="font-bold orderDeliveryAddress"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Покупатель:</p>
+                        </div>
+                        <div class="col-md-9">
+                            <span class="font-bold orderCustomer"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>телефон1:</p>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="font-bold orderCustomerPhone1"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <p>Логин:</p>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="font-bold orderCustomerLogin"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>телефон2:</p>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="font-bold orderCustomerPhone2"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <p>Скайп:</p>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="font-bold orderCustomerSkype"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-offset-6 col-md-2">
+                            <p>Email:</p>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="font-bold orderCustomerEmail"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Заказано:</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="list-unstiled orderItemDetails">
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="row m-b">
+                        <div class="col-md-3">
+                            <p class="m-t-xs">Статус:</p>
+                        </div>
+                        <div class="col-md-9">
+                            <select name="Sale[statusShowroom]" class="editOrderStatusSelect w-195p inline form-control"></select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p class="m-t-xs">Дата отправки:</p>
+                        </div>
+                        <div class="col-md-9">
+                            <span class="font-bold orderDepartureDate"></span>
+                        </div>
+                    </div>
+
+                    <div class="row m-b">
+                        <div class="col-md-3">
+                            <p class="m-t-xs">Способ доставки:</p>
+                        </div>
+                        <div class="col-md-9">
+                            <input type="text" name="Sale[deliveryCompany][logisticName]" class="form-control w-195p inline orderlogisticName">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p class="m-t-xs">Номер декларации:</p>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="Sale[deliveryCompany][ttn]" class="form-control inline orderlogisticTTN">
+                        </div>
+
+                        <div class="col-md-3">
+                            <a href="#">Добавить фото</a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p class="m-t-xs">Ориентировочная дата доставки:</p>
+                        </div>
+                        <div class="col-md-3">
+                            <input name="Sale[deliveryCompany][dateComing]" class="orderCommingDate input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" data-date-format="yyyy-mm-dd">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 m-t-xs">
+                            Комментарий
+                            <textarea class="form-control orderComment m-t m-b" name="Sale[deliveryCompany][comment]" id="orderComment" rows="5" placeholder=""></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <div class="col-sm-8 col-sm-offset-2 form-group">
+                                <a class="btn btn-danger" data-dismiss="modal">Отмена</a>
+                                <button type="submit" class="btn btn-success orderSave">Сохранить</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="viewOrder">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Заказ</h4>
+            </div>
+            <div class="modal-body viewOrder">
+
 
                 <div class="row">
                     <div class="col-md-3">
                         <p>Дата заказа:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderDate">12-03-2013</span>
-                    </div>
-                </div>
-
-                <div class="row m-b">
-                    <div class="col-md-3">
-                        <p>Шоу-рум:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <select name="looseOrderShowroomSelect" class="looseOrderShowroomSelect w-195p inline form-control">
-                            <option value="null">siren888</option>
-                            <option value="1">main</option>
-                        </select>
+                        <span class="font-bold orderDate"></span>
                     </div>
                 </div>
 
@@ -170,7 +322,7 @@ use yii\widgets\ActiveForm;
                         <p>Страна:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderCountry">Россия</span>
+                        <span class="font-bold orderCountry"></span>
                     </div>
                 </div>
 
@@ -179,7 +331,7 @@ use yii\widgets\ActiveForm;
                         <p>Город:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderCity">Москва</span>
+                        <span class="font-bold orderCity"></span>
                     </div>
                 </div>
 
@@ -188,7 +340,7 @@ use yii\widgets\ActiveForm;
                         <p>Куда отправляем:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderDeliveryAddress">Москва, Калугина 23</span>
+                        <span class="font-bold orderDeliveryAddress"></span>
                     </div>
                 </div>
 
@@ -197,7 +349,7 @@ use yii\widgets\ActiveForm;
                         <p>Покупатель:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderCustomer">Иванов Иван Иванович</span>
+                        <span class="font-bold orderCustomer"></span>
                     </div>
                 </div>
 
@@ -206,13 +358,13 @@ use yii\widgets\ActiveForm;
                         <p>телефон1:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCustomerPhone1">+78854555454</span>
+                        <span class="font-bold orderCustomerPhone1"></span>
                     </div>
                     <div class="col-md-2">
                         <p>Логин:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCustomerLogin">ivanov</span>
+                        <span class="font-bold orderCustomerLogin"></span>
                     </div>
                 </div>
 
@@ -221,39 +373,25 @@ use yii\widgets\ActiveForm;
                         <p>телефон2:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCustomerPhone2">+78854555454</span>
+                        <span class="font-bold orderCustomerPhone2"></span>
                     </div>
                     <div class="col-md-2">
                         <p>Скайп:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCustomerSkype">ivanov</span>
+                        <span class="font-bold orderCustomerSkype"></span>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-3">
-                        <p>телефон3:</p>
-                    </div>
-                    <div class="col-md-3">
-                        <span class="font-bold orderCustomerPhone3">+78854555454</span>
-                    </div>
-                    <div class="col-md-2">
+                    <div class="col-md-offset-6 col-md-2">
                         <p>Email:</p>
                     </div>
                     <div class="col-md-3">
-                        <span class="font-bold orderCustomerEmail">ivanov@loshara.com</span>
+                        <span class="font-bold orderCustomerEmail"></span>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-3">
-                        <p>телефон4:</p>
-                    </div>
-                    <div class="col-md-9">
-                        <span class="font-bold orderCustomerPhone4">+78854555454</span>
-                    </div>
-                </div>
 
                 <div class="row">
                     <div class="col-md-3">
@@ -264,8 +402,6 @@ use yii\widgets\ActiveForm;
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="list-unstiled orderItemDetails">
-                            <li>Два прибора Life Balance</li>
-                            <li>Два прибора Life Balance</li>
                         </ul>
                     </div>
                 </div>
@@ -275,10 +411,9 @@ use yii\widgets\ActiveForm;
                         <p class="m-t-xs">Статус:</p>
                     </div>
                     <div class="col-md-9">
-                        <select name="editLooseOrderStatusSelect" class="editLooseOrderStatusSelect w-195p inline form-control">
-                            <option value="null">Доставлено</option>
-                            <option value="1">Отгружено</option>
-                        </select>
+                        <span class="font-bold orderStatus">
+                            Доставлено
+                        </span>
                     </div>
                 </div>
 
@@ -287,7 +422,7 @@ use yii\widgets\ActiveForm;
                         <p class="m-t-xs">Дата отправки:</p>
                     </div>
                     <div class="col-md-9">
-                        <span class="font-bold orderDepartureDate">15.04.2016</span>
+                        <span class="font-bold orderDepartureDate"></span>
                     </div>
                 </div>
 
@@ -296,7 +431,7 @@ use yii\widgets\ActiveForm;
                         <p class="m-t-xs">Способ доставки:</p>
                     </div>
                     <div class="col-md-9">
-                        <input type="text" name="looseOrderlogisticName" class="form-control w-195p inline looseOrderlogisticName">
+                        <span class="font-bold orderLogisticName"></span>
                     </div>
                 </div>
 
@@ -304,12 +439,8 @@ use yii\widgets\ActiveForm;
                     <div class="col-md-3">
                         <p class="m-t-xs">Номер декларации:</p>
                     </div>
-                    <div class="col-md-3">
-                        <input type="text" name="looseOrderlogisticTTN" class="form-control inline looseOrderlogisticTTN">
-                    </div>
-
-                    <div class="col-md-3">
-                        <a href="#">Добавить фото</a>
+                    <div class="col-md-9">
+                        <span class="font-bold orderLogisticTTN"></span>
                     </div>
                 </div>
 
@@ -318,22 +449,23 @@ use yii\widgets\ActiveForm;
                         <p class="m-t-xs">Ориентировочная дата доставки:</p>
                     </div>
                     <div class="col-md-3">
-                        <input id="orderCommingDate" class="orderCommingDate input-s datepicker-input inline input-showroom form-control text-center" size="16" type="text" value="12-02-2013" data-date-format="dd-mm-yyyy">
+                        <span class="font-bold orderCommingDate"></span>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12 m-t-xs">
-                        Комментарий
-                        <textarea class="form-control looseOrderComment m-t m-b" name="looseOrderComment" id="looseOrderComment" rows="5" placeholder=""></textarea>
+                    <div class="col-md-3">
+                        <p>Комментарий:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderComment"></span>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="col-sm-8 col-sm-offset-2 form-group">
-                            <a class="btn btn-danger" data-dismiss="modal">Отмена</a>
-                            <a class="btn btn-success editLooseOrderSave">Сохранить</a>
+                            <a class="btn btn-success"  data-dismiss="modal">Выход</a>
                         </div>
                     </div>
                 </div>
@@ -348,6 +480,17 @@ use yii\widgets\ActiveForm;
 
 <script>
 
+    var listStatusShowroom = JSON.parse('<?=json_encode($listStatusShowroom)?>');
+
+    var availableStatusShowroom = {
+        waiting : ['waiting','delivering','delegate_company','sending_showroom','delivered_company','issue_part'],
+        delivering : ['delivering','delivered_company'],
+        delegate_company : ['delegate_company','sending_showroom','delivered_company'],
+        sending_showroom : ['sending_showroom','delivered_company'],
+        delivered_company : ['delivered_company'],
+        issue_part : ['issue_part','delivered']
+    };
+
     $('#table-loose-orders').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],
@@ -356,17 +499,210 @@ use yii\widgets\ActiveForm;
     });
 
 
-    $('#editLooseOrder').on('shown.bs.modal', function(){
-        // вызываеться перед открытием модального окна редактирования неприкреплённого заказа - выдёргиваем заказ из БД и подгружаем в окно
+    $('table').on('click','.editOrder',function(){
+
+        clearEditOrderForm();
+
+        var blInfo = $('#editOrder');
+
+        $.ajax({
+            url: '/ru/business/sale/get-sale',
+            type: 'POST',
+            data: {saleId:$(this).closest('tr').data('sale-id')},
+            beforeSend: function () {
+                blInfo.find('.modal-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                blInfo.find('.loader').remove();
+            },
+            success: function(msg){
+                if(msg.error === ''){
+
+                    var blForm = $('.editOrderForm');
+
+                    blForm.find('.saleId').val(msg.saleId);
+                    blForm.find('.orderDate').text(msg.dateCreate);
+                    blForm.find('.orderCountry').text(msg.country);
+                    blForm.find('.orderCity').text(msg.city);
+                    blForm.find('.orderDeliveryAddress').text(msg.addressDelivery);
+                    blForm.find('.orderCustomer').text(msg.secondName + ' ' + msg.firstName);
+                    blForm.find('.orderCustomerPhone1').text(msg.phone1);
+                    blForm.find('.orderCustomerPhone2').text(msg.phone2);
+                    blForm.find('.orderCustomerLogin').text(msg.login);
+                    blForm.find('.orderCustomerSkype').text(msg.skype);
+                    blForm.find('.orderCustomerEmail').text(msg.email);
+
+                    var blOrder = blForm.find('.orderItemDetails');
+                    blOrder.html('');
+                    $.each(msg.products, function( k, v ) {
+
+                        blProduct = '<li>'+v.name;
+
+                        if(msg.statusShowroom == 'waiting' || msg.statusShowroom == 'sending_showroom'){
+                            //blProduct += '<a href="javascript:void(0);" class="fromBalance pull-right" data-product-id="'+v.id+'">Выдать с моего шоу-рума демонстрационый образец</a><span class="spanIssued pull-right m-r"></span></li>'
+                        }
+
+                        blOrder.append(blProduct);
+                    });
+
+                    var statusShowroomOptions = '';
+                    availableStatusShowroom[msg.statusShowroom].forEach(function(item) {
+                        statusShowroomOptions += '<option value="'+item+'">'+listStatusShowroom[item]+'</option>'
+                    });
+                    blForm.find('.editOrderStatusSelect').html(statusShowroomOptions).val(msg.statusShowroom);
+
+                    blForm.find('.orderDepartureDate').text(msg.dateSend);
+
+                    blForm.find('.orderlogisticName').val(msg.logisticName);
+                    blForm.find('.orderlogisticTTN').val(msg.ttn);
+                    blForm.find('.orderCommingDate').val(msg.dateComing);
+                    blForm.find('.orderComment').val(msg.commentCompany);
+                }
+            }
+        });
+
+        blInfo.modal('show');
+    });
+    function clearEditOrderForm() {
+        var blForm = $('.editOrderForm');
+
+        blForm.find('.saleId').val('');
+        blForm.find('.orderDate').text('');
+        blForm.find('.looseOrderShowroomSelect').val('');
+        blForm.find('.orderCountry').text('');
+        blForm.find('.orderCity').text('');
+        blForm.find('.orderDeliveryAddress').text('');
+        blForm.find('.orderCustomer').text('');
+        blForm.find('.orderCustomerPhone1').text('');
+        blForm.find('.orderCustomerPhone2').text('');
+        blForm.find('.orderCustomerLogin').text('');
+        blForm.find('.orderCustomerSkype').text('');
+        blForm.find('.orderCustomerEmail').text('');
+
+        blForm.find('.orderItemDetails').html('');
+
+        blForm.find('.editOrderStatusSelect').val('');
+
+        blForm.find('.orderDepartureDate').text('');
+
+        blForm.find('.orderlogisticName').val('');
+        blForm.find('.orderlogisticTTN').val('');
+        blForm.find('.orderCommingDate').val('');
+        blForm.find('.orderComment').val('');
+    }
+
+
+    $('table').on('click','.viewOrder',function(){
+
+        clearViewOrder();
+
+        var blInfo = $('#viewOrder');
+
+        $.ajax({
+            url: '/ru/business/sale/get-sale',
+            type: 'POST',
+            data: {saleId:$(this).closest('tr').data('sale-id')},
+            beforeSend: function () {
+                blInfo.find('.modal-body').append('<div class="loader"><div></div></div>');
+            },
+            complete: function () {
+                blInfo.find('.loader').remove();
+            },
+            success: function(msg){
+                if(msg.error === ''){
+
+                    blInfo.find('.saleId').val(msg.saleId);
+                    blInfo.find('.orderDate').text(msg.dateCreate);
+                    blInfo.find('.orderCountry').text(msg.country);
+                    blInfo.find('.orderCity').text(msg.city);
+                    blInfo.find('.orderDeliveryAddress').text(msg.addressDelivery);
+                    blInfo.find('.orderCustomer').text(msg.secondName + ' ' + msg.firstName);
+                    blInfo.find('.orderCustomerPhone1').text(msg.phone1);
+                    blInfo.find('.orderCustomerPhone2').text(msg.phone2);
+                    blInfo.find('.orderCustomerLogin').text(msg.login);
+                    blInfo.find('.orderCustomerSkype').text(msg.skype);
+                    blInfo.find('.orderCustomerEmail').text(msg.email);
+
+                    var blOrder = blInfo.find('.orderItemDetails');
+                    blOrder.html('');
+                    $.each(msg.products, function( k, v ) {
+
+                        blProduct = '<li>'+v.name;
+
+                        blOrder.append(blProduct);
+                    });
+
+                    blInfo.find('.orderStatus').text(listStatusShowroom[msg.statusShowroom]);
+                    blInfo.find('.orderDepartureDate').text(msg.dateSend);
+                    blInfo.find('.orderLogisticName').text(msg.logisticName);
+                    blInfo.find('.orderLogisticTTN').text(msg.ttn);
+                    blInfo.find('.orderCommingDate').text(msg.dateComing);
+                    blInfo.find('.orderComment').text(msg.commentCompany);
+
+                }
+            }
+        });
+
+        blInfo.modal('show');
+    });
+    function clearViewOrder() {
+        var bl = $('#viewOrder');
+
+        bl.find('.orderDate').text('');
+        bl.find('.orderCountry').text('');
+        bl.find('.orderCity').text('');
+        bl.find('.orderDeliveryAddress').text('');
+        bl.find('.orderCustomer').text('');
+        bl.find('.orderCustomerPhone1').text('');
+        bl.find('.orderCustomerPhone2').text('');
+        bl.find('.orderCustomerLogin').text('');
+        bl.find('.orderCustomerSkype').text('');
+        bl.find('.orderCustomerEmail').text('');
+        bl.find('.orderItemDetails').html('');
+        bl.find('.orderStatus').text('');
+        bl.find('.orderDepartureDate').text('');
+        bl.find('.orderLogisticName').text('');
+        bl.find('.orderLogisticTTN').text('');
+        bl.find('.orderCommingDate').text('');
+        bl.find('.orderComment').text('');
+    }
+
+    $('.filterInfoDate').datepicker().on('changeDate', function (e) {
+        var link = window.location.href;
+        var date = new Date(e.date);
+        var newDate = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2);
+        var newFilter = e.currentTarget.dataset.filter;
+
+        $('.filterInfoDate').each(function () {
+            link = updateQueryStringParameter(link,$(this).data('filter'),$(this).datepicker({ dateFormat: 'yy-mm' }).val());
+        });
+
+        link = updateQueryStringParameter(link,newFilter,newDate);
+
+        document.location.href = link;
 
     });
-
-
-    $('.modal').on('click','.editLooseOrderSave',function(){
-        // сохраняем редактирование приём товара
-
-        $('#editLooseOrder').modal('hide');
-    });
-
+    function updateQueryStringParameter(uri, key, value) {
+        var re = new RegExp("([?&])" + key + "=.*?(&|#|$)", "i");
+        if( value === undefined ) {
+            if (uri.match(re)) {
+                return uri.replace(re, '$1$2');
+            } else {
+                return uri;
+            }
+        } else {
+            if (uri.match(re)) {
+                return uri.replace(re, '$1' + key + "=" + value + '$2');
+            } else {
+                var hash =  '';
+                if( uri.indexOf('#') !== -1 ){
+                    hash = uri.replace(/.*#/, '#');
+                    uri = uri.replace(/#.*/, '');
+                }
+                var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+                return uri + separator + key + "=" + value + hash;
+            }
+        }
+    }
 
 </script>
