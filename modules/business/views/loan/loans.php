@@ -15,11 +15,18 @@ $total = [
 </div>
 
 <div class="m-b-md">
-    <h3 class="m-b-none"><?= THelper::t('sidebar_loan') ?></h3>
+    <h3 class="m-b-none" title="<?=$loan_date ?>"><?= THelper::t('sidebar_loan') ?></h3>
 </div>
 
 <div class="row form-group">
-    <div class="col-md-2 col-md-offset-10">
+    <div class="col-md-3">
+        <select  class="form-control" id="loan-filter-id" name="loan-filter">
+            <option <?=$f==0?'selected':'' ?> value="0">Долг равен 0</option>
+            <option <?=(!isset($f)||$f==1)?'selected':'' ?> value="1">Долг больше 0</option>
+            <option <?=$f==1000?'selected':'' ?> value="1000">Долг больше 0 (пересчет)</option>
+        </select>
+    </div>
+    <div class="col-md-2 col-md-offset-7">
         <?= Html::a('<i class="fa fa-usd"></i> '.THelper::t('sent_loan'), ['/business/loan/sent-repayment'], ['data-toggle'=>'ajaxModal','class'=>'btn btn-block btn-success']) ?>
     </div>
 </div>
@@ -73,6 +80,10 @@ $total = [
 </section>
 
 <script>
+    $('#loan-filter-id').change(function(el){
+        console.log(el);
+        window.location.href ='/' + LANG + '/business/loan/loans?f='+$('#loan-filter-id').val();
+    });
     $('.table-translations').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],

@@ -22,60 +22,87 @@ class LoanController extends BaseController {
     {
         $infoLoad = [];
 
-        $wherePins = [
-            'loan' => true,
-            'isDelete' => false
-        ];
+        //--filter--
+        $f = Yii::$app->request->get('f');
+        $loan_calc = \Yii::$app->cache->get('loan-calc');
+        if (($loan_calc === false) ||($f == 1000)) {
 
-        if (!$this->user->isMain()) {
-            $wherePins['userId'] = new ObjectID($this->user->id);
-        }
+            $wherePins = [
+                'loan' => true,
+                'isDelete' => false
+            ];
 
-        $model = Pins::find()->where($wherePins)->all();
+            if (!$this->user->isMain()) {
+                $wherePins['userId'] = new ObjectID($this->user->id);
+            }
 
-        if ($model) {
-            foreach ($model as $item) {
-                $infoPin = api\Pin::getPinInfo($item->pin);
-                if (!empty($infoPin->pinUsedBy)) {
-                    $infoUser = Users::findOne(['username' => $infoPin->pinUsedBy]);
-                    if(empty($infoLoad[(string)$infoUser->_id])){
+            $model = Pins::find()->where($wherePins)->all();
 
-                        $infoLoad[(string)$infoUser->_id] = [
-                            'infoUser'  => $infoPin->pinUsedBy,
+            if ($model) {
+                foreach ($model as $item) {
+                    $infoPin = api\Pin::getPinInfo($item->pin);
+                    if (!empty($infoPin->pinUsedBy)) {
+                        $infoUser = Users::findOne(['username' => $infoPin->pinUsedBy]);
+                        if(empty($infoLoad[(string)$infoUser->_id])){
+
+                            $infoLoad[(string)$infoUser->_id] = [
+                                'infoUser'  => $infoPin->pinUsedBy,
+                                'amountLoan' => 0,
+                                'amountRepayment' => 0
+                            ];
+                        }
+                        $infoLoad[(string)$infoUser->_id]['amountLoan'] += ($infoPin->productPrice * $infoPin->count);
+                    }
+                }
+            }
+
+            if ($this->user->isMain()) {
+                $model = LoanRepayment::find()->all();
+            } else {
+                $model = LoanRepayment::find()->where(['user_id' => new ObjectID($this->user->id)])->all();
+            }
+
+            if ($model) {
+                foreach ($model as $item){
+                    $infoUser = Users::findOne(['_id' => $item->user_id]);
+
+                    if(empty($infoLoad[(string)$item->user_id])){
+                        $infoLoad[(string)$item->user_id] = [
+                            'infoUser'  => $infoUser->username,
                             'amountLoan' => 0,
                             'amountRepayment' => 0
                         ];
                     }
-                    $infoLoad[(string)$infoUser->_id]['amountLoan'] += ($infoPin->productPrice * $infoPin->count);
-                }
-            }
-        }
 
-        if ($this->user->isMain()) {
-            $model = LoanRepayment::find()->all();
+                    $infoLoad[(string)$item->user_id]['amountRepayment'] += $item->amount;
+                }
+
+            }
+            \Yii::$app->cache->set('loan-calc',$infoLoad);
+            \Yii::$app->cache->set('loan-calc-date',date('d-m-Y H:i'));
         } else {
-            $model = LoanRepayment::find()->where(['user_id' => new ObjectID($this->user->id)])->all();
+            $infoLoad = $loan_calc;
         }
-
-        if ($model) {
-            foreach ($model as $item){
-                $infoUser = Users::findOne(['_id' => $item->user_id]);
-
-                if(empty($infoLoad[(string)$item->user_id])){
-                    $infoLoad[(string)$item->user_id] = [
-                        'infoUser'  => $infoUser->username,
-                        'amountLoan' => 0,
-                        'amountRepayment' => 0
-                    ];
+        $infoLoad_filtered = [];
+        foreach ($infoLoad as $key=>$value) {
+            $diff = $value['amountLoan'] - $value['amountRepayment'];
+            if (isset($f) && ($f==0)) {
+                if ($diff == 0) {// -- = 0
+                    $infoLoad_filtered[$key] = $value;
                 }
-
-                $infoLoad[(string)$item->user_id]['amountRepayment'] += $item->amount;
             }
-        }
+            if (!isset($f) || ($f==1)||($f == 1000)) {
+                if ($diff > 0) {// -- <> 0
+                    $infoLoad_filtered[$key] = $value;
+                }
+            }
 
+        }
         return $this->render('loans',[
-            'infoLoad'  => $infoLoad,
-            'alert'     => Yii::$app->session->getFlash('alert', '', true)
+            'infoLoad'  => $infoLoad_filtered,
+            'alert'     => Yii::$app->session->getFlash('alert', '', true),
+            'f' => $f,
+            'loan_date' => Yii::$app->cache->get('loan-calc-date')
         ]);
     }
 
@@ -119,7 +146,14 @@ class LoanController extends BaseController {
             $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
             
             if($model->save()){
-
+                //--b:change cache data
+                $loan_calc = \Yii::$app->cache->get('loan-calc');
+                if (($loan_calc <> false) ) {
+                    $loan_calc[$request['LoanRepayment']['user_id']]['amountRepayment'] +=(double)$request['LoanRepayment']['amount'];
+                    @\Yii::$app->cache->set('loan-calc',$loan_calc);
+                    @\Yii::$app->cache->set('loan-calc-date', \Yii::$app->cache->get('loan-calc-date').' ;paied='.date('d-m H:i'));
+                }
+                //--e:change cache data
                 Yii::$app->session->setFlash('alert' ,[
                         'typeAlert'=>'success',
                         'message'=>'Сохранения применились.'
