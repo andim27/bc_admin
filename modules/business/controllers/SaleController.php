@@ -328,7 +328,20 @@ class SaleController extends BaseController {
                     $typeDelivery = $sale->delivery['type'];
 
                     if(!empty($sale->delivery['params']['date'])){
-                        $dateDelivery = date('Y-m-d', strtotime($dateCreate. ' + '.(int)$sale->delivery['params']['date'].' days'));
+                        $dateDelivery = $sale->delivery['params']['date'];
+                    }
+                }
+
+                $addressDelivery = $country = $city = '';
+                if(!empty($sale->delivery)){
+                    if($sale->delivery['type'] == 'showroom'){
+                        $addressDelivery = 'Шон-рум: ' . $sale->showroom->address;
+                        $country = $sale->showroom->countryInfo->name['ru'];
+                        $city = $sale->showroom->cityInfo->name['ru'];
+                    } else if($sale->delivery['type'] == 'courier'){
+                        $addressDelivery = 'Курьер: ' . $sale->delivery['address'];
+                        $country = $sale->infoUser->countryData['name']['ru'];
+                        $city = $sale->infoUser->cityData['name']['ru'];
                     }
                 }
 
@@ -354,7 +367,14 @@ class SaleController extends BaseController {
                     'commentShowroom'=>$sale->commentShowroom,
                     'typeDelivery'  => $typeDelivery,
                     'dateDelivery'  => $dateDelivery,
-                    'addressDelivery'=> (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
+                    'country'       => $country,
+                    'city'          => $city,
+                    'addressDelivery'=> $addressDelivery,
+                    'dateSend'      => (!empty($sale->deliveryCompany['dateSend']) ? $sale->deliveryCompany['dateSend']->toDateTime()->format('Y-m-d H:i') : ''),
+                    'logisticName'  => (!empty($sale->deliveryCompany['logisticName']) ? $sale->deliveryCompany['logisticName'] : ''),
+                    'ttn'           => (!empty($sale->deliveryCompany['ttn']) ? $sale->deliveryCompany['ttn'] : ''),
+                    'dateComing'    => (!empty($sale->deliveryCompany['dateComing']) ? $sale->deliveryCompany['dateComing']->toDateTime()->format('Y-m-d') : ''),
+                    'commentCompany'=> (!empty($sale->deliveryCompany['comment']) ? $sale->deliveryCompany['comment'] : ''),
                     'products'      => $products,
                     'flHasAccruals' => ((!empty($sale->infoProduct->paymentsToRepresentive) && !empty($sale->infoProduct->paymentsToStock)) ? true : false)
                 ];

@@ -69,6 +69,8 @@ class Showrooms
                     $itemShowroom->userLoginFiledRequest . ' / ' .
                     $itemShowroom->userSecondNameFiledRequest . ' ' . $itemShowroom->userFirstNameFiledRequest;
             }
+
+            asort($list);
         }
 
         return $list;

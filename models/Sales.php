@@ -67,6 +67,7 @@ class Sales extends ActiveRecord
             'delivery',
             'orderId',
             'statusShowroom',
+            'deliveryCompany',
             'formPayment',
             'comment',
             'comment_user_name',
