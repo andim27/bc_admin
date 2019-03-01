@@ -79,7 +79,7 @@ class LoanController extends BaseController {
 
             }
             \Yii::$app->cache->set('loan-calc',$infoLoad);
-            \Yii::$app->cache->set('loan-calc-date',date('d-m-Y H:i:s'));
+            \Yii::$app->cache->set('loan-calc-date',date('d-m-Y H:i'));
         } else {
             $infoLoad = $loan_calc;
         }
@@ -146,7 +146,14 @@ class LoanController extends BaseController {
             $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
             
             if($model->save()){
-
+                //--b:change cache data
+                $loan_calc = \Yii::$app->cache->get('loan-calc');
+                if (($loan_calc <> false) ) {
+                    $loan_calc[$request['LoanRepayment']['user_id']]['amountRepayment'] +=(double)$request['LoanRepayment']['amount'];
+                    @\Yii::$app->cache->set('loan-calc',$loan_calc);
+                    @\Yii::$app->cache->set('loan-calc-date', \Yii::$app->cache->get('loan-calc-date').' ;paied='.date('d-m H:i'));
+                }
+                //--e:change cache data
                 Yii::$app->session->setFlash('alert' ,[
                         'typeAlert'=>'success',
                         'message'=>'Сохранения применились.'
