@@ -158,13 +158,33 @@ class ManufacturingSuppliersController extends BaseController {
      */
     public function actionPartsAccessories()
     {
-        $model = PartsAccessories::find()->all();
+
         $arrayProcurementPlanning = $this->procurementPlanning();
-        
+        $f = \Yii::$app->request->get('f');
+        if (!isset($f)) {
+            $model = PartsAccessories::find()->where(['arc'=>['$ne'=>1]])->all();
+        } else {
+            switch ($f) {
+                case 0:
+                    $model = PartsAccessories::find()->all();
+                    break;
+                case 1:
+                    $model = PartsAccessories::find()->where(['arc'=>['$ne'=>1]])->all();
+                    break;
+                case -1:
+                    $model = PartsAccessories::find()->where(['arc'=>1])->all();
+                    break;
+                default:
+                    $model = PartsAccessories::find()->where(['arc'=>['$ne'=>1]])->all();
+                    break;
+
+            }
+        }
         return $this->render('parts-accessories',[
             'model' => $model,
             'arrayProcurementPlanning' => $arrayProcurementPlanning,
-            'alert' => Yii::$app->session->getFlash('alert', '', true)
+            'alert' => Yii::$app->session->getFlash('alert', '', true),
+            'f'=>$f
         ]);
     }
 
@@ -365,13 +385,14 @@ class ManufacturingSuppliersController extends BaseController {
         }
 
         if(!empty($request)){
-            $model->title = $request['PartsAccessories']['title'];
-            $model->article = $request['PartsAccessories']['article'];
+            $model->title        = $request['PartsAccessories']['title'];
+            $model->article      = $request['PartsAccessories']['article'];
             $model->translations = ['en' => $request['PartsAccessories']['translations']['en']];
-            $model->unit = $request['PartsAccessories']['unit'];
+            $model->unit         = $request['PartsAccessories']['unit'];
             $model->delivery_from_chine = (int)(!empty($request['PartsAccessories']['delivery_from_chine']) ? '1' : '0');
-            $model->repair_fund = (int)(!empty($request['PartsAccessories']['repair_fund']) ? '1' : '0');
-            $model->exchange_fund = (int)(!empty($request['PartsAccessories']['exchange_fund']) ? '1' : '0');
+            $model->repair_fund         = (int)(!empty($request['PartsAccessories']['repair_fund']) ? '1' : '0');
+            $model->exchange_fund       = (int)(!empty($request['PartsAccessories']['exchange_fund']) ? '1' : '0');
+            $model->arc                 = (int)(!empty($request['PartsAccessories']['arc']) ? '1' : '0');
 
             if(!empty($request['PartsAccessories']['last_price_eur'])){
                 $ActualCurrency = CurrencyRate::getActualCurrency();
@@ -388,7 +409,7 @@ class ManufacturingSuppliersController extends BaseController {
             }
         }
 
-        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories');
+        return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-accessories?f=1');
     }
 
     /**
