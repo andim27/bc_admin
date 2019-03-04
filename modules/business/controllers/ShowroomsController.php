@@ -602,13 +602,17 @@ class ShowroomsController extends BaseController
                         ]
                     ]
                 ]
-
-
             )
             ->andFilterWhere((!empty($filter['showroomId']) ? ['showroomId'=>new ObjectId($filter['showroomId'])] : []))
             ->with(['infoUser','infoProduct'])
             ->orderBy(['dateCreate'=>SORT_DESC])
             ->all();
+
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo '<xmp>';
+//        print_r($sales);
+//        echo '</xmp>';
+//        die();
 
         $arrayTurnoverAccruals = [];
         $totalAccrual = 0;
@@ -1622,6 +1626,9 @@ class ShowroomsController extends BaseController
         return $this->render('repair-service',[]);
     }
 
+    /**
+     * Sales cmpany
+     */
     public function actionOrdersCompany()
     {
 
@@ -1629,8 +1636,11 @@ class ShowroomsController extends BaseController
 
         $filter = [];
 
+        $filter['showroomId'] = false;
         $listShowroomsForSelect = api\Showrooms::getListForFilter();
-
+        if(!empty($request['showroomId'])){
+            $filter['showroomId'] = $request['showroomId'];
+        }
 
         $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : '2019-01');
         $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
@@ -1646,13 +1656,12 @@ class ShowroomsController extends BaseController
                 'dateCreate' => [
                     '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
                     '$lte' => new UTCDateTime(strtotime($filter['dateTo'].'-'.$countDay.' 23:59:59') * 1000)
-                ]
-            ])
-            ->andWhere([
+                ],
                 'statusShowroom' => [
                     '$nin' => [Sales::STATUS_SHOWROOM_DELIVERED,Sales::STATUS_SHOWROOM_DELIVERED]
                 ]
             ])
+            ->andFilterWhere((!empty($filter['showroomId']) ? ['showroomId'=>new ObjectId($filter['showroomId'])] : []))
             ->with(['infoUser'])
             ->orderBy(['dateCreate'=>SORT_ASC])
             ->all();
@@ -1693,7 +1702,7 @@ class ShowroomsController extends BaseController
                     'dateCreate'    => $dateCreate,
                     'country'       => $country,
                     'city'          => $city,
-                    'dateSend'      => '***',
+                    'dateSend'      => (!empty($sale->deliveryCompany['dateSend']) ? $sale->deliveryCompany['dateSend']->toDateTime()->format('Y-m-d H:i') : ''),
                     'login'         => $sale->infoUser->username,
                     'secondName'    => $sale->infoUser->secondName,
                     'firstName'     => $sale->infoUser->firstName,
@@ -1706,14 +1715,123 @@ class ShowroomsController extends BaseController
 
         return $this->render('orders-company',[
             'filter' => $filter,
+            'salesShowroom' => $salesShowroom,
+            'listShowroomsForSelect' => $listShowroomsForSelect
+        ]);
+    }
+
+    public function actionOrdersNonDistributed()
+    {
+        $request = Yii::$app->request->get();
+
+        $filter = [];
+
+        $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : '2019-01');
+        $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
+        $infoDateTo = explode("-",$filter['dateTo']);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+
+        $sales = Sales::find()
+            ->where([
+                'type' => [
+                    '$ne'   =>  -1
+                ],
+                'productData.productNatural' => 1,
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'].'-'.$countDay.' 23:59:59') * 1000)
+                ],
+                'showroomId' => [
+                    '$in' => [null,'']
+                ]
+            ])
+            ->with(['infoUser'])
+            ->orderBy(['dateCreate'=>SORT_ASC])
+            ->all();
+
+        $salesShowroom = [];
+        if(!empty($sales)){
+            /** @var Sales $sale */
+            foreach ($sales as $sale) {
+
+                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+
+                $addressDelivery = $country = $city = '';
+                if(!empty($sale->delivery)){
+                    if($sale->delivery['type'] == 'courier'){
+                        $addressDelivery = 'Курьер: ' . $sale->delivery['address'];
+                        $country = $sale->infoUser->countryData['name']['ru'];
+                        $city = $sale->infoUser->cityData['name']['ru'];
+                    }
+                }
+
+                $salesShowroom[strval($sale->_id)] = [
+                    'saleId'        => strval($sale->_id),
+                    'pack'          => $sale->productData['productName'],
+                    'countPack'     => $sale->productData['count'],
+                    'dateCreate'    => $dateCreate,
+                    'country'       => $country,
+                    'city'          => $city,
+                    'dateSend'      => (!empty($sale->deliveryCompany['dateSend']) ? $sale->deliveryCompany['dateSend']->toDateTime()->format('Y-m-d H:i') : ''),
+                    'login'         => $sale->infoUser->username,
+                    'secondName'    => $sale->infoUser->secondName,
+                    'firstName'     => $sale->infoUser->firstName,
+                    'statusShowroom'=> Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom  : Sales::STATUS_SHOWROOM_WAITING)),
+                    'addressDelivery'=> $addressDelivery,
+                ];
+
+            }
+        }
+
+        return $this->render('orders-non-distributed',[
+            'filter' => $filter,
             'salesShowroom' => $salesShowroom
         ]);
     }
-    public function actionOrdersNonDistributed()
+
+    public function actionOrderCompanyEdit()
     {
 
+        $request = Yii::$app->request->post();
 
-        return $this->render('orders-non-distributed',[]);
+        if(!empty($request['Sale']['id'])){
+            $modelSale = Sales::findOne(['_id' => new ObjectId($request['Sale']['id'])]);
+
+            if(!empty($modelSale)){
+
+                $deliveryCompany = $modelSale->deliveryCompany;
+
+                if($modelSale->statusShowroom != Sales::STATUS_SHOWROOM_SENDING_SHOWROOM && in_array($request['Sale']['statusShowroom'],[Sales::STATUS_SHOWROOM_SENDING_SHOWROOM])){
+                    $deliveryCompany['dateSend'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                }
+
+                if(!empty($request['Sale']['deliveryCompany']['dateComing'])) {
+                    $deliveryCompany['dateComing'] = new UTCDatetime(strtotime($request['Sale']['deliveryCompany']['dateComing']) * 1000);
+                }
+
+                $deliveryCompany['logisticName'] = (!empty($request['Sale']['deliveryCompany']['logisticName']) ? $request['Sale']['deliveryCompany']['logisticName'] : '');
+                $deliveryCompany['ttn'] = (!empty($request['Sale']['deliveryCompany']['ttn']) ? $request['Sale']['deliveryCompany']['ttn'] : '');
+                $deliveryCompany['comment'] = (!empty($request['Sale']['deliveryCompany']['comment']) ? $request['Sale']['deliveryCompany']['comment'] : '');
+
+                $modelSale->statusShowroom = $request['Sale']['statusShowroom'];
+
+                if(!empty($request['Sale']['showroomId'])){
+                    $modelSale->showroomId = new ObjectId($request['Sale']['showroomId']);
+                }
+
+                $modelSale->deliveryCompany = $deliveryCompany;
+
+                if($modelSale->save()){
+                    Yii::$app->session->setFlash('success', 'Заказ обновился');
+                    return $this->redirect(isset(Yii::$app->request->referrer) ? Yii::$app->request->referrer : '/ru/business/showrooms/orders-company',301);
+                }
+
+            }
+        }
+
+        Yii::$app->session->setFlash('danger', 'Заказ не обновился');
+
+        return $this->redirect('/ru/business/showrooms/orders-company',301);
     }
 
 
