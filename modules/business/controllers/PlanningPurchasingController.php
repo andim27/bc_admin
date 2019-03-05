@@ -42,14 +42,17 @@ class PlanningPurchasingController extends BaseController {
             $model->need_collect = (int)$request['need'];
             $model->date_create =  new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
             $complect = [];
-            foreach ($request['complect'] as $k=>$item){
-                $complect[] = [
-                    'parts_accessories_id' => $item ,
-                    'needForOne' => $request['needForOne'][$k] ,
-                    'priceForOne' => $request['priceForOne'][$k] ,
-                    'buy' => $request['buy'][$k] ,
-                ];
+            if (isset($request['complect'])) {
+                foreach ($request['complect'] as $k=>$item){
+                    $complect[] = [
+                        'parts_accessories_id' => $item ,
+                        'needForOne' => $request['needForOne'][$k] ,
+                        'priceForOne' => $request['priceForOne'][$k] ,
+                        'buy' => $request['buy'][$k] ,
+                    ];
+                }
             }
+
             $model->complect = $complect;
 
         }
