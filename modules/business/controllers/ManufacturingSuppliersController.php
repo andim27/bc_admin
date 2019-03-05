@@ -339,7 +339,7 @@ class ManufacturingSuppliersController extends BaseController {
         }
         
         $existingProducts = [];
-        $modelExistingProducts = PartsAccessories::find()->all();
+        $modelExistingProducts = PartsAccessories::find()->where(['arc'=>['$ne'=>1]])->all();;
         if(!empty($modelExistingProducts)){
             foreach ($modelExistingProducts as $item) {
                 $existingProducts['ru'][$item->title] = $item->title;
