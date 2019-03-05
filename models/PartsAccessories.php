@@ -59,7 +59,8 @@ class PartsAccessories extends \yii2tech\embedded\mongodb\ActiveRecord
             'last_price_eur',
             'repair_fund',
             'exchange_fund',
-            'delovod_id'
+            'delovod_id',
+            'arc'
         ];
     }
 
