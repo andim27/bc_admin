@@ -42,8 +42,14 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
     <div class="row">
         <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
-
-        <div class="col-md-offset-6 col-md-3 form-group">
+        <div class="col-md-2 form-group">
+           <select id="f-id" name="f" class="form-control">
+               <option value="0"  <?=(isset($f)&&$f==0?'selected':'')  ?> >Все</option>
+               <option value="1"  <?=(!isset($f)||$f==1?'selected':'')  ?> >Рабочие</option>
+               <option value="-1" <?=(isset($f)&&$f==-1?'selected':'') ?> >Архивные</option>
+           </select>
+        </div>
+        <div class="col-md-offset-4 col-md-3 form-group">
             <?=Html::a('<i class="fa fa-file-o"></i>',['/business/manufacturing-suppliers/parts-accessories-excel'],['class'=>'btn btn-default btn-block'])?>
         </div>
         <div class="col-md-3 form-group">
@@ -119,10 +125,16 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
                 </table>
             </div>
         </section>
+    <?php } else {?>
+        <section class="panel panel-default">
+            <h4 class="text-center text-danger">Ничего нет</h4>
+        </section>
     <?php } ?>
-
 <?php } ?>
 <script>
+    $('#f-id').change(function(){
+       window.location.href = '/' + LANG + '/business/manufacturing-suppliers/parts-accessories?f='+$('#f-id').val();
+    });
     $('.table-translations').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],

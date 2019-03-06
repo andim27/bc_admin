@@ -115,6 +115,16 @@ use app\models\CurrencyRate;
                 </div>
             </div>
 
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <?= Html::label('Архив')?>
+                    <?= Html::checkbox('PartsAccessories[arc]',((!empty($model->arc))? true : false),[
+                        'class'=>'flExchangeFund'
+                    ]);
+                    ?>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-12 text-right">
                     <?= Html::submitButton(THelper::t('settings_translation_edit_save'), ['class' => 'btn btn-success']) ?>

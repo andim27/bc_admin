@@ -18,8 +18,18 @@ spec:
       nodeSelector:
             nodetype: bpt
             apptype: admin
+      initContainers:
+      - name: copy-code
+        volumeMounts:
+        - name: shared-files
+          mountPath: /var/www/html
+        image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
+        command: ["/bin/sh", "-c", "cp -r /app/. /var/www/html || true && sh /var/www/html/permmissions.sh"]
       containers:
       - name: admin
+        volumeMounts:
+        - name: shared-files
+          mountPath: /var/www/html
         image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
         ports:
         - containerPort: 80
@@ -42,6 +52,12 @@ spec:
           value: '86400'
         - name: PHP_MEMORY_MAX
           value: '256'
+      - name: yii2-logs
+        volumeMounts:
+        - name: shared-files
+          mountPath: /var/www/html
+        image: busybox
+        command: ["tail", "-f", "/var/www/html/runtime/logs/app.log"]
 #        livenessProbe:
 #          httpGet:
 #            path: /
@@ -50,3 +66,6 @@ spec:
 #          periodSeconds: 10
       imagePullSecrets:
         - name: gitlab-registry
+      volumes:
+        - name: shared-files
+          emptyDir: {}
