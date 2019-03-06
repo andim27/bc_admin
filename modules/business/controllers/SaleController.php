@@ -259,8 +259,6 @@ class SaleController extends BaseController {
 
             $response = [];
 
-            $listGoodsForIssue = Products::getListIdProductForIssue();
-
             if(!empty($request['orderId'])){
                 $order = Order::findOne(['orderId'=>(int)$request['orderId']]);
                
@@ -282,30 +280,10 @@ class SaleController extends BaseController {
 
                 $products = [];
 
-//                header('Content-Type: text/html; charset=utf-8');
-//                echo '<xmp>';
-//                print_r($sale->statusSale);
-//                echo '</xmp>';
-//                die();
+                $infoSetSales = $sale->getStatusSale();
 
-                if($sale->productData['products']) {
-
-//                    header('Content-Type: text/html; charset=utf-8');
-//                    echo '<xmp>';
-//                    print_r($sale->productData['products']);
-//                    echo '</xmp>';
-//                    die();
-
-                    foreach ($sale->productData['products'] as $itemProduct) {
-                        $productId = strval($itemProduct['_id']);
-                        if(in_array($productId,$listGoodsForIssue)){
-                            $products[] = [
-                                'id' => $productId,
-                                'name' => $itemProduct['productName'],
-                                'status' => 0
-                            ];
-                        }
-                    }
+                if(!empty($infoSetSales->setSales)) {
+                    $products = $infoSetSales->setSales;
                 }
 
                 $orderId = '';

@@ -2,6 +2,7 @@
 
 namespace app\modules\business\controllers;
 
+use app\models\LogWarehouse;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
@@ -10,6 +11,7 @@ use app\models\SendingWaitingParcel;
 use app\models\ShowroomsCompensation;
 use app\models\Showrooms;
 use app\models\ShowroomsEmails;
+use app\models\StatusSales;
 use app\models\Users;
 use app\modules\business\models\ShowroomsEmailsForm;
 use app\modules\business\models\ShowroomsOpeningConditionsForm;
@@ -621,7 +623,8 @@ class ShowroomsController extends BaseController
             /** @var Sales $sale */
             foreach ($sales as $sale) {
 
-                if(!empty($sale->infoProduct->paymentsToRepresentive) && !empty($sale->infoProduct->paymentsToStock)){
+                if(!empty($sale->productData['paymentsToRepresentive']) && !empty($sale->productData['paymentsToStock'])){
+
                     $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
                     $dateCreateM = $sale->dateCreate->toDateTime()->format('Y-m');
 
@@ -649,9 +652,7 @@ class ShowroomsController extends BaseController
                     $accrual = 0;
                     if(!empty($sale->statusShowroom) && in_array($sale->statusShowroom,[Sales::STATUS_SHOWROOM_DELIVERED,Sales::STATUS_SHOWROOM_DELIVERED_COMPANY])){
 
-
                         if(empty($arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM])){
-
                             $infoDateToTemp = explode("-",$dateCreateM);
                             $countDayTemp = cal_days_in_month(CAL_GREGORIAN, $infoDateToTemp['1'], $infoDateToTemp['0']);
                             $tempTurnover = $this->getTurnoverAccruals($dateCreateM . '-01',$dateCreateM .'-'.$countDayTemp,$showroomId);
@@ -690,9 +691,6 @@ class ShowroomsController extends BaseController
                     $totalAccrual += ($countSale * $accrual);
 
                 }
-
-
-
             }
 
         }
@@ -796,42 +794,43 @@ class ShowroomsController extends BaseController
     }
 
     //TODO:KAA remove after link showroom with warehouse
-    public function actionTempBalance($fromWarehouseId,$toShowroomId)
-    {
+//    public function actionTempBalance($fromWarehouseId,$toShowroomId)
+//    {
+//
+//        $response = [];
+//        $modelShowroom = PartsAccessoriesInWarehouse::find()
+//            ->where(['warehouse_id'=>new ObjectId($toShowroomId)])
+//            ->all();
+//
+//        if(empty($modelShowroom)){
+//            $modelWarehouse = PartsAccessoriesInWarehouse::find()
+//                ->where(['warehouse_id'=>new ObjectId($fromWarehouseId)])
+//                ->all();
+//
+//            if(!empty($modelWarehouse)){
+//                foreach ($modelWarehouse as $item) {
+//                    $item->warehouse_id = new ObjectId($toShowroomId);
+//
+//                    if($item->save()){
+//                        $response[] = [
+//                            'product'   => $item->parts_accessories_id,
+//                            'number'    => $item->number
+//                        ];
+//                    }
+//                }
+//
+//
+//            }
+//        }
+//
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo '<xmp>';
+//        print_r($response);
+//        echo '</xmp>';
+//        die();
+//
+//    }
 
-        $response = [];
-        $modelShowroom = PartsAccessoriesInWarehouse::find()
-            ->where(['warehouse_id'=>new ObjectId($toShowroomId)])
-            ->all();
-
-        if(empty($modelShowroom)){
-            $modelWarehouse = PartsAccessoriesInWarehouse::find()
-                ->where(['warehouse_id'=>new ObjectId($fromWarehouseId)])
-                ->all();
-
-            if(!empty($modelWarehouse)){
-                foreach ($modelWarehouse as $item) {
-                    $item->warehouse_id = new ObjectId($toShowroomId);
-
-                    if($item->save()){
-                        $response[] = [
-                            'product'   => $item->parts_accessories_id,
-                            'number'    => $item->number
-                        ];
-                    }
-                }
-
-
-            }
-        }
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo '<xmp>';
-        print_r($response);
-        echo '</xmp>';
-        die();
-
-    }
 
 //    public function actionTemp()
 //    {
@@ -882,88 +881,151 @@ class ShowroomsController extends BaseController
 //        die();
 //    }
 
-//    public function actionTieShowroomWarehouse()
-//    {
-//        $array = [
-//            '5926aa99dca78744b224ec45'  =>  '5c6bd11c90cf47014a3baf62',
-//            '5a44dd8fdca7875f3235e1a7'  =>  '5c6aa7a5cab31d00690969a2',
-//            '5aa8e731267a9c00150f243e'  =>  '5c668ebef70884006f7754b2',
-//            '5aa8fa39267a9c00050c5f53'	=>  '5c6673ffd537e9007253d862',
-//            '590c5b80dca78776693864d2'  =>  '5c666d90d537e9006b6dab2b',
-//            '592e9b44dca78714107bc915'  =>	'5c6521e91058ac00793b4315',
-//            '5926a902dca7871604279202'	=>  '5c6414825f6dac00c35beeac',
-//            '5926ac04dca78744b224ec46'  =>  '5c63e600bc1c6900e9647a62',
-//            '59d75ffedca7872daa7a59c4'	=>  '5c62e598bc1c6900aa61a0d3',
-//            '592e9a67dca7872e9e17e4e2'	=>  '5c62dc125f6dac009c5a7cbd',
-//            '5926aa99dca78744b224ec45'	=>  '5c62dadc5f6dac008c7fb5a9',
-//            '592ff500dca7877580068552'	=>  '5c62da2a5f6dac009c5a7cbb',
-//            '5a3a2f4ddca7877bdb50a012'	=>  '5c62d7e45f6dac009c5a7c8b',
-//            '58ef7af7dca78741546e59a2'  =>	'5c62d4b6bc1c6900a9008730',
-//            '5912f1f0dca7875198097b12'  =>	'5c62bff05f6dac008c7fb4e2',
-//            '58eb5317dca7871bb210c2b2'	=>  '5c62acea5f6dac008c7fb4be',
-//            '5970882ddca7870e16366a32'	=>  '5c6297835f6dac00836724e5',
-//            '5926aa48dca78723cd4986a4'	=>  '5c6293925f6dac00836724e4',
-//            '59047bd3dca78733db1b2b31'	=>  '5c6289d35f6dac00836724b8',
-//            '5b34c84535bd11132731d6e7'	=>  '5c6282e05f6dac008077782e'
-//        ];
-//
-//
-//        $sales = Sales::find()
-//            ->where([
-//                'type' => [
-//                    '$ne'   =>  -1
-//                ],
-//                'dateCreate' => [
-//                    '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
-//                    '$lte' => new UTCDateTime(strtotime('2019-02-28 23:59:59') * 1000)
-//                ]
-//            ])
-//            ->with(['infoUser','infoProduct'])
-//            ->orderBy(['dateCreate'=>SORT_DESC])
-//            ->all();
-//
-//        $table = '<table>';
-//        foreach ($sales as $sale) {
-//
-//            $userId = strval($sale->warehouseId);
-//
-//            if(!empty($userId)){
-//                $warehouseId = Warehouse::getIdMyWarehouse($userId);
-//
-//                $showroomId = strval($sale->showroomId);
-//                $saleId = strval($sale->_id);
-//
-//                if(!empty($warehouseId) && !empty($array[$warehouseId])){
-//
-//                    if($array[$warehouseId] != $showroomId){
-//
-//                        $table .= '
-//                            <tr>
-//                                <td>'.$saleId.'</td>
-//                                <td>'.$sale->productName.'</td>
-//                                <td>'.$showroomId.'</td>
-//                                <td>'.$array[$warehouseId].'</td>
-//                            </tr>
-//                        ';
-//
-//                        $sale->showroomId = new ObjectId($array[$warehouseId]);
-//
-//                        if($sale->save()){
-//
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        $table .= '<table>';
-//        echo $table;
-//
-//
-//
-//        die();
-//
-//    }
+    public function actionTieShowroomWarehouse()
+    {
+        // шоу-руму -------- склад
+        $array = [
+            '5c6bd11c90cf47014a3baf62' => '5926aa99dca78744b224ec45',
+            '5c6aa7a5cab31d00690969a2' => '5a44dd8fdca7875f3235e1a7',
+            '5c668ebef70884006f7754b2' => '5aa8e731267a9c00150f243e',
+            '5c6673ffd537e9007253d862' => '5aa8fa39267a9c00050c5f53',
+            '5c666d90d537e9006b6dab2b' => '590c5b80dca78776693864d2',
+            '5c6521e91058ac00793b4315' => '592e9b44dca78714107bc915',
+            '5c6414825f6dac00c35beeac' => '5926a902dca7871604279202',
+            '5c63e600bc1c6900e9647a62' => '5926ac04dca78744b224ec46',
+            '5c62e598bc1c6900aa61a0d3' => '59d75ffedca7872daa7a59c4',
+            '5c62dc125f6dac009c5a7cbd' => '592e9a67dca7872e9e17e4e2',
+            '5c62dadc5f6dac008c7fb5a9' => '5926aa99dca78744b224ec45',
+            '5c62da2a5f6dac009c5a7cbb' => '592ff500dca7877580068552',
+            '5c62d7e45f6dac009c5a7c8b' => '5a3a2f4ddca7877bdb50a012',
+            '5c62d4b6bc1c6900a9008730' => '58ef7af7dca78741546e59a2',
+            '5c62bff05f6dac008c7fb4e2' => '5912f1f0dca7875198097b12',
+            '5c62acea5f6dac008c7fb4be' => '58eb5317dca7871bb210c2b2',
+            '5c6297835f6dac00836724e5' => '5970882ddca7870e16366a32',
+            '5c6293925f6dac00836724e4' => '5926aa48dca78723cd4986a4',
+            '5c6289d35f6dac00836724b8' => '59047bd3dca78733db1b2b31',
+            '5c6282e05f6dac008077782e' => '5b34c84535bd11132731d6e7'
+        ];
+
+        foreach ($array as $toShowroomId=>$fromWarehouseId){
+            $modelShowroom = PartsAccessoriesInWarehouse::find()
+                ->where(['warehouse_id'=>new ObjectId($toShowroomId)])
+                ->all();
+
+            if(empty($modelShowroom)){
+                $modelWarehouse = PartsAccessoriesInWarehouse::find()
+                    ->where(['warehouse_id'=>new ObjectId($fromWarehouseId)])
+                    ->all();
+
+                if(!empty($modelWarehouse)){
+                    foreach ($modelWarehouse as $item) {
+                        $item->warehouse_id = new ObjectId($toShowroomId);
+
+                        if($item->save()){
+                            $response[$toShowroomId][] = [
+                                'product'   => $item->parts_accessories_id,
+                                'number'    => $item->number
+                            ];
+                        }
+                    }
+
+
+                }
+            }
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r($response);
+        echo '</xmp>';
+        die();
+
+    }
+    
+    public function actionUpdateOrders()
+    {
+        $sales = Sales::find()
+            ->select(['_id'])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere(
+                [
+                    '$or' => [
+                        [
+                            'dateCreate' => [
+                                '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
+                                '$lte' => new UTCDateTime(strtotime('2019-03-20 23:59:59') * 1000)
+                            ]
+                        ]
+                    ]
+                ]
+            )
+            ->with(['infoProduct'])
+            ->all();
+
+        $listPartsAccessoriesForSaLe = PartsAccessories::getListPartsAccessoriesForSaLe();
+
+        $modelTie = Products::find()
+            ->select(['_id','product_connect_to_natural'])
+            ->where(['product_connect_to_natural'=>[
+                '$nin' => [null,'false'],
+            ]])
+            ->all();
+        $listTie = [];
+        foreach ($modelTie as $item){
+            $listTie[strval($item->product_connect_to_natural)] = strval($item->_id);
+        }
+
+        $line = '';
+        foreach ($sales as $sale) {
+            $statusSale = $sale->statusSale;
+
+            $setSales = $statusSale->setSales;
+
+            if(empty($setSales)){
+                $line .= strval($sale->_id) . ' - удалить<br/>';
+                $statusSale->delete();
+            } else {
+                $statusIssue = 0;
+                foreach ($setSales as $itemSale) {
+                    if($itemSale['status'] != 'status_sale_new') {
+                        $statusIssue = 1;
+                    }
+                }
+
+                if($statusIssue){
+                    $line .= strval($sale->_id) . ' - пересобрать<br/>';
+
+                    foreach ($setSales as $k=>$itemSale) {
+                        $parts_accessories_id = array_search($setSales[$k]['title'],$listPartsAccessoriesForSaLe);
+                        if(!empty($parts_accessories_id)){
+                            $setSales[$k]['parts_accessories_id'] = new ObjectId($parts_accessories_id);
+                            $setSales[$k]['productId'] = new ObjectId($listTie[$parts_accessories_id]);
+                        }
+
+                    }
+
+                    $statusSale->setSales = $setSales;
+
+                    if($statusSale->save()){
+
+                    }
+
+                } else {
+                    $statusSale->delete();
+                    $line .= strval($sale->_id) . ' - удалить<br/>';
+                }
+            }
+
+        }
+
+        echo $line;
+        die();
+
+    }
 
 //    public function actionGetOldOrder()
 //    {
@@ -1413,6 +1475,7 @@ class ShowroomsController extends BaseController
                         'orderId' => $orderId,
                         'showroomId' => $showroomIdSale,
                         'pack' => $sale->productData['productName'],
+                        'countPack' => $sale->productData['count'],
                         'dateCreate' => $dateCreate,
                         'dateFinish' => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
                         'login' => $sale->infoUser->username,
@@ -1437,179 +1500,251 @@ class ShowroomsController extends BaseController
         ]);
     }
 
-    public function actionReceptionIssueGoodsReception()
+    public function actionIssueProductFromShowroom()
     {
-        $request = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        $filter = [];
-        $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : '2019-01');
-        $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
+            $request = Yii::$app->request->post();
 
-        $infoDateTo = explode("-",$filter['dateTo']);
-        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+            $response = [
+                'typeAlert' => 'danger',
+                'message'   => 'Заказ не выдан'
+            ];
 
-        $showroomId = Showrooms::getIdMyShowroom();
+            if(!empty($request)){
 
-        if(empty($showroomId)){
-            return $this->render('not-showroom');
-        }
+                $showroomId = Showrooms::getIdMyShowroom();
 
-        $sales = Sales::find()
-            ->where(['showroomId'=>$showroomId])
-            ->andWhere([
-                'type' => [
-                    '$ne'   =>  -1
-                ]
-                ,
-                'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
-                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
-                ]
-            ])
-            ->with(['infoUser'])
-            ->orderBy(['dateCreate'=>SORT_DESC])
-            ->all();
+                if(!empty($showroomId)){
+                    $modelavAilabilityShowroom = PartsAccessoriesInWarehouse::findOne([
+                        'parts_accessories_id' => new ObjectId($request['parts_accessories_id']),
+                        'warehouse_id' => $showroomId
+                    ]);
 
-        $salesShowroom = [];
-        if(!empty($sales)){
-            /** @var Sales $sale */
-            foreach ($sales as $sale) {
+                    if(!empty($modelavAilabilityShowroom) && $modelavAilabilityShowroom->number >= 1){
 
-                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+                        $modelavAilabilityShowroom->number = (float)($modelavAilabilityShowroom->number - 1);
 
-                $orderId = '';
-                if(!empty($sale->orderId)){
-                    $orderId = strval($sale->orderId);
-                }
+                        $modelStatusSale = StatusSales::findOne([
+                            'idSale' => new ObjectId($request['saleId'])
+                        ]);
+                        $setSales = $modelStatusSale->setSales;
+                        $setSales[$request['number']]['status'] = 'status_sale_issued';
+                        $setSales[$request['number']]['dateChange'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                        $setSales[$request['number']]['idUserChange'] = 'status_sale_issued';
 
-                $showroomIdSale = '';
-                if(!empty($sale->showroomId)){
-                    $showroomIdSale = strval($sale->showroomId);
-                }
+                        $modelStatusSale->setSales = $setSales;
 
-                $typeDelivery = $dateDelivery = '-';
-                if(isset($sale->delivery)){
-                    $typeDelivery = $sale->delivery['type'];
+                        $reviewsSales = $modelStatusSale->reviewsSales;
+                        $reviewsSales[] = [
+                            'idUser'    => new ObjectId($this->user->id),
+                            'review'    => 'Смена статуса ('.$setSales[$request['number']]['title'].') Новый->Выдан',
+                            'dateCreate'=> new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)
+                        ];
+                        $modelStatusSale->reviewsSales = $reviewsSales;
 
-                    if(!empty($sale->delivery['params']['date'])){
-                        $dateDelivery = date('Y-m-d', strtotime($dateCreate. ' + '.(int)$sale->delivery['params']['date'].' days'));
+                        if($modelavAilabilityShowroom->save() && $modelStatusSale->save()){
+                            LogWarehouse::setInfoLog([
+                                'admin_warehouse_id'        =>  strval($showroomId),
+                                'action'                    =>  'status_sale_issued',
+                                'parts_accessories_id'      =>  $request['parts_accessories_id'],
+                                'number'                    =>  (float)'1',
+                            ]);
+
+                            $response = [
+                                'typeAlert' => 'success',
+                                'message'   => 'Товар выдан'
+                            ];
+                        }
+                    } else {
+                        $response = [
+                            'typeAlert' => 'danger',
+                            'message'   => 'Не достаточно товара для выдачи'
+                        ];
                     }
                 }
-
-                $salesShowroom[strval($sale->_id)] = [
-                    'saleId'        => strval($sale->_id),
-                    'orderId'       => $orderId,
-                    'showroomId'    => $showroomIdSale,
-                    'pack'          => $sale->productData['productName'],
-                    'dateCreate'    => $dateCreate,
-                    'dateFinish'    => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
-                    'login'         => $sale->infoUser->username,
-                    'secondName'    => $sale->infoUser->secondName,
-                    'firstName'     => $sale->infoUser->firstName,
-                    'phone1'        => $sale->infoUser->phoneNumber,
-                    'phone2'        => $sale->infoUser->phoneNumber2,
-                    'statusShowroom'=> Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom  : Sales::STATUS_SHOWROOM_DELIVERING)),
-                    'typeDelivery'  => $typeDelivery,
-                    'dateDelivery'  => $dateDelivery,
-                    'addressDelivery'=> (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
-                ];
-
             }
+
+            return $response;
+        } else {
+            return $this->redirect(['reception-issue-goods-issue'],301);
         }
-
-
-        return $this->render('reception-issue-goods', [
-            'filter'                    =>  $filter,
-            'salesShowroom'             =>  $salesShowroom,
-        ]);
     }
 
-    public function actionReceptionIssueGoodsOrder()
-    {
-        $request = Yii::$app->request->get();
-
-        $filter = [];
-        $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : '2019-01');
-        $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
-
-        $infoDateTo = explode("-",$filter['dateTo']);
-        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
-
-        $showroomId = Showrooms::getIdMyShowroom();
-
-        if(empty($showroomId)){
-            return $this->render('not-showroom');
-        }
-
-        $sales = Sales::find()
-            ->where(['showroomId'=>$showroomId])
-            ->andWhere([
-                'type' => [
-                    '$ne'   =>  -1
-                ]
-                ,
-                'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
-                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
-                ]
-            ])
-            ->with(['infoUser'])
-            ->orderBy(['dateCreate'=>SORT_DESC])
-            ->all();
-
-        $salesShowroom = [];
-        if(!empty($sales)){
-            /** @var Sales $sale */
-            foreach ($sales as $sale) {
-
-                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
-
-                $orderId = '';
-                if(!empty($sale->orderId)){
-                    $orderId = strval($sale->orderId);
-                }
-
-                $showroomIdSale = '';
-                if(!empty($sale->showroomId)){
-                    $showroomIdSale = strval($sale->showroomId);
-                }
-
-                $typeDelivery = $dateDelivery = '-';
-                if(isset($sale->delivery)){
-                    $typeDelivery = $sale->delivery['type'];
-
-                    if(!empty($sale->delivery['params']['date'])){
-                        $dateDelivery = date('Y-m-d', strtotime($dateCreate. ' + '.(int)$sale->delivery['params']['date'].' days'));
-                    }
-                }
-
-                $salesShowroom[strval($sale->_id)] = [
-                    'saleId'        => strval($sale->_id),
-                    'orderId'       => $orderId,
-                    'showroomId'    => $showroomIdSale,
-                    'pack'          => $sale->productData['productName'],
-                    'dateCreate'    => $dateCreate,
-                    'dateFinish'    => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
-                    'login'         => $sale->infoUser->username,
-                    'secondName'    => $sale->infoUser->secondName,
-                    'firstName'     => $sale->infoUser->firstName,
-                    'phone1'        => $sale->infoUser->phoneNumber,
-                    'phone2'        => $sale->infoUser->phoneNumber2,
-                    'statusShowroom'=> Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom  : Sales::STATUS_SHOWROOM_DELIVERING)),
-                    'typeDelivery'  => $typeDelivery,
-                    'dateDelivery'  => $dateDelivery,
-                    'addressDelivery'=> (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
-                ];
-
-            }
-        }
-
-
-        return $this->render('reception-issue-goods', [
-            'filter'                    =>  $filter,
-            'salesShowroom'             =>  $salesShowroom,
-        ]);
-    }
+//    public function actionReceptionIssueGoodsReception()
+//    {
+//        $request = Yii::$app->request->get();
+//
+//        $filter = [];
+//        $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : '2019-01');
+//        $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
+//
+//        $infoDateTo = explode("-",$filter['dateTo']);
+//        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+//
+//        $showroomId = Showrooms::getIdMyShowroom();
+//
+//        if(empty($showroomId)){
+//            return $this->render('not-showroom');
+//        }
+//
+//        $sales = Sales::find()
+//            ->where(['showroomId'=>$showroomId])
+//            ->andWhere([
+//                'type' => [
+//                    '$ne'   =>  -1
+//                ]
+//                ,
+//                'dateCreate' => [
+//                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+//                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
+//                ]
+//            ])
+//            ->with(['infoUser'])
+//            ->orderBy(['dateCreate'=>SORT_DESC])
+//            ->all();
+//
+//        $salesShowroom = [];
+//        if(!empty($sales)){
+//            /** @var Sales $sale */
+//            foreach ($sales as $sale) {
+//
+//                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+//
+//                $orderId = '';
+//                if(!empty($sale->orderId)){
+//                    $orderId = strval($sale->orderId);
+//                }
+//
+//                $showroomIdSale = '';
+//                if(!empty($sale->showroomId)){
+//                    $showroomIdSale = strval($sale->showroomId);
+//                }
+//
+//                $typeDelivery = $dateDelivery = '-';
+//                if(isset($sale->delivery)){
+//                    $typeDelivery = $sale->delivery['type'];
+//
+//                    if(!empty($sale->delivery['params']['date'])){
+//                        $dateDelivery = date('Y-m-d', strtotime($dateCreate. ' + '.(int)$sale->delivery['params']['date'].' days'));
+//                    }
+//                }
+//
+//                $salesShowroom[strval($sale->_id)] = [
+//                    'saleId'        => strval($sale->_id),
+//                    'orderId'       => $orderId,
+//                    'showroomId'    => $showroomIdSale,
+//                    'pack'          => $sale->productData['productName'],
+//                    'dateCreate'    => $dateCreate,
+//                    'dateFinish'    => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
+//                    'login'         => $sale->infoUser->username,
+//                    'secondName'    => $sale->infoUser->secondName,
+//                    'firstName'     => $sale->infoUser->firstName,
+//                    'phone1'        => $sale->infoUser->phoneNumber,
+//                    'phone2'        => $sale->infoUser->phoneNumber2,
+//                    'statusShowroom'=> Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom  : Sales::STATUS_SHOWROOM_DELIVERING)),
+//                    'typeDelivery'  => $typeDelivery,
+//                    'dateDelivery'  => $dateDelivery,
+//                    'addressDelivery'=> (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
+//                ];
+//
+//            }
+//        }
+//
+//
+//        return $this->render('reception-issue-goods', [
+//            'filter'                    =>  $filter,
+//            'salesShowroom'             =>  $salesShowroom,
+//        ]);
+//    }
+//
+//    public function actionReceptionIssueGoodsOrder()
+//    {
+//        $request = Yii::$app->request->get();
+//
+//        $filter = [];
+//        $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : '2019-01');
+//        $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
+//
+//        $infoDateTo = explode("-",$filter['dateTo']);
+//        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+//
+//        $showroomId = Showrooms::getIdMyShowroom();
+//
+//        if(empty($showroomId)){
+//            return $this->render('not-showroom');
+//        }
+//
+//        $sales = Sales::find()
+//            ->where(['showroomId'=>$showroomId])
+//            ->andWhere([
+//                'type' => [
+//                    '$ne'   =>  -1
+//                ]
+//                ,
+//                'dateCreate' => [
+//                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+//                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
+//                ]
+//            ])
+//            ->with(['infoUser'])
+//            ->orderBy(['dateCreate'=>SORT_DESC])
+//            ->all();
+//
+//        $salesShowroom = [];
+//        if(!empty($sales)){
+//            /** @var Sales $sale */
+//            foreach ($sales as $sale) {
+//
+//                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+//
+//                $orderId = '';
+//                if(!empty($sale->orderId)){
+//                    $orderId = strval($sale->orderId);
+//                }
+//
+//                $showroomIdSale = '';
+//                if(!empty($sale->showroomId)){
+//                    $showroomIdSale = strval($sale->showroomId);
+//                }
+//
+//                $typeDelivery = $dateDelivery = '-';
+//                if(isset($sale->delivery)){
+//                    $typeDelivery = $sale->delivery['type'];
+//
+//                    if(!empty($sale->delivery['params']['date'])){
+//                        $dateDelivery = date('Y-m-d', strtotime($dateCreate. ' + '.(int)$sale->delivery['params']['date'].' days'));
+//                    }
+//                }
+//
+//                $salesShowroom[strval($sale->_id)] = [
+//                    'saleId'        => strval($sale->_id),
+//                    'orderId'       => $orderId,
+//                    'showroomId'    => $showroomIdSale,
+//                    'pack'          => $sale->productData['productName'],
+//                    'dateCreate'    => $dateCreate,
+//                    'dateFinish'    => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
+//                    'login'         => $sale->infoUser->username,
+//                    'secondName'    => $sale->infoUser->secondName,
+//                    'firstName'     => $sale->infoUser->firstName,
+//                    'phone1'        => $sale->infoUser->phoneNumber,
+//                    'phone2'        => $sale->infoUser->phoneNumber2,
+//                    'statusShowroom'=> Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom  : Sales::STATUS_SHOWROOM_DELIVERING)),
+//                    'typeDelivery'  => $typeDelivery,
+//                    'dateDelivery'  => $dateDelivery,
+//                    'addressDelivery'=> (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
+//                ];
+//
+//            }
+//        }
+//
+//
+//        return $this->render('reception-issue-goods', [
+//            'filter'                    =>  $filter,
+//            'salesShowroom'             =>  $salesShowroom,
+//        ]);
+//    }
 
     public function actionRepair()
     {
@@ -1682,7 +1817,7 @@ class ShowroomsController extends BaseController
                 $addressDelivery = $country = $city = '';
                 if(!empty($sale->delivery)){
                     if($sale->delivery['type'] == 'showroom'){
-                        $addressDelivery = 'Шон-рум: ' . $sale->showroom->address;
+                        $addressDelivery = 'Шоу-рум: ' . $sale->showroom->address;
                         $country = $sale->showroom->countryInfo->name['ru'];
                         $city = $sale->showroom->cityInfo->name['ru'];
                     } else if($sale->delivery['type'] == 'courier'){
