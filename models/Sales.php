@@ -91,54 +91,46 @@ class Sales extends ActiveRecord
                 $countPack = 1;
             }
 
+            $model = new StatusSales();
+            $model->idSale = $this->_id;
 
-//            $model = new StatusSales();
-//            $model->idSale = $this->_id;
-//
-//            for(){
-//
-//            }
-//            'idSale':ObjectId('5c71a6c62a1f3e006a059528'
-//            if($model->save()){
-//
-//            }
+            $arraySet = [];
+            if(!empty($this->infoProduct['products'])){
+                foreach ($this->infoProduct['products']as $itemProductSet) {
+                    $infoProductSet = Products::findOne(['_id'=>$itemProductSet['_id']]);
 
-
-
-
-            /** get info about product */
-            $infoProduct = Products::find()
-                ->where(['product' => $this->product])
-                ->one();
-
-            /** check isset set product */
-            if(count($infoProduct->set) > 0) {
-
-                $model = new StatusSales();
-                $model->idSale = $this->_id;
-
-                foreach ($infoProduct->set as $itemSet){
-
-                    for($i=1; $i<=$countPack; $i++){
-                        $modelSet = new SetSales();
-                        $modelSet->title = $itemSet->setName;
-                        $modelSet->status = StatusSales::$listStatus['0'];
-                        $modelSet->dateChange = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
-                        $model->set[] = $modelSet;
+                    if(!empty($infoProductSet->product_connect_to_natural)){
+                        for ($i = 1; $i <= ($itemProductSet['cnt'] * $countPack); $i++) {
+                            $arraySet[] = [
+                                'productId'             =>  $itemProductSet['_id'],
+                                'title'                 =>  $itemProductSet['productName'],
+                                'parts_accessories_id'  =>  new ObjectId($infoProductSet->product_connect_to_natural),
+                                'status'                =>  StatusSales::$listStatus['0'],
+                                'dateChange'            =>  new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000),
+                                'idUserChange'          =>  null
+                            ];
+                        }
                     }
-                }
-
-                $model->refreshFromEmbedded();
-                $model->isAttributeChanged('setSales');
-
-                if($model->save()){
 
                 }
+            } else if(!empty($this->infoProduct['product_connect_to_natural']) && $this->infoProduct['product_connect_to_natural'] != 'false'){
+                for ($i = 1; $i <= $countPack; $i++) {
+                    $arraySet[] = [
+                        'productId' => $this->infoProduct['_id'],
+                        'title' => $this->infoProduct['productName'],
+                        'parts_accessories_id' => new ObjectId($this->infoProduct['product_connect_to_natural']),
+                        'status' => StatusSales::$listStatus['0'],
+                        'dateChange' => new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000),
+                        'idUserChange' => null
+                    ];
+                }
+            }
+
+            $model->setSales = $arraySet;
+
+            if($model->save()){
 
             }
-            
-            
-
         }
 
         return $model;

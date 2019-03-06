@@ -124,7 +124,7 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
             ->one();
 
         $price = 0;
-        if(!empty($model)){
+        if(!empty($model->money) && !empty($model->number)){
             $price = round(($model->money / $model->number),2);
         }
 

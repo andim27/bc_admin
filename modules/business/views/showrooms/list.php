@@ -146,7 +146,7 @@
                             <input type="button" class="btn btn-sm btn-success checkLogin m-n" value="Проверить" disabled="disabled">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row m-b-sm">
                         <div class="col-md-8 no-padder">
                             <div class="col-md-6 no-padder">
                                 <div class="col-md-12 m-b-20">
@@ -382,15 +382,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row m-b-sm">
                         <div class="col-sm-4 pull-right">
                             <?=Html::dropDownList('Showroom[status]',false,Showrooms::getStatus(),[
-                                'class'     => 'form-control m-b w-45 inline m-b-none stateShowroom',
+                                'class'     => 'form-control m-b inline m-b-none stateShowroom',
                                 'required'  => true,
                                 'prompt'     => 'Выберите статус шоу-рума'
                             ])?>
-                        <a class="btn btn-danger m-b-xs m-l" data-dismiss="modal">Закрыть</a>
-                        <input type="submit" class="btn btn-success pull-right" value="Сохранить">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 pull-right">
+                            <input type="submit" class="btn btn-block  btn-success pull-right" value="Сохранить">
+                        </div>
+                        <div class="col-md-2 pull-right">
+                            <a class="btn btn-block btn-danger m-b-xs m-l" data-dismiss="modal">Закрыть</a>
                         </div>
                     </div>
                  </form>
