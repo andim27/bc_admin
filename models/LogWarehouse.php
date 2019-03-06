@@ -48,7 +48,7 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
 
             'comment',
             'cancellation',
-
+            'part_virt',
             'date_create'
 
         ];
@@ -105,6 +105,7 @@ class LogWarehouse extends \yii2tech\embedded\mongodb\ActiveRecord
 
             $model->date_create= new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
 
+            $model->part_virt = (!empty($info['part-virt']) ? (int)$info['part-virt'] : '');
 
             if($model->save()){
 
