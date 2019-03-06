@@ -33,6 +33,7 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
             'parts_accessories_id',            
             'warehouse_id',            
             'number',
+            'part_virt'
         ];
     }
 

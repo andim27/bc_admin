@@ -99,6 +99,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
                         ])?>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-12 text-left">
                         <?=Html::label('Примечание')?>
@@ -109,7 +110,17 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6 text-left">
+                    <label> Виртуальный элемент
+                        <div class="checkbox">
+                            <?= Html::checkbox('part-virt', false, ['class'=>'']) ?>
+                        </div>
+                    </label>
 
+                </div>
+
+            </div>
 
             <div class="row">
                 <div class="col-md-12 text-right">
