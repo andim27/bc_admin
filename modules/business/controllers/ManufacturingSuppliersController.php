@@ -931,6 +931,7 @@ class ManufacturingSuppliersController extends BaseController {
                 $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
                 $model->warehouse_id = new ObjectID($myWarehouse);
                 $model->number = (float)$request['number'];
+                $model->part_virt = (int)$request['part-virt'];
             } else {
                 $model->number += $request['number'];
             }
@@ -956,7 +957,7 @@ class ManufacturingSuppliersController extends BaseController {
                     'number'                    =>  $request['number'],
                     'comment'                   =>  $request['comment'],
                     'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
-
+                    'part-virt'                 =>  $request['part-virt'],
                     'money'                     =>  $last_price_eur,
                 ]);
 
