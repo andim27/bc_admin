@@ -721,6 +721,24 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    public function actionAddManyPartsOrdering($id='')
+    {
+
+        $model = new PartsOrdering();
+        if(!empty($id)){
+            $model = $model::findOne(['_id' => new ObjectID($id)]);
+        }
+
+        $part_title = $sup_title = '??';
+
+        return $this->renderAjax('_add-many-parts-ordering', [
+            'language' => Yii::$app->language,
+            'model'    => $model,
+            'part_title' => $part_title,
+            'sup_title'  => ''
+        ]);
+    }
+
     /**
      * popup create and edit ordering
      * @param string $id
