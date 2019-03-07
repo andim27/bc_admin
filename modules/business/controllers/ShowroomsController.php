@@ -794,42 +794,42 @@ class ShowroomsController extends BaseController
     }
 
     //TODO:KAA remove after link showroom with warehouse
-//    public function actionTempBalance($fromWarehouseId,$toShowroomId)
-//    {
-//
-//        $response = [];
-//        $modelShowroom = PartsAccessoriesInWarehouse::find()
-//            ->where(['warehouse_id'=>new ObjectId($toShowroomId)])
-//            ->all();
-//
-//        if(empty($modelShowroom)){
-//            $modelWarehouse = PartsAccessoriesInWarehouse::find()
-//                ->where(['warehouse_id'=>new ObjectId($fromWarehouseId)])
-//                ->all();
-//
-//            if(!empty($modelWarehouse)){
-//                foreach ($modelWarehouse as $item) {
-//                    $item->warehouse_id = new ObjectId($toShowroomId);
-//
-//                    if($item->save()){
-//                        $response[] = [
-//                            'product'   => $item->parts_accessories_id,
-//                            'number'    => $item->number
-//                        ];
-//                    }
-//                }
-//
-//
-//            }
-//        }
-//
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo '<xmp>';
-//        print_r($response);
-//        echo '</xmp>';
-//        die();
-//
-//    }
+    public function actionTempBalance($fromWarehouseId,$toShowroomId)
+    {
+
+        $response = [];
+        $modelShowroom = PartsAccessoriesInWarehouse::find()
+            ->where(['warehouse_id'=>new ObjectId($toShowroomId)])
+            ->all();
+
+        if(empty($modelShowroom)){
+            $modelWarehouse = PartsAccessoriesInWarehouse::find()
+                ->where(['warehouse_id'=>new ObjectId($fromWarehouseId)])
+                ->all();
+
+            if(!empty($modelWarehouse)){
+                foreach ($modelWarehouse as $item) {
+                    $item->warehouse_id = new ObjectId($toShowroomId);
+
+                    if($item->save()){
+                        $response[] = [
+                            'product'   => $item->parts_accessories_id,
+                            'number'    => $item->number
+                        ];
+                    }
+                }
+
+
+            }
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r($response);
+        echo '</xmp>';
+        die();
+
+    }
 
 
 //    public function actionTemp()
