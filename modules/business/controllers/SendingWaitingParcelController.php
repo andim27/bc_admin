@@ -22,7 +22,10 @@ class SendingWaitingParcelController extends BaseController {
     public function actionSendingWaitingParcel()
     {
 
-        $idWarehouse[] = Warehouse::getIdMyWarehouse();
+        $warehouseId = Warehouse::getIdMyWarehouse();
+        if(!empty($warehouseId)){
+            $idWarehouse[] = Warehouse::getIdMyWarehouse();
+        }
 
         $showroomId = Showrooms::getIdMyShowroom();
         if(!empty($showroomId)){
@@ -87,6 +90,9 @@ class SendingWaitingParcelController extends BaseController {
 
         if(!empty($request)) {
             $idMyWarehouse = Warehouse::getIdMyWarehouse();
+            if(empty($idMyWarehouse)){
+                $idMyWarehouse = strval(Showrooms::getIdMyShowroom());
+            }
 
             $id = SendingWaitingParcel::find()->orderBy(['id'=>SORT_DESC])->one();
 
@@ -296,6 +302,9 @@ class SendingWaitingParcelController extends BaseController {
             }
 
             $myWarehouse = Warehouse::getIdMyWarehouse();
+            if(empty($myWarehouse)){
+                $myWarehouse = strval(Showrooms::getIdMyShowroom());
+            }
 
             $modelParcel = SendingWaitingParcel::findOne(['_id'=>new ObjectID($request['id'])]);
 
@@ -351,6 +360,9 @@ class SendingWaitingParcelController extends BaseController {
     {
         $warehouse = Warehouse::getInfoWarehouse();
         $warehouseId = (string)$warehouse->_id;
+        if(empty($warehouseId)){
+            $warehouseId = strval(Showrooms::getIdMyShowroom());
+        }
 
         $model = SendingWaitingParcel::find();
         if(Warehouse::checkWarehouseKharkov($warehouseId)===false){
@@ -396,6 +408,10 @@ class SendingWaitingParcelController extends BaseController {
         if($modelParcel->save()){
 
             $idMyWarehouse = Warehouse::getIdMyWarehouse();
+            if(empty($idMyWarehouse)){
+                $idMyWarehouse = strval(Showrooms::getIdMyShowroom());
+            }
+
 
             foreach ($arrayParcelWriteOff as $k=>$item){
 

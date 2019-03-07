@@ -3,6 +3,7 @@
 namespace app\modules\business\controllers;
 use app\components\THelper;
 use app\models\LogWarehouse;
+use app\models\Showrooms;
 use DateTime;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\SendingWaitingParcel;
@@ -27,6 +28,9 @@ class PartsAccessoriesInWarehouseController extends BaseController {
         $request =  Yii::$app->request->post();
 
         $idWarehouse = Warehouse::getIdMyWarehouse();
+        if(empty($idWarehouse)){
+            $idWarehouse = strval(Showrooms::getIdMyShowroom());
+        }
 
         if(empty($request)){
             $request['dateInterval']['to'] = date("Y-m-d");
@@ -149,6 +153,9 @@ class PartsAccessoriesInWarehouseController extends BaseController {
         if(!empty($request)){
 
             $myWarehouse = Warehouse::getIdMyWarehouse();
+            if(empty($myWarehouse)){
+                $myWarehouse = strval(Showrooms::getIdMyShowroom());
+            }
 
             $model = PartsAccessoriesInWarehouse::findOne([
                 'parts_accessories_id'  =>  new ObjectID($request['parts_accessories_id']),
@@ -202,6 +209,10 @@ class PartsAccessoriesInWarehouseController extends BaseController {
 
     public function actionCancellationWarehouseExel(){
         $myWarehouse = Warehouse::getIdMyWarehouse();
+        if(empty($myWarehouse)){
+            $myWarehouse = strval(Showrooms::getIdMyShowroom());
+        }
+
         $request = Yii::$app->request->post();
         if(!empty($request)){
             $dateInterval['to'] = $request['to'];
@@ -266,6 +277,9 @@ class PartsAccessoriesInWarehouseController extends BaseController {
      */
     public function actionCancellationWarehouse(){
         $myWarehouse = Warehouse::getIdMyWarehouse();
+        if(empty($myWarehouse)){
+            $myWarehouse = strval(Showrooms::getIdMyShowroom());
+        }
 
         $request =  Yii::$app->request->post();
 
@@ -410,6 +424,10 @@ class PartsAccessoriesInWarehouseController extends BaseController {
     protected function procurementPlanning()
     {
         $idWarehouse = Warehouse::getIdMyWarehouse();
+        if(empty($idWarehouse)){
+            $idWarehouse = strval(Showrooms::getIdMyShowroom());
+        }
+
 
         $listGoods = [];
         $statusGoods = [];
