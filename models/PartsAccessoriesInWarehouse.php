@@ -96,6 +96,9 @@ class PartsAccessoriesInWarehouse extends \yii2tech\embedded\mongodb\ActiveRecor
         $list = [];
 
         $idMyWarehouse = Warehouse::getIdMyWarehouse();
+        if(empty($idMyWarehouse)){
+            $idMyWarehouse = Showrooms::getIdMyShowroom();
+        }
 
         if(!empty($idMyWarehouse)){
             $model = self::find()
