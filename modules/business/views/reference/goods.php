@@ -126,6 +126,8 @@ GoodsAsset::register($this);
                             </th>
                             <th class="text-center"><?= THelper::t('points') ?><br>(<?= THelper::t('pack_type_1') ?>)</th>
                             <th class="text-center"><?= THelper::t('stocks') ?><br>(<?= THelper::t('pack_type_1') ?>)</th>
+                            <th class="text-center"><?= THelper::t('showrooms_title') ?><br>(>1000)</th>
+                            <th class="text-center"><?= THelper::t('showrooms_title') ?><br>(<1000)</th>
                             <th class="text-center"><?= THelper::t('nds') ?><br>(%)</th>
                             <th class="text-center"><?= THelper::t('act') ?><br>(<?= THelper::t('month') ?>)</th>
                             <th><?= THelper::t('type') ?></th>
@@ -200,6 +202,12 @@ GoodsAsset::register($this);
 
                                 ?>
 
+                            </td>
+                            <td class="text-center">
+                                <?=empty($item['paymentsToRepresentive'])?'?':$item['paymentsToRepresentive'] ?>
+                            </td>
+                            <td class="text-center">
+                                <?=empty($item['paymentsToStock'])?'?':$item['paymentsToStock'] ?>
                             </td>
                             <td class="text-center">
                                 <?=empty($item['productTax'])?0:$item['productTax'] ?>
