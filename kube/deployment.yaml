@@ -33,6 +33,8 @@ spec:
         image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
         ports:
         - containerPort: 80
+        - containerPort: 8080
+        - containerPort: 9913
         env:
         - name: ENABLE_MONITORING
           value: '1'

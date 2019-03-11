@@ -13,6 +13,14 @@ spec:
       port: 80
       targetPort: 80
       protocol: TCP
+    - name: nginx-metrics
+      port: 9913
+      targetPort: 9913
+      protocol: TCP
+    - name: php-metrics
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
   selector:
     name: bpt-admin-__CI_ENVIRONMENT_SLUG__
   type: NodePort
