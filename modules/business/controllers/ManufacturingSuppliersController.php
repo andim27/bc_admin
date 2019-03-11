@@ -957,7 +957,7 @@ class ManufacturingSuppliersController extends BaseController {
                     'number'                    =>  $request['number'],
                     'comment'                   =>  $request['comment'],
                     'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
-                    'part-virt'                 =>  $request['part-virt'],
+                    'part-virt'                 =>  $request['part-virt'] ?? '',
                     'money'                     =>  $last_price_eur,
                 ]);
 
