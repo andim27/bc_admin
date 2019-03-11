@@ -767,6 +767,24 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    public function actionSaveManyPartsOrdering()
+    {
+        $request = Yii::$app->request->post();
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+        $part_items = $request['part_items'];
+
+        $res = ['success'=>true,'mes'=>var_dump($part_items)];
+        //$res = ['success'=>true,'mes'=>'Saved !'];
+        Yii::$app->response->format = Yii\web\Response::FORMAT_JSON;
+        return $res;
+
+        //return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-ordering');
+    }
+
     /**
      * save parts ordering
      * @return \yii\web\Response
