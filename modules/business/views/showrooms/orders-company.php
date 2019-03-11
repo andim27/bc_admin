@@ -555,7 +555,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                     blOrder.html('');
                     $.each(msg.products, function( k, v ) {
 
-                        blProduct = '<li>'+v.name;
+                        blProduct = '<li>'+v.title;
 
                         if(msg.statusShowroom == 'waiting' || msg.statusShowroom == 'sending_showroom'){
                             //blProduct += '<a href="javascript:void(0);" class="fromBalance pull-right" data-product-id="'+v.id+'">Выдать с моего шоу-рума демонстрационый образец</a><span class="spanIssued pull-right m-r"></span></li>'
@@ -619,7 +619,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                     blOrder.html('');
                     $.each(msg.products, function( k, v ) {
 
-                        blProduct = '<li>'+v.name;
+                        blProduct = '<li>'+v.title;
 
                         blOrder.append(blProduct);
                     });

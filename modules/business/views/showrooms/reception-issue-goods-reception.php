@@ -848,7 +848,7 @@
                     blOrder.html('');
                     $.each(msg.products, function( k, v ) {
 
-                        blProduct = '<li>'+v.name;
+                        blProduct = '<li>'+v.title;
 
                         if(msg.typeDelivery == '-' || msg.typeDelivery == 'showroom'){
                             //blProduct += '<a href="javascript:void(0);" class="fromBalnce pull-right">Выдать с баланса</a> <span class="spanIssued pull-right m-r"></span></li>'

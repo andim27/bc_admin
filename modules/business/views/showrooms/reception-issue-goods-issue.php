@@ -67,6 +67,9 @@
                                             Название продукта
                                         </th>
                                         <th>
+                                            Кол.
+                                        </th>
+                                        <th>
                                             Статус
                                         </th>
                                         <th>
@@ -98,14 +101,13 @@
                                                     <?=$saleItem['phone2']?>
                                                 </td>
                                                 <td><?=$saleItem['pack']?></td>
+                                                <td><?=$saleItem['countPack']?></td>
                                                 <td><?=$saleItem['statusShowroom']?></td>
                                                 <td><?=$saleItem['dateFinish']?></td>
                                                 <td><?=$saleItem['dateDelivery']?></td>
                                                 <td><?=$saleItem['addressDelivery']?></td>
                                                 <td>
-                                                    <a class="editIssue" href="#issueInfo" data-id="<?=$saleItem['saleId']?>"
-                                                    data-toggle="modal"
-                                                    >
+                                                    <a class="editIssue" href="#issueInfo" data-id="<?=$saleItem['saleId']?>" data-toggle="modal">
                                                         <i class="fa fa-pencil"></i>
                                                     </a>
                                                 </td>
@@ -683,14 +685,44 @@
         "order": [[ 0, "desc" ]]
     });
 
-    $('.issueInfo').on('click','.fromBalance',function(){
+    $('.issueInfo').on('click','.issueFromBalance',function(){
 
         var blInfo = $('.issueInfo');
+
+        var blProductLine = $(this).closest('li');
 
         var statusSale = blInfo.find('.issueSelect').val();
 
         if(statusSale == 'waiting' || statusSale == 'delegate_company' || statusSale == 'issue_part'){
-            console.log('issue')
+            $.ajax({
+                url: '/ru/business/showrooms/issue-product-from-showroom',
+                type: 'POST',
+                data: {
+                    saleId:$(this).data('sale-id'),
+                    parts_accessories_id:$(this).data('parts_accessories_id'),
+                    number:$(this).data('number')
+                },
+                beforeSend: function () {
+                    $('.issueInfo').find('.modal-body').append('<div class="loader"><div></div></div>');
+                },
+                complete: function () {
+                    $('.issueInfo').find('.loader').remove();
+                },
+                success: function(msg){
+                    blProductLine.prepend(
+                        '<div class="alert alert-'+msg.typeAlert+' fade in">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                            msg.message +
+                        '</div>'
+                    );
+
+                    if(msg.typeAlert === 'success'){
+                        blProductLine.find('a').remove();
+                        blProductLine.append('<span class="label label-primary pull-right">Выдан</span>');
+                    }
+
+                }
+            });
         } else {
             blInfo.find('.blError').html(
                 '<div class="alert alert-danger fade in">' +
@@ -699,24 +731,7 @@
                 '</div>'
             );
         }
-
-        // if ($(this).hasClass('issued')) {
-        //     //товар был выдан с баланса нажали отменить
-        //
-        //     // отменяем всё в БД и меняем текст кнопки
-        //     $(this).removeClass('issued');
-        //     $(this).text('Выдать с баланса');
-        //     $(this).next().text('');
-        // } else {
-        //     //товар НЕ был выдан с баланса нажали выдать с балнса
-        //
-        //     // выдаём с баланса всё в БД и меняем текст кнопки
-        //     $(this).addClass('issued');
-        //     $(this).text('Отменить');
-        //     $(this).next().text('Выдано с баланса');
-        //
-        // }
-    })
+    });
 
     $('.modal').on('click','.editReceptionSave',function(){
         // сохраняем редактирование приём товара
@@ -784,10 +799,14 @@
                     blOrder.html('');
                     $.each(msg.products, function( k, v ) {
 
-                        blProduct = '<li>'+v.name;
+                        console.log(v);
 
-                        if(msg.statusShowroom == 'waiting' || msg.statusShowroom == 'sending_showroom'){
-                            //blProduct += '<a href="javascript:void(0);" class="fromBalance pull-right" data-product-id="'+v.id+'">Выдать с моего шоу-рума демонстрационый образец</a><span class="spanIssued pull-right m-r"></span></li>'
+                        blProduct = '<li>'+v.title;
+
+                        if((msg.statusShowroom == 'waiting' || msg.statusShowroom == 'sending_showroom') && v.status == 'status_sale_new'){
+                            blProduct += '<a href="javascript:void(0);" class="issueFromBalance pull-right" data-sale-id="'+msg.saleId+'" data-number="'+k+'" data-parts_accessories_id="'+v.parts_accessories_id.$oid+'">Выдать с моего шоу-рума демонстрационый образец</a><span class="spanIssued pull-right m-r"></span></li>'
+                        } else if(v.status == 'status_sale_issued'){
+                            blProduct += '<span class="label label-primary pull-right">Выдан</span>';
                         }
 
                         blOrder.append(blProduct);
@@ -829,12 +848,6 @@
             }
         });
     });
-
-    // $('#content').on('click','.issueOrder',function(){
-    //     $('.issueOrderDetail').hide();
-    //     $('.issueInfo').hide();
-    //     $('.issueOrderRow').toggle();
-    // });
 
     $('#content').on('click','.checkIssue',function(){
 
@@ -924,18 +937,18 @@
 
     });
 
-    $('#content').on('click','.receiptGoods',function(){ 
-
-        // нажимаем на подобрать заказа
-        $('.receiptGoodsRow').toggle();
-    })
-
-    $('#content').on('click','.findReceiptOrder',function(){ 
-
-        //ищем товар в БД и выдаём в таблицу ниже
-
-        $('.table-reception-goods').toggle();
-    });
+    // $('#content').on('click','.receiptGoods',function(){
+    //
+    //     // нажимаем на подобрать заказа
+    //     $('.receiptGoodsRow').toggle();
+    // })
+    //
+    // $('#content').on('click','.findReceiptOrder',function(){
+    //
+    //     //ищем товар в БД и выдаём в таблицу ниже
+    //
+    //     $('.table-reception-goods').toggle();
+    // });
 
     $('#content').on('click','.checkLogin',function () {
         $(this).prop('disabled', true);
