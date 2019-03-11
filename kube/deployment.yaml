@@ -52,7 +52,7 @@ spec:
           value: '86400'
         - name: PHP_MEMORY_MAX
           value: '256'
-      - name: yii2-logs
+      - name: admin-yii2-logs
         volumeMounts:
         - name: shared-files
           mountPath: /var/www/html
