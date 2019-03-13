@@ -16,6 +16,7 @@ use Yii;
 use app\controllers\BaseController;
 use DateTime;
 use yii\data\Pagination;
+use yii\web\Response;
 
 class ManufacturingSuppliersController extends BaseController {
 
@@ -812,7 +813,7 @@ class ManufacturingSuppliersController extends BaseController {
 
         }
         $res = ['success'=>true,'mes'=>$mes];
-        Yii::$app->response->format = Yii\web\Response::FORMAT_JSON;
+        Yii::$app->response->format = Response::FORMAT_JSON;
         return $res;
 
         //return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-ordering');
