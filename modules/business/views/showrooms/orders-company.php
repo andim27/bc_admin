@@ -88,30 +88,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <?php if(!empty($salesShowroom)){ ?>
-                                    <?php foreach($salesShowroom as $itemSale){ ?>
-                                        <tr data-sale-id="<?=$itemSale['saleId']?>">
-                                            <td><?=$itemSale['dateCreate']?></td>
-                                            <td><?=$itemSale['pack']?></td>
-                                            <td><?=$itemSale['countPack']?></td>
-                                            <td>
-                                                <?=$itemSale['statusShowroom']?>
-                                                <a class="editOrder m-l" href="javascript:void(0);"><i class="fa fa-pencil"></i></a>
-                                            </td>
-                                            <td><?=$itemSale['showroomName']?></td>
-                                            <td><?=$itemSale['country']?></td>
-                                            <td><?=$itemSale['city']?></td>
-                                            <td><?=$itemSale['addressDelivery']?></td>
-                                            <td><?=$itemSale['secondName']?> <?=$itemSale['firstName']?> (<?=$itemSale['login']?>)</td>
-                                            <td><?=$itemSale['dateSend']?></td>
-                                            <td>
-                                                <a class="viewOrder m-l" href="javascript:void(0);">
-                                                    <i class="fa fa-eye"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    <?php } ?>
-                                <?php } ?>
+
                                 </tbody>
                             </table>
                         </div>
@@ -173,6 +150,15 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         </div>
                         <div class="col-md-9">
                             <span class="font-bold orderDeliveryAddress"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Информация о доставке:</p>
+                        </div>
+                        <div class="col-md-9">
+                            <span class="font-bold orderInfoDelivery"></span>
                         </div>
                     </div>
 
@@ -363,6 +349,15 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
 
                 <div class="row">
                     <div class="col-md-3">
+                        <p>Информация о доставке:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold orderInfoDelivery"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
                         <p>Покупатель:</p>
                     </div>
                     <div class="col-md-9">
@@ -512,10 +507,39 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
     $('#table-orders').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],
-        lengthChange: false,
-        info: false,
-        order: [[0, 'asc']]
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            url: '/ru/business/showrooms/orders-company',
+            data: function ( d ) {
+                d.showroomId = "<?=$filter['showroomId']?>",
+                d.dateFrom = "<?=$filter['dateFrom']?>";
+                d.dateTo = "<?=$filter['dateTo']?>"
+            }
+        },
+        "columns": [
+            {"data": "dateCreate"},
+            {"data": "productName"},
+            {"data": "count"},
+            {"data": "status"},
+            {"data": "nameShowroom"},
+            {"data": "country"},
+            {"data": "city"},
+            {"data": "address"},
+            {"data": "fullName"},
+            {"data": "dateSend"},
+            {"data": "btnLook"}
+        ],
+        "order": [[ 0, "desc" ]]
     });
+
+    // $('#table-orders').dataTable({
+    //     language: TRANSLATION,
+    //     lengthMenu: [ 25, 50, 75, 100 ],
+    //     lengthChange: false,
+    //     info: false,
+    //     order: [[0, 'asc']]
+    // });
 
     $('table').on('click','.editOrder',function(){
 
@@ -526,7 +550,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
         $.ajax({
             url: '/ru/business/sale/get-sale',
             type: 'POST',
-            data: {saleId:$(this).closest('tr').data('sale-id')},
+            data: {saleId:$(this).data('sale-id')},
             beforeSend: function () {
                 blInfo.find('.modal-body').append('<div class="loader"><div></div></div>');
             },
@@ -544,6 +568,12 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                     blForm.find('.orderCountry').text(msg.country);
                     blForm.find('.orderCity').text(msg.city);
                     blForm.find('.orderDeliveryAddress').text(msg.addressDelivery);
+                    if(msg.typeDelivery == 'courier'){
+                        blInfo.find('.orderInfoDelivery').html('Служба доставки - ' + msg.titleDelivery +
+                            '<br>Время доставки - ' + msg.dateDelivery + ' дней' +
+                            '<br>Стоимость доставки - ' + msg.priceDelivery + ' eur'
+                        );
+                    }
                     blForm.find('.orderCustomer').text(msg.secondName + ' ' + msg.firstName);
                     blForm.find('.orderCustomerPhone1').text(msg.phone1);
                     blForm.find('.orderCustomerPhone2').text(msg.phone2);
@@ -592,7 +622,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
         $.ajax({
             url: '/ru/business/sale/get-sale',
             type: 'POST',
-            data: {saleId:$(this).closest('tr').data('sale-id')},
+            data: {saleId:$(this).data('sale-id')},
             beforeSend: function () {
                 blInfo.find('.modal-body').append('<div class="loader"><div></div></div>');
             },
@@ -608,6 +638,12 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                     blInfo.find('.orderCountry').text(msg.country);
                     blInfo.find('.orderCity').text(msg.city);
                     blInfo.find('.orderDeliveryAddress').text(msg.addressDelivery);
+                    if(msg.typeDelivery == 'courier'){
+                        blInfo.find('.orderInfoDelivery').html('Служба доставки - ' + msg.titleDelivery +
+                            '<br>Время доставки - ' + msg.dateDelivery + ' дней' +
+                            '<br>Стоимость доставки - ' + msg.priceDelivery + ' eur'
+                        );
+                    }
                     blInfo.find('.orderCustomer').text(msg.secondName + ' ' + msg.firstName);
                     blInfo.find('.orderCustomerPhone1').text(msg.phone1);
                     blInfo.find('.orderCustomerPhone2').text(msg.phone2);
@@ -654,6 +690,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
         blForm.find('.orderCountry').text('');
         blForm.find('.orderCity').text('');
         blForm.find('.orderDeliveryAddress').text('');
+        blForm.find('.orderInfoDelivery').text('');
         blForm.find('.orderCustomer').text('');
         blForm.find('.orderCustomerPhone1').text('');
         blForm.find('.orderCustomerPhone2').text('');
@@ -681,6 +718,7 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
         bl.find('.orderCountry').text('');
         bl.find('.orderCity').text('');
         bl.find('.orderDeliveryAddress').text('');
+        bl.find('.orderInfoDelivery').text('');
         bl.find('.orderCustomer').text('');
         bl.find('.orderCustomerPhone1').text('');
         bl.find('.orderCustomerPhone2').text('');

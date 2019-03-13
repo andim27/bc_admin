@@ -17,6 +17,7 @@ use app\modules\business\models\ShowroomsEmailsForm;
 use app\modules\business\models\ShowroomsOpeningConditionsForm;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
+use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 use app\controllers\BaseController;
 use Yii;
@@ -580,129 +581,147 @@ class ShowroomsController extends BaseController
         $infoDateTo = explode("-",$filter['dateTo']);
         $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
 
+        // load data from sale
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        $sales = Sales::find()
-            ->andWhere([
-                'type' => [
-                    '$ne'   =>  -1
-                ]
-            ])
-            ->andWhere(
-                [
-                    '$or' => [
-                        [
-                            'dateCreate' => [
-                                '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
-                                '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
-                            ]
-                        ],
-                        [
-                            'dateCloseSale' => [
-                                '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
-                                '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
+            $columns = [
+                'dateCreate','dateClose','login','fullName','phones','nameShowroom','productName',
+                'count','status','accrual'
+            ];
+
+            $model = Sales::find()
+                ->andWhere([
+                    'type' => [
+                        '$ne'   =>  -1
+                    ],
+                    'productData.paymentsToRepresentive' => [
+                        '$nin'   =>  [0,null]
+                    ],
+                    'productData.paymentsToStock' => [
+                        '$nin'   =>  [0,null]
+                    ]
+                ])
+                ->andWhere(
+                    [
+                        '$or' => [
+                            [
+                                'dateCreate' => [
+                                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+                                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
+                                ]
+                            ],
+                            [
+                                'dateCloseSale' => [
+                                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+                                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
+                                ]
                             ]
                         ]
                     ]
-                ]
-            )
-            ->andFilterWhere((!empty($filter['showroomId']) ? ['showroomId'=>new ObjectId($filter['showroomId'])] : []))
-            ->with(['infoUser','infoProduct'])
-            ->orderBy(['dateCreate'=>SORT_DESC])
-            ->all();
+                )
+                ->andFilterWhere((!empty($filter['showroomId']) ? ['showroomId'=>new ObjectId($filter['showroomId'])] : []))
+                ->with(['infoUser','infoProduct'])
+                ->orderBy(['dateCreate'=>SORT_DESC]);
 
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo '<xmp>';
-//        print_r($sales);
-//        echo '</xmp>';
-//        die();
-
-        $arrayTurnoverAccruals = [];
-        $totalAccrual = 0;
-        $salesShowroom = $turnoverShowroom = [];
-        if(!empty($sales)){
-            /** @var Sales $sale */
-            foreach ($sales as $sale) {
-
-                if(!empty($sale->productData['paymentsToRepresentive']) && !empty($sale->productData['paymentsToStock'])){
-
-                    $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
-                    $dateCreateM = $sale->dateCreate->toDateTime()->format('Y-m');
-
-                    $dateCloseSale = $dateCloseSaleM = '';
-                    if(!empty($sale->dateCloseSale)){
-                        $dateCloseSale = $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i');
-                        $dateCloseSaleM = $sale->dateCloseSale->toDateTime()->format('Y-m');
-                    }
-
-                    if(!empty($sale->showroomId)){
-                        $showroomId = strval($sale->showroomId);
-                        $showroomName = $listShowroomsForSelect[$showroomId];
-
-                        if(empty($turnoverShowroom[$showroomId][$dateCreateM])){
-                            $turnoverShowroom[$showroomId][$dateCreateM] = 0;
-                        }
-                        $turnoverShowroom[$showroomId][$dateCreateM] += $sale->price;
-                    } else {
-                        $showroomId = '';
-                        $showroomName = '';
-                    }
-
-                    $countSale = $sale->productData['count'];
-
-                    $accrual = 0;
-                    if(!empty($sale->statusShowroom) && in_array($sale->statusShowroom,[Sales::STATUS_SHOWROOM_DELIVERED,Sales::STATUS_SHOWROOM_DELIVERED_COMPANY])){
-
-                        if(empty($arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM])){
-                            $infoDateToTemp = explode("-",$dateCreateM);
-                            $countDayTemp = cal_days_in_month(CAL_GREGORIAN, $infoDateToTemp['1'], $infoDateToTemp['0']);
-                            $tempTurnover = $this->getTurnoverAccruals($dateCreateM . '-01',$dateCreateM .'-'.$countDayTemp,$showroomId);
-
-                            if(!empty($tempTurnover[$showroomId]['turnover'][$dateCreateM])){
-                                $arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM] = $tempTurnover[$showroomId]['turnover'][$dateCreateM];
-                            } else {
-                                $arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM] = 0;
-                            }
-                        }
-
-                        if($arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM] > 10000 && !empty($sale->productData['paymentsToRepresentive'])){
-                            $accrual = $sale->productData['paymentsToRepresentive'];
-                        } else if(!empty($sale->productData['paymentsToStock'])) {
-                            $accrual = $sale->productData['paymentsToStock'];
-                        }
-                    }
-
-                    $salesShowroom[strval($sale->_id)] = [
-                        'saleId'        => strval($sale->_id),
-                        'dateCreate'    => $dateCreate,
-                        'dateCloseSale' => $dateCloseSale,
-                        'login'         => $sale->infoUser->username,
-                        'secondName'    => $sale->infoUser->secondName,
-                        'firstName'     => $sale->infoUser->firstName,
-                        'phone1'        => $sale->infoUser->phoneNumber,
-                        'phone2'        => $sale->infoUser->phoneNumber2,
-                        'productName'   => $sale->productName,
-                        'count'         => $countSale,
-                        'showroom'      => $showroomName,
-                        'showroomId'    => $showroomId,
-                        'status'        => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_WAITING)),
-                        'accrual'       => ($countSale * $accrual)
-                    ];
-
-                    $totalAccrual += ($countSale * $accrual);
-
-                }
+            if (!empty($request['search']['value']) && $search = $request['search']['value']) {
+                $model->andFilterWhere(['or',
+                    ['like', 'username', $search]
+                ]);
             }
 
-        }
+            $countQuery = clone $model;
+            $countQuery = $countQuery->count();
 
-        return $this->render('compensation-table-purchases', [
-            'listShowroomsForSelect'    =>  $listShowroomsForSelect,
-            'filter'                    =>  $filter,
-            'salesShowroom'             =>  $salesShowroom,
-            'turnoverShowroom'          =>  $turnoverShowroom,
-            'btnChangeShowroom'         =>  $btnChangeShowroom,
-            'totalAccrual'              =>  $totalAccrual,
-        ]);
+            $pages = new Pagination(['totalCount' => $countQuery]);
+
+            $data = [];
+
+            $model = $model
+                ->offset($request['start'] ?: $pages->offset)
+                ->limit($request['length'] ?: $pages->limit);
+
+            $count = $model->count();
+
+            /** @var Sales $sale */
+            foreach ($model->all() as $key => $sale){
+
+                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+                $dateCreateM = $sale->dateCreate->toDateTime()->format('Y-m');
+
+                $dateCloseSale = $dateCloseSaleM = '';
+                if(!empty($sale->dateCloseSale)){
+                    $dateCloseSale = $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i');
+                    $dateCloseSaleM = $sale->dateCloseSale->toDateTime()->format('Y-m');
+                }
+
+                if(!empty($sale->showroomId)){
+                    $showroomId = strval($sale->showroomId);
+                    $showroomName = $listShowroomsForSelect[$showroomId];
+
+                    if(empty($turnoverShowroom[$showroomId][$dateCreateM])){
+                        $turnoverShowroom[$showroomId][$dateCreateM] = 0;
+                    }
+                    $turnoverShowroom[$showroomId][$dateCreateM] += $sale->price;
+                } else {
+                    $showroomId = '';
+                    $showroomName = '';
+                }
+
+                $countSale = $sale->productData['count'];
+
+                $accrual = 0;
+                if(!empty($sale->statusShowroom) && in_array($sale->statusShowroom,[Sales::STATUS_SHOWROOM_DELIVERED,Sales::STATUS_SHOWROOM_DELIVERED_COMPANY])){
+
+                    if(empty($arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM])){
+                        $infoDateToTemp = explode("-",$dateCreateM);
+                        $countDayTemp = cal_days_in_month(CAL_GREGORIAN, $infoDateToTemp['1'], $infoDateToTemp['0']);
+                        $tempTurnover = $this->getTurnoverAccruals($dateCreateM . '-01',$dateCreateM .'-'.$countDayTemp,$showroomId);
+
+                        if(!empty($tempTurnover[$showroomId]['turnover'][$dateCreateM])){
+                            $arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM] = $tempTurnover[$showroomId]['turnover'][$dateCreateM];
+                        } else {
+                            $arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM] = 0;
+                        }
+                    }
+
+                    if($arrayTurnoverAccruals[$showroomId]['turnover'][$dateCreateM] > 10000 && !empty($sale->productData['paymentsToRepresentive'])){
+                        $accrual = $sale->productData['paymentsToRepresentive'];
+                    } else if(!empty($sale->productData['paymentsToStock'])) {
+                        $accrual = $sale->productData['paymentsToStock'];
+                    }
+                }
+
+                $data[] = [
+                    $columns[0] => $dateCreate,
+                    $columns[1] => $dateCloseSale,
+                    $columns[2] => $sale->infoUser->username,
+                    $columns[3] => $sale->infoUser->secondName . ' ' . $sale->infoUser->firstName,
+                    $columns[4] => $sale->infoUser->phoneNumber . '<br>' . $sale->infoUser->phoneNumber2,
+                    $columns[5] => '<span class="showroomName">' . $showroomName . '</span>' . ($btnChangeShowroom == 1 ? '<a href="javascript:void(0);" class="changeShowroom" data-sale-id="'.strval($sale->_id).'"><i class="fa fa-random"></i></a>' : ''),
+                    $columns[6] => $sale->productName,
+                    $columns[7] => $countSale,
+                    $columns[8] => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_WAITING)),
+                    $columns[9] => $accrual
+                ];
+            }
+
+            return [
+                'draw' => $request['draw'],
+                'data' => $data,
+                'recordsTotal' => $count,
+                'recordsFiltered' => $count
+            ];
+
+
+        }
+        // load template
+        else {
+            return $this->render('compensation-table-purchases', [
+                'listShowroomsForSelect'    =>  $listShowroomsForSelect,
+                'filter'                    =>  $filter
+            ]);
+        }
     }
 
     public function actionCompensationTableOnBalance()
@@ -941,7 +960,7 @@ class ShowroomsController extends BaseController
 //        die();
 //
 //    }
-//
+
 //    public function actionUpdateOrders()
 //    {
 //        $sales = Sales::find()
@@ -1461,12 +1480,18 @@ class ShowroomsController extends BaseController
                         $showroomIdSale = strval($sale->showroomId);
                     }
 
-                    $typeDelivery = $dateDelivery = '-';
-                    if (isset($sale->delivery)) {
+                    $dateDelivery = $typeDelivery = $addressDelivery = '';
+                    if(!empty($sale->delivery)){
                         $typeDelivery = $sale->delivery['type'];
 
-                        if (!empty($sale->delivery['params']['date'])) {
-                            $dateDelivery = date('Y-m-d', strtotime($dateCreate . ' + ' . (int)$sale->delivery['params']['date'] . ' days'));
+                        if($typeDelivery == 'showroom'){
+                            $addressDelivery = 'Шоу-рум: ' . $sale->showroom->address;
+                        } else if($typeDelivery == 'courier'){
+                            $addressDelivery = 'Курьер: ' . $sale->delivery['address'];
+                        }
+                        
+                        if (!empty($sale->delivery['params']['day'])) {
+                            $dateDelivery = $sale->delivery['params']['day'] . ' дней';
                         }
                     }
 
@@ -1486,7 +1511,7 @@ class ShowroomsController extends BaseController
                         'statusShowroom' => Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
                         'typeDelivery' => $typeDelivery,
                         'dateDelivery' => $dateDelivery,
-                        'addressDelivery' => (isset($sale->shippingAddress) ? $sale->shippingAddress : ''),
+                        'addressDelivery' => $addressDelivery,
                     ];
                 }
 
@@ -1658,7 +1683,7 @@ class ShowroomsController extends BaseController
 //            'salesShowroom'             =>  $salesShowroom,
 //        ]);
 //    }
-//
+
 //    public function actionReceptionIssueGoodsOrder()
 //    {
 //        $request = Yii::$app->request->get();
@@ -1782,29 +1807,58 @@ class ShowroomsController extends BaseController
         $infoDateTo = explode("-",$filter['dateTo']);
         $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
 
-        $sales = Sales::find()
-            ->where([
-                'type' => [
-                    '$ne'   =>  -1
-                ],
-                'productData.productNatural' => 1,
-                'dateCreate' => [
-                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
-                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'].'-'.$countDay.' 23:59:59') * 1000)
-                ],
-                'statusShowroom' => [
-                    '$nin' => [Sales::STATUS_SHOWROOM_DELIVERED,Sales::STATUS_SHOWROOM_DELIVERED]
-                ]
-            ])
-            ->andFilterWhere((!empty($filter['showroomId']) ? ['showroomId'=>new ObjectId($filter['showroomId'])] : []))
-            ->with(['infoUser'])
-            ->orderBy(['dateCreate'=>SORT_ASC])
-            ->all();
 
-        $salesShowroom = [];
-        if(!empty($sales)){
+        // load data from sale
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $columns = [
+                'dateCreate','productName','count','status','nameShowroom','country','city',
+                'address','fullName','dateSend','btnLook'
+            ];
+
+
+
+            $model = Sales::find()
+                ->where([
+                    'type' => [
+                        '$ne'   =>  -1
+                    ],
+                    'productData.productNatural' => 1,
+                    'dateCreate' => [
+                        '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+                        '$lte' => new UTCDateTime(strtotime($filter['dateTo'].'-'.$countDay.' 23:59:59') * 1000)
+                    ],
+                    'statusShowroom' => [
+                        '$nin' => [Sales::STATUS_SHOWROOM_DELIVERED,Sales::STATUS_SHOWROOM_DELIVERED]
+                    ]
+                ])
+                ->andFilterWhere((!empty($filter['showroomId']) ? ['showroomId'=>new ObjectId($filter['showroomId'])] : []))
+                ->with(['infoUser'])
+                ->orderBy(['dateCreate'=>SORT_ASC]);
+
+
+            if (!empty($request['search']['value']) && $search = $request['search']['value']) {
+                $model->andFilterWhere(['or',
+                    ['like', 'username', $search]
+                ]);
+            }
+
+            $countQuery = clone $model;
+            $countQuery = $countQuery->count();
+
+            $pages = new Pagination(['totalCount' => $countQuery]);
+
+            $data = [];
+
+            $model = $model
+                ->offset($request['start'] ?: $pages->offset)
+                ->limit($request['length'] ?: $pages->limit);
+
+            $count = $model->count();
+
             /** @var Sales $sale */
-            foreach ($sales as $sale) {
+            foreach ($model->all() as $key => $sale){
 
                 $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
 
@@ -1827,32 +1881,41 @@ class ShowroomsController extends BaseController
                     }
                 }
 
-
-                $salesShowroom[strval($sale->_id)] = [
-                    'saleId'        => strval($sale->_id),
-                    'showroomId'    => $showroomId,
-                    'showroomName'  => $showroomName,
-                    'pack'          => $sale->productData['productName'],
-                    'countPack'     => $sale->productData['count'],
-                    'dateCreate'    => $dateCreate,
-                    'country'       => $country,
-                    'city'          => $city,
-                    'dateSend'      => (!empty($sale->deliveryCompany['dateSend']) ? $sale->deliveryCompany['dateSend']->toDateTime()->format('Y-m-d H:i') : ''),
-                    'login'         => $sale->infoUser->username,
-                    'secondName'    => $sale->infoUser->secondName,
-                    'firstName'     => $sale->infoUser->firstName,
-                    'statusShowroom'=> Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom  : Sales::STATUS_SHOWROOM_WAITING)),
-                    'addressDelivery'=> $addressDelivery,
+                $data[] = [
+                    $columns[0] => $dateCreate,
+                    $columns[1] => $sale->productData['productName'],
+                    $columns[2] => $sale->productData['count'],
+                    $columns[3] => Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom  : Sales::STATUS_SHOWROOM_WAITING)) .
+                        '<a class="editOrder m-l" href="javascript:void(0);" data-sale-id="'.strval($sale->_id).'"><i class="fa fa-pencil"></i></a>',
+                    $columns[4] => $showroomName,
+                    $columns[5] => $country,
+                    $columns[6] => $city,
+                    $columns[7] => $addressDelivery,
+                    $columns[8] => $sale->infoUser->secondName . ' ' .  $sale->infoUser->firstName . ' (' . $sale->infoUser->username . ')',
+                    $columns[9] => (!empty($sale->deliveryCompany['dateSend']) ? $sale->deliveryCompany['dateSend']->toDateTime()->format('Y-m-d H:i') : ''),
+                    $columns[10] => '<a class="viewOrder m-l" href="javascript:void(0);" data-sale-id="'.strval($sale->_id).'"><i class="fa fa-eye"></i></a>'
                 ];
 
             }
+
+
+            return [
+                'draw' => $request['draw'],
+                'data' => $data,
+                'recordsTotal' => $count,
+                'recordsFiltered' => $count
+            ];
+
+
+        }
+        // load template
+        else {
+            return $this->render('orders-company',[
+                'filter' => $filter,
+                'listShowroomsForSelect' => $listShowroomsForSelect
+            ]);
         }
 
-        return $this->render('orders-company',[
-            'filter' => $filter,
-            'salesShowroom' => $salesShowroom,
-            'listShowroomsForSelect' => $listShowroomsForSelect
-        ]);
     }
 
     public function actionOrdersNonDistributed()
@@ -1968,7 +2031,6 @@ class ShowroomsController extends BaseController
 
         return $this->redirect('/ru/business/showrooms/orders-company',301);
     }
-
 
     public function actionEmails()
     {
