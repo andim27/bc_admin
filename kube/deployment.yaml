@@ -33,6 +33,8 @@ spec:
         image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
         ports:
         - containerPort: 80
+        - containerPort: 8080
+        - containerPort: 9913
         env:
         - name: ENABLE_MONITORING
           value: '1'
@@ -52,7 +54,7 @@ spec:
           value: '86400'
         - name: PHP_MEMORY_MAX
           value: '256'
-      - name: yii2-logs
+      - name: admin-yii2-logs
         volumeMounts:
         - name: shared-files
           mountPath: /var/www/html
