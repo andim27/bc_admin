@@ -40,7 +40,6 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">x</button>
             <h4 class="modal-title"><?= THelper::t('sidebar_parts_ordering') ?></h4>
-            <h5>ADD</h5>
         </div>
 
         <div class="modal-body">
@@ -204,6 +203,14 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
             '<strong>'+error+'</strong>' +
             '</div>')
     }
+    function alertMessage(mes) {
+        $(".popupPartsOrdering .blError").html(
+            '<div class="alert alert-success fade in">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+            '<strong>'+mes+'</strong>' +
+            '</div>')
+
+    }
     function clearError() {
         $(".popupPartsOrdering .blError").html('');
     }
@@ -309,7 +316,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
             //{'part_id':456,'part_number':2,'part_currency':'eur','part_price':200},
         ];
         var cnt =  $('#part-items').children().length;
-        for (var i=0;i<=cnt;i++) {
+        for (var i=1;i<=cnt;i++) {
             part_id       = $('#part-item-'+i).attr('data-part_id');
             part_number   = $('#part-item-'+i+' input[name="number"]').val();
             part_currency = $('#part-item-'+i+' select[name="currency"]').val();
@@ -320,13 +327,19 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
     }
     function saveParts() {
         if (checkPartItems()==false) return;
-        $('#s_btn').attr('disabled',true);
         var part_items = pickItems();
+        if (part_items.length <=1) {alertMessage('Ошибка: не выбраны товары');return;}
         var url="/<?=Yii::$app->language?>/business/manufacturing-suppliers/save-many-parts-ordering";
-        //JSON.stringify(part_items)
-        $.post(url,{'part_items':part_items}).done(function (data) {
+        $('#s_btn').attr('disabled',true);
+        $.post(url,{
+            'suppliers_performers_id':$('select[name="suppliers_performers_id"]').val(),
+            'dateReceipt':$('input[name="dateReceipt"] ').val(),
+            'part_items':part_items}).done(function (data) {
             if (data.success == true) {
-                window.location.href = "/<?=Yii::$app->language?>/business/manufacturing-suppliers/parts-ordering";
+                alertMessage(data.mes);
+                setTimeout(function(){
+                    window.location.href = "/<?=Yii::$app->language?>/business/manufacturing-suppliers/parts-ordering";
+                },5);
             } else {
                 console.log('Error='+data.mes);
                 $('#s_btn').attr('disabled',false);

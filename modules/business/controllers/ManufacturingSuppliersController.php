@@ -776,9 +776,42 @@ class ManufacturingSuppliersController extends BaseController {
             ]
         );
         $part_items = $request['part_items'];
+        if (is_array($part_items)) {
+            try {
+                $all_saved = true;
+                $cnt = 0;
+                $mes = "Сохранения применились!!!Сохранено {$cnt} позиций.";
+                foreach ($part_items as $part_item) {
+                    $model = new PartsOrdering();
+                    $model->parts_accessories_id    = new ObjectID($part_item['part_id']);
+                    $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
+                    $model->number      = (int)$part_item['part_number'];
+                    $model->price       = (double)$part_item['part_price'];
+                    $model->currency    = $part_item['part_currency'];
+                    $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);
+                    $model->dateCreate  = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                    $save_res = $model->save();
+                    if ($save_res) {
+                        $all_saved = true;
+                    } else {
+                        $all_saved = false;
+                    }
+                    $cnt++;
+                }
+                if ($all_saved) {
+                    $mes = "Сохранения применились!!!Сохранено {$cnt} позиций.";
+                    Yii::$app->session->setFlash('alert', [
+                            'typeAlert' => 'success',
+                            'message'   => $mes
+                        ]
+                    );
+                }
+            } catch (\Exception $e) {
+                $mes = "Ошибка сохранения! позиция ".$cnt." .<br>".$e->getMessage()." code=".$e->getLine();
+            }
 
-        $res = ['success'=>true,'mes'=>var_dump($part_items)];
-        //$res = ['success'=>true,'mes'=>'Saved !'];
+        }
+        $res = ['success'=>true,'mes'=>$mes];
         Yii::$app->response->format = Yii\web\Response::FORMAT_JSON;
         return $res;
 
