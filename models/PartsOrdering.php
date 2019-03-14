@@ -43,6 +43,10 @@ class PartsOrdering extends \yii2tech\embedded\mongodb\ActiveRecord
         return $this->hasOne(PartsAccessories::className(),['_id'=>'parts_accessories_id']);
     }
 
+    public function getSuppliersPerformers(){
+        return $this->hasOne(SuppliersPerformers::className(),['_id'=>'suppliers_performers_id']);
+    }
+
     public static function getListPreOrdering(){
         $model = self::find()->all();
 

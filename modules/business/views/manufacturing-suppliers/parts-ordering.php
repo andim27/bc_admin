@@ -26,6 +26,9 @@ use app\components\AlertWidget;
                         <?=THelper::t('sale_date_create')?>
                     </th>
                     <th>
+                        <?=THelper::t('sidebar_suppliers_performers')?>
+                    </th>
+                    <th>
                         <?=THelper::t('name_product')?>
                     </th>
                     <th>
@@ -52,6 +55,7 @@ use app\components\AlertWidget;
                 <?php foreach ($model as $item) { ?>
                     <tr>
                         <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:m:s')?></td>
+                        <td><?=$item->getSuppliersPerformers()->one()->title  ?? '?';?></td>
                         <td><?=$item->partsAccessories->title?></td>
                         <td><?=$item->number?></td>
                         <td><?=THelper::t($item->currency)?></td>
