@@ -16,6 +16,7 @@ use Yii;
 use app\controllers\BaseController;
 use DateTime;
 use yii\data\Pagination;
+use yii\web\Response;
 
 class ManufacturingSuppliersController extends BaseController {
 
@@ -721,6 +722,24 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    public function actionAddManyPartsOrdering($id='')
+    {
+
+        $model = new PartsOrdering();
+        if(!empty($id)){
+            $model = $model::findOne(['_id' => new ObjectID($id)]);
+        }
+
+        $part_title = $sup_title = '??';
+
+        return $this->renderAjax('_add-many-parts-ordering', [
+            'language' => Yii::$app->language,
+            'model'    => $model,
+            'part_title' => $part_title,
+            'sup_title'  => ''
+        ]);
+    }
+
     /**
      * popup create and edit ordering
      * @param string $id
@@ -747,6 +766,57 @@ class ManufacturingSuppliersController extends BaseController {
             'part_title' => $part_title,
             'sup_title'  => $sup_title
         ]);
+    }
+
+    public function actionSaveManyPartsOrdering()
+    {
+        $request = Yii::$app->request->post();
+        Yii::$app->session->setFlash('alert' ,[
+                'typeAlert'=>'danger',
+                'message'=>'Сохранения не применились, что то пошло не так!!!'
+            ]
+        );
+        $part_items = $request['part_items'];
+        if (is_array($part_items)) {
+            try {
+                $all_saved = true;
+                $cnt = 0;
+                $mes = "Сохранения применились!!!Сохранено {$cnt} позиций.";
+                foreach ($part_items as $part_item) {
+                    $model = new PartsOrdering();
+                    $model->parts_accessories_id    = new ObjectID($part_item['part_id']);
+                    $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
+                    $model->number      = (int)$part_item['part_number'];
+                    $model->price       = (double)$part_item['part_price'];
+                    $model->currency    = $part_item['part_currency'];
+                    $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);
+                    $model->dateCreate  = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                    $save_res = $model->save();
+                    if ($save_res) {
+                        $all_saved = true;
+                    } else {
+                        $all_saved = false;
+                    }
+                    $cnt++;
+                }
+                if ($all_saved) {
+                    $mes = "Сохранения применились!!!Сохранено {$cnt} позиций.";
+                    Yii::$app->session->setFlash('alert', [
+                            'typeAlert' => 'success',
+                            'message'   => $mes
+                        ]
+                    );
+                }
+            } catch (\Exception $e) {
+                $mes = "Ошибка сохранения! позиция ".$cnt." .<br>".$e->getMessage()." code=".$e->getLine();
+            }
+
+        }
+        $res = ['success'=>true,'mes'=>$mes];
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return $res;
+
+        //return $this->redirect('/' . Yii::$app->language .'/business/manufacturing-suppliers/parts-ordering');
     }
 
     /**
@@ -931,7 +1001,7 @@ class ManufacturingSuppliersController extends BaseController {
                 $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
                 $model->warehouse_id = new ObjectID($myWarehouse);
                 $model->number = (float)$request['number'];
-                $model->part_virt = (int)$request['part-virt'];
+                $model->part_virt = $request['part-virt'] ?? '';
             } else {
                 $model->number += $request['number'];
             }

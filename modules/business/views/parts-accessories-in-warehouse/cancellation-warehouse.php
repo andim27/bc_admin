@@ -13,8 +13,8 @@ $layoutDate = <<< HTML
     {input2}
 HTML;
 
-$idMyWarehouse = Warehouse::getIdMyWarehouse();
 $listWarehouse = Warehouse::getArrayWarehouse();
+$listShowroom = \app\models\api\Showrooms::getListForFilter();
 $listGoods = PartsAccessories::getListPartsAccessories();
 ?>
 
@@ -83,7 +83,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                             <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
                             <td><?=$listGoods[(string)$item->parts_accessories_id]?></td>
                             <td><?=$item->number?></td>
-                            <td><?=$listWarehouse[(string)$item->admin_warehouse_id]?></td>
+                            <td><?=(!empty($listWarehouse[(string)$item->admin_warehouse_id]) ? $listWarehouse[(string)$item->admin_warehouse_id] : (!empty($listShowroom[(string)$item->admin_warehouse_id]) ? $listShowroom[(string)$item->admin_warehouse_id] : '???')) ?></td>
                             <td><?=(!empty($item->adminInfo) ? $item->adminInfo->secondName . ' ' .$item->adminInfo->firstName : '')?></td>
                             <td><?=$item->comment?></td>
                         </tr>

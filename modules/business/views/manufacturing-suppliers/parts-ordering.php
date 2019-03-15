@@ -12,7 +12,7 @@ use app\components\AlertWidget;
     <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
 
     <div class="col-md-offset-9 col-md-3 form-group">
-        <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-update-parts-ordering?action=add'],['class'=>'btn btn-default btn-block addPartsOrdering','data-toggle'=>'ajaxModal'])?>
+        <?=Html::a('<i class="fa fa-plus"></i>',['/business/manufacturing-suppliers/add-many-parts-ordering'],['class'=>'btn btn-default btn-block addPartsOrdering','data-toggle'=>'ajaxModal'])?>
     </div>
 </div>
 
@@ -24,6 +24,9 @@ use app\components\AlertWidget;
                 <tr>
                     <th>
                         <?=THelper::t('sale_date_create')?>
+                    </th>
+                    <th>
+                        <?=THelper::t('sidebar_suppliers_performers')?>
                     </th>
                     <th>
                         <?=THelper::t('name_product')?>
@@ -52,6 +55,7 @@ use app\components\AlertWidget;
                 <?php foreach ($model as $item) { ?>
                     <tr>
                         <td><?=$item->dateCreate->toDateTime()->format('Y-m-d H:m:s')?></td>
+                        <td><?=$item->getSuppliersPerformers()->one()->title  ?? '?';?></td>
                         <td><?=$item->partsAccessories->title?></td>
                         <td><?=$item->number?></td>
                         <td><?=THelper::t($item->currency)?></td>

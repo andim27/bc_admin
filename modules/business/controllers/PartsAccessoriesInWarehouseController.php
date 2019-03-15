@@ -189,7 +189,7 @@ class PartsAccessoriesInWarehouseController extends BaseController {
                     'action'                    =>  'cancellation',
                     'parts_accessories_id'      =>  $request['parts_accessories_id'],
                     'number'                    =>  $request['number'],
-
+                    'admin_warehouse_id'        =>  $myWarehouse,
                     'comment'                   =>  $request['comment'],
                 ]);
 
@@ -306,6 +306,7 @@ class PartsAccessoriesInWarehouseController extends BaseController {
             'language' => Yii::$app->language,
             'model' => $model,
             'dateInterval' => $dateInterval,
+            'idMyWarehouse' => $myWarehouse,
             'alert' => Yii::$app->session->getFlash('alert', '', true)
         ]);
     }

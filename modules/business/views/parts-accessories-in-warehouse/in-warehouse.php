@@ -15,7 +15,7 @@ $layoutDate = <<< HTML
     {input2}
 HTML;
 
-$idMyWarehouse = Warehouse::getIdMyWarehouse();
+//$idMyWarehouse = Warehouse::getIdMyWarehouse();
 
 $listGoods = PartsAccessories::getListPartsAccessories();
 
@@ -36,7 +36,7 @@ if(Warehouse::checkWarehouseKharkov($idWarehouse)){
 </div>
 
 
-<?php if(!empty($idMyWarehouse)){?>
+<?php if(!empty($idWarehouse)){?>
 
     <div class="row">
         <?= (!empty($alert) ? AlertWidget::widget($alert) : '') ?>
@@ -92,7 +92,7 @@ if(Warehouse::checkWarehouseKharkov($idWarehouse)){
                     <tr>
                         <th><?=THelper::t('product')?></th>
                         <th><?=THelper::t('number_in_stock')?></th>
-                        <th><?=THelper::t('sold_during_period')?></th>
+<!--                        <th>--><?php//=THelper::t('sold_during_period')?><!--</th>-->
                         <th></th>
                         <th></th>
                     </tr>
@@ -102,7 +102,7 @@ if(Warehouse::checkWarehouseKharkov($idWarehouse)){
                         <tr>
                             <td><?=$listGoods[(string)$item->parts_accessories_id]?></td>
                             <td><?=$item->number?></td>
-                            <td><?=(!empty($implementation[$listGoods[(string)$item->parts_accessories_id]]) ? $implementation[$listGoods[(string)$item->parts_accessories_id]] : '0')?></td>
+<!--                            <td>--><?php //=(!empty($implementation[$listGoods[(string)$item->parts_accessories_id]]) ? $implementation[$listGoods[(string)$item->parts_accessories_id]] : '0'); ?><!--</td>-->
                             <td>
                                 <?php if(!empty($arrayProcurementPlanning[(string)$item->parts_accessories_id]) && $arrayProcurementPlanning[(string)$item->parts_accessories_id]=='wait'){ ?>
                                     <i class="fa fa-exclamation-triangle procurementPlanningWait" data-container="body" data-toggle="popover" data-placement="left" data-content="Данный товар доставляется"></i>

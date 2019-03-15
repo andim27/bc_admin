@@ -76,7 +76,7 @@
                                             Даты закрытия заказа
                                         </th>
                                         <th>
-                                            Будет доставлен ориентировочно
+                                            Время доставки
                                         </th>
                                         <th>
                                             Адрес доставки
@@ -183,6 +183,15 @@
                     </div>
                     <div class="col-md-9">
                         <span class="font-bold issue-address m-l m-r"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>Информация о доставке:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="font-bold issue-info-delivery m-l m-r"></span>
                     </div>
                 </div>
 
@@ -372,6 +381,15 @@
 
                         <div class="row">
                             <div class="col-md-3">
+                                <p>Информация о доставке:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <span class="font-bold issue-info-delivery m-l m-r"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
                                 <p>Получатель:</p>
                             </div>
                             <div class="col-md-9">
@@ -473,194 +491,6 @@
         </div>
     </div>
 </div>
-
-<!--<div class="modal fade" id="receiptionGoodsEdit">-->
-<!--    <div class="modal-dialog" >-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h4 class="modal-title">Приём товара</h4>-->
-<!--            </div>-->
-<!--            <div class="modal-body">-->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Дата покупки:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <span class="font-bold dateOrder m-l m-r">14.02.2019</span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Название продукта:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <span class="font-bold itemOrder m-l m-r">набор Life Balance</span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Серийный номер:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <a href="#" class="m-l">Добавить</a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row m-t m-b">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Статус:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <select name="receiptionStatusSelect" class="receiptionStatusSelect w-195p inline form-control m-l"> -->
-<!--                            <option value="null">Доставлено</option> -->
-<!--                            <option value="1">Отгружено</option> -->
-<!--                        </select>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row m-t m-b">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Гарантия:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <span class="font-bold receptionWarranty m-l m-r">Да</span>-->
-<!--                        <a href="#" class="pull-right">Не гарантийный случай</a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                -->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-12">-->
-<!--                        Комментарий-->
-<!--                        <textarea class="form-control receptionComment m-t m-b" name="receptionComment" id="receptionComment" rows="5" placeholder=""></textarea>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-12 text-center">-->
-<!--                        <div class="col-sm-8 col-sm-offset-2 form-group">-->
-<!--                            <a class="btn btn-danger" data-dismiss="modal">Отмена</a>-->
-<!--                            <a class="btn btn-success receptionSave">Сохранить</a>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<!---->
-<!--<div class="modal fade" id="editReceiptedGoods">-->
-<!--    <div class="modal-dialog" >-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h4 class="modal-title">Редактирование</h4>-->
-<!--            </div>-->
-<!--            <div class="modal-body">-->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Дата покупки:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <span class="font-bold dateReceipted m-l m-r">14.02.2019</span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Логин:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <span class="font-bold loginReceipted m-l m-r">main</span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>ФИО:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <span class="font-bold fioReceipted m-l m-r">Абдула Абрамович КамЕнский</span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Телефон:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <span class="font-bold phoneReceipted m-l m-r">03</span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Название продукта:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <span class="font-bold itemReceipted m-l m-r">набор Life Balance</span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Серийный номер:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <span class="font-bold serialReceipted m-l m-r">3424234234</span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row">-->
-<!---->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Статус:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <select name="receiptedStatusSelect" class="receiptedStatusSelect w-195p inline form-control m-l"> -->
-<!--                            <option value="null">Доставлено</option> -->
-<!--                            <option value="1">Отгружено</option> -->
-<!--                        </select>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!--                <div class="row m-b m-t">-->
-<!--                -->
-<!--                    <div class="col-md-3">-->
-<!--                        <p>Гарантия:</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-9">-->
-<!--                        <select name="receiptedStatusSelect" class="receiptedStatusSelect w-195p inline form-control m-l"> -->
-<!--                            <option value="null">Да</option> -->
-<!--                            <option value="1">Нет</option> -->
-<!--                        </select>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                -->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-12">-->
-<!--                        Комментарий-->
-<!--                        <textarea class="form-control receptionComment m-t m-b" name="receptionComment" id="receptionComment" rows="5" placeholder=""></textarea>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!---->
-<!---->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-12 text-center">-->
-<!--                        <div class="col-sm-8 col-sm-offset-2 form-group">-->
-<!--                            <a class="btn btn-danger" data-dismiss="modal">Отмена</a>-->
-<!--                            <a class="btn btn-success editReceptionSave">Сохранить</a>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
 
 <?php $this->registerCssFile('/js/datepicker/datepicker.css', ['position' => yii\web\View::POS_HEAD]); ?>
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js', ['position' => yii\web\View::POS_END]); ?>
@@ -793,19 +623,26 @@
                     blInfo.find('.issue-dateDelivery').text(msg.dateDelivery);
                     blInfo.find('.issue-address').text(msg.addressDelivery);
 
+                    if(msg.typeDelivery == 'courier'){
+                        blInfo.find('.issue-info-delivery').html(
+                            'Служба доставки - ' + msg.titleDelivery +
+                            '<br>Время доставки - ' + msg.dateDelivery + ' дней' +
+                            '<br>Стоимость доставки - ' + msg.priceDelivery + ' eur'
+                        );
+                    }
+
                     blInfo.find('.lookComment').text(msg.commentShowroom);
 
                     var blOrder = blInfo.find('.issue-order');
                     blOrder.html('');
                     $.each(msg.products, function( k, v ) {
 
-                        console.log(v);
-
                         blProduct = '<li>'+v.title;
 
-                        if((msg.statusShowroom == 'waiting' || msg.statusShowroom == 'sending_showroom') && v.status == 'status_sale_new'){
+                        if((msg.statusShowroom == 'waiting' || msg.statusShowroom == 'sending_showroom')
+                            && v.status == 'status_sale_new' && v.parts_accessories_id !== null){
                             blProduct += '<a href="javascript:void(0);" class="issueFromBalance pull-right" data-sale-id="'+msg.saleId+'" data-number="'+k+'" data-parts_accessories_id="'+v.parts_accessories_id.$oid+'">Выдать с моего шоу-рума демонстрационый образец</a><span class="spanIssued pull-right m-r"></span></li>'
-                        } else if(v.status == 'status_sale_issued'){
+                        } else if(v.status == 'status_sale_issued' && v.parts_accessories_id !== null){
                             blProduct += '<span class="label label-primary pull-right">Выдан</span>';
                         }
 
@@ -882,6 +719,13 @@
 
                         blInfo.find('.issue-dateDelivery').text(msg.dateDelivery);
                         blInfo.find('.issue-address').text(msg.addressDelivery);
+
+                        if(msg.typeDelivery == 'courier'){
+                            blInfo.find('.issue-info-delivery').html('Служба доставки - ' + msg.titleDelivery +
+                                '<br>Время доставки - ' + msg.dateDelivery + ' дней' +
+                                '<br>Стоимость доставки - ' + msg.priceDelivery + ' eur'
+                            );
+                        }
 
                         var blOrder = blInfo.find('.issue-order');
                         blOrder.html('');
@@ -1035,6 +879,7 @@
         blInfo.find('.issueSelect').html('');
         blInfo.find('.issue-dateDelivery').text('');
         blInfo.find('.issue-address').text('');
+        blInfo.find('.issue-info-delivery').text('');
         blInfo.find('.issue-order').html('');
         blInfo.find('.checkLogin').data({id:''}).prop('disabled', true);
         blInfo.find('.lookComment').val('');
@@ -1056,6 +901,7 @@
         blInfo.find('.issueSelect').prop( "disabled", false ).val('');
         blInfo.find('.issue-dateDelivery').text('');
         blInfo.find('.issue-address').text('');
+        blInfo.find('.issue-info-delivery').text('');
         blInfo.find('.issue-order').html('');
     }
 

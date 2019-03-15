@@ -82,34 +82,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if(!empty($salesShowroom)){ ?>
-                                        <?php foreach ($salesShowroom as $itemSale) { ?>
-                                            <tr data-id="<?=$itemSale['saleId']?>">
-                                                <td><?=$itemSale['dateCreate']?></td>
-                                                <td><?=$itemSale['dateCloseSale']?></td>
-                                                <td><?=$itemSale['login']?></td>
-                                                <td><?=$itemSale['secondName']?> <?=$itemSale['firstName']?></td>
-                                                <td><?=$itemSale['phone1']?><br><?=$itemSale['phone2']?></td>
-                                                <td class="nameShowroom">
-                                                    <span><?=$itemSale['showroom']?></span>
-                                                    <?=($btnChangeShowroom == 1 ? '<a href="javascript:void(0);" class="changeShowroom"><i class="fa fa-random"></i></a>' : '')?>
-                                                </td>
-                                                <td><?=$itemSale['productName']?></td>
-                                                <td><?=$itemSale['count']?></td>
-                                                <td><?=$itemSale['status']?></td>
-                                                <td>
-                                                    <?=(!empty($itemSale['accrual']) ? $itemSale['accrual'] : '')?>
-                                                </td>
-                                            </tr>
-                                        <?php } ?>
-                                    <?php } ?>
                                 </tbody>
-                                <tfooter>
+                                <tfoot>
                                     <th>
-                                        <td colspan="8"></td>
-                                        <td><?=$totalAccrual?></td>
+                                        <td colspan="8" style="text-align:right">Итого:</td>
+                                        <td></td>
                                     </th>
-                                </tfooter>
+                                </tfoot>
                             </table>
                         </div>
 
@@ -170,21 +149,65 @@
 <?php $this->registerJsFile('/js/datepicker/bootstrap-datepicker.js', ['position' => yii\web\View::POS_END]); ?>
 
 <script>
-
     $('#table-purchases').dataTable({
         language: TRANSLATION,
         lengthMenu: [ 25, 50, 75, 100 ],
-        lengthChange: false,
-        info: false,
-        order: [[ 0, "desc" ]]
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            url: '/ru/business/showrooms/compensation-table-purchases',
+            data: function ( d ) {
+                d.showroomId = "<?=$filter['showroomId']?>",
+                d.dateFrom = "<?=$filter['dateFrom']?>";
+                d.dateTo = "<?=$filter['dateTo']?>"
+            }
+        },
+        "columns": [
+            {"data": "dateCreate"},
+            {"data": "dateClose"},
+            {"data": "login"},
+            {"data": "fullName"},
+            {"data": "phones"},
+            {"data": "nameShowroom"},
+            {"data": "productName"},
+            {"data": "count"},
+            {"data": "status"},
+            {"data": "accrual"}
+        ],
+        "order": [[ 0, "desc" ]],
+        "footerCallback": function ( ) {
+            var api = this.api();
+
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+
+            // Total over this page
+            pageTotal = api
+                .column( 9, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            // Update footer
+            $( api.column( 9 ).footer() ).html(
+                pageTotal
+            );
+        }
     });
         
     $('table').on('click','.changeShowroom',function(){
         var modal =  $('.modalChangeShowroom');
+        
         var lineShowroom = $(this).closest('tr');
+        var saleIdShowroom = $(this).data('sale-id');
 
-        modal.find('.saleIdShowroom').val(lineShowroom.data('id'));
-        modal.find('.oldShowroom').text(lineShowroom.find('.nameShowroom span').text());
+        modal.find('.saleIdShowroom').val(saleIdShowroom);
+        modal.find('.oldShowroom').text(lineShowroom.find('.showroomName').text());
 
         modal.modal();
     });

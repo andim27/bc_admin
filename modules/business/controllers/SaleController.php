@@ -300,23 +300,28 @@ class SaleController extends BaseController {
                     $showroomName = $listShowroom[$showroomIdSale];
                 }
 
-
-                $typeDelivery = $dateDelivery = '-';
-                if(isset($sale->delivery)){
+                $priceDelivery = $dateDelivery = $titleDelivery = '';
+                $typeDelivery = $addressDelivery = $country = $city = '';
+                if(!empty($sale->delivery)){
                     $typeDelivery = $sale->delivery['type'];
 
-                    if(!empty($sale->delivery['params']['date'])){
-                        $dateDelivery = $sale->delivery['params']['date'];
+                    if(!empty($sale->delivery['params']['day'])){
+                        $dateDelivery = $sale->delivery['params']['day'];
                     }
-                }
 
-                $addressDelivery = $country = $city = '';
-                if(!empty($sale->delivery)){
-                    if($sale->delivery['type'] == 'showroom'){
+                    if(!empty($sale->delivery['params']['title'])){
+                        $titleDelivery = $sale->delivery['params']['title'];
+                    }
+
+                    if(!empty($sale->delivery['params']['price'])){
+                        $priceDelivery = $sale->delivery['params']['price'];
+                    }
+
+                    if($typeDelivery == 'showroom'){
                         $addressDelivery = 'Шон-рум: ' . $sale->showroom->address;
                         $country = $sale->showroom->countryInfo->name['ru'];
                         $city = $sale->showroom->cityInfo->name['ru'];
-                    } else if($sale->delivery['type'] == 'courier'){
+                    } else if($typeDelivery == 'courier'){
                         $addressDelivery = 'Курьер: ' . $sale->delivery['address'];
                         $country = $sale->infoUser->countryData['name']['ru'];
                         $city = $sale->infoUser->cityData['name']['ru'];
@@ -345,6 +350,8 @@ class SaleController extends BaseController {
                     'commentShowroom'=>$sale->commentShowroom,
                     'typeDelivery'  => $typeDelivery,
                     'dateDelivery'  => $dateDelivery,
+                    'priceDelivery' => $priceDelivery,
+                    'titleDelivery' => $titleDelivery,
                     'country'       => $country,
                     'city'          => $city,
                     'addressDelivery'=> $addressDelivery,
