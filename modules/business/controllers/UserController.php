@@ -1242,6 +1242,7 @@ class UserController extends BaseController
             'cash'     =>'Пополнение наличными',
             //'comis'    =>'Пополнение комиссионными',
             'advaction'=>'Пополнение по рекламной акции',
+            'compsr'   =>'Компенсация работы шоурума',
             'other'    =>'Другое'
         ];
         $model = new PincodeGenerateForm();
