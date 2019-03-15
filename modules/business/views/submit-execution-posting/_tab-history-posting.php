@@ -24,7 +24,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 <?php foreach ($modelPosting as $k=>$item) { ?>
                     <tr>
                         <td><?=$item->date_create->toDateTime()->format('Y-m-d H:i:s')?></td>
-                        <td><?=$listGoods[(string)$item->parts_accessories_id]?></td>
+                        <td title="<?=$item->comment ?>"><?=(isset($item->part_virt)&&($item->part_virt ==1) ? '(вирт)':'').$listGoods[(string)$item->parts_accessories_id]?></td>
                         <td><?=$item->number?></td>
                         <td><?=$item->adminInfo->secondName . ' ' .$item->adminInfo->firstName?></td>
                         <td><?=THelper::t($item->action)?></td>
