@@ -54,6 +54,8 @@ spec:
           value: '86400'
         - name: PHP_MEMORY_MAX
           value: '256'
+        - name: PHP_FPM_WORKERS
+          value: '4'
       - name: admin-yii2-logs
         volumeMounts:
         - name: shared-files
