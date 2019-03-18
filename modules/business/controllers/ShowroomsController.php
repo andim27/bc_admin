@@ -702,7 +702,7 @@ class ShowroomsController extends BaseController
                     $columns[6] => $sale->productName,
                     $columns[7] => $countSale,
                     $columns[8] => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_WAITING)),
-                    $columns[9] => $accrual
+                    $columns[9] => $accrual * $countSale
                 ];
             }
 

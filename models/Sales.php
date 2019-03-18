@@ -129,9 +129,9 @@ class Sales extends ActiveRecord
 
             $model->setSales = $arraySet;
 
-//            if($model->save()){
-//
-//            }
+            if($model->save()){
+
+            }
         }
 
         return $model;
