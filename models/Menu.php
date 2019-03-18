@@ -157,6 +157,12 @@ Class Menu
                 'controller' => 'setting',
                 'items' => [
                     [
+                        'key'   =>  'sidebar_settings_menu',
+                        'label' => THelper::t('sidebar_settings_menu'),
+                        'url' => ['/business/setting/menu-control'],
+                        'action' => 'menu-control',
+                    ],
+                    [
                         'key'   =>  'sidebar_settings_admin',
                         'label' => THelper::t('sidebar_settings_admin'),
                         'url' => ['/business/setting/admin'],

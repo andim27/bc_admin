@@ -959,6 +959,13 @@ class SettingController extends BaseController {
             'error'             =>  $error
         ]);
     }
+    public function actionMenuControl()
+    {
+        return $this->render('_menu_control',[
+
+        ]);
+
+    }
 }
 
 function base64_to_jpeg($base64_string, $output_file) {
