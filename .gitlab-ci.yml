@@ -38,6 +38,7 @@ build_dev:
     - mv ./vendor/bower-asset ./vendor/bower/ || true
     - ./pre-admin.sh
     - docker info
+    - docker pull bulich/php7lx
     - cp config/params.dev config/params.php
     - cp config/web.dev config/web.php
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
