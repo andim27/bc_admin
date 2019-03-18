@@ -28,6 +28,7 @@ function totalDetailsSum($statisticInfo) {
         +$statisticInfo['receiptMoneyDetails']['cash_a']
         +$statisticInfo['receiptMoneyDetails']['perevod_a']
         +$statisticInfo['receiptMoneyDetails']['advaction_a']
+        +$statisticInfo['receiptMoneyDetails']['compsr_a']
         +$statisticInfo['receiptMoneyDetails']['other_a']
     ;
     return number_format(round($sum));
@@ -270,6 +271,7 @@ function totalDetailsSum($statisticInfo) {
                     <tr><td  width="25%"><span>cash(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['cash_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['cash_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
                     <tr><td  width="25%"><span>perevod(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['perevod_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['perevod_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
                     <tr><td  width="25%"><span>advaction(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['advaction_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['advaction_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
+                    <tr><td  width="25%"><span>s-rooms(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['compsr_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['compsr_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
                     <tr style="border-bottom: dotted darkgreen"><td  width="25%"><span>other(a):</span></td><td align="right"><span class="h4 m-t-xs"><?= isset($statisticInfo['receiptMoneyDetails']['other_a']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['other_a']), 0, ',', ' ')) : 0 ?></span></td></tr>
                     <!--                    <tr><td  width="25%"><span>invoice:</span></td><td align="right"><span class="h4 m-t-xs">--><?//= isset($statisticInfo['receiptMoneyDetails']['invoice']) ? (number_format(round($statisticInfo['receiptMoneyDetails']['invoice']), 0, ',', ' ')) : 0 ?><!--</span></td></tr>-->
                     <!--                    <tr style="border-bottom: dotted darkgreen"></tr>-->

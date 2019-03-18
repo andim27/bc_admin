@@ -605,6 +605,7 @@ class SaleReportController extends BaseController
         $statisticInfo['receiptMoneyDetails']['advcash_a'] = 0;
         $statisticInfo['receiptMoneyDetails']['perevod_a'] = 0;
         $statisticInfo['receiptMoneyDetails']['advaction_a'] = 0;
+        $statisticInfo['receiptMoneyDetails']['compsr_a']    = 0;
         $statisticInfo['receiptMoneyDetails']['other_a']     = 0;
         $adm_items =  (new \yii\mongodb\Query())
             ->select(['dateCreate','price','whenceSale'])
@@ -643,6 +644,9 @@ class SaleReportController extends BaseController
                 }
                 if (preg_match('/kind:advaction/',$item['whenceSale'])) {
                     $statisticInfo['receiptMoneyDetails']['advaction_a']+=$item['price'];
+                }
+                if (preg_match('/kind:compsr/',$item['whenceSale'])) {
+                    $statisticInfo['receiptMoneyDetails']['compsr_a']+=$item['price'];
                 }
                 if (preg_match('/kind:other/',$item['whenceSale'])) {
                     $statisticInfo['receiptMoneyDetails']['other_a']+=$item['price'];
