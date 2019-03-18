@@ -99,7 +99,8 @@ class Sales extends ActiveRecord
                 foreach ($this->infoProduct['products']as $itemProductSet) {
                     $infoProductSet = Products::findOne(['_id'=>$itemProductSet['_id']]);
 
-                    if(!empty($infoProductSet->product_connect_to_natural)){
+                    if(!empty($infoProductSet->product_connect_to_natural) && $infoProductSet->product_connect_to_natural != 'false'){
+
                         for ($i = 1; $i <= ($itemProductSet['cnt'] * $countPack); $i++) {
                             $arraySet[] = [
                                 'productId'             =>  $itemProductSet['_id'],
@@ -128,9 +129,9 @@ class Sales extends ActiveRecord
 
             $model->setSales = $arraySet;
 
-            if($model->save()){
-
-            }
+//            if($model->save()){
+//
+//            }
         }
 
         return $model;
