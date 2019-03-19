@@ -961,9 +961,36 @@ class SettingController extends BaseController {
     }
     public function actionMenuControl()
     {
+        $user_name='main';
+        //$model = Users::find()->where(['_id'=> new ObjectID('573a0d76965dd0fb16f60bfe')])->one();
+        $model = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
+        $items = Menu::getItems();
         return $this->render('_menu_control',[
-
+            'items'    => $items,
+            'language' => Yii::$app->language,
+            'model'    => $model,
+            'user_name'=>$user_name
         ]);
+
+    }
+    public function actionMenuControlSave()
+    {
+        $request = Yii::$app->request;
+        $rule_admin_menu = $request->post('rule');
+        if (isset($rule_admin_menu)) {
+            $settings = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
+            $settings->adminMainMenu = $rule_admin_menu;
+            if ($settings->save() ) {
+                Yii::$app->session->setFlash('success', 'Данные обновлены!');
+            } else {
+                Yii::$app->session->setFlash('danger', THelper::t('something_went_wrong'));
+            }
+
+        }
+        //return hh($request['rule']['hideMenu']);
+        //return hh($rule_admin_menu);
+        return $this->redirect('/' . Yii::$app->language .'/business/setting/menu-control');
+        //return hh($request);
 
     }
 }

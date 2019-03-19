@@ -26,6 +26,7 @@ class Settings extends ActiveRecord
         return [
             '_id',
             'countries',
+            'adminMainMenu'
         ];
     }
 
