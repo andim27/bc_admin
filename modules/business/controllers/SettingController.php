@@ -961,8 +961,7 @@ class SettingController extends BaseController {
     }
     public function actionMenuControl()
     {
-        $user_name='main';
-        //$model = Users::find()->where(['_id'=> new ObjectID('573a0d76965dd0fb16f60bfe')])->one();
+        $user_name=$this->user->username;//'main';
         $model = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
         $items = Menu::getItems();
         return $this->render('_menu_control',[

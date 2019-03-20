@@ -52,10 +52,10 @@ $bg = 'bg-light';
                     <div class="col-md-2">
                         <label class="control-label switch-center"><?= THelper::t('rules_admin_display');?></label>
                         <label class="switch">
-                            <?php  if (isset($model->adminMainMenu->hideMenu)) { ?>
-                                <input value="<?=$subitem['key']?>" class="btnRulesShow" type="checkbox" name="rule[hideMenu][]" <?= (in_array($subitem['key'],(array)$model['adminMainMenu']["hideMenu"]) ? 'checked="checked"' : '')?>/>
+                            <?php  if (isset($model['adminMainMenu']["hideMenu"])) { ?>
+                                <input value="<?=$subitem['key']?>" class="btnRulesShow" type="checkbox" name="rule[hideMenu][]"   <?= ($subitem['key'] == 'sidebar_settings_menu') ? 'disabled' :'' ?>   <?= (in_array($subitem['key'],(array)$model['adminMainMenu']["hideMenu"]) ? 'checked="checked"' : '')?>/>
                             <?php } else { ?>
-                                <input value="<?=$subitem['key']?>" class="btnRulesShow" type="checkbox" name="rule[hideMenu][]" />
+                                <input value="<?=$subitem['key']?>" class="btnRulesShow" type="checkbox" name="rule[hideMenu][]"  />
                             <?php } ?>
                             <span></span>
                         </label>

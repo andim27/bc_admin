@@ -1,6 +1,9 @@
 <?php
     use yii\helpers\Html;
     use app\models\Users;
+    use app\models\Settings;
+    use MongoDB\BSON\ObjectID;
+    $can_main_menu = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
 ?>
 <aside class="bg-dark  lter b-r aside-md hidden-print hidden-xs" id="nav">
     <section class="vbox">
@@ -9,39 +12,53 @@
                 <nav class="nav-primary hidden-xs">
                     <ul class="nav">
                         <?php foreach ($items as $item) { ?>
-                            <?php if(Users::checkRule('showMenu',$item['key']) === true ){ ?>
-                            <li <?= (!empty($item['controller']) && $currentController == $item['controller']) ? $class_a : '' ?>>
-                                <?=Html::a(
-                                    (!empty($item['items']) ?
-                                    '<span class="pull-right">
+                            <?php
+                                  $can_show_item = true;
+                                  $can_show_item = @(!in_array($item['key'],(array)$can_main_menu['adminMainMenu']["hideMenu"]))
+                            ?>
+                            <?php
+                            if ($can_show_item == true) {
+                                if (Users::checkRule('showMenu', $item['key']) === true) { ?>
+                                    <li <?= (!empty($item['controller']) && $currentController == $item['controller']) ? $class_a : '' ?>>
+                                        <?= Html::a(
+                                            (!empty($item['items']) ?
+                                                '<span class="pull-right">
                                           <i class="fa fa-angle-down text"></i>
                                           <i class="fa fa-angle-up text-active"></i>
                                     </span>' : '') .
-                                    '<span>'. $item['label'].'</span>',
-                                    $item['url'], [
-                                        ((!empty($item['controller']) && $currentModule == $item['controller']) ? $class_a : '')
-                                    ]
-                                )?>
-                                <?php if(!empty($item['items'])){ ?>
-                                <ul class="nav lt">
-                                    <?php foreach ($item['items'] as $subitem) {?>
-                                        <?php if(Users::checkRule('showMenu', $subitem['key']) === true ){ ?>
-                                        <li <?=((!empty($subitem['action']) && $currentAction == $subitem['action']) ? $class_a : '')?> >
-                                        <?=Html::a(
-                                            '<b class="badge bg-info pull-right non_seen_promo"></b>
+                                            '<span>' . $item['label'] . '</span>',
+                                            $item['url'], [
+                                                ((!empty($item['controller']) && $currentModule == $item['controller']) ? $class_a : '')
+                                            ]
+                                        ) ?>
+                                        <?php if (!empty($item['items'])) { ?>
+                                            <ul class="nav lt">
+                                                <?php foreach ($item['items'] as $subitem) { ?>
+                                                    <?php
+                                                     $can_show_sub_item = true;
+                                                     $can_show_sub_item = @(!in_array($subitem['key'],(array)$can_main_menu['adminMainMenu']["hideMenu"]));
+                                                     if ($can_show_sub_item == true) {
+                                                         if (Users::checkRule('showMenu', $subitem['key']) === true) { ?>
+                                                             <li <?= ((!empty($subitem['action']) && $currentAction == $subitem['action']) ? $class_a : '') ?> >
+                                                                 <?= Html::a(
+                                                                     '<b class="badge bg-info pull-right non_seen_promo"></b>
                                             <i class="fa fa-angle-right"></i>
-                                            <span>'.$subitem['label'].'</span>',
-                                            $subitem['url'],
-                                            [
-                                                ((!empty($subitem['action']) && $currentAction == $subitem['action']) ? $class_a : '')
-                                            ])?>
-                                        </li>
+                                            <span>' . $subitem['label'] . '</span>',
+                                                                     $subitem['url'],
+                                                                     [
+                                                                         ((!empty($subitem['action']) && $currentAction == $subitem['action']) ? $class_a : '')
+                                                                     ]) ?>
+                                                             </li>
+                                                         <?php }
+                                                     }//--can_show_item
+                                                       ?>
+                                                <?php } ?>
+                                            </ul>
                                         <?php } ?>
-                                    <?php } ?>
-                                </ul>
-                                <?php } ?>
-                            </li>
-                            <?php } ?>
+                                    </li>
+                                <?php }
+                            }//--can_show_item
+                              ?>
                         <?php } ?>
 
                     </ul>
