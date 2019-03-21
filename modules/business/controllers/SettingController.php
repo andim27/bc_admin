@@ -132,7 +132,7 @@ class SettingController extends BaseController {
         }
 
         $countQuery = clone $translations;
-        $languages = api\dictionary\Lang::all();
+        $languages = api\dictionary\Lang::supported();
         $pages = new Pagination(['totalCount' => $countQuery->count()]);
 
         if (Yii::$app->request->isAjax) {
