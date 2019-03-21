@@ -980,16 +980,14 @@ class SettingController extends BaseController {
             $settings = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
             $settings->adminMainMenu = $rule_admin_menu;
             if ($settings->save() ) {
-                Yii::$app->session->setFlash('success', 'Данные обновлены!');
+                Yii::$app->cache->set('rule_admin_menu', $rule_admin_menu);
+                Yii::$app->session->setFlash('success',  THelper::t('data_updated'));
             } else {
                 Yii::$app->session->setFlash('danger', THelper::t('something_went_wrong'));
             }
 
         }
-        //return hh($request['rule']['hideMenu']);
-        //return hh($rule_admin_menu);
         return $this->redirect('/' . Yii::$app->language .'/business/setting/menu-control');
-        //return hh($request);
 
     }
 }

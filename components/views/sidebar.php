@@ -3,7 +3,13 @@
     use app\models\Users;
     use app\models\Settings;
     use MongoDB\BSON\ObjectID;
-    $can_main_menu = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
+    $rule_admin_menu = Yii::$app->cache->get('rule_admin_menu');
+    if ($rule_admin_menu == false) {
+        $can_main_menu = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
+    } else {
+        $can_main_menu['adminMainMenu'] = $rule_admin_menu;
+    }
+
 ?>
 <aside class="bg-dark  lter b-r aside-md hidden-print hidden-xs" id="nav">
     <section class="vbox">

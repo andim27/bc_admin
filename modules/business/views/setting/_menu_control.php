@@ -10,9 +10,6 @@ $bg = 'bg-light';
 <?php return; } ?>
 
 <?php if($items) {?>
-<pre>
-    <?=var_dump($model['adminMainMenu']["hideMenu"]) ?>
-</pre>
     <?php $formCom = ActiveForm::begin([
         'action' => '/' . $language . '/business/setting/menu-control-save',
         'options' => ['name' => 'menuControlSave'],
