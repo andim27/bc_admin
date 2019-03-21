@@ -959,6 +959,37 @@ class SettingController extends BaseController {
             'error'             =>  $error
         ]);
     }
+    public function actionMenuControl()
+    {
+        $user_name=$this->user->username;//'main';
+        $model = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
+        $items = Menu::getItems();
+        return $this->render('_menu_control',[
+            'items'    => $items,
+            'language' => Yii::$app->language,
+            'model'    => $model,
+            'user_name'=>$user_name
+        ]);
+
+    }
+    public function actionMenuControlSave()
+    {
+        $request = Yii::$app->request;
+        $rule_admin_menu = $request->post('rule');
+        if (isset($rule_admin_menu)) {
+            $settings = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
+            $settings->adminMainMenu = $rule_admin_menu;
+            if ($settings->save() ) {
+                Yii::$app->cache->set('rule_admin_menu', $rule_admin_menu);
+                Yii::$app->session->setFlash('success',  THelper::t('data_updated'));
+            } else {
+                Yii::$app->session->setFlash('danger', THelper::t('something_went_wrong'));
+            }
+
+        }
+        return $this->redirect('/' . Yii::$app->language .'/business/setting/menu-control');
+
+    }
 }
 
 function base64_to_jpeg($base64_string, $output_file) {
