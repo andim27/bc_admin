@@ -6,6 +6,7 @@ metadata:
     name: bpt-admin-__CI_ENVIRONMENT_SLUG__
     commit: __COMMIT__
     env: __CI_ENVIRONMENT_SLUG__
+    prometheus_custom_target: bpt-admin
   namespace: bpt
 spec:
   ports:
