@@ -986,6 +986,12 @@ class SettingController extends BaseController {
                 Yii::$app->session->setFlash('danger', THelper::t('something_went_wrong'));
             }
 
+        } else {
+            $rule_admin_menu = null;
+            $settings = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
+            $settings->adminMainMenu = $rule_admin_menu;
+            $settings->save();
+            Yii::$app->cache->set('rule_admin_menu', $rule_admin_menu);
         }
         return $this->redirect('/' . Yii::$app->language .'/business/setting/menu-control');
 
