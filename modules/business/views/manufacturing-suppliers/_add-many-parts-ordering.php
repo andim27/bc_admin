@@ -14,10 +14,11 @@ $listSuppliersPerformers=SuppliersPerformers::getListSuppliersPerformers();
 $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поставщика-испонителя'],$listSuppliersPerformers);
 
 $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite();
+$listPartsUnit = PartsAccessories::getListUnit();
 ?>
 <style>
     .popupPartsOrdering {
-        width: 60%;
+        width: 70%;
     }
     .m-top-20 {
         margin-top: 20px
@@ -33,6 +34,9 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
     }
     .m-bottom-25 {
         margin-bottom: 25px;
+    }
+    .p-right-2 {
+        padding-right: 2px;
     }
 </style>
 <div class="modal-dialog popupPartsOrdering">
@@ -53,7 +57,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
             <div class="blError"></div>
 
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-8">
                     <?=Html::label(THelper::t('sidebar_suppliers_performers'))?>
 
                     <?=Html::dropDownList('suppliers_performers_id',
@@ -98,7 +102,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
 
 
                 <div class="row m-bottom-25" id="part-item-0" style="display:none">
-                    <div class="col-md-5">
+                    <div class="col-md-3">
                         <h4 class="text-primary text-right  m-left-10">Название товара</h4>
                     </div>
                     <div class="col-md-2">
@@ -108,6 +112,17 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
                             'min'=>'1',
                             'step'=>'1',
                             'onchange'=>'calcNumberPrice();'
+                        ])?>
+                    </div>
+                    <div class="col-md-2">
+                        Ед.изм.
+                        <?=Html::dropDownList('unit',(!empty($model->unit) ? $model->unit : ''),$listPartsUnit,[
+                            'class'=>'form-control',
+                            'id'=>'selectChangeStatus',
+                            'required'=>'required',
+                            'options' => [
+                                '' => ['disabled' => true]
+                            ]
                         ])?>
                     </div>
                     <div class="col-md-2">
@@ -134,7 +149,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
                             'onchange'=>'calcNumberPrice();'
                         ])?>
                     </div>
-                     <div class="col-md-1">
+                     <div class="col-md-1 p-right-2">
                          <button  id="del-part-btn"  type="button" class="btn btn-default m-top-20" data-pos=1 onclick="delPart(this)"><span class="glyphicon glyphicon-minus-sign"></span> </button>
                      </div>
 
@@ -319,15 +334,17 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
         for (var i=1;i<=cnt;i++) {
             part_id       = $('#part-item-'+i).attr('data-part_id');
             part_number   = $('#part-item-'+i+' input[name="number"]').val();
+            part_unit     = $('#part-item-'+i+' select[name="unit"]').val();
             part_currency = $('#part-item-'+i+' select[name="currency"]').val();
             part_price    = $('#part-item-'+i+' input[name="price"]').val();
-            part_items.push({'part_id':part_id,'part_number':part_number,'part_currency':part_currency,'part_price':part_price});
+            part_items.push({'part_id':part_id,'part_number':part_number,'part_unit':part_unit,'part_currency':part_currency,'part_price':part_price});
         }
         return part_items;
     }
     function saveParts() {
         if (checkPartItems()==false) return;
         var part_items = pickItems();
+        console.log('part_items =',part_items);
         if (part_items.length <=1) {alertMessage('Ошибка: не выбраны товары');return;}
         var url="/<?=Yii::$app->language?>/business/manufacturing-suppliers/save-many-parts-ordering";
         $('#s_btn').attr('disabled',true);

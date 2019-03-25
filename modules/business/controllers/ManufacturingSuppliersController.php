@@ -789,6 +789,7 @@ class ManufacturingSuppliersController extends BaseController {
                     $model->number      = (int)$part_item['part_number'];
                     $model->price       = (double)$part_item['part_price'];
                     $model->currency    = $part_item['part_currency'];
+                    $model->unit        = $part_item['part_unit'];
                     $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);
                     $model->dateCreate  = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
                     $save_res = $model->save();
@@ -848,6 +849,7 @@ class ManufacturingSuppliersController extends BaseController {
                         $model->parts_accessories_id = new ObjectID($part_id);
                         $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
                         $model->number = (int)$request['number'];
+                        $model->unit   = (int)$request['unit'];
                         $model->price = (double)$request['price'];
                         $model->currency = $request['currency'];
                         $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);
