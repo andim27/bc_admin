@@ -692,18 +692,21 @@ class ShowroomsController extends BaseController
                     }
                 }
 
-                $data[] = [
-                    $columns[0] => $dateCreate,
-                    $columns[1] => $dateCloseSale,
-                    $columns[2] => $sale->infoUser->username,
-                    $columns[3] => $sale->infoUser->secondName . ' ' . $sale->infoUser->firstName,
-                    $columns[4] => $sale->infoUser->phoneNumber . '<br>' . $sale->infoUser->phoneNumber2,
-                    $columns[5] => '<span class="showroomName">' . $showroomName . '</span>' . ($btnChangeShowroom == 1 ? '<a href="javascript:void(0);" class="changeShowroom" data-sale-id="'.strval($sale->_id).'"><i class="fa fa-random"></i></a>' : ''),
-                    $columns[6] => $sale->productName,
-                    $columns[7] => $countSale,
-                    $columns[8] => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_WAITING)),
-                    $columns[9] => $accrual * $countSale
-                ];
+                if(!empty($sale->infoUser)){
+                    $data[] = [
+                        $columns[0] => $dateCreate,
+                        $columns[1] => $dateCloseSale,
+                        $columns[2] => $sale->infoUser->username,
+                        $columns[3] => $sale->infoUser->secondName . ' ' . $sale->infoUser->firstName,
+                        $columns[4] => $sale->infoUser->phoneNumber . '<br>' . $sale->infoUser->phoneNumber2,
+                        $columns[5] => '<span class="showroomName">' . $showroomName . '</span>' . ($btnChangeShowroom == 1 ? '<a href="javascript:void(0);" class="changeShowroom" data-sale-id="'.strval($sale->_id).'"><i class="fa fa-random"></i></a>' : ''),
+                        $columns[6] => $sale->productName,
+                        $columns[7] => $countSale,
+                        $columns[8] => Sales::getStatusShowroomValue((!empty($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_WAITING)),
+                        $columns[9] => $accrual * $countSale
+                    ];
+                }
+
             }
 
             return [
@@ -1495,24 +1498,26 @@ class ShowroomsController extends BaseController
                         }
                     }
 
-                    $salesShowroom[strval($sale->_id)] = [
-                        'saleId' => strval($sale->_id),
-                        'orderId' => $orderId,
-                        'showroomId' => $showroomIdSale,
-                        'pack' => $sale->productData['productName'],
-                        'countPack' => $sale->productData['count'],
-                        'dateCreate' => $dateCreate,
-                        'dateFinish' => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
-                        'login' => $sale->infoUser->username,
-                        'secondName' => $sale->infoUser->secondName,
-                        'firstName' => $sale->infoUser->firstName,
-                        'phone1' => $sale->infoUser->phoneNumber,
-                        'phone2' => $sale->infoUser->phoneNumber2,
-                        'statusShowroom' => Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
-                        'typeDelivery' => $typeDelivery,
-                        'dateDelivery' => $dateDelivery,
-                        'addressDelivery' => $addressDelivery,
-                    ];
+                    if(!empty($sale->infoUser)){
+                        $salesShowroom[strval($sale->_id)] = [
+                            'saleId' => strval($sale->_id),
+                            'orderId' => $orderId,
+                            'showroomId' => $showroomIdSale,
+                            'pack' => $sale->productData['productName'],
+                            'countPack' => $sale->productData['count'],
+                            'dateCreate' => $dateCreate,
+                            'dateFinish' => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
+                            'login' => $sale->infoUser->username,
+                            'secondName' => $sale->infoUser->secondName,
+                            'firstName' => $sale->infoUser->firstName,
+                            'phone1' => $sale->infoUser->phoneNumber,
+                            'phone2' => $sale->infoUser->phoneNumber2,
+                            'statusShowroom' => Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
+                            'typeDelivery' => $typeDelivery,
+                            'dateDelivery' => $dateDelivery,
+                            'addressDelivery' => $addressDelivery,
+                        ];
+                    }
                 }
 
             }
@@ -2087,6 +2092,119 @@ class ShowroomsController extends BaseController
             ]);
         }
     }
+
+
+    public function actionTemp()
+    {
+        $sales = Sales::find()
+            ->select(['_id'])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ]
+            ])
+            ->andWhere(
+                [
+                    '$or' => [
+                        [
+                            'dateCreate' => [
+                                '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
+                                '$lte' => new UTCDateTime(strtotime('2019-03-20 23:59:59') * 1000)
+                            ]
+                        ]
+                    ]
+                ]
+            )
+            ->with(['infoProduct'])
+            ->all();
+
+        $listPartsAccessoriesForSaLe = PartsAccessories::getListPartsAccessoriesForSaLe();
+
+        $modelTie = Products::find()
+            ->select(['_id','product_connect_to_natural'])
+            ->where(['product_connect_to_natural'=>[
+                '$nin' => [null,'false'],
+            ]])
+            ->all();
+        $listTie = [];
+        foreach ($modelTie as $item){
+            $listTie[strval($item->product_connect_to_natural)] = strval($item->_id);
+        }
+
+        $line = '';
+        $count = 0;
+        $countAll = 0;
+        $xz=[];
+        foreach ($sales as $sale) {
+            $statusSale = $sale->statusSale;
+
+            $setSales = $statusSale->setSales;
+
+            if(!empty($setSales)){
+//                $statusIssue = 0;
+//                foreach ($setSales as $itemSale) {
+//                    if($itemSale['status'] != 'status_sale_new') {
+//                        $statusIssue = 1;
+//                    }
+//                }
+//
+//                if($statusIssue){
+//                    $line .= strval($sale->_id) . ' - пересобрать<br/>';
+
+
+                $fl = 0;
+                foreach ($setSales as $k=>$itemSale) {
+                    if(!empty($itemSale['title']) && $itemSale['parts_accessories_id']===null){
+                        $parts_accessories_id = array_search($setSales[$k]['title'],$listPartsAccessoriesForSaLe);
+                        if(!empty($parts_accessories_id)){
+                            $fl = 1;
+                            $setSales[$k]['parts_accessories_id'] = new ObjectId($parts_accessories_id);
+                            $setSales[$k]['productId'] = new ObjectId($listTie[$parts_accessories_id]);
+                        }
+                    }
+                }
+
+                $countAll++;
+                if(!empty($fl)){
+                    $count++;
+//                    $xz[] = $setSales;
+//                    header('Content-Type: text/html; charset=utf-8');
+//                    echo '<xmp>';
+//                    print_r($setSales);
+//                    echo '</xmp>';
+//                    die();
+
+                    $statusSale->setSales = $setSales;
+
+                    if($statusSale->save()){
+
+                    }
+                }
+
+
+                $statusSale->setSales = $setSales;
+
+//                    if($statusSale->save()){
+//
+//                    }
+//                }
+            }
+
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r($countAll);
+        print_r('-');
+        print_r($count);
+        echo '</xmp>';
+        die();
+
+        echo $line;
+        die();
+
+    }
+
 
     private function getTurnoverAccruals($dateFrom,$dateTo,$showroomId = [])
     {
