@@ -41,6 +41,7 @@ build_dev:
     - docker pull bulich/php7lx
     - cp config/params.dev config/params.php
     - cp config/web.dev config/web.php
+    - docker pull bulich/php7lx:latest
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
     - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
     - docker push $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
@@ -61,6 +62,7 @@ build_stage:
     - docker info
     - cp config/params.prod config/params.php
     - cp config/web.prod config/web.php
+    - docker pull bulich/php7lx:latest
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
     - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
     - docker push $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
