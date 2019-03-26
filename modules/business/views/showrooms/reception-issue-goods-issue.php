@@ -503,7 +503,7 @@
         waiting : ['waiting','delivered','delegate_company'],
         delivering : ['delivering','delivered_company'],
         delivered : ['delivered'],
-        delegate_company : ['delegate_company','delivered_showroom'],
+        delegate_company : ['delegate_company','delivered'],
         sending_showroom : ['sending_showroom','delivered_company'],
         delivered_company : ['delivered_company'],
         issue_part : ['issue_part','delivered']
