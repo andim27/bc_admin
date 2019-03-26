@@ -109,13 +109,13 @@ $listPartsUnit = PartsAccessories::getListUnit();
                         Количество
                         <?=Html::input('number','number', (!empty($model->number) ? $model->number: '1'),[
                             'class'=>'form-control',
-                            'min'=>'1',
-                            'step'=>'1',
+                            'min'=>'0.1',
+                            'step'=>'0.1',
                             'onchange'=>'calcNumberPrice();'
                         ])?>
                     </div>
                     <div class="col-md-2">
-                        Ед.изм.
+                        Ед.изм. <span id="part-item-unit-0" class="text-color-green text-primary"></span>
                         <?=Html::dropDownList('unit',(!empty($model->unit) ? $model->unit : ''),$listPartsUnit,[
                             'class'=>'form-control',
                             'id'=>'selectChangeStatus',
@@ -242,6 +242,7 @@ $listPartsUnit = PartsAccessories::getListUnit();
         $('#part-totals').show();
         var cnt =  $('#part-items').children().length;
         p_items_cnt = cnt;
+        console.log('cnt='+cnt);
         if (cnt >= 1) {
             $('#part-item-0').clone().appendTo('#part-items');
 
@@ -254,6 +255,18 @@ $listPartsUnit = PartsAccessories::getListUnit();
             p_items_cnt =p_items_cnt+1;
         }
         calcNumberPrice();
+        $('#part-items  #part-item-unit-0').eq(cnt).html('???-'+cnt);
+        url="/<?=Yii::$app->language?>/business/manufacturing-suppliers/get-parts-info";
+        $.post(url,{
+            'parts_accessories_id':$('select[name="parts_accessories_id"]').val()
+        }).done(function(data){
+            if (data.success == true) {
+                $('#part-items  #part-item-unit-0').eq(cnt).html(data.mes);
+
+            } else {
+                $('#part-items  #part-item-unit-0').eq(cnt).html(' Error');
+            }
+        });
     }
     function delPart(el) {
         var cnt =  $('#part-items').children().length;
@@ -362,6 +375,7 @@ $listPartsUnit = PartsAccessories::getListUnit();
                 $('#s_btn').attr('disabled',false);
             }
         });
+
     }
 
 </script>
