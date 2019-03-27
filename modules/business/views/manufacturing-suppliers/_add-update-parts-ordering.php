@@ -14,6 +14,7 @@ $listSuppliersPerformers=SuppliersPerformers::getListSuppliersPerformers();
 $listSuppliersPerformers = ArrayHelper::merge([''=>'Выберите поставщика-испонителя'],$listSuppliersPerformers);
 
 $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite();
+$listPartsUnit = PartsAccessories::getListUnit();
 ?>
 
 <div class="modal-dialog popupPartsOrdering">
@@ -85,7 +86,7 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
             </div>
 
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     Количество
                     <?=Html::input('number','number', (!empty($model->number) ? $model->number: '1'),[
                         'class'=>'form-control',
@@ -93,7 +94,18 @@ $listGoodsWithComposite = PartsAccessories::getListPartsAccessoriesWithComposite
                         'step'=>'1',
                     ])?>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    Ед.изм.
+                    <?=Html::dropDownList('unit',(!empty($model->unit) ? $model->unit : ''),$listPartsUnit,[
+                        'class'=>'form-control',
+                        'id'=>'selectChangeStatus',
+                        'required'=>'required',
+                        'options' => [
+                            '' => ['disabled' => true]
+                        ]
+                    ])?>
+                </div>
+                <div class="col-md-2">
                     Валюта
                     <?=Html::dropDownList('currency',
                         (!empty((string)$model->currency) ? (string)$model->currency: ''),
