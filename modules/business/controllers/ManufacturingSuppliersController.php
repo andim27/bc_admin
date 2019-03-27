@@ -255,7 +255,7 @@ class ManufacturingSuppliersController extends BaseController {
             }
 
             $columns = [
-                'date_create', 'action', 'who_performed_action', 'number', 'money', 'comment'
+                'date_create', 'action', 'who_performed_action', 'number', 'manuf','money', 'comment'
             ];
             
             $model = LogWarehouse::find()
@@ -300,8 +300,14 @@ class ManufacturingSuppliersController extends BaseController {
                     $nestedData[$columns[1]] = THelper::t($item->action);
                     $nestedData[$columns[2]] = (!empty($item->adminInfo) ? $item->adminInfo->secondName . ' ' .$item->adminInfo->firstName : 'None');
                     $nestedData[$columns[3]] = $item->number;
-                    $nestedData[$columns[4]] = (!empty($item->money) ? $item->money . ' EUR' : '');
-                    $nestedData[$columns[5]] = $item->comment;
+                    if (!Empty($item->suppliers_performers_id)) {
+                        $s_p_title = @SuppliersPerformers::find(['_id'=>new ObjectID((string)$item->suppliers_performers_id)])->one()->title;
+                    } else {
+                        $s_p_title = '???';
+                    }
+                    $nestedData[$columns[4]] = $s_p_title;
+                    $nestedData[$columns[5]] = (!empty($item->money) ? $item->money . ' EUR' : '');
+                    $nestedData[$columns[6]] = $item->comment;
 
                     $data[] = $nestedData;
                 }

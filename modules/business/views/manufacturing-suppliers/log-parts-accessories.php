@@ -63,6 +63,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 <th>Кто проводил</th>
                 <th>Количество</th>
                 <th>Цена</th>
+                <th> <?=THelper::t('sidebar_suppliers_performers')?></th>
                 <th>Коментарий</th>
             </tr>
             </thead>
@@ -95,6 +96,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
             {"data": "who_performed_action"},
             {"data": "number"},
             {"data": "money"},
+            {"data": "manuf"},
             {"data": "comment"}
         ],
         "order": [[ 0, "desc" ]]
