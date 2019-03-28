@@ -100,6 +100,7 @@ $listPartsUnit = PartsAccessories::getListUnit();
                         'class'=>'form-control',
                         'id'=>'selectChangeStatus',
                         'required'=>'required',
+                        'disabled' => true,
                         'options' => [
                             '' => ['disabled' => true]
                         ]
