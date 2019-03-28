@@ -62,12 +62,12 @@ spec:
           mountPath: /var/www/html
         image: busybox
         command: ["tail", "-f", "/var/www/html/runtime/logs/app.log"]
-#        livenessProbe:
-#          httpGet:
-#            path: /
-#            port: 80
-#          initialDelaySeconds: 10
-#          periodSeconds: 10
+       livenessProbe:
+         httpGet:
+           path: /
+           port: 80
+         initialDelaySeconds: 15
+         periodSeconds: 15
       imagePullSecrets:
         - name: gitlab-registry
       volumes:
