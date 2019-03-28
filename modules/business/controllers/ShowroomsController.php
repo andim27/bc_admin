@@ -2109,7 +2109,7 @@ class ShowroomsController extends BaseController
                         [
                             'dateCreate' => [
                                 '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
-                                '$lte' => new UTCDateTime(strtotime('2019-03-20 23:59:59') * 1000)
+                                '$lte' => new UTCDateTime(strtotime('2019-04-01 23:59:59') * 1000)
                             ]
                         ]
                     ]
@@ -2131,33 +2131,19 @@ class ShowroomsController extends BaseController
             $listTie[strval($item->product_connect_to_natural)] = strval($item->_id);
         }
 
-        $line = '';
         $count = 0;
         $countAll = 0;
-        $xz=[];
         foreach ($sales as $sale) {
             $statusSale = $sale->statusSale;
-
             $setSales = $statusSale->setSales;
 
             if(!empty($setSales)){
-//                $statusIssue = 0;
-//                foreach ($setSales as $itemSale) {
-//                    if($itemSale['status'] != 'status_sale_new') {
-//                        $statusIssue = 1;
-//                    }
-//                }
-//
-//                if($statusIssue){
-//                    $line .= strval($sale->_id) . ' - пересобрать<br/>';
-
-
-                $fl = 0;
+                $fl = '-';
                 foreach ($setSales as $k=>$itemSale) {
                     if(!empty($itemSale['title']) && $itemSale['parts_accessories_id']===null){
                         $parts_accessories_id = array_search($setSales[$k]['title'],$listPartsAccessoriesForSaLe);
                         if(!empty($parts_accessories_id)){
-                            $fl = 1;
+                            $fl = '+';
                             $setSales[$k]['parts_accessories_id'] = new ObjectId($parts_accessories_id);
                             $setSales[$k]['productId'] = new ObjectId($listTie[$parts_accessories_id]);
                         }
@@ -2165,7 +2151,7 @@ class ShowroomsController extends BaseController
                 }
 
                 $countAll++;
-                if(!empty($fl)){
+                if($fl=='+'){
                     $count++;
 //                    $xz[] = $setSales;
 //                    header('Content-Type: text/html; charset=utf-8');
@@ -2180,16 +2166,7 @@ class ShowroomsController extends BaseController
 
                     }
                 }
-
-
-                $statusSale->setSales = $setSales;
-
-//                    if($statusSale->save()){
-//
-//                    }
-//                }
             }
-
         }
 
         header('Content-Type: text/html; charset=utf-8');
@@ -2200,8 +2177,6 @@ class ShowroomsController extends BaseController
         echo '</xmp>';
         die();
 
-        echo $line;
-        die();
 
     }
 

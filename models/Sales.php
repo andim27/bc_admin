@@ -84,7 +84,7 @@ class Sales extends ActiveRecord
     {
         $model = StatusSales::find()->where(['idSale' => $this->_id])->one();
 
-        if ($model === null) {
+        if (empty($model)) {
 
             $countPack = $this->productData['count'];
             if(empty($countPack)){
@@ -95,12 +95,12 @@ class Sales extends ActiveRecord
             $model->idSale = $this->_id;
 
             $arraySet = [];
+
             if(!empty($this->infoProduct['products'])){
-                foreach ($this->infoProduct['products']as $itemProductSet) {
+                foreach ($this->infoProduct['products'] as $itemProductSet) {
                     $infoProductSet = Products::findOne(['_id'=>$itemProductSet['_id']]);
 
                     if(!empty($infoProductSet->product_connect_to_natural) && $infoProductSet->product_connect_to_natural != 'false'){
-
                         for ($i = 1; $i <= ($itemProductSet['cnt'] * $countPack); $i++) {
                             $arraySet[] = [
                                 'productId'             =>  $itemProductSet['_id'],
@@ -112,8 +112,9 @@ class Sales extends ActiveRecord
                             ];
                         }
                     }
-
                 }
+
+
             } else if(!empty($this->infoProduct['product_connect_to_natural']) && $this->infoProduct['product_connect_to_natural'] != 'false'){
                 for ($i = 1; $i <= $countPack; $i++) {
                     $arraySet[] = [
@@ -127,11 +128,14 @@ class Sales extends ActiveRecord
                 }
             }
 
-            $model->setSales = $arraySet;
+            if(!empty($arraySet[0]['productId'])){
+                $model->setSales = $arraySet;
 
-            if($model->save()){
+                if($model->save()){
 
+                }
             }
+
         }
 
         return $model;

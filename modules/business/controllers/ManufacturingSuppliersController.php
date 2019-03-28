@@ -255,7 +255,7 @@ class ManufacturingSuppliersController extends BaseController {
             }
 
             $columns = [
-                'date_create', 'action', 'who_performed_action', 'number', 'money', 'comment'
+                'date_create', 'action', 'who_performed_action', 'number', 'manuf','money', 'comment'
             ];
             
             $model = LogWarehouse::find()
@@ -300,8 +300,14 @@ class ManufacturingSuppliersController extends BaseController {
                     $nestedData[$columns[1]] = THelper::t($item->action);
                     $nestedData[$columns[2]] = (!empty($item->adminInfo) ? $item->adminInfo->secondName . ' ' .$item->adminInfo->firstName : 'None');
                     $nestedData[$columns[3]] = $item->number;
-                    $nestedData[$columns[4]] = (!empty($item->money) ? $item->money . ' EUR' : '');
-                    $nestedData[$columns[5]] = $item->comment;
+                    if (!Empty($item->suppliers_performers_id)) {
+                        $s_p_title = @SuppliersPerformers::find(['_id'=>new ObjectID((string)$item->suppliers_performers_id)])->one()->title;
+                    } else {
+                        $s_p_title = '???';
+                    }
+                    $nestedData[$columns[4]] = $s_p_title;
+                    $nestedData[$columns[5]] = (!empty($item->money) ? $item->money . ' EUR' : '');
+                    $nestedData[$columns[6]] = $item->comment;
 
                     $data[] = $nestedData;
                 }
@@ -768,6 +774,21 @@ class ManufacturingSuppliersController extends BaseController {
         ]);
     }
 
+    public function actionGetPartsInfo()
+    {
+        $parts_accessories_id =  Yii::$app->request->post('parts_accessories_id');
+        if (!empty($parts_accessories_id)) {
+            try {
+                $mes = PartsAccessories::find(['_id'=>new ObjectID($parts_accessories_id)])->one()->unit;
+                $res = ["success"=>true,'mes'=>THelper::t($mes)];
+            } catch (\Exception $e) {
+                $res = ["success"=>true,'mes'=>' error'];
+            }
+        }
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        return $res;
+    }
+
     public function actionSaveManyPartsOrdering()
     {
         $request = Yii::$app->request->post();
@@ -786,9 +807,10 @@ class ManufacturingSuppliersController extends BaseController {
                     $model = new PartsOrdering();
                     $model->parts_accessories_id    = new ObjectID($part_item['part_id']);
                     $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
-                    $model->number      = (int)$part_item['part_number'];
+                    $model->number      = (float)$part_item['part_number'];
                     $model->price       = (double)$part_item['part_price'];
                     $model->currency    = $part_item['part_currency'];
+                    $model->unit        = $part_item['part_unit'];
                     $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);
                     $model->dateCreate  = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
                     $save_res = $model->save();
@@ -848,6 +870,7 @@ class ManufacturingSuppliersController extends BaseController {
                         $model->parts_accessories_id = new ObjectID($part_id);
                         $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
                         $model->number = (int)$request['number'];
+                        $model->unit   = $request['unit'];
                         $model->price = (double)$request['price'];
                         $model->currency = $request['currency'];
                         $model->dateReceipt = new UTCDatetime(strtotime($request['dateReceipt']) * 1000);

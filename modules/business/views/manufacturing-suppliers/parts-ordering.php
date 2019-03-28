@@ -35,6 +35,9 @@ use app\components\AlertWidget;
                         <?=THelper::t('count')?>
                     </th>
                     <th>
+                        <?=THelper::t('unit')?>
+                    </th>
+                    <th>
                         <?=THelper::t('curency')?>
                     </th>
                     <th>
@@ -58,6 +61,7 @@ use app\components\AlertWidget;
                         <td><?=$item->getSuppliersPerformers()->one()->title  ?? '?';?></td>
                         <td><?=$item->partsAccessories->title?></td>
                         <td><?=$item->number?></td>
+                        <td><?=$item->unit?></td>
                         <td><?=THelper::t($item->currency)?></td>
                         <td><?=round($item->price/$item->number,2)?></td>
                         <td><?=$item->price?></td>
