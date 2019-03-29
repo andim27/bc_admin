@@ -54,7 +54,7 @@ use app\models\CurrencyRate;
 
             <div class="row form-group">
                 <div class="col-md-12">
-                    <?=Html::dropDownList('PartsAccessories[unit]',(!empty($model->unit) ? $model->unit : ''),PartsAccessories::getListUnit(),[
+                    <?=Html::dropDownList('unit',(!empty($model->unit) ? $model->unit : ''),PartsAccessories::getListUnit(),[
                         'class'=>'form-control',
                         'id'=>'selectChangeStatus',
                         'required'=>'required',

@@ -31,6 +31,7 @@ class PartsOrdering extends \yii2tech\embedded\mongodb\ActiveRecord
             'number',
             'price',
             'currency',
+            'unit',
             'dateReceipt',
             'dateCreate'
         ];
