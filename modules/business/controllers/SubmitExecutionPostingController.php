@@ -2,18 +2,111 @@
 
 namespace app\modules\business\controllers;
 
+use app\components\THelper;
 use app\models\ExecutionPosting;
 use app\models\LogWarehouse;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
+use app\models\SuppliersPerformers;
 use app\models\Warehouse;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
 use app\controllers\BaseController;
+use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 class SubmitExecutionPostingController extends BaseController {
+
+
+    /**
+     * info Execution and Posting
+     * @return string
+     */
+    public function actionSendingExecution()
+    {
+        $request = Yii::$app->request->get();
+
+        // load data from sale
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $columns = [
+                'dateCreate','nameProduct','countProduct','whatMake','dateExecution','supplier',
+                'fullNameWhomTransferred','editBtn'
+            ];
+
+            $model = ExecutionPosting::find()
+                ->where([
+                    'received'  => 0,
+                    'posting'   => [
+                        '$ne'   => 1
+                    ]
+                ])
+                ->orderBy(['date_create'=>SORT_DESC]);
+
+            if (!empty($request['search']['value']) && $search = $request['search']['value']) {
+
+            }
+
+            $countQuery = clone $model;
+            $countQuery = $countQuery->count();
+
+            $pages = new Pagination(['totalCount' => $countQuery]);
+
+            $data = [];
+
+            $model = $model
+                ->offset($request['start'] ?: $pages->offset)
+                ->limit($request['length'] ?: $pages->limit);
+
+            $count = $model->count();
+
+            $listGoods = PartsAccessories::getListPartsAccessories();
+            $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
+
+            /** @var ExecutionPosting $item */
+            foreach ($model->all() as $key => $item){
+
+                if(!empty($item->list_component)) {
+                    foreach ($item->list_component as $k => $itemList) {
+                        $data[] = [
+                            $columns[0] => $item->date_create->toDateTime()->format('Y-m-d H:i:s'),
+                            $columns[1] => $listGoods[(string)$itemList['parts_accessories_id']],
+                            $columns[2] => ($itemList['number'] * $item->number) + $itemList['reserve'],
+                            $columns[3] => ($item->one_component == 1 ? THelper::t('component_replacement') : $listGoods[(string)$item->parts_accessories_id]),
+                            $columns[4] => (!empty($item->date_execution) ? $item->date_execution->toDateTime()->format('Y-m-d H:i:s') : ''),
+                            $columns[5] => $listSuppliers[(string)$item->suppliers_performers_id],
+                            $columns[6] => ((!empty($item->repair) && $item->repair==1) ? 'Ремонт' : $item->fullname_whom_transferred),
+                            $columns[7] => ((empty($item->repair) && $item->repair==0)
+                                ? Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/add-edit-sending-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal'])
+                                : '')
+                        ];
+                    }
+                }
+
+            }
+
+            return [
+                'draw' => $request['draw'],
+                'data' => $data,
+                'recordsTotal' => $count,
+                'recordsFiltered' => $count
+            ];
+
+
+        }
+        // load template
+        else {
+            return $this->render('sending-execution',[
+                'language' => Yii::$app->language,
+                'alert' => Yii::$app->session->getFlash('alert', '', true)
+            ]);
+
+        }
+
+    }
 
     /**
      * info Execution and Posting
@@ -21,13 +114,109 @@ class SubmitExecutionPostingController extends BaseController {
      */
     public function actionExecutionPosting()
     {
-        $model = ExecutionPosting::find()->all();
+        $request = Yii::$app->request->get();
 
-        return $this->render('execution-posting',[
-            'language' => Yii::$app->language,
-            'model' => $model,
-            'alert' => Yii::$app->session->getFlash('alert', '', true)
-        ]);
+        // load data from sale
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $columns = [
+                'dateCreate','whatMake','count','dateExecution','supplier','fullNameWhomTransferred','status'
+            ];
+
+            $model = ExecutionPosting::find()
+                ->orderBy(['date_create'=>SORT_DESC]);
+
+            if (!empty($request['search']['value']) && $search = $request['search']['value']) {
+
+            }
+
+            $countQuery = clone $model;
+            $countQuery = $countQuery->count();
+
+            $pages = new Pagination(['totalCount' => $countQuery]);
+
+            $data = [];
+
+            $model = $model
+                ->offset($request['start'] ?: $pages->offset)
+                ->limit($request['length'] ?: $pages->limit);
+
+            $count = $model->count();
+
+            $listGoods = PartsAccessories::getListPartsAccessories();
+            $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
+
+            /** @var ExecutionPosting $item */
+            foreach ($model->all() as $key => $item){
+
+                $status = '';
+                if(!empty($item->repair) && $item->repair == 1){
+                    if($item->posting != 1){
+                        $status = 'На ремонте' . ($item->number - $item->received) . ' ' . Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/posting-repair','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']);
+                    } else {
+                        if($item->number == $item->received) {
+                            $titleL = 'Отремонтировано';
+                            $classL = 'text-info';
+                        } else if ($item->received == 0) {
+                            $titleL = 'Расформировано';
+                            $classL = 'text-danger';
+                        } else {
+                            $titleL = 'Отремонтировано частично';
+                            $classL = 'text-warning';
+                        }
+
+                        $status = Html::a($titleL, ['/business/submit-execution-posting/look-posting-repair','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal','class'=>$classL]);
+                    }
+                } else {
+                    if($item->posting != 1){
+                        $status = 'Осталось' . ($item->number - $item->received) . ' ' . Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/posting-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal']);
+                    } else {
+                        if($item->number == $item->received) {
+                            $titleL = 'Выполнен';
+                            $classL = 'text-info';
+                        } else if ($item->received == 0) {
+                            $titleL = 'Расформировано';
+                            $classL = 'text-danger';
+                        } else {
+                            $titleL = 'Выполнен частично';
+                            $classL = 'text-warning';
+                        }
+                        $status = Html::a($titleL, ['/business/submit-execution-posting/look-posting-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal','class'=>$classL]);
+                    }
+                }
+
+
+                if(!empty($item->list_component)) {
+                    $data[] = [
+                        $columns[0] => $item->date_create->toDateTime()->format('Y-m-d H:i:s'),
+                        $columns[1] => $listGoods[(string)$item->parts_accessories_id],
+                        $columns[2] => $item->number,
+                        $columns[3] => (!empty($item->date_execution) ? $item->date_execution->toDateTime()->format('Y-m-d H:i:s') : ''),
+                        $columns[4] => $listSuppliers[(string)$item->suppliers_performers_id],
+                        $columns[5] => ((!empty($item->repair) && $item->repair==1) ? 'Ремонт' : $item->fullname_whom_transferred),
+                        $columns[6] => $status
+                    ];
+                }
+
+            }
+
+            return [
+                'draw' => $request['draw'],
+                'data' => $data,
+                'recordsTotal' => $count,
+                'recordsFiltered' => $count
+            ];
+
+
+        }
+        // load template
+        else {
+            return $this->render('execution-posting',[
+                'language' => Yii::$app->language,
+                'alert' => Yii::$app->session->getFlash('alert', '', true)
+            ]);
+        }
     }
 
     /**
@@ -117,13 +306,6 @@ class SubmitExecutionPostingController extends BaseController {
                     }
                 }
             }
-
-//            header('Content-Type: text/html; charset=utf-8');
-//            echo "<xmp>";
-//            print_r($list_component);
-//            echo "</xmp>";
-//            die();
-
 
             $model->list_component = $list_component;
 
@@ -220,7 +402,7 @@ class SubmitExecutionPostingController extends BaseController {
             
         }
 
-        return $this->redirect('/'.Yii::$app->language.'/business/submit-execution-posting/execution-posting');
+        return $this->redirect('/'.Yii::$app->language.'/business/submit-execution-posting/sending-execution');
     }
 
 
@@ -297,7 +479,7 @@ class SubmitExecutionPostingController extends BaseController {
 
 
         }
-        return $this->redirect('/'.Yii::$app->language.'/business/submit-execution-posting/execution-posting');
+        return $this->redirect('/'.Yii::$app->language.'/business/submit-execution-posting/sending-execution');
     }
 
 

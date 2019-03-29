@@ -1,12 +1,10 @@
 <?php
 use app\components\THelper;
-use app\models\PartsAccessories;
-use app\models\SuppliersPerformers;
 use app\components\AlertWidget;
 use yii\helpers\Html;
 
-$listGoods = PartsAccessories::getListPartsAccessories();
-$listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
+
+
 
 ?>
     <div class="m-b-md">
@@ -22,13 +20,13 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
             <section class="panel panel-default">
                 <header class="panel-heading bg-light">
                     <ul class="nav nav-tabs nav-justified">
-                        <li class="">
-                            <a href="/ru/business/submit-execution-posting/sending-execution" class="tab-sending-execution">
+                        <li class="active">
+                            <a href="javascript:void(0);" class="tab-sending-execution">
                                 <?= THelper::t('sending_for_execution') ?>
                             </a>
                         </li>
-                        <li class="active">
-                            <a href="javascript:void(0);" class="tab-posting-executed">
+                        <li class="">
+                            <a href="/ru/business/submit-execution-posting/execution-posting" class="tab-posting-executed">
                                 <?= THelper::t('posting_executed') ?>
                             </a>
                         </li>
@@ -36,19 +34,47 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 </header>
                 <div class="panel-body">
                     <div class="tab-content">
-                        <div class="tab-pane active" id="by-posting-executed">
+                        <div class="tab-pane active" id="by-sending-execution">
+                            <div class="row">
+                                <div class="col-md-offset-6 col-md-3 form-group">
+                                    <?=Html::a('<i class="fa fa-wrench"></i>',[
+                                        '/business/submit-execution-posting/add-edit-sending-repair'
+                                    ],[
+                                        'class'=>'btn btn-default btn-block',
+                                        'data-toggle'=>'ajaxModal',
+                                        'title'=>'Отправить на ремонт'
+                                    ]);?>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                    <?=Html::a('<i class="fa fa-plus"></i>',[
+                                        '/business/submit-execution-posting/add-edit-sending-execution'
+                                    ],[
+                                        'class'=>'btn btn-default btn-block',
+                                        'data-toggle'=>'ajaxModal',
+                                        'title'=>'Отправить на исполнение'
+                                    ])?>
+                                </div>
+                            </div>
+
                             <section class="panel panel-default">
                                 <div class="table-responsive">
                                     <table class="table table-translations table-striped datagrid m-b-sm">
                                         <thead>
                                         <tr>
                                             <th>Дата добавдения</th>
-                                            <th>Что собираем</th>
-                                            <th><?=THelper::t('count')?></th>
+                                            <th>
+                                                <?=THelper::t('name_product')?>
+                                            </th>
+                                            <th>
+                                                <?=THelper::t('count')?>
+                                            </th>
+                                            <th>
+                                                Что собираем
+                                            </th>
                                             <th>Дата прихода</th>
                                             <th>Кто собирает</th>
                                             <th>Кому переданно</th>
-                                            <th>Статус</th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -72,16 +98,17 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
             "processing": true,
             "serverSide": true,
             "ajax": {
-                url: '/ru/business/submit-execution-posting/execution-posting',
+                url: '/ru/business/submit-execution-posting/sending-execution',
             },
             "columns": [
                 {"data": "dateCreate"},
+                {"data": "nameProduct"},
+                {"data": "countProduct"},
                 {"data": "whatMake"},
-                {"data": "count"},
                 {"data": "dateExecution"},
                 {"data": "supplier"},
                 {"data": "fullNameWhomTransferred"},
-                {"data": "status"}
+                {"data": "editBtn"}
             ],
             "order": [[ 0, "desc" ]]
         });

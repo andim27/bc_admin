@@ -533,8 +533,8 @@ Class Menu
                     [
                         'key'   =>  'sidebar_execution_posting',
                         'label' => THelper::t('sidebar_execution_posting'),
-                        'url' => ['submit-execution-posting/execution-posting'],
-                        'action' => 'execution-posting',
+                        'url' => ['submit-execution-posting/sending-execution'],
+                        'action' => 'sending-execution',
                     ],
                     [
                         'key'   =>  'sidebar_history_cancellation_posting',
