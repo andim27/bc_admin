@@ -2094,91 +2094,91 @@ class ShowroomsController extends BaseController
     }
 
 
-    public function actionTemp()
-    {
-        $sales = Sales::find()
-            ->select(['_id'])
-            ->andWhere([
-                'type' => [
-                    '$ne'   =>  -1
-                ]
-            ])
-            ->andWhere(
-                [
-                    '$or' => [
-                        [
-                            'dateCreate' => [
-                                '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
-                                '$lte' => new UTCDateTime(strtotime('2019-04-01 23:59:59') * 1000)
-                            ]
-                        ]
-                    ]
-                ]
-            )
-            ->with(['infoProduct'])
-            ->all();
-
-        $listPartsAccessoriesForSaLe = PartsAccessories::getListPartsAccessoriesForSaLe();
-
-        $modelTie = Products::find()
-            ->select(['_id','product_connect_to_natural'])
-            ->where(['product_connect_to_natural'=>[
-                '$nin' => [null,'false'],
-            ]])
-            ->all();
-        $listTie = [];
-        foreach ($modelTie as $item){
-            $listTie[strval($item->product_connect_to_natural)] = strval($item->_id);
-        }
-
-        $count = 0;
-        $countAll = 0;
-        foreach ($sales as $sale) {
-            $statusSale = $sale->statusSale;
-            $setSales = $statusSale->setSales;
-
-            if(!empty($setSales)){
-                $fl = '-';
-                foreach ($setSales as $k=>$itemSale) {
-                    if(!empty($itemSale['title']) && $itemSale['parts_accessories_id']===null){
-                        $parts_accessories_id = array_search($setSales[$k]['title'],$listPartsAccessoriesForSaLe);
-                        if(!empty($parts_accessories_id)){
-                            $fl = '+';
-                            $setSales[$k]['parts_accessories_id'] = new ObjectId($parts_accessories_id);
-                            $setSales[$k]['productId'] = new ObjectId($listTie[$parts_accessories_id]);
-                        }
-                    }
-                }
-
-                $countAll++;
-                if($fl=='+'){
-                    $count++;
-//                    $xz[] = $setSales;
-//                    header('Content-Type: text/html; charset=utf-8');
-//                    echo '<xmp>';
-//                    print_r($setSales);
-//                    echo '</xmp>';
-//                    die();
-
-                    $statusSale->setSales = $setSales;
-
-                    if($statusSale->save()){
-
-                    }
-                }
-            }
-        }
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo '<xmp>';
-        print_r($countAll);
-        print_r('-');
-        print_r($count);
-        echo '</xmp>';
-        die();
-
-
-    }
+//    public function actionTemp()
+//    {
+//        $sales = Sales::find()
+//            ->select(['_id','product'])
+//            ->andWhere([
+//                'type' => [
+//                    '$ne'   =>  -1
+//                ]
+//            ])
+//            ->andWhere(
+//                [
+//                    '$or' => [
+//                        [
+//                            'dateCreate' => [
+//                                '$gte' => new UTCDateTime(strtotime('2019-01-01 00:00:00') * 1000),
+//                                '$lte' => new UTCDateTime(strtotime('2019-04-01 23:59:59') * 1000)
+//                            ]
+//                        ]
+//                    ]
+//                ]
+//            )
+//            ->with(['infoProduct'])
+//            ->all();
+//
+//        $listPartsAccessoriesForSaLe = PartsAccessories::getListPartsAccessoriesForSaLe();
+//
+//        $modelTie = Products::find()
+//            ->select(['_id','product_connect_to_natural'])
+//            ->where(['product_connect_to_natural'=>[
+//                '$nin' => [null,'false'],
+//            ]])
+//            ->all();
+//        $listTie = [];
+//        foreach ($modelTie as $item){
+//            $listTie[strval($item->product_connect_to_natural)] = strval($item->_id);
+//        }
+//
+//        $count = 0;
+//        $countAll = 0;
+//        foreach ($sales as $sale) {
+//            $statusSale = $sale->statusSale;
+//            $setSales = $statusSale->setSales;
+//
+//            if(!empty($setSales)){
+//                $fl = '-';
+//                foreach ($setSales as $k=>$itemSale) {
+//                    if(!empty($itemSale['title']) && $itemSale['parts_accessories_id']===null){
+//                        $parts_accessories_id = array_search($setSales[$k]['title'],$listPartsAccessoriesForSaLe);
+//                        if(!empty($parts_accessories_id)){
+//                            $fl = '+';
+//                            $setSales[$k]['parts_accessories_id'] = new ObjectId($parts_accessories_id);
+//                            $setSales[$k]['productId'] = new ObjectId($listTie[$parts_accessories_id]);
+//                        }
+//                    }
+//                }
+//
+//                $countAll++;
+//                if($fl=='+'){
+//                    $count++;
+////                    $xz[] = $setSales;
+////                    header('Content-Type: text/html; charset=utf-8');
+////                    echo '<xmp>';
+////                    print_r($setSales);
+////                    echo '</xmp>';
+////                    die();
+//
+//                    $statusSale->setSales = $setSales;
+//
+//                    if($statusSale->save()){
+//
+//                    }
+//                }
+//            }
+//        }
+//
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo '<xmp>';
+//        print_r($countAll);
+//        print_r('-');
+//        print_r($count);
+//        echo '</xmp>';
+//        die();
+//
+//
+//    }
 
 
     private function getTurnoverAccruals($dateFrom,$dateTo,$showroomId = [])
