@@ -1259,7 +1259,9 @@ class UserController extends BaseController
 
                 return ActiveForm::validate($model);
             }
-
+            if (empty($comment)) {
+                Yii::$app->session->setFlash('danger', THelper::t('write_you_comment').'?');
+            }
             if (compareShortPin($model->pin) ) {
                 $product = Products::findOne(['product' => (integer)$defaultProduct]);
                 $pin = api\Pin::createPinForProduct($product ? $product->idInMarket : null, $model->quantity, $this->user->id);
@@ -1324,11 +1326,11 @@ class UserController extends BaseController
                     }
                     if (empty($comment)) {
                         Yii::$app->session->setFlash('danger', THelper::t('write_you_comment').'?');
-                    } else {
-                        if ($modelPin->save()){
-                            Yii::$app->session->setFlash('success', 'Сохранено '.$mes);
-                        }
                     }
+                    if ($modelPin->save()){
+                        Yii::$app->session->setFlash('success', 'Сохранено '.$mes);
+                    }
+
 
                 }
             }
