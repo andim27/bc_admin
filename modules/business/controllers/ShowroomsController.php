@@ -2129,6 +2129,8 @@ class ShowroomsController extends BaseController
         $infoDateTo = explode("-",$filter['dateTo']);
         $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
 
+        $listPartsAccessoriesForSaLe = PartsAccessories::getListPartsAccessoriesForSaLe();
+
         $modelSales = Sales::find()
             ->where([
                 'type' => [
@@ -2151,17 +2153,19 @@ class ShowroomsController extends BaseController
                 if(!empty($setSales)){
                     foreach ($setSales as $k=>$itemSale) {
 
-                        if(empty($infoSale[$itemSale['title']])){
-                            $infoSale[$itemSale['title']] = [
+                        $title = $listPartsAccessoriesForSaLe[strval($itemSale['parts_accessories_id'])];
+
+                        if(empty($infoSale[$title])){
+                            $infoSale[$title] = [
                                 'orderCount' => 0,
                                 'issueCount' => 0
                             ];
                         }
 
-                        $infoSale[$itemSale['title']]['orderCount']++;
+                        $infoSale[$title]['orderCount']++;
 
                         if (!empty($itemSale['status']) && $itemSale['status'] == 'status_sale_issued'){
-                            $infoSale[$itemSale['title']]['issueCount']++;
+                            $infoSale[$title]['issueCount']++;
                         }
 
                     }
