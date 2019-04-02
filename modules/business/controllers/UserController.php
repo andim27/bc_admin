@@ -1419,11 +1419,30 @@ class UserController extends BaseController
     public function actionBalanceCancel($id)
     {
         $res = ['success' => true, 'mes' => 'done'];
-        $rec = PreUp::findOne(['_id'=>new ObjectID((string)$id)]);
-        if ($rec) {
-            $rec->status = 'cancel';
-            $rec->save();
+        try {
+            $rec = PreUp::findOne(['_id'=>new ObjectID((string)$id)]);
+            if ($rec) {
+                $rec->status = 'cancel';
+                $rec->save();
+                //--return loan--
+                $kind = $rec->kind;
+                if ($kind == 'loan') {
+                    $pin = $rec->pin;
+                    $pin_rec = Pins::find()->where(['pin' => $pin])->one();
+                    if ($pin_rec->kind =='loan') {
+                        $pin_rec->isDelete   = true;
+                        $pin_rec->isActivate = false;
+                        $pin_rec->loan       = false;
+                        $pin_rec->kind ='loan:cancel:'.date('Y-m-d H:i');
+                        $pin_rec->save();
+                        $res['mes'] = 'Loan set back';
+                    }
+                }
+            }
+        } catch (\Exception $err) {
+            $res = ['success' => false, 'mes' => 'ERROR:'.$err->getMessage().' line:'.$err->getLine()];
         }
+
         return $res;
     }
     public function actionBalanceApply($id)
@@ -1478,7 +1497,7 @@ class UserController extends BaseController
         if ($action == 'cancel') {
             $status_html_cancel = '<span class="glyphicon glyphicon-remove" title="cancel"></span>';
             $res_balance = self::actionBalanceCancel($id);
-            $res = ['success'=>true,'mes'=>'done','status_html'=>'done','id'=>$id,'status_html' => $status_html_cancel,'action'=>$action];
+            $res = ['success'=>$res_balance['success'],'mes'=>$res_balance['mes'],'status_html'=>'done','id'=>$id,'status_html' => $status_html_cancel,'action'=>$action];
 
         }
         if ($action == 'done') {
