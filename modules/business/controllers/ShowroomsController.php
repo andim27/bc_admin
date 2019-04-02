@@ -2094,6 +2094,89 @@ class ShowroomsController extends BaseController
     }
 
 
+    /**
+     * statistic
+     */
+    public function actionStatisticSale()
+    {
+        $request = Yii::$app->request->get();
+
+        $filter = $infoSale = [];
+
+        $showroomId = Showrooms::getIdMyShowroom();
+
+        if(empty($showroomId) && $this->user->username != 'main'){
+            return $this->render('not-showroom');
+        }
+
+        $listShowroomsForSelect = api\Showrooms::getListForFilter();
+        if($this->user->username != 'main'){
+            $filter['showroomId'] = strval($showroomId);
+            $listShowroomsForSelect = [
+                $filter['showroomId'] => $listShowroomsForSelect[$filter['showroomId']]
+            ];
+        } else{
+            $filter['showroomId'] = false;
+        }
+
+
+        if(!empty($request['showroomId'])){
+            $filter['showroomId'] = $request['showroomId'];
+        }
+
+        $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : date('Y-m'));
+        $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
+        $infoDateTo = explode("-",$filter['dateTo']);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+
+        $modelSales = Sales::find()
+            ->where([
+                'type' => [
+                    '$ne'   =>  -1
+                ],
+                'productData.productNatural' => 1,
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'].'-'.$countDay.' 23:59:59') * 1000)
+                ]
+            ])
+            ->andFilterWhere((!empty($filter['showroomId']) ? ['showroomId'=>new ObjectId($filter['showroomId'])] : []))
+            ->all();
+        if(!empty($modelSales)){
+            /** @var Sales $sale */
+            foreach ($modelSales as $sale) {
+                $statusSale = $sale->statusSale;
+                $setSales = $statusSale->setSales;
+
+                if(!empty($setSales)){
+                    foreach ($setSales as $k=>$itemSale) {
+
+                        if(empty($infoSale[$itemSale['title']])){
+                            $infoSale[$itemSale['title']] = [
+                                'orderCount' => 0,
+                                'issueCount' => 0
+                            ];
+                        }
+
+                        $infoSale[$itemSale['title']]['orderCount']++;
+
+                        if (!empty($itemSale['status']) && $itemSale['status'] == 'status_sale_issued'){
+                            $infoSale[$itemSale['title']]['issueCount']++;
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+        return $this->render('statistic-sale',[
+            'filter' => $filter,
+            'listShowroomsForSelect' => $listShowroomsForSelect,
+            'infoSale' => $infoSale
+        ]);
+    }
+
 //    public function actionTemp()
 //    {
 //        $sales = Sales::find()

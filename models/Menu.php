@@ -675,6 +675,12 @@ Class Menu
                         'label' => THelper::t('showrooms_orders'),
                         'url' => ['showrooms/orders-company'],
                         'action' => 'orders-company',
+                    ],
+                    [
+                        'key'   =>  'statistic_sale',
+                        'label' => THelper::t('statistic_sale'),
+                        'url' => ['showrooms/statistic-sale'],
+                        'action' => 'statistic-sale',
                     ]
                 ]
             ]
