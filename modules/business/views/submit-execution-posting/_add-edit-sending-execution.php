@@ -51,6 +51,12 @@ if(!empty($model)){
                     <?=Html::checkbox('',(!empty($model->one_component) ?  true : false ),['class'=>'flOneComponent'])?>
                 </div>
             </div>
+            <div class="form-group row">
+                <div class="col-md-offset-8 col-md-3 text-right"><?=THelper::t('non_complect')?></div>
+                <div class="col-md-1">
+                    <?=Html::checkbox('non-complect', false ,['id'=>'non-complect'])?>
+                </div>
+            </div>
             <?php } ?>
 
             <!--kit product-->
@@ -393,9 +399,17 @@ if(!empty($model)){
             }
         }
         $('.assemblyBtn').hide();
+        if (document.getElementById('non-complect').checked) {
+            $('.assemblyBtn').show();
+        }
+
         return true;
     }
-
+    $('#non-complect').on('change',function(){
+        if (document.getElementById('non-complect').checked) {
+            $('.assemblyBtn').show();
+        }
+    });
 
     $('.blPartsAccessories').on('change','.partNeedReserve',function(){
         bl = $(this).closest('.row');

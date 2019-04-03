@@ -33,7 +33,7 @@ class SubmitExecutionPostingController extends BaseController {
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
             $columns = [
-                'dateCreate','nameProduct','countProduct','whatMake','dateExecution','supplier',
+                'acticleId','dateCreate','nameProduct','countProduct','whatMake','dateExecution','supplier',
                 'fullNameWhomTransferred','editBtn'
             ];
 
@@ -72,14 +72,15 @@ class SubmitExecutionPostingController extends BaseController {
                 if(!empty($item->list_component)) {
                     foreach ($item->list_component as $k => $itemList) {
                         $data[] = [
-                            $columns[0] => $item->date_create->toDateTime()->format('Y-m-d H:i:s'),
-                            $columns[1] => $listGoods[(string)$itemList['parts_accessories_id']],
-                            $columns[2] => ($itemList['number'] * $item->number) + $itemList['reserve'],
-                            $columns[3] => ($item->one_component == 1 ? THelper::t('component_replacement') : $listGoods[(string)$item->parts_accessories_id]),
-                            $columns[4] => (!empty($item->date_execution) ? $item->date_execution->toDateTime()->format('Y-m-d H:i:s') : ''),
-                            $columns[5] => $listSuppliers[(string)$item->suppliers_performers_id],
-                            $columns[6] => ((!empty($item->repair) && $item->repair==1) ? 'Ремонт' : $item->fullname_whom_transferred),
-                            $columns[7] => ((empty($item->repair) && $item->repair==0)
+                            $columns[0] => $item->article_id,
+                            $columns[1] => $item->date_create->toDateTime()->format('Y-m-d H:i:s'),
+                            $columns[2] => $listGoods[(string)$itemList['parts_accessories_id']],
+                            $columns[3] => ($itemList['number'] * $item->number) + $itemList['reserve'],
+                            $columns[4] => ($item->one_component == 1 ? THelper::t('component_replacement') : $listGoods[(string)$item->parts_accessories_id]),
+                            $columns[5] => (!empty($item->date_execution) ? $item->date_execution->toDateTime()->format('Y-m-d H:i:s') : ''),
+                            $columns[6] => $listSuppliers[(string)$item->suppliers_performers_id],
+                            $columns[7] => ((!empty($item->repair) && $item->repair==1) ? 'Ремонт' : $item->fullname_whom_transferred),
+                            $columns[8] => ((empty($item->repair) && $item->repair==0)
                                 ? Html::a('<i class="fa fa-edit"></i>', ['/business/submit-execution-posting/add-edit-sending-execution','id'=>$item->_id->__toString()], ['data-toggle'=>'ajaxModal'])
                                 : '')
                         ];
@@ -272,7 +273,12 @@ class SubmitExecutionPostingController extends BaseController {
             } else {
                 $model = new ExecutionPosting();
             }
-
+            //if (isset($model->article_id)) {
+            $model->article_id =(@ExecutionPosting::find()->max('article_id'))+1;// inc('acticle_id')
+            //$model->article_id=2;
+            //} else {
+             //   $model->article_id =1;
+            //}
             $model->one_component = (int)(!empty($request['one_component']) ? '1' : '0');
             $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
             $model->number = (int)$request['want_number'];
@@ -425,6 +431,9 @@ class SubmitExecutionPostingController extends BaseController {
                 $this->Cancellation($model);
             } else {
                 $model = new ExecutionPosting();
+            }
+            if(empty($request['_id'])){
+                $model->article_id =( ExecutionPosting::find()->max('article_id'))+1;
             }
 
             $model->one_component = (int)(!empty($request['one_component']) ? '1' : '0');

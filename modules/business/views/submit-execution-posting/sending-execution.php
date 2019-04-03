@@ -30,6 +30,11 @@ use yii\helpers\Html;
                                 <?= THelper::t('posting_executed') ?>
                             </a>
                         </li>
+                        <li class="">
+                            <a href="/ru/business/submit-execution-posting/execution-posting-non-complect" class="tab-posting-executed">
+                                <?= THelper::t('non_complect') ?>
+                            </a>
+                        </li>
                     </ul>
                 </header>
                 <div class="panel-body">
@@ -61,6 +66,7 @@ use yii\helpers\Html;
                                     <table class="table table-translations table-striped datagrid m-b-sm">
                                         <thead>
                                         <tr>
+                                            <th><?=THelper::t('article')?></th>
                                             <th>Дата добавдения</th>
                                             <th>
                                                 <?=THelper::t('name_product')?>
@@ -101,6 +107,7 @@ use yii\helpers\Html;
                 url: '/ru/business/submit-execution-posting/sending-execution',
             },
             "columns": [
+                {"data": "acticleId"},
                 {"data": "dateCreate"},
                 {"data": "nameProduct"},
                 {"data": "countProduct"},
