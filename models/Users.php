@@ -91,8 +91,9 @@ class Users extends ActiveRecord
         $fl = false;
 
         $rules = self::$userMenuRules;
-        if(!empty($rules)){
+        if(empty($rules)){
             $rules = self::getRulesUser();
+            self::$userMenuRules = $rules;
         }
 
         if(!empty($rules->{$rule}) && in_array($key,$rules->{$rule})){
