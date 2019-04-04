@@ -2105,7 +2105,7 @@ class ShowroomsController extends BaseController
 
         $showroomId = Showrooms::getIdMyShowroom();
 
-        if(empty($showroomId) && $this->user->username != 'main'){
+        if(empty($showroomId) && !in_array($this->user->username,['main','mafdaf22'])){
             return $this->render('not-showroom');
         }
 
@@ -2179,6 +2179,11 @@ class ShowroomsController extends BaseController
             'listShowroomsForSelect' => $listShowroomsForSelect,
             'infoSale' => $infoSale
         ]);
+    }
+
+    public function actionTest()
+    {
+
     }
 
 //    public function actionTemp()
