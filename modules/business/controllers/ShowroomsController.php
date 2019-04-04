@@ -17,6 +17,7 @@ use app\modules\business\models\ShowroomsEmailsForm;
 use app\modules\business\models\ShowroomsOpeningConditionsForm;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
+use yii\data\ArrayDataProvider;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 use app\controllers\BaseController;
@@ -2190,7 +2191,155 @@ class ShowroomsController extends BaseController
 
     public function actionTest()
     {
-        return $this->render('test',[]);
+        $request = Yii::$app->request->get();
+
+        $filter = [];
+        $filter['dateFrom'] = (!empty($request['dateFrom']) ? $request['dateFrom'] : '2019-01');
+        $filter['dateTo'] = (!empty($request['dateTo']) ? $request['dateTo'] : date('Y-m'));
+
+        $infoDateTo = explode("-",$filter['dateTo']);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+
+        $showroomId = Showrooms::getIdMyShowroom();
+
+        if(empty($showroomId)){
+            return $this->render('not-showroom');
+        }
+
+        $sales = Sales::find()
+            ->where(['showroomId'=>$showroomId])
+            ->andWhere([
+                'type' => [
+                    '$ne'   =>  -1
+                ],
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
+                    '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
+                ],
+                'productData.paymentsToRepresentive' => [
+                    '$nin'   =>  [0,null]
+                ],
+                'productData.paymentsToStock' => [
+                    '$nin'   =>  [0,null]
+                ]
+            ])
+            ->with(['infoUser'])
+            ->orderBy(['dateCreate'=>SORT_DESC]);
+
+//        if (!empty($request['search']['value']) && $search = $request['search']['value']) {
+//            $model->andFilterWhere(['or',
+//                ['like', 'username', $search]
+//            ]);
+//        }
+
+        $countQuery = clone $sales;
+        $countQuery = $countQuery->count();
+
+        $pages = new Pagination(['totalCount' => $countQuery,'pageSize' => 10]);
+
+        $sales = $sales
+            ->offset($pages->offset)
+            ->limit($pages->limit);
+
+        $data = [];
+        if(!empty($sales)){
+            /** @var Sales $sale */
+            foreach ($sales->all() as $key => $sale){
+
+                    $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+
+                    $orderId = '';
+                    if (!empty($sale->orderId)) {
+                        $orderId = strval($sale->orderId);
+                    }
+
+                    $showroomIdSale = '';
+                    if (!empty($sale->showroomId)) {
+                        $showroomIdSale = strval($sale->showroomId);
+                    }
+
+                    $dateDelivery = $typeDelivery = $addressDelivery = '';
+                    if(!empty($sale->delivery)){
+                        $typeDelivery = $sale->delivery['type'];
+
+                        if($typeDelivery == 'showroom'){
+                            $addressDelivery = 'Шоу-рум: ' . $sale->showroom->address;
+                        } else if($typeDelivery == 'courier'){
+                            $addressDelivery = 'Курьер: ' . $sale->delivery['address'];
+                        }
+
+                        if (!empty($sale->delivery['params']['day'])) {
+                            $dateDelivery = $sale->delivery['params']['day'] . ' дней';
+                        }
+                    }
+
+                    if(!empty($sale->infoUser)){
+
+                        $data[] = [
+                            'saleId'            =>  strval($sale->_id),
+                            'dateCreate'        =>  $dateCreate,
+                            'login'             =>  $sale->infoUser->username,
+                            'fullName'          =>  $sale->infoUser->secondName . '<br>' . $sale->infoUser->firstName,
+                            'phones'            =>  $sale->infoUser->phoneNumber .'<br>' . $sale->infoUser->phoneNumber2,
+                            'productName'       =>  $sale->productData['productName'],
+                            'productNumber'     =>  $sale->productData['count'],
+                            'dateClose'         =>  (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
+                            'status'            =>  Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
+                            'timeDelivery'      =>  $dateDelivery,
+                            'addressDelivery'   =>  $addressDelivery
+                        ];
+
+//                        $salesShowroom[strval($sale->_id)] = [
+//                            'saleId' => strval($sale->_id),
+//                            'orderId' => $orderId,
+//                            'showroomId' => $showroomIdSale,
+//                            'pack' => $sale->productData['productName'],
+//                            'countPack' => $sale->productData['count'],
+//                            'dateCreate' => $dateCreate,
+//                            'dateFinish' => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
+//                            'login' => $sale->infoUser->username,
+//                            'secondName' => $sale->infoUser->secondName,
+//                            'firstName' => $sale->infoUser->firstName,
+//                            'phone1' => $sale->infoUser->phoneNumber,
+//                            'phone2' => $sale->infoUser->phoneNumber2,
+//                            'statusShowroom' => Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
+//                            'typeDelivery' => $typeDelivery,
+//                            'dateDelivery' => $dateDelivery,
+//                            'addressDelivery' => $addressDelivery,
+//                        ];
+                    }
+
+
+            }
+        }
+
+
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $data,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'attributes' => [
+                    'dateCreate',
+                    'login',
+                    'fullName',
+                    'phones',
+                    'productName',
+                    'productNumber',
+                    'status',
+                    'dateClose',
+                    'timeDelivery',
+                    'addressDelivery'
+                ],
+            ],
+        ]);
+
+
+        return $this->render('test', [
+            'dataProvider' => $dataProvider,
+            'request' => $request
+        ]);
     }
 
 //    public function actionTemp()
