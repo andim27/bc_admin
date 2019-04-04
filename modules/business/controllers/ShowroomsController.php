@@ -2105,7 +2105,7 @@ class ShowroomsController extends BaseController
 
         $showroomId = Showrooms::getIdMyShowroom();
 
-        if(empty($showroomId) && !in_array($this->user->username,['main','mafdaf22'])){
+        if(empty($showroomId) && !in_array($this->user->username,['main','mafdaf22','yuliia_sosnovaja'])){
             return $this->render('not-showroom');
         }
 
@@ -2150,22 +2150,29 @@ class ShowroomsController extends BaseController
                 $statusSale = $sale->statusSale;
                 $setSales = $statusSale->setSales;
 
+                if(empty($infoSale['packs'][$sale->productName])){
+                    $infoSale['packs'][$sale->productName] = [
+                        'orderCount' => 0
+                    ];
+                }
+                $infoSale['packs'][$sale->productName]['orderCount']++;
+
                 if(!empty($setSales)){
                     foreach ($setSales as $k=>$itemSale) {
 
                         $title = $listPartsAccessoriesForSaLe[strval($itemSale['parts_accessories_id'])];
 
-                        if(empty($infoSale[$title])){
-                            $infoSale[$title] = [
+                        if(empty($infoSale['products'][$title])){
+                            $infoSale['products'][$title] = [
                                 'orderCount' => 0,
                                 'issueCount' => 0
                             ];
                         }
 
-                        $infoSale[$title]['orderCount']++;
+                        $infoSale['products'][$title]['orderCount']++;
 
                         if (!empty($itemSale['status']) && $itemSale['status'] == 'status_sale_issued'){
-                            $infoSale[$title]['issueCount']++;
+                            $infoSale['products'][$title]['issueCount']++;
                         }
 
                     }

@@ -40,26 +40,65 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
 
     <div class="row">
         <div class="col-md-12">
-            <table id="table-requests" class="table table-users table-striped datagrid m-b-sm">
-                <thead>
-                <tr>
-                    <th>Товар</th>
-                    <th>Заказано</th>
-                    <th>Выдано</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php if(!empty($infoSale)){?>
-                    <?php foreach ($infoSale as $k=>$item) {?>
-                        <tr>
-                            <td><?=$k?></td>
-                            <td><?=$item['orderCount']?></td>
-                            <td><?=$item['issueCount']?></td>
-                        </tr>
-                    <?php } ?>
-                <?php }?>
-                </tbody>
-            </table>
+
+            <header class="panel-heading bg-light">
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active mainLi"><a href="#products" data-toggle="tab">Товары</a></li>
+                    <li class="historyLi"><a href="#packs" data-toggle="tab">Паки</a></li>
+                </ul>
+            </header>
+            <div class="panel-body">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="products">
+                        <table id="table-requests" class="table table-users table-striped datagrid m-b-sm">
+                            <thead>
+                            <tr>
+                                <th>Товар</th>
+                                <th>Заказано</th>
+                                <th>Выдано</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php if(!empty($infoSale['products'])){?>
+                                <?php foreach ($infoSale['products'] as $k=>$item) {?>
+                                    <tr>
+                                        <td><?=$k?></td>
+                                        <td><?=$item['orderCount']?></td>
+                                        <td><?=$item['issueCount']?></td>
+                                    </tr>
+                                <?php } ?>
+                            <?php }?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="tab-pane" id="packs">
+                        <table id="table-requests" class="table table-users table-striped datagrid m-b-sm">
+                            <thead>
+                            <tr>
+                                <th>Паки</th>
+                                <th>Заказано</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php if(!empty($infoSale['packs'])){?>
+                                <?php foreach ($infoSale['packs'] as $k=>$item) {?>
+                                    <tr>
+                                        <td><?=$k?></td>
+                                        <td><?=$item['orderCount']?></td>
+                                    </tr>
+                                <?php } ?>
+                            <?php }?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
         </div>
     </div>
 </section>
