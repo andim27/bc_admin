@@ -1,4 +1,5 @@
 <?php
+//$start = microtime(true);
 ini_set('display_errors',1);
 ini_set('display_startup_errors',1);
 error_reporting(-1);
@@ -20,3 +21,4 @@ function hh($data)
 }
 
 (new yii\web\Application($config))->run();
+//echo '<div>Время выполнения скрипта: '.round(microtime(true) - $start, 4).' сек.</div>';

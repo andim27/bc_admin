@@ -2183,7 +2183,7 @@ class ShowroomsController extends BaseController
 
     public function actionTest()
     {
-
+        return $this->render('test',[]);
     }
 
 //    public function actionTemp()

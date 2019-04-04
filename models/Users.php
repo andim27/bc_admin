@@ -14,6 +14,9 @@ use yii\base\Model;
  */
 class Users extends ActiveRecord
 {
+
+    public static $userMenuRules;
+
     /**
      * @return string
      */
@@ -86,7 +89,12 @@ class Users extends ActiveRecord
     public static function checkRule($rule,$key)
     {
         $fl = false;
-        $rules = self::getRulesUser();
+
+        $rules = self::$userMenuRules;
+        if(!empty($rules)){
+            $rules = self::getRulesUser();
+        }
+
         if(!empty($rules->{$rule}) && in_array($key,$rules->{$rule})){
             $fl = true;
         } elseif (\Yii::$app->view->params['user']->username == 'main'){
