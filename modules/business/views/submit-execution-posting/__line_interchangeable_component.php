@@ -39,7 +39,7 @@ $temp = [
             ?>
 
             <div class="form-group row">
-                <div class="col-md-7">
+                <div class="col-md-6">
                     <?=Html::hiddenInput('complectInterchangeable['.(string)$item['parent_parts_accessories_id'].'][]',(string)$item['parts_accessories_id'],[]);?>
                     <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],[
                         'class'             => 'form-control partTitle',
@@ -76,11 +76,19 @@ $temp = [
                         'step'=>'1',
                     ]);?>
                 </div>
+                <div class="col-md-1">
+                    <?=Html::input('number','non_complect[]',0,[
+                        'class'=>'form-control partNoneComplect',
+                        'pattern'=>'\d*',
+                        'step'=>'1',
+                        'title' => 'Не комплект(_interch-items)'
+                    ]);?>
+                </div>
             </div>
         <?php } ?>
 
         <div class="form-group row totalInterchangeable">
-            <div class="col-md-7"></div>
+            <div class="col-md-6"></div>
             <div class="col-md-1">
                 <?=Html::input('text',
                     '',
@@ -102,6 +110,14 @@ $temp = [
                 <?=Html::input('text','',$temp['partNeedReserve'],[
                     'class'=>'form-control partNeedReserve',
                     'disabled'=>'disabled'
+                ]);?>
+            </div>
+            <div class="col-md-1">
+                <?=Html::input('number','non_complect[]',0,[
+                    'class'=>'form-control partNoneComplect',
+                    'pattern'=>'\d*',
+                    'step'=>'1',
+                    'title' => 'Не комплект(_interch-bottom)'
                 ]);?>
             </div>
         </div>

@@ -66,12 +66,13 @@ function pasportLang($name,$p_lang) {
 <div class="panel panel-default">
     <div class="panel-body">
         <div class="row form-group">
-            <div class="col-md-7"></div>
+            <div class="col-md-6"></div>
             <div class="col-md-1">В наличие</div>
             <div class="col-md-1">У исполнителя</div>
             <div class="col-md-1">На одну шт.</div>
             <div class="col-md-1">Надо отправить</div>
             <div class="col-md-1">С запасом</div>
+            <div class="col-md-1 partNoneComplect">Не комплект</div>
         </div>
         <?php if(!empty($model->composite)){ ?>
             <?php foreach($model->composite as $item){ ?>
@@ -103,7 +104,7 @@ function pasportLang($name,$p_lang) {
                                 ?>
                         <?php if ((!empty($p_lang)) && pasportLang($itemInterchangeable,$p_lang)) {?>
                                 <div class="form-group row">
-                                    <div class="col-md-7 mmm">
+                                    <div class="col-md-6 mmm">
                                         <?=Html::hiddenInput('complectInterchangeable['.(string)$item['_id'].'][]',$kInterchangeable,[]);?>
                                         <?=Html::input('text','',$itemInterchangeable,
                                             [
@@ -146,13 +147,22 @@ function pasportLang($name,$p_lang) {
                                             'step'=>'1',
                                         ]);?>
                                     </div>
+                                    <div class="col-md-1">
+                                        <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[$kInterchangeable]) ? $listGoodsFromMyWarehouse[$kInterchangeable] : 0 ),['class'=>'partNoneComplect']);?>
+                                        <?=Html::input('number','numberNoneComplect['.$kInterchangeable.']','0',[
+                                            'class'=>'form-control partNoneComplect',
+                                            'pattern'=>'\d*',
+                                            'disabled'=>'disabled',
+                                            'title' => 'Не комплект(_kit-p-lang)'
+                                        ]);?>
+                                    </div>
                                 </div>
                         <?php } ?>
                             <?php } ?>
 
 
                             <div class="form-group row totalInterchangeable">
-                                <div class="col-md-7"></div>
+                                <div class="col-md-6"></div>
                                 <div class="col-md-1">
                                     <?=Html::input('text',
                                         '',
@@ -177,6 +187,15 @@ function pasportLang($name,$p_lang) {
                                         'disabled'=>'disabled'
                                     ]);?>
                                 </div>
+                                <div class="col-md-1">
+                                    <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[$kInterchangeable]) ? $listGoodsFromMyWarehouse[$kInterchangeable] : 0 ),['class'=>'partNoneComplect']);?>
+                                    <?=Html::input('number','numberNoneComplect['.$kInterchangeable.']','0',[
+                                        'class'=>'form-control partNoneComplect',
+                                        'pattern'=>'\d*',
+                                        'disabled'=>'disabled',
+                                        'title' => 'Не комплект(_kit)'
+                                    ]);?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -187,7 +206,7 @@ function pasportLang($name,$p_lang) {
                         ?>
                     <?php if ((!empty($p_lang)) && pasportLang($listGoods[(string)$item['_id']],$p_lang)) {?>
                             <div class="form-group row blUnique">
-                        <div class="col-md-7">
+                        <div class="col-md-6">
                             <?=Html::hiddenInput('complect[]',(string)$item['_id'],[]);?>
                             <?=Html::input('text','',$listGoods[(string)$item['_id']],
                                 [
@@ -226,6 +245,15 @@ function pasportLang($name,$p_lang) {
                                 'step'=>'1',
                             ]);?>
                         </div>
+                                <div class="col-md-1">
+                                    <?=Html::input('number','non_complect[]',0,[
+                                        'class'=>'form-control partNoneComplect',
+                                        'pattern'=>'\d*',
+                                        'step'=>'1',
+                                        'disabled'=>true,
+                                        'title' => 'Не комплект(_kit_exec!empty)'
+                                    ]);?>
+                                </div>
                     </div>
                     <?php } ?>
                     <?php } ?>

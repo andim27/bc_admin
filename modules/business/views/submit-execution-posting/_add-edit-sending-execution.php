@@ -34,7 +34,16 @@ if(!empty($model)){
 }
 
 ?>
-
+<style>
+    .partNoneComplect {
+        display: none;
+        border-bottom-color: red;
+        color: red;
+    }
+    .none-complect-ch-row {
+        display: none;
+    }
+</style>
 <div class="modal-dialog modal-more-lg popupSendingExecution">
     <div class="modal-content">
         <div class="modal-header">
@@ -51,10 +60,10 @@ if(!empty($model)){
                     <?=Html::checkbox('',(!empty($model->one_component) ?  true : false ),['class'=>'flOneComponent'])?>
                 </div>
             </div>
-            <div class="form-group row">
+            <div class="form-group row none-complect-ch-row">
                 <div class="col-md-offset-8 col-md-3 text-right"><?=THelper::t('non_complect')?></div>
                 <div class="col-md-1">
-                    <?=Html::checkbox('non-complect', false ,['id'=>'non-complect'])?>
+                    <?=Html::checkbox('none-complect-ch', false ,['id'=>'none-complect-ch'])?>
                 </div>
             </div>
             <?php } ?>
@@ -208,6 +217,7 @@ if(!empty($model)){
 
 
                 <div class="form-group row blUnique">
+                   <!-- add-edit-sending-exec-->
                     <div class="col-md-7">
                         <?=Html::dropDownList('parts_accessories_id',
                             (!empty($model) ?  $model->parts_accessories_id : ''),
@@ -297,7 +307,12 @@ if(!empty($model)){
         blForm = $(this).closest('form');
 
         wantC = parseFloat($(this).val());
-
+        canC = parseFloat(blForm.find('.CanCollect').val());
+        if (wantC > canC) {
+            nonComplectCells('show');
+        } else {
+            nonComplectCells('hide');
+        }
         blForm.find('.blPartsAccessories .row').each(function () {
             partNeedForOne = $(this).find('.partNeedForOne').val();
            $(this).find('.needSend').val((partNeedForOne*wantC).toFixed(2));
@@ -379,7 +394,9 @@ if(!empty($model)){
 
         if(wantC>canC){
             answer = 0;
+            nonComplectCells('show');
         } else {
+            nonComplectCells('hide');
             answer = 1;
         }
 
@@ -399,15 +416,18 @@ if(!empty($model)){
             }
         }
         $('.assemblyBtn').hide();
-        if (document.getElementById('non-complect').checked) {
+        if (document.getElementById('none-complect-ch').checked) {
             $('.assemblyBtn').show();
         }
 
         return true;
     }
-    $('#non-complect').on('change',function(){
-        if (document.getElementById('non-complect').checked) {
+    $('#none-complect-ch').on('change',function(){
+        if (document.getElementById('none-complect-ch').checked) {
             $('.assemblyBtn').show();
+            nonComplectCells('show');
+        } else {
+            nonComplectCells('hide');
         }
     });
 
@@ -597,5 +617,18 @@ if(!empty($model)){
         }
 
     });
+    //----non complect func-----
+    function nonComplectCells(action) {
+        if (action == 'show') {
+            $('.none-complect-ch-row').show();
+            $('#none-complect-ch').attr('checked',true);
+            $('.partNoneComplect').show();
+        }
+        if (action == 'hide') {
+            $('.none-complect-ch-row').hide();
+            $('#none-complect-ch').attr('checked',false);
+            $('.partNoneComplect').hide();
+        }
+    }
 
 </script>
