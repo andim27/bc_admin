@@ -3,7 +3,6 @@ image: bulich/builder
 stages:
 - build
 - deploy
-- merge
 - cache
 
 variables:
@@ -13,6 +12,10 @@ variables:
   DEV_URL: admin-dev.bpt.ooo.ua
   STAGE_URL: admin-stage.bpt.ooo.ua
   PROD_URL: admin.businessprocess.biz
+  API_DEV_URL: bpt-api-dev
+  API_PROD_URL: bpt-api-prod
+  MONGO_DEV: 10.10.1.9/gnc
+  MONGO_PROD: gnc:b41uHcdR@bpt-gke-shard-00-00-ezdfa.gcp.mongodb.net:27017,bpt-gke-shard-00-01-ezdfa.gcp.mongodb.net:27017,bpt-gke-shard-00-02-ezdfa.gcp.mongodb.net:27017/gnc?ssl=true&sslWeakCertificateValidation=true&replicaSet=BPT-GKE-shard-0&authSource=admin
 
 
 before_script:
@@ -25,27 +28,7 @@ before_script:
   - google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
   - docker login -u _json_key --password-stdin https://eu.gcr.io < ${HOME}/gcloud-service-key.json
 
-build_dev:
-  stage: build
-  only:
-    - dev
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - vendor/
-  script:
-    - composer install --ignore-platform-reqs
-    - mv ./vendor/bower-asset ./vendor/bower/ || true
-    - docker info
-    - docker pull bulich/php7lx
-    - cp config/params.dev config/params.php
-    - cp config/web.dev config/web.php
-    - docker pull bulich/php7lx:latest
-    - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
-    - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
-    - docker push $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
-
-build_stage:
+build:
   stage: build
   only:
     - master
@@ -57,29 +40,17 @@ build_stage:
     - composer install --ignore-platform-reqs
     - mv ./vendor/bower-asset ./vendor/bower/ || true
     - docker info
-    - cp config/params.prod config/params.php
-    - cp config/web.prod config/web.php
     - docker pull bulich/php7lx:latest
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
     - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
     - docker push $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
 
-merge_to_stage:
-  image: bulich/dind
-  stage: merge
-  only:
-    - dev
-  when: manual
-  script:
-    - HOST=${CI_PROJECT_URL} CI_PROJECT_ID=${CI_PROJECT_ID} CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME} GITLAB_USER_ID=${GITLAB_USER_ID} PRIVATE_TOKEN=${PRIVATE_TOKEN} ./utils/autoMergeRequest.sh
-
 deploy_dev:
     stage: deploy
     environment:
         name: dev
-        url: admin-dev.bpt.ooo.ua
     only:
-        - dev
+        - master
     script:
         - echo "${API_CA_DEV}" > kube_ca.pem
         - kubectl config set-cluster default-cluster --server=${API_URL_DEV} --certificate-authority="$(pwd)/kube_ca.pem"
@@ -89,6 +60,8 @@ deploy_dev:
         - cd kube
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml ingress.yaml
         - sed -i "s/__ADMIN-REPLICA__/1/" deployment.yaml
+        - sed -i "s/__API_URL__/$API_DEV_URL/" deployment.yaml
+        - sed -i "s/__MONGO_URI__/$MONGO_DEV/" deployment.yaml
         - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__URL__/$DEV_URL/" ingress.yaml
@@ -101,9 +74,9 @@ deploy_stage:
     stage: deploy
     environment:
         name: stage
-        url: admin-stage.bpt.ooo.ua
     only:
         - master
+    when: manual
     script:
         - echo "${API_CA_PROD}" > kube_ca.pem
         - kubectl config set-cluster default-cluster --server=${API_URL_PROD} --certificate-authority="$(pwd)/kube_ca.pem"
@@ -113,6 +86,8 @@ deploy_stage:
         - cd kube
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml ingress.yaml
         - sed -i "s/__ADMIN-REPLICA__/1/" deployment.yaml
+        - sed -i "s/__API_URL__/$API_DEV_URL/" deployment.yaml
+        - sed -i "s/__MONGO_URI__/$MONGO_PROD/" deployment.yaml
         - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__URL__/$STAGE_URL/" ingress.yaml
@@ -137,6 +112,8 @@ deploy_prod:
         - cd kube
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml ingress.yaml
         - sed -i "s/__ADMIN-REPLICA__/6/" deployment.yaml
+        - sed -i "s/__API_URL__/$API_DEV_URL/" deployment.yaml
+        - sed -i "s/__MONGO_URI__/$MONGO_DEV/" deployment.yaml
         - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__URL__/$PROD_URL/" ingress.yaml

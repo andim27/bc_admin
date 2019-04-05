@@ -56,6 +56,10 @@ spec:
           value: '512'
         - name: PHP_FPM_WORKERS
           value: '8'
+        - name: API_URL
+          value: '__API_URL__'
+        - name: MONGO_URI
+          value: '__MONGO_URI__'
       - name: admin-yii2-logs
         volumeMounts:
         - name: shared-files
