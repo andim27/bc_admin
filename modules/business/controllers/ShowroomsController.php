@@ -1454,80 +1454,138 @@ class ShowroomsController extends BaseController
             ->andWhere([
                 'type' => [
                     '$ne'   =>  -1
-                ]
-                ,
+                ],
                 'dateCreate' => [
                     '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
                     '$lte' => new UTCDateTime(strtotime($filter['dateTo'] .'-'.$countDay.' 23:59:59') * 1000)
+                ],
+                'productData.paymentsToRepresentive' => [
+                    '$nin'   =>  [0,null]
+                ],
+                'productData.paymentsToStock' => [
+                    '$nin'   =>  [0,null]
                 ]
             ])
-            ->with(['infoUser'])
-            ->orderBy(['dateCreate'=>SORT_DESC])
-            ->all();
+            ->orderBy(['dateCreate'=>SORT_DESC]);
 
-        $salesShowroom = [];
+
+        if (!empty($request['search']['login'])) {
+            $sales->andFilterWhere(['or',
+                ['like', 'username', $request['search']['login']]
+            ]);
+        }
+        if (!empty($request['search']['productName'])) {
+            $sales->andFilterWhere(['or',
+                ['like', 'productName', $request['search']['productName']]
+            ]);
+        }
+        if (!empty($request['search']['productNumber'])) {
+            $sales->andFilterWhere(['or',
+                ['=', 'productData.count', $request['search']['productNumber']]
+            ]);
+        }
+        if (!empty($request['search']['statusShowroom'])) {
+
+            if($request['search']['statusShowroom']==Sales::STATUS_SHOWROOM_DELIVERING){
+                $sales->andFilterWhere(['or',
+                    ['statusShowroom' => ['$in' => [$request['search']['statusShowroom'],null]]]
+                ]);
+            } else {
+                $sales->andFilterWhere(['or',
+                    ['=', 'statusShowroom', $request['search']['statusShowroom']]
+                ]);
+            }
+
+        }
+
+        $countQuery = clone $sales;
+        $countQuery = $countQuery->count();
+
+        $pageSize = 20;
+        $pages = new Pagination(['totalCount' => $countQuery, 'pageSize' => $pageSize]);
+
+        $sales = $sales
+            ->offset($pages->offset)
+            ->limit($pages->limit);
+
+        $data = [];
         if(!empty($sales)){
             /** @var Sales $sale */
-            foreach ($sales as $sale) {
+            foreach ($sales->all() as $key => $sale){
 
-                if(!empty($sale->infoProduct->paymentsToRepresentive) && !empty($sale->infoProduct->paymentsToStock)) {
 
-                    $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
 
-                    $orderId = '';
-                    if (!empty($sale->orderId)) {
-                        $orderId = strval($sale->orderId);
-                    }
+                $showroomIdSale = '';
+                if (!empty($sale->showroomId)) {
+                    $showroomIdSale = strval($sale->showroomId);
+                }
 
-                    $showroomIdSale = '';
-                    if (!empty($sale->showroomId)) {
-                        $showroomIdSale = strval($sale->showroomId);
-                    }
+                $dateDelivery = $typeDelivery = $addressDelivery = '';
+                if(!empty($sale->delivery)){
+                    $typeDelivery = $sale->delivery['type'];
 
-                    $dateDelivery = $typeDelivery = $addressDelivery = '';
-                    if(!empty($sale->delivery)){
-                        $typeDelivery = $sale->delivery['type'];
+                    if($typeDelivery == 'showroom'){
 
-                        if($typeDelivery == 'showroom'){
-                            $addressDelivery = 'Шоу-рум: ' . $sale->showroom->address;
-                        } else if($typeDelivery == 'courier'){
-                            $addressDelivery = 'Курьер: ' . $sale->delivery['address'];
+                        if(empty($addressShowroom)){
+                            $addressShowroom = $sale->showroom->address;
                         }
-                        
-                        if (!empty($sale->delivery['params']['day'])) {
-                            $dateDelivery = $sale->delivery['params']['day'] . ' дней';
-                        }
+
+                        $addressDelivery = 'Шоу-рум: ' . $addressShowroom;
+                    } else if($typeDelivery == 'courier'){
+                        $addressDelivery = 'Курьер: ' . $sale->delivery['address'];
                     }
 
-                    if(!empty($sale->infoUser)){
-                        $salesShowroom[strval($sale->_id)] = [
-                            'saleId' => strval($sale->_id),
-                            'orderId' => $orderId,
-                            'showroomId' => $showroomIdSale,
-                            'pack' => $sale->productData['productName'],
-                            'countPack' => $sale->productData['count'],
-                            'dateCreate' => $dateCreate,
-                            'dateFinish' => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
-                            'login' => $sale->infoUser->username,
-                            'secondName' => $sale->infoUser->secondName,
-                            'firstName' => $sale->infoUser->firstName,
-                            'phone1' => $sale->infoUser->phoneNumber,
-                            'phone2' => $sale->infoUser->phoneNumber2,
-                            'statusShowroom' => Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
-                            'typeDelivery' => $typeDelivery,
-                            'dateDelivery' => $dateDelivery,
-                            'addressDelivery' => $addressDelivery,
-                        ];
+                    if (!empty($sale->delivery['params']['day'])) {
+                        $dateDelivery = $sale->delivery['params']['day'] . ' дней';
                     }
                 }
+
+
+                $data[] = [
+                    'saleId'            =>  strval($sale->_id),
+                    'showroomIdSale'    =>  $showroomIdSale,
+                    'dateCreate'        =>  $dateCreate,
+                    'login'             =>  $sale->username,
+                    'fullName'          =>  $sale->infoUser->secondName . '<br>' . $sale->infoUser->firstName,
+                    'phones'            =>  $sale->infoUser->phoneNumber .'<br>' . $sale->infoUser->phoneNumber2,
+                    'productName'       =>  $sale->productData['productName'],
+                    'productNumber'     =>  $sale->productData['count'],
+                    'dateClose'         =>  (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
+                    'statusShowroom'    =>  Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
+                    'timeDelivery'      =>  $dateDelivery,
+                    'addressDelivery'   =>  $addressDelivery
+                ];
 
             }
         }
 
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $data,
+            'totalCount' => $countQuery,
+            'pagination' => false,
+            'sort' => [
+                'attributes' => [
+                    'dateCreate',
+                    'login',
+                    'fullName',
+                    'phones',
+                    'productName',
+                    'productNumber',
+                    'statusShowroom',
+                    'dateClose',
+                    'timeDelivery',
+                    'addressDelivery'
+                ],
+            ],
+        ]);
+
 
         return $this->render('reception-issue-goods-issue', [
-            'filter'                    =>  $filter,
-            'salesShowroom'             =>  $salesShowroom,
+            'dataProvider' => $dataProvider,
+            'request' => $request,
+            'pages' => $pages,
+            'filter' => $filter
         ]);
     }
 
@@ -2106,12 +2164,12 @@ class ShowroomsController extends BaseController
 
         $showroomId = Showrooms::getIdMyShowroom();
 
-        if(empty($showroomId) && !in_array($this->user->username,['main','mafdaf22','yuliia_sosnovaja'])){
+        if(empty($showroomId) && !in_array($this->user->username,['main','mafdaf22','yuliia_sosnovaja','alexkamenskiy'])){
             return $this->render('not-showroom');
         }
 
         $listShowroomsForSelect = api\Showrooms::getListForFilter();
-        if($this->user->username != 'main'){
+        if(!in_array($this->user->username,['main','mafdaf22','yuliia_sosnovaja','alexkamenskiy'])){
             $filter['showroomId'] = strval($showroomId);
             $listShowroomsForSelect = [
                 $filter['showroomId'] => $listShowroomsForSelect[$filter['showroomId']]
@@ -2223,35 +2281,45 @@ class ShowroomsController extends BaseController
                     '$nin'   =>  [0,null]
                 ]
             ])
-            ->with(['infoUser'])
             ->orderBy(['dateCreate'=>SORT_DESC]);
 
-//        if (!empty($request['search']['value']) && $search = $request['search']['value']) {
-//            $model->andFilterWhere(['or',
-//                ['like', 'username', $search]
-//            ]);
-//        }
+
+        if (!empty($request['search']['login'])) {
+            $sales->andFilterWhere(['or',
+                ['like', 'username', $request['search']['login']]
+            ]);
+        }
+        if (!empty($request['search']['productName'])) {
+            $sales->andFilterWhere(['or',
+                ['like', 'productName', $request['search']['productName']]
+            ]);
+        }
+        if (!empty($request['search']['productNumber'])) {
+            $sales->andFilterWhere(['or',
+                ['=', 'productData.count', $request['search']['productNumber']]
+            ]);
+        }
+
+
 
         $countQuery = clone $sales;
         $countQuery = $countQuery->count();
 
-        $pages = new Pagination(['totalCount' => $countQuery,'pageSize' => 10]);
+        $pageSize = 20;
+        $pages = new Pagination(['totalCount' => $countQuery, 'pageSize' => $pageSize]);
 
         $sales = $sales
             ->offset($pages->offset)
             ->limit($pages->limit);
+
 
         $data = [];
         if(!empty($sales)){
             /** @var Sales $sale */
             foreach ($sales->all() as $key => $sale){
 
-                    $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
 
-                    $orderId = '';
-                    if (!empty($sale->orderId)) {
-                        $orderId = strval($sale->orderId);
-                    }
+                    $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
 
                     $showroomIdSale = '';
                     if (!empty($sale->showroomId)) {
@@ -2263,7 +2331,12 @@ class ShowroomsController extends BaseController
                         $typeDelivery = $sale->delivery['type'];
 
                         if($typeDelivery == 'showroom'){
-                            $addressDelivery = 'Шоу-рум: ' . $sale->showroom->address;
+
+                            if(empty($addressShowroom)){
+                                $addressShowroom = $sale->showroom->address;
+                            }
+
+                            $addressDelivery = 'Шоу-рум: ' . $addressShowroom;
                         } else if($typeDelivery == 'courier'){
                             $addressDelivery = 'Курьер: ' . $sale->delivery['address'];
                         }
@@ -2273,52 +2346,29 @@ class ShowroomsController extends BaseController
                         }
                     }
 
-                    if(!empty($sale->infoUser)){
 
-                        $data[] = [
-                            'saleId'            =>  strval($sale->_id),
-                            'dateCreate'        =>  $dateCreate,
-                            'login'             =>  $sale->infoUser->username,
-                            'fullName'          =>  $sale->infoUser->secondName . '<br>' . $sale->infoUser->firstName,
-                            'phones'            =>  $sale->infoUser->phoneNumber .'<br>' . $sale->infoUser->phoneNumber2,
-                            'productName'       =>  $sale->productData['productName'],
-                            'productNumber'     =>  $sale->productData['count'],
-                            'dateClose'         =>  (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
-                            'status'            =>  Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
-                            'timeDelivery'      =>  $dateDelivery,
-                            'addressDelivery'   =>  $addressDelivery
-                        ];
-
-//                        $salesShowroom[strval($sale->_id)] = [
-//                            'saleId' => strval($sale->_id),
-//                            'orderId' => $orderId,
-//                            'showroomId' => $showroomIdSale,
-//                            'pack' => $sale->productData['productName'],
-//                            'countPack' => $sale->productData['count'],
-//                            'dateCreate' => $dateCreate,
-//                            'dateFinish' => (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
-//                            'login' => $sale->infoUser->username,
-//                            'secondName' => $sale->infoUser->secondName,
-//                            'firstName' => $sale->infoUser->firstName,
-//                            'phone1' => $sale->infoUser->phoneNumber,
-//                            'phone2' => $sale->infoUser->phoneNumber2,
-//                            'statusShowroom' => Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
-//                            'typeDelivery' => $typeDelivery,
-//                            'dateDelivery' => $dateDelivery,
-//                            'addressDelivery' => $addressDelivery,
-//                        ];
-                    }
-
+                    $data[] = [
+                        'saleId'            =>  strval($sale->_id),
+                        'showroomIdSale'    =>  $showroomIdSale,
+                        'dateCreate'        =>  $dateCreate,
+                        'login'             =>  $sale->username,
+                        'fullName'          =>  $sale->infoUser->secondName . '<br>' . $sale->infoUser->firstName,
+                        'phones'            =>  $sale->infoUser->phoneNumber .'<br>' . $sale->infoUser->phoneNumber2,
+                        'productName'       =>  $sale->productData['productName'],
+                        'productNumber'     =>  $sale->productData['count'],
+                        'dateClose'         =>  (!empty($sale->dateCloseSale) ? $sale->dateCloseSale->toDateTime()->format('Y-m-d H:i') : ''),
+                        'status'            =>  Sales::getStatusShowroomValue((isset($sale->statusShowroom) ? $sale->statusShowroom : Sales::STATUS_SHOWROOM_DELIVERING)),
+                        'timeDelivery'      =>  $dateDelivery,
+                        'addressDelivery'   =>  $addressDelivery
+                    ];
 
             }
         }
 
-
         $dataProvider = new ArrayDataProvider([
             'allModels' => $data,
-            'pagination' => [
-                'pageSize' => 10,
-            ],
+            'totalCount' => $countQuery,
+            'pagination' => false,
             'sort' => [
                 'attributes' => [
                     'dateCreate',
@@ -2335,10 +2385,10 @@ class ShowroomsController extends BaseController
             ],
         ]);
 
-
         return $this->render('test', [
             'dataProvider' => $dataProvider,
-            'request' => $request
+            'request' => $request,
+            'pages' => $pages
         ]);
     }
 
