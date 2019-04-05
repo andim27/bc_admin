@@ -29,7 +29,7 @@ use yii\helpers\Html;
             'value' => function ($model){
                 return $model['login'];
             },
-            'filter' => Html::input('text','login',(!empty($request['login']) ? $request['login'] : ''),['class'=>'form-control'])
+            'filter' => Html::input('text','search[login]',(!empty($request['search']['login']) ? $request['search']['login'] : ''),['class'=>'form-control'])
         ],
 
         [
@@ -60,7 +60,7 @@ use yii\helpers\Html;
             'value' => function ($model){
                 return $model['productName'];
             },
-            'filter' => Html::input('text','productName',(!empty($request['productName']) ? $request['productName'] : ''),['class'=>'form-control'])
+            'filter' => Html::input('text','search[productName]',(!empty($request['search']['productName']) ? $request['search']['productName'] : ''),['class'=>'form-control'])
         ],
 
         [
@@ -71,7 +71,7 @@ use yii\helpers\Html;
             'value' => function ($model){
                 return $model['productNumber'];
             },
-            'filter' => Html::input('integer','productNumber',(!empty($request['productNumber']) ? $request['productNumber'] : ''),['class'=>'form-control'])
+            'filter' => Html::input('integer','search[productNumber]',(!empty($request['search']['productNumber']) ? $request['search']['productNumber'] : ''),['class'=>'form-control'])
         ],
 
         [
@@ -100,7 +100,7 @@ use yii\helpers\Html;
             'label' => 'Адресс доставки',
             'format' => 'raw',
             'value' => function ($model){
-                return $model['dateClose'];
+                return $model['addressDelivery'];
             }
         ],
 
@@ -120,3 +120,9 @@ use yii\helpers\Html;
     ]
 
 ]); ?>
+
+
+<?= \yii\widgets\LinkPager::widget([
+    'pagination' => $pages,
+]);
+?>

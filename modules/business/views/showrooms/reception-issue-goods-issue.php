@@ -1,7 +1,7 @@
 <?php
-    use app\components\THelper;
     use yii\helpers\Html;
-    use yii\widgets\ActiveForm;
+    use yii\grid\GridView;
+    use app\models\Sales;
 
     $listStatusShowroom = \app\models\Sales::getStatusShowroom();
 ?>
@@ -48,74 +48,136 @@
                             </div>
                         </div>                        
                         <div class="table-responsive">
-                            <table id="table-issue" class="table table-users table-striped datagrid m-b-sm">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            Дата создания
-                                        </th>
-                                        <th>
-                                            Логин
-                                        </th>
-                                        <th>
-                                            ФИО
-                                        </th>
-                                        <th>
-                                            Телефон
-                                        </th>
-                                        <th>
-                                            Название продукта
-                                        </th>
-                                        <th>
-                                            Кол.
-                                        </th>
-                                        <th>
-                                            Статус
-                                        </th>
-                                        <th>
-                                            Даты закрытия заказа
-                                        </th>
-                                        <th>
-                                            Время доставки
-                                        </th>
-                                        <th>
-                                            Адрес доставки
-                                        </th>
-                                        <th>
-                                           
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if(!empty($salesShowroom)){ ?>
-                                        <?php foreach ($salesShowroom as $saleItem) { ?>
-                                            <tr>
-                                                <td><?=$saleItem['dateCreate']?></td>
-                                                <td><?=$saleItem['login']?></td>
-                                                <td>
-                                                    <?=$saleItem['secondName']?><br>
-                                                    <?=$saleItem['firstName']?>
-                                                </td>
-                                                <td>
-                                                    <?=$saleItem['phone1']?><br>
-                                                    <?=$saleItem['phone2']?>
-                                                </td>
-                                                <td><?=$saleItem['pack']?></td>
-                                                <td><?=$saleItem['countPack']?></td>
-                                                <td><?=$saleItem['statusShowroom']?></td>
-                                                <td><?=$saleItem['dateFinish']?></td>
-                                                <td><?=$saleItem['dateDelivery']?></td>
-                                                <td><?=$saleItem['addressDelivery']?></td>
-                                                <td>
-                                                    <a class="editIssue" href="#issueInfo" data-id="<?=$saleItem['saleId']?>" data-toggle="modal">
-                                                        <i class="fa fa-pencil"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        <?php } ?>
-                                    <?php } ?>
-                                </tbody>
-                            </table>
+                            <?= GridView::widget([
+                                'dataProvider' => $dataProvider,
+                                'filterModel' => [],
+                                'columns' => [
+
+                                    [
+                                        'class' => 'yii\grid\DataColumn',
+                                        'attribute' => 'dateCreate',
+                                        'label' => 'Дата создания',
+                                        'format' => 'raw',
+                                        'value' => function ($model){
+                                            return $model['dateCreate'];
+                                        }
+                                    ],
+
+                                    [
+                                        'class' => 'yii\grid\DataColumn',
+                                        'attribute' => 'login',
+                                        'label' => 'Оригинал',
+                                        'format' => 'raw',
+                                        'value' => function ($model){
+                                            return $model['login'];
+                                        },
+                                        'filter' => Html::input('text','search[login]',(!empty($request['search']['login']) ? $request['search']['login'] : ''),['class'=>'form-control'])
+                                    ],
+
+                                    [
+                                        'class' => 'yii\grid\DataColumn',
+                                        'attribute' => 'fullName',
+                                        'label' => 'Полное имя',
+                                        'format' => 'raw',
+                                        'value' => function ($model){
+                                            return $model['fullName'];
+                                        }
+                                    ],
+
+                                    [
+                                        'class' => 'yii\grid\DataColumn',
+                                        'attribute' => 'phones',
+                                        'label' => 'Телефоны',
+                                        'format' => 'raw',
+                                        'value' => function ($model){
+                                            return $model['phones'];
+                                        }
+                                    ],
+
+                                    [
+                                        'class' => 'yii\grid\DataColumn',
+                                        'attribute' => 'productName',
+                                        'label' => 'Название продукта',
+                                        'format' => 'raw',
+                                        'value' => function ($model){
+                                            return $model['productName'];
+                                        },
+                                        'filter' => Html::input('text','search[productName]',(!empty($request['search']['productName']) ? $request['search']['productName'] : ''),['class'=>'form-control'])
+                                    ],
+
+                                    [
+                                        'class' => 'yii\grid\DataColumn',
+                                        'attribute' => 'productNumber',
+                                        'label' => 'Кол',
+                                        'format' => 'raw',
+                                        'value' => function ($model){
+                                            return $model['productNumber'];
+                                        },
+                                        'filter' => Html::input('integer','search[productNumber]',(!empty($request['search']['productNumber']) ? $request['search']['productNumber'] : ''),['class'=>'form-control'])
+                                    ],
+
+                                    [
+                                        'class' => 'yii\grid\DataColumn',
+                                        'attribute' => 'statusShowroom',
+                                        'label' => 'Статус',
+                                        'format' => 'raw',
+                                        'value' => function ($model){
+                                            return $model['statusShowroom'];
+                                        },
+                                        'filter' => Html::dropDownList(
+                                            'search[statusShowroom]',
+                                            (!empty($request['search']['statusShowroom']) ? $request['search']['statusShowroom'] : ''),
+                                            Sales::getStatusShowroom(),
+                                            [
+                                                'class'=>'form-control',
+                                                'prompt'=>'Статус'
+                                            ]
+                                        )
+                                    ],
+
+                                    [
+                                        'class' => 'yii\grid\DataColumn',
+                                        'attribute' => 'dateClose',
+                                        'label' => 'Время доставки',
+                                        'format' => 'raw',
+                                        'value' => function ($model){
+                                            return $model['dateClose'];
+                                        }
+                                    ],
+
+                                    [
+                                        'class' => 'yii\grid\DataColumn',
+                                        'attribute' => 'dateClose',
+                                        'label' => 'Адресс доставки',
+                                        'format' => 'raw',
+                                        'value' => function ($model){
+                                            return $model['addressDelivery'];
+                                        }
+                                    ],
+
+                                    [
+                                        'class' => 'yii\grid\ActionColumn',
+                                        'template' => '{editOrder}',
+                                        'buttons' => [
+                                            'editOrder' => function($url, $model, $key) {
+
+                                                return '<a class="editIssue" href="#issueInfo" data-id="'.$model['saleId'].'" data-toggle="modal">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>';
+
+                                            }
+                                        ]
+                                    ]
+                                ]
+
+                            ]); ?>
+
+
+                            <?= \yii\widgets\LinkPager::widget([
+                                'pagination' => $pages,
+                            ]);
+                            ?>
+
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
@@ -508,12 +570,6 @@
         delivered_company : ['delivered_company'],
         issue_part : ['issue_part','delivered']
     };
-
-    $('#table-issue').dataTable({
-        language: TRANSLATION,
-        lengthMenu: [ 25, 50, 75, 100 ],
-        "order": [[ 0, "desc" ]]
-    });
 
     $('.issueInfo').on('click','.issueFromBalance',function(){
 
