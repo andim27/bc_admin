@@ -30,6 +30,7 @@ spec:
         volumeMounts:
         - name: shared-files
           mountPath: /var/www/html
+        workingDir: /var/www/html/
         image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
         ports:
         - containerPort: 80
