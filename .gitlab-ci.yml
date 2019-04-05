@@ -87,7 +87,7 @@ deploy_stage:
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml ingress.yaml
         - sed -i "s/__ADMIN-REPLICA__/1/" deployment.yaml
         - sed -i "s/__API_URL__/$API_DEV_URL/" deployment.yaml
-        - sed -i "s/__MONGO_URI__/$MONGO_PROD/" deployment.yaml
+        - sed -i "s|__MONGO_URI__|$MONGO_PROD|" deployment.yaml
         - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__URL__/$STAGE_URL/" ingress.yaml
@@ -113,7 +113,7 @@ deploy_prod:
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml ingress.yaml
         - sed -i "s/__ADMIN-REPLICA__/6/" deployment.yaml
         - sed -i "s/__API_URL__/$API_DEV_URL/" deployment.yaml
-        - sed -i "s/__MONGO_URI__/$MONGO_DEV/" deployment.yaml
+        - sed -i "s|__MONGO_URI__|$MONGO_PROD|" deployment.yaml
         - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__URL__/$PROD_URL/" ingress.yaml
