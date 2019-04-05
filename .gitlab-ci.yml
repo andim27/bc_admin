@@ -14,7 +14,7 @@ variables:
   PROD_URL: admin.businessprocess.biz
   API_DEV_URL: bpt-api-dev
   API_PROD_URL: bpt-api-prod
-  MONGO_DEV: '10.10.1.9gnc'
+  MONGO_DEV: '10.10.1.9/gnc'
   MONGO_PROD: 'gnc:b41uHcdR@bpt-gke-shard-00-00-ezdfa.gcp.mongodb.net:27017,bpt-gke-shard-00-01-ezdfa.gcp.mongodb.net:27017,bpt-gke-shard-00-02-ezdfa.gcp.mongodb.net:27017/gnc?ssl=true&sslWeakCertificateValidation=true&replicaSet=BPT-GKE-shard-0&authSource=admin'
 
 
@@ -61,7 +61,7 @@ deploy_dev:
         - sed -i "s/__CI_ENVIRONMENT_SLUG__/${CI_ENVIRONMENT_SLUG}/" deployment.yaml service.yaml ingress.yaml
         - sed -i "s/__ADMIN-REPLICA__/1/" deployment.yaml
         - sed -i "s/__API_URL__/$API_DEV_URL/" deployment.yaml
-        - sed -i "s/__MONGO_URI__/$MONGO_DEV/" deployment.yaml
+        - sed -i "s|__MONGO_URI__|$MONGO_DEV|" deployment.yaml
         - sed -i "s/__VERSION__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__COMMIT__/${CI_COMMIT_SHA}/" deployment.yaml service.yaml
         - sed -i "s/__URL__/$DEV_URL/" ingress.yaml
