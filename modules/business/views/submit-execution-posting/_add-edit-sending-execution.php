@@ -317,7 +317,21 @@ if(!empty($model)){
             partNeedForOne = $(this).find('.partNeedForOne').val();
            $(this).find('.needSend').val((partNeedForOne*wantC).toFixed(2));
         });
+        //--none complect--
+        blForm.find('.form-group .row').each(function () {
+            //--inWarehouseInterchangeable--
+            partNeedForOne  = $(this).find('.partNeedForOneInterchangeable').val();
+            partNeedForSend = $(this).find('.needSendInterchangeable').val();
 
+
+            inwhInter =$(this).find('input.inWarehouseInterchangeable').val();//--inWarehouseInterchangeable inWarwhouse
+            console.log('yes inwh=',inwhInter);
+            if (inwhInter == 0) {
+                console.log('yes ZERO! partNeedForOne='+partNeedForOne+ '  wantC='+wantC);
+               $(this).find('input.partNoneComplect').val(parseInt(partNeedForOne*wantC));
+            }
+            //--inWarehouse--
+        });
         checkBeforeSend();
     });
 
@@ -394,9 +408,9 @@ if(!empty($model)){
 
         if(wantC>canC){
             answer = 0;
-            nonComplectCells('show');
+            //nonComplectCells('show');
         } else {
-            nonComplectCells('hide');
+            //nonComplectCells('hide');
             answer = 1;
         }
 
@@ -425,9 +439,9 @@ if(!empty($model)){
     $('#none-complect-ch').on('change',function(){
         if (document.getElementById('none-complect-ch').checked) {
             $('.assemblyBtn').show();
-            nonComplectCells('show');
+            //nonComplectCells('show');
         } else {
-            nonComplectCells('hide');
+            //nonComplectCells('hide');
         }
     });
 
