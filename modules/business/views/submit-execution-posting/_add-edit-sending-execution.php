@@ -312,10 +312,16 @@ if(!empty($model)){
             nonComplectCells('show');
         } else {
             nonComplectCells('hide');
+            return;
         }
         blForm.find('.blPartsAccessories .row').each(function () {
             partNeedForOne = $(this).find('.partNeedForOne').val();
            $(this).find('.needSend').val((partNeedForOne*wantC).toFixed(2));
+        });
+        //--fill Interchangeable--
+        blForm.find('.blInterchangeable .row').each(function () {
+            partNeedForOneInterchangeable = $(this).find('.partNeedForOneInterchangeable').val();
+            $(this).find('.needSendInterchangeable').val((parseInt(partNeedForOneInterchangeable*wantC)));
         });
         //--none complect--
         blForm.find('.form-group .row').each(function () {
@@ -323,16 +329,31 @@ if(!empty($model)){
             partNeedForOne  = $(this).find('.partNeedForOneInterchangeable').val();
             partNeedForSend = $(this).find('.needSendInterchangeable').val();
 
-
             inwhInter =$(this).find('input.inWarehouseInterchangeable').val();//--inWarehouseInterchangeable inWarwhouse
-            console.log('yes inwh=',inwhInter);
-            if (inwhInter == 0) {
-                console.log('yes ZERO! partNeedForOne='+partNeedForOne+ '  wantC='+wantC);
-               $(this).find('input.partNoneComplect').val(parseInt(partNeedForOne*wantC));
+            if (inwhInter != undefined){
+                console.log('yes inwh=',inwhInter);
+                if (inwhInter == 0) {
+                    console.log('yes ZERO! partNeedForOne='+partNeedForOne+ '  wantC='+wantC);
+                    //$(this).find('input.partNoneComplect').val(parseInt(partNeedForOne*wantC));
+                }
+                if (inwhInter < partNeedForSend) {
+                    console.log('yes LESS! partNeedForOne='+partNeedForOne+ '  wantC='+wantC);
+                    $(this).find('input.partNoneComplect').val(parseInt(partNeedForOne*wantC)-inwhInter);
+                }
             }
             //--inWarehouse--
+            inwh =$(this).find('input.inWarehouse').val();
+            partNeedForOne  = $(this).find('.partNeedForOne').val();
+            partNeedForSend = $(this).find('.needSend').val();
+            if (inwh != undefined){
+                if (inwh < partNeedForSend) {
+                    console.log('yes inWarehouse LESS! partNeedForOne='+partNeedForOne+ '  wantC='+wantC+' inWareHouse='+inwh);
+                    $(this).find('input.partNoneComplect').val((parseInt(partNeedForOne*wantC)-inwh));
+                }
+            }
         });
-        checkBeforeSend();
+        //checkBeforeSend();
+
     });
 
     $(".partNeedReserve").on("change",function () {
@@ -633,6 +654,7 @@ if(!empty($model)){
     });
     //----non complect func-----
     function nonComplectCells(action) {
+        console.log('noneComplectCells:'+action);
         if (action == 'show') {
             $('.none-complect-ch-row').show();
             $('#none-complect-ch').attr('checked',true);
