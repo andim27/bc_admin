@@ -189,7 +189,7 @@ function pasportLang($name,$p_lang) {
                                 </div>
                                 <div class="col-md-1">
                                     <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[$kInterchangeable]) ? $listGoodsFromMyWarehouse[$kInterchangeable] : 0 ),['class'=>'partNoneComplect']);?>
-                                    <?=Html::input('number','numberNoneComplect['.$kInterchangeable.']','0',[
+                                    <?=Html::input('number','numberNoneComplect['.$kInterchangeable.']','10',[
                                         'class'=>'form-control partNoneComplect',
                                         'pattern'=>'\d*',
                                         'disabled'=>'disabled',
@@ -246,7 +246,7 @@ function pasportLang($name,$p_lang) {
                             ]);?>
                         </div>
                                 <div class="col-md-1">
-                                    <?=Html::input('number','non_complect[]',0,[
+                                    <?=Html::input('number','numberNoneComplect['.(string)$item['_id'].']',0,[
                                         'class'=>'form-control partNoneComplect',
                                         'pattern'=>'\d*',
                                         'step'=>'1',

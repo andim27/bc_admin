@@ -194,6 +194,7 @@ if(!empty($model)){
                     </div>
                     <div class="col-md-6 text-right">
                         <?php if(empty($model)){?>
+                        <?=Html::hiddenInput('arrayNoneComplect[]',1);?>
                         <?= Html::submitButton(THelper::t('save'), ['class' => 'btn btn-success assemblyBtn']) ?>
                         <?php } ?>
                     </div>
@@ -325,30 +326,32 @@ if(!empty($model)){
         });
         //--none complect--
         blForm.find('.form-group .row').each(function () {
-            //--inWarehouseInterchangeable--
-            partNeedForOne  = $(this).find('.partNeedForOneInterchangeable').val();
-            partNeedForSend = $(this).find('.needSendInterchangeable').val();
+            if ($(this).find('input.partTitle').length !=0) {
+                //--inWarehouseInterchangeable--
+                partNeedForOne  = parseInt($(this).find('.partNeedForOneInterchangeable').val());
+                partNeedForSend = parseInt($(this).find('.needSendInterchangeable').val());
 
-            inwhInter =$(this).find('input.inWarehouseInterchangeable').val();//--inWarehouseInterchangeable inWarwhouse
-            if (inwhInter != undefined){
-                console.log('yes inwh=',inwhInter);
-                if (inwhInter == 0) {
-                    console.log('yes ZERO! partNeedForOne='+partNeedForOne+ '  wantC='+wantC);
-                    //$(this).find('input.partNoneComplect').val(parseInt(partNeedForOne*wantC));
+                inwhInter = $(this).find('input.inWarehouseInterchangeable').val();//--inWarehouseInterchangeable inWarwhouse
+                if (inwhInter != undefined) {
+                    console.log('yes inwh=' + inwhInter + ' partNeedForSend=' + partNeedForSend);
+                    if (inwhInter == 0) {
+                        console.log('yes ZERO! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC);
+                        $(this).find('input.partNoneComplect').val(parseInt(partNeedForOne * wantC));
+                    }
+                    if (inwhInter < partNeedForSend) {
+                        console.log('yes LESS! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC);
+                        $(this).find('input.partNoneComplect').val(parseInt(partNeedForOne * wantC) - inwhInter);
+                    }
                 }
-                if (inwhInter < partNeedForSend) {
-                    console.log('yes LESS! partNeedForOne='+partNeedForOne+ '  wantC='+wantC);
-                    $(this).find('input.partNoneComplect').val(parseInt(partNeedForOne*wantC)-inwhInter);
-                }
-            }
-            //--inWarehouse--
-            inwh =$(this).find('input.inWarehouse').val();
-            partNeedForOne  = $(this).find('.partNeedForOne').val();
-            partNeedForSend = $(this).find('.needSend').val();
-            if (inwh != undefined){
-                if (inwh < partNeedForSend) {
-                    console.log('yes inWarehouse LESS! partNeedForOne='+partNeedForOne+ '  wantC='+wantC+' inWareHouse='+inwh);
-                    $(this).find('input.partNoneComplect').val((parseInt(partNeedForOne*wantC)-inwh));
+                //--inWarehouse--
+                inwh = $(this).find('input.inWarehouse').val();
+                partNeedForOne = parseInt($(this).find('.partNeedForOne').val());
+                partNeedForSend = parseInt($(this).find('.needSend').val());
+                if (inwh != undefined) {
+                    if (inwh < partNeedForSend) {
+                        console.log('yes inWarehouse LESS! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC + ' inWareHouse=' + inwh);
+                        $(this).find('input.partNoneComplect').val((parseInt(partNeedForOne * wantC) - inwh));
+                    }
                 }
             }
         });
@@ -657,8 +660,9 @@ if(!empty($model)){
         console.log('noneComplectCells:'+action);
         if (action == 'show') {
             $('.none-complect-ch-row').show();
-            $('#none-complect-ch').attr('checked',true);
+            $('#none-complect-ch').attr('checked',true).attr('disabled',true);
             $('.partNoneComplect').show();
+            $('.assemblyBtn').show();
         }
         if (action == 'hide') {
             $('.none-complect-ch-row').hide();

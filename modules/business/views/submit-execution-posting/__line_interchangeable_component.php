@@ -77,7 +77,7 @@ $temp = [
                     ]);?>
                 </div>
                 <div class="col-md-1">
-                    <?=Html::input('number','non_complect[]',0,[
+                    <?=Html::input('number','numberNoneComplect['.(string)$item['parts_accessories_id'].']',0,[
                         'class'=>'form-control partNoneComplect',
                         'pattern'=>'\d*',
                         'step'=>'1',
@@ -113,7 +113,7 @@ $temp = [
                 ]);?>
             </div>
             <div class="col-md-1">
-                <?=Html::input('number','non_complect[]',0,[
+                <?=Html::input('number','numberNoneComplect['.(string)$item['parts_accessories_id'].']',0,[
                     'class'=>'form-control partNoneComplect',
                     'pattern'=>'\d*',
                     'step'=>'1',

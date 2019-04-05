@@ -263,7 +263,7 @@ class SubmitExecutionPostingController extends BaseController {
 
         if(!empty($request)){
             $myWarehouse = Warehouse::getIdMyWarehouse();
-
+            return var_dump($request);die();
             if(!empty($request['_id'])){
                 //TODO: KAA сделать редактирование
                 die();
