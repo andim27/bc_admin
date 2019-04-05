@@ -36,7 +36,6 @@ build_dev:
   script:
     - composer install --ignore-platform-reqs
     - mv ./vendor/bower-asset ./vendor/bower/ || true
-    - ./pre-admin.sh
     - docker info
     - docker pull bulich/php7lx
     - cp config/params.dev config/params.php
@@ -45,7 +44,6 @@ build_dev:
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
     - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
     - docker push $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
-    - ./post-admin.sh
 
 build_stage:
   stage: build
@@ -58,7 +56,6 @@ build_stage:
   script:
     - composer install --ignore-platform-reqs
     - mv ./vendor/bower-asset ./vendor/bower/ || true
-    - ./pre-admin.sh
     - docker info
     - cp config/params.prod config/params.php
     - cp config/web.prod config/web.php
@@ -66,7 +63,6 @@ build_stage:
     - docker build -t $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest .
     - docker tag $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:latest $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
     - docker push $CONTAINER_REGISTRY/${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
-    - ./post-admin.sh
 
 merge_to_stage:
   image: bulich/dind

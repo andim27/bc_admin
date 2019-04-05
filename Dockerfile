@@ -1,4 +1,3 @@
-#FROM bulich/bpt-php-7
 FROM bulich/php7lx:latest
 RUN apk add --no-cache \
   gcc \
