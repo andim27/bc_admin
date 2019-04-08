@@ -30,7 +30,7 @@ if [ "$ENVIRONMENT"  == "production" ]; then
 
 fi
 
-API_URL=cat ./config/params.php | grep 'http://' | sed -e "s/=>//g"
-MONGO_URI=cat ./config/web.php | grep 'mongodb://' | sed -e "s/dsn = >//g"
+API_URL="$(cat ./config/params.php | grep 'http://' | sed -e "s/=>//g")"
+MONGO_URI="$(cat ./config/web.php | grep 'mongodb://' | sed -e "s/dsn = >//g")"
 printf "%-30s %-30s\n" "${grn}API URL:${end}" "${cyn}${API_URL}${end}"
 printf "%-30s %-30s\n" "${grn}MONGO URI:${end}" "${cyn}${MONGO_URI}${end}"
