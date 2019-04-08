@@ -42,7 +42,7 @@ spec:
         - name: NGINX_WEB_ROOT
           value: '/var/www/html'
         - name: ENVIRONMENT
-          value: 'production'
+          value: '__ENVIRONMENT__'
         - name: ATATUS_LICENSE_KEY
           value: 'lic_apm_32166a6f029e4a29ac10ec6b643baafa'
         - name: ATATUS_APP_NAME
@@ -57,10 +57,6 @@ spec:
           value: '512'
         - name: PHP_FPM_WORKERS
           value: '8'
-        - name: API_URL
-          value: '__API_URL__'
-        - name: MONGO_URI
-          value: '__MONGO_URI__'
       - name: admin-yii2-logs
         volumeMounts:
         - name: shared-files
