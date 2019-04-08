@@ -13,10 +13,6 @@ if [ "$ENVIRONMENT"  == "development" ]; then
 
 	cp ./config/params.dev ./config/params.php
 	cp ./config/web.dev ./config/web.php
-	API_URL = cat ./config/params.prod | grep 'http://' | sed -e "s/=>//g"
-	MONGO_URI = test33
-	printf "%-30s %-30s\n" "${grn}API URL:${end}" "${cyn}${API_URL}${end}"
-	printf "%-30s %-30s\n" "${grn}MONGO URI:${end}" "${cyn}${MONGO_URI}${end}"
 
 fi
 
@@ -24,14 +20,17 @@ if [ "$ENVIRONMENT"  == "stage" ]; then
 
 	cp ./config/params.prod ./config/params.php
 	cp ./config/web.prod ./config/web.php
-	printf "%-30s %-30s\n" "${grn}API URL:${end}" "${cyn}${API_URL}${end}"
-	printf "%-30s %-30s\n" "${grn}MONGO URI:${end}" "${cyn}${MONGO_URI}${end}"
+
 fi
 
 if [ "$ENVIRONMENT"  == "production" ]; then
 
 	cp ./config/params.prod ./config/params.php
 	cp ./config/web.prod ./config/web.php
-	printf "%-30s %-30s\n" "${grn}API URL:${end}" "${cyn}${API_URL}${end}"
-	printf "%-30s %-30s\n" "${grn}MONGO URI:${end}" "${cyn}${MONGO_URI}${end}"
+
 fi
+
+API_URL = cat ./config/params.php | grep 'http://' | sed -e "s/=>//g"
+MONGO_URI = cat ./config/web.php | grep 'mongodb://' | sed -e "s/dsn = >//g"
+printf "%-30s %-30s\n" "${grn}API URL:${end}" "${cyn}${API_URL}${end}"
+printf "%-30s %-30s\n" "${grn}MONGO URI:${end}" "${cyn}${MONGO_URI}${end}"
