@@ -77,6 +77,7 @@ if(!empty($model)){
 
                 <?=Html::hiddenInput('_id',(!empty($model) ? (string)$model->_id : ''));?>
                 <?=Html::hiddenInput('one_component',0);?>
+                <?=Html::hiddenInput('none-complect-ch-val',0);?>
 
                 <div class="form-group row infoDanger"></div>
 
@@ -194,7 +195,9 @@ if(!empty($model)){
                     </div>
                     <div class="col-md-6 text-right">
                         <?php if(empty($model)){?>
-                        <?=Html::hiddenInput('arrayNoneComplect[]',1);?>
+                            <div id="none-complect-items">
+
+                            </div>
                         <?= Html::submitButton(THelper::t('save'), ['class' => 'btn btn-success assemblyBtn']) ?>
                         <?php } ?>
                     </div>
@@ -268,6 +271,9 @@ if(!empty($model)){
 
                 <div class="row">
                     <div class="col-md-12 text-right">
+                        <div id="none-complect-items">
+
+                        </div>
                         <?= Html::submitButton(THelper::t('save'), ['class' => 'btn btn-success assemblyBtn']) ?>
                     </div>
                 </div>
@@ -304,7 +310,7 @@ if(!empty($model)){
     });
 
     $(".WantCollect").on('change',function(){
-
+        $('#none-complect-items').html("");
         blForm = $(this).closest('form');
 
         wantC = parseFloat($(this).val());
@@ -326,21 +332,28 @@ if(!empty($model)){
         });
         //--none complect--
         blForm.find('.form-group .row').each(function () {
-            if ($(this).find('input.partTitle').length !=0) {
+            if ($(this).find('input.partTitle').val() != undefined) {
+
+                noneVal=undefined;
+                part_id = $(this).find('input.partTitle').attr('data-part_id');
                 //--inWarehouseInterchangeable--
                 partNeedForOne  = parseInt($(this).find('.partNeedForOneInterchangeable').val());
                 partNeedForSend = parseInt($(this).find('.needSendInterchangeable').val());
 
                 inwhInter = $(this).find('input.inWarehouseInterchangeable').val();//--inWarehouseInterchangeable inWarwhouse
                 if (inwhInter != undefined) {
-                    console.log('yes inwh=' + inwhInter + ' partNeedForSend=' + partNeedForSend);
+                    console.log('yes inwh=' + inwhInter + ' partNeedForSend=' + partNeedForSend+' partTitle='+$(this).find('input.partTitle').val());
                     if (inwhInter == 0) {
-                        console.log('yes ZERO! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC);
-                        $(this).find('input.partNoneComplect').val(parseInt(partNeedForOne * wantC));
+                        noneVal =parseInt(partNeedForOne * wantC);
+                        console.log('yes >'+noneVal+'< ZERO! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC+' noneVal='+noneVal);
+
+                        $(this).find('input.partNoneComplect').val(noneVal);
                     }
                     if (inwhInter < partNeedForSend) {
-                        console.log('yes LESS! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC);
-                        $(this).find('input.partNoneComplect').val(parseInt(partNeedForOne * wantC) - inwhInter);
+                        noneVal = parseInt(partNeedForOne * wantC) - inwhInter;
+                        console.log('yes >'+noneVal+'< LESS! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC+' noneVal='+noneVal);
+                        $(this).find('input.partNoneComplect').val(noneVal);
+
                     }
                 }
                 //--inWarehouse--
@@ -349,9 +362,14 @@ if(!empty($model)){
                 partNeedForSend = parseInt($(this).find('.needSend').val());
                 if (inwh != undefined) {
                     if (inwh < partNeedForSend) {
-                        console.log('yes inWarehouse LESS! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC + ' inWareHouse=' + inwh);
-                        $(this).find('input.partNoneComplect').val((parseInt(partNeedForOne * wantC) - inwh));
+                        noneVal = (parseInt(partNeedForOne * wantC) - inwh);
+                        console.log('yes inWarehouse >'+noneVal+'<LESS! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC + ' inWareHouse=' + inwh+' partTitle='+$(this).find('input.partTitle').val());
+                        $(this).find('input.partNoneComplect').val(noneVal);
                     }
+                }
+                console.log('NONEVAL='+noneVal+' part_id='+part_id);
+                if ((part_id != undefined)&&(noneVal != undefined)) {
+                    $('#none-complect-items').append("<input type='hidden' name='arrayNoneComplect["+part_id+"]' value='"+noneVal+"' />");
                 }
             }
         });
@@ -463,9 +481,11 @@ if(!empty($model)){
     $('#none-complect-ch').on('change',function(){
         if (document.getElementById('none-complect-ch').checked) {
             $('.assemblyBtn').show();
+            $('#none-complect-ch-val').val(1);
             //nonComplectCells('show');
         } else {
             //nonComplectCells('hide');
+            $('#none-complect-ch-val').val(0);
         }
     });
 
@@ -661,12 +681,14 @@ if(!empty($model)){
         if (action == 'show') {
             $('.none-complect-ch-row').show();
             $('#none-complect-ch').attr('checked',true).attr('disabled',true);
+            $('#none-complect-ch-val').val(1);
             $('.partNoneComplect').show();
             $('.assemblyBtn').show();
         }
         if (action == 'hide') {
             $('.none-complect-ch-row').hide();
             $('#none-complect-ch').attr('checked',false);
+            $('#none-complect-ch-val').val(0);
             $('.partNoneComplect').hide();
         }
     }

@@ -6,6 +6,7 @@ use app\components\THelper;
 use app\models\ExecutionPosting;
 use app\models\LogWarehouse;
 use app\models\PartsAccessories;
+use app\models\PartsAccessoriesNone;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\SuppliersPerformers;
 use app\models\Warehouse;
@@ -263,7 +264,7 @@ class SubmitExecutionPostingController extends BaseController {
 
         if(!empty($request)){
             $myWarehouse = Warehouse::getIdMyWarehouse();
-            return var_dump($request);die();
+
             if(!empty($request['_id'])){
                 //TODO: KAA сделать редактирование
                 die();
@@ -274,10 +275,9 @@ class SubmitExecutionPostingController extends BaseController {
                 $model = new ExecutionPosting();
             }
             //if (isset($model->article_id)) {
-            $model->article_id =(@ExecutionPosting::find()->max('article_id'))+1;// inc('acticle_id')
-            //$model->article_id=2;
-            //} else {
-             //   $model->article_id =1;
+            $article_id = (@ExecutionPosting::find()->max('article_id'))+1;
+            $model->article_id = $article_id;
+
             //}
             $model->one_component = (int)(!empty($request['one_component']) ? '1' : '0');
             $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
@@ -320,7 +320,7 @@ class SubmitExecutionPostingController extends BaseController {
             $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
 
             if($model->save()){
-                
+                $execution_posting_id = $model->_id;
                 if(!empty($list_component)){
                     foreach ($list_component as $k=>$item) {
                         if((!empty($item['number_use']) && !empty($item['parent_parts_accessories_id'])) || empty($item['parent_parts_accessories_id'])){
@@ -396,10 +396,37 @@ class SubmitExecutionPostingController extends BaseController {
                         }
                     }
                 }
+                //--noneComplect--
+                $none_complect = $request['arrayNoneComplect'];
+                if (!empty($none_complect)) {
+                    foreach ($none_complect as $k=>$item) {
+                        if (!empty($k)) {
+                            $list_none_component[] = [
+                                'parts_accessories_id' => new ObjectID($k),
+                                'title'                => @PartsAccessories::findOne(['_id'=>new ObjectID((string)$k)])->title ?? '??',
+                                'number'               => $item
+                            ];
+                        }
 
+                    }
+                    $model = new PartsAccessoriesNone();
+                    $model->execution_posting_id = $execution_posting_id;
+                    $model->title = @PartsAccessories::findOne(['_id'=>new ObjectID($request['parts_accessories_id'])])->title;
+                    $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
+                    $model->article_id = $article_id;
+                    $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
+                    $model->list_none_component = $list_none_component;
+                    $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                    if ($model->save()) {
+                        $mes_none='';
+                    } else {
+                        $mes_none ='Ошибка сохранения некомплекта!';
+                    }
+
+                }
                 Yii::$app->session->setFlash('alert' ,[
                         'typeAlert'=>'success',
-                        'message'=>'Сохранения применились.'
+                        'message'=>'Сохранения применились.'.$mes_none
                     ]
                 );
                 

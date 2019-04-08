@@ -112,7 +112,8 @@ function pasportLang($name,$p_lang) {
                                                 'disabled'=>true,
                                                 'data' => [
                                                     'toggle'    =>  'tooltip',
-                                                    'placement' =>  'placement'
+                                                    'placement' =>  'placement',
+                                                    'part_id'   => (string)$kInterchangeable
                                                 ],
                                                 'title' => $itemInterchangeable
                                             ]);?>
@@ -189,7 +190,7 @@ function pasportLang($name,$p_lang) {
                                 </div>
                                 <div class="col-md-1">
                                     <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[$kInterchangeable]) ? $listGoodsFromMyWarehouse[$kInterchangeable] : 0 ),['class'=>'partNoneComplect']);?>
-                                    <?=Html::input('number','numberNoneComplect['.$kInterchangeable.']','10',[
+                                    <?=Html::input('number','numberNoneComplect['.$kInterchangeable.']','',[
                                         'class'=>'form-control partNoneComplect',
                                         'pattern'=>'\d*',
                                         'disabled'=>'disabled',
@@ -214,7 +215,8 @@ function pasportLang($name,$p_lang) {
                                     'disabled'=>true,
                                     'data' => [
                                         'toggle'    =>  'tooltip',
-                                        'placement' =>  'placement'
+                                        'placement' =>  'placement',
+                                        'part_id'   => (string)$item['_id']
                                     ],
                                     'title' => $listGoods[(string)$item['_id']]
                                 ]);?>
