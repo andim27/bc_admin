@@ -400,6 +400,7 @@
                         </div>
                     </div>
                  </form>
+            </div>
         </div>
     </div>
 </div>
@@ -525,9 +526,7 @@
                     );
                 });
 
-                console.log(msg);
-
-                $('.showroomInfo').modal();
+                $('.showroomInfo').modal('show');
             }
         });
     });
@@ -551,7 +550,6 @@
                 blInfo.find('.loader').remove();
             },
             success: function(msg){
-                console.log(msg)
 
                 if(msg === '1'){
                     blError.html(
