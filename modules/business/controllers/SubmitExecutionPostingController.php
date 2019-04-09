@@ -400,7 +400,7 @@ class SubmitExecutionPostingController extends BaseController {
                 $none_complect = $request['arrayNoneComplect'];
                 if (!empty($none_complect)) {
                     foreach ($none_complect as $k=>$item) {
-                        if (!empty($k)) {
+                        if (!empty($k)&&(!empty($item))) {
                             $list_none_component[] = [
                                 'parts_accessories_id' => new ObjectID($k),
                                 'title'                => @PartsAccessories::findOne(['_id'=>new ObjectID((string)$k)])->title ?? '??',
@@ -409,19 +409,22 @@ class SubmitExecutionPostingController extends BaseController {
                         }
 
                     }
-                    $model = new PartsAccessoriesNone();
-                    $model->execution_posting_id = $execution_posting_id;
-                    $model->title = @PartsAccessories::findOne(['_id'=>new ObjectID($request['parts_accessories_id'])])->title;
-                    $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
-                    $model->article_id = $article_id;
-                    $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
-                    $model->list_none_component = $list_none_component;
-                    $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
-                    if ($model->save()) {
-                        $mes_none='';
-                    } else {
-                        $mes_none ='Ошибка сохранения некомплекта!';
+                    if (!empty($list_none_component)) {
+                        $model = new PartsAccessoriesNone();
+                        $model->execution_posting_id = $execution_posting_id;
+                        $model->title = @PartsAccessories::findOne(['_id'=>new ObjectID($request['parts_accessories_id'])])->title;
+                        $model->parts_accessories_id = new ObjectID($request['parts_accessories_id']);
+                        $model->article_id = $article_id;
+                        $model->suppliers_performers_id = new ObjectID($request['suppliers_performers_id']);
+                        $model->list_none_component = $list_none_component;
+                        $model->date_create = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                        if ($model->save()) {
+                            $mes_none='';
+                        } else {
+                            $mes_none ='Ошибка сохранения некомплекта!';
+                        }
                     }
+
 
                 }
                 Yii::$app->session->setFlash('alert' ,[

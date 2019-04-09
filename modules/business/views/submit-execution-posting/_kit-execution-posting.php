@@ -139,6 +139,7 @@ function pasportLang($name,$p_lang) {
                                             'class'=>'form-control needSendInterchangeable',
                                             'pattern'=>'\d*',
                                             'step'=>'0.01',
+                                            'data-part_id'=> (string)$kInterchangeable
                                         ]);?>
                                     </div>
                                     <div class="col-md-1">
@@ -154,7 +155,8 @@ function pasportLang($name,$p_lang) {
                                             'class'=>'form-control partNoneComplect',
                                             'pattern'=>'\d*',
                                             'disabled'=>'disabled',
-                                            'title' => 'Не комплект(_kit-p-lang)'
+                                            'title' => 'Не комплект(_kit-p-lang)',
+                                            'id'=>'NoneComplect-'.(string)$kInterchangeable
                                         ]);?>
                                     </div>
                                 </div>
@@ -194,7 +196,8 @@ function pasportLang($name,$p_lang) {
                                         'class'=>'form-control partNoneComplect',
                                         'pattern'=>'\d*',
                                         'disabled'=>'disabled',
-                                        'title' => 'Не комплект(_kit)'
+                                        'title' => 'Не комплект(_kit)',
+                                        'id'=>'NoneComplect-'.(string)$kInterchangeable
                                     ]);?>
                                 </div>
                             </div>
@@ -253,7 +256,8 @@ function pasportLang($name,$p_lang) {
                                         'pattern'=>'\d*',
                                         'step'=>'1',
                                         'disabled'=>true,
-                                        'title' => 'Не комплект(_kit_exec!empty)'
+                                        'title' => 'Не комплект(_kit_exec!empty)',
+                                        'id'=>'NoneComplect-'.(string)$item['_id']
                                     ]);?>
                                 </div>
                     </div>
@@ -279,6 +283,19 @@ function pasportLang($name,$p_lang) {
 
     $(document).find('.CanCollect').val(canCollect);
 
+    $(document).ready(function() {
+        //needSendInterchangeable
+        $(".needSendInterchangeable").on("change",function () {
+            cur_val     = $(this).val();
+            cur_part_id = $(this).attr('data-part_id');
+            console.log('needSendInterchangeable val= '+cur_val+' part_id='+cur_part_id);
+            //if (cur_val == 0){
+                $("#NoneComplect-"+cur_part_id).val(cur_val);
+                $("#itemNoneComplect-"+cur_part_id).val(cur_val);
+
+            //}
+        });
+    });
 //    $(document).on('change','select[name="complect[]"]',function () {
 //
 //        changeRow = $(this).closest('.row');

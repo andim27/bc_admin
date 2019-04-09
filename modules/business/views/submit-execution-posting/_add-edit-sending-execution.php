@@ -308,7 +308,14 @@ if(!empty($model)){
             }
         });
     });
+    function isInt(n)
+    {
+        return ((n != "" && !isNaN(n)) && (Math.round(n) == n));
+    }
+    function isFloat (x) {
+        return !!(x % 1); //return n != "" && !isNaN(n) && Math.round(n) != n;
 
+    }
     $(".WantCollect").on('change',function(){
         $('#none-complect-items').html("");
         blForm = $(this).closest('form');
@@ -339,37 +346,65 @@ if(!empty($model)){
                 //--inWarehouseInterchangeable--
                 partNeedForOne  = parseInt($(this).find('.partNeedForOneInterchangeable').val());
                 partNeedForSend = parseInt($(this).find('.needSendInterchangeable').val());
-
+                partNeedForSendAll = parseInt($(this).find('.needSendInterchangeable').val());//partNeedForSend*partNeedForOne;
                 inwhInter = $(this).find('input.inWarehouseInterchangeable').val();//--inWarehouseInterchangeable inWarwhouse
                 if (inwhInter != undefined) {
-                    console.log('yes inwh=' + inwhInter + ' partNeedForSend=' + partNeedForSend+' partTitle='+$(this).find('input.partTitle').val());
-                    if (inwhInter == 0) {
-                        noneVal =parseInt(partNeedForOne * wantC);
-                        console.log('yes >'+noneVal+'< ZERO! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC+' noneVal='+noneVal);
+                    console.log('(inwhInter) yes inwhInter=' + inwhInter + '  wantC=' + wantC+ ' partNeedForSend=' + partNeedForSend+' partTitle='+$(this).find('input.partTitle').val());
+                    if (isFloat(inwhInter)) {
+                        inwhInter = parseFloat(inwhInter);
+                        partNeedForOne  = parseFloat($(this).find('.partNeedForOneInterchangeable').val());
+                        partNeedForSend = parseFloat($(this).find('.needSendInterchangeable').val());
+                        partNeedForSendAll = partNeedForSend;//partNeedForSend*partNeedForOne;
+                        if (inwhInter < partNeedForSendAll) {
+                            noneVal = partNeedForSendAll - inwhInter;
+                            console.log('(inwhInter)FLOAT-LESS yes inwhInter='+inwhInter+'< LESS! partNeedForOne=' + partNeedForOne +' partNeedForSendAll='+partNeedForSendAll+' noneVal='+noneVal);
+                            $(this).find('input.partNoneComplect').val(noneVal);
 
-                        $(this).find('input.partNoneComplect').val(noneVal);
-                    }
-                    if (inwhInter < partNeedForSend) {
-                        noneVal = parseInt(partNeedForOne * wantC) - inwhInter;
-                        console.log('yes >'+noneVal+'< LESS! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC+' noneVal='+noneVal);
-                        $(this).find('input.partNoneComplect').val(noneVal);
+                        }
+                    } else {
+                        if (inwhInter == 0) {
+                            noneVal =parseInt(partNeedForOne * wantC);
+                            console.log('(inwhInter)INT-0 yes >'+noneVal+'< ZERO! partNeedForOne=' + partNeedForOne +' noneVal='+noneVal);
 
+                            $(this).find('input.partNoneComplect').val(noneVal);
+                        }
+                        if (inwhInter < partNeedForSend) {
+                            noneVal = parseInt(partNeedForOne * wantC) - inwhInter;
+                            console.log('(inwhInter)INT-LESS yes >'+noneVal+'< LESS! partNeedForOne=' + partNeedForOne  + wantC+' noneVal='+noneVal);
+                            $(this).find('input.partNoneComplect').val(noneVal);
+
+                        }
                     }
+
                 }
                 //--inWarehouse--
                 inwh = $(this).find('input.inWarehouse').val();
                 partNeedForOne = parseInt($(this).find('.partNeedForOne').val());
                 partNeedForSend = parseInt($(this).find('.needSend').val());
+                partNeedForSendAll = parseInt($(this).find('.needSend').val());//partNeedForSend*partNeedForOne;
                 if (inwh != undefined) {
-                    if (inwh < partNeedForSend) {
-                        noneVal = (parseInt(partNeedForOne * wantC) - inwh);
-                        console.log('yes inWarehouse >'+noneVal+'<LESS! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC + ' inWareHouse=' + inwh+' partTitle='+$(this).find('input.partTitle').val());
-                        $(this).find('input.partNoneComplect').val(noneVal);
+                    if (isFloat(inwh)) {
+                        inwh            = parseFloat($(this).find('input.inWarehouse').val());
+                        partNeedForOne  = parseFloat($(this).find('.partNeedForOne').val());
+                        partNeedForSend = parseFloat($(this).find('.needSend').val());
+                        partNeedForSendAll = partNeedForSend;//partNeedForSend*partNeedForOne;
+                        if (inwh < partNeedForSendAll) {
+                            noneVal = partNeedForSendAll - inwh;
+                            console.log('FLOAT yes >'+noneVal+'< LESS! partNeedForSendAll=' + partNeedForSendAll + '  wantC=' + wantC+' noneVal='+noneVal);
+                            $(this).find('input.partNoneComplect').val(noneVal);
+                        }
+                    } else {
+                        if (inwh < partNeedForSendAll) {
+                            noneVal = partNeedForSendAll - inwh;
+                            console.log('(inwh)INT LESS yes inWarehouse >'+noneVal+'<LESS! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC + ' inWareHouse=' + inwh+' partTitle='+$(this).find('input.partTitle').val());
+                            $(this).find('input.partNoneComplect').val(noneVal);
+                        }
                     }
+
                 }
                 console.log('NONEVAL='+noneVal+' part_id='+part_id);
                 if ((part_id != undefined)&&(noneVal != undefined)) {
-                    $('#none-complect-items').append("<input type='hidden' name='arrayNoneComplect["+part_id+"]' value='"+noneVal+"' />");
+                    $('#none-complect-items').append("<input type='hidden' id='itemNoneComplect-"+part_id+"' name='arrayNoneComplect["+part_id+"]' value='"+noneVal+"' />");
                 }
             }
         });
