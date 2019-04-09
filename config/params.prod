@@ -3,7 +3,6 @@
 return [
     'adminEmail' => 'admin@example.com',
     'apiAddress' => 'http://bpt-api-prod/api/',
-//    'apiAddress' => 'gnc_api/api/',
     'defaultCountry' => 'RU',
     'useCache' => false,
     'certificate' => [

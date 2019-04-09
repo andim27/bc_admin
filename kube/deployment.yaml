@@ -30,6 +30,7 @@ spec:
         volumeMounts:
         - name: shared-files
           mountPath: /var/www/html
+        workingDir: /var/www/html/
         image: eu.gcr.io/bpt-core/bpt-admin:__VERSION__
         ports:
         - containerPort: 80
@@ -41,9 +42,9 @@ spec:
         - name: NGINX_WEB_ROOT
           value: '/var/www/html'
         - name: ENVIRONMENT
-          value: 'production'
+          value: '__ENVIRONMENT__'
         - name: ATATUS_LICENSE_KEY
-          value: 'lic_apm_138a92e758c44e0b8717bcf316b14633'
+          value: 'lic_apm_32166a6f029e4a29ac10ec6b643baafa'
         - name: ATATUS_APP_NAME
           value: 'six-app'
         - name: ATATUS_FRAMEWORK

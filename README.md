@@ -2,8 +2,8 @@ http://atatus.com/login/
 
 Atatus for admin 
 
-Login: wigozo@gift-link.com
+Login: hufadi@businesssource.net
 
-Password: 42G1xw0MUzKxb2
+Password: ntOj4kXsjC
 
-LicenseKEY: lic_apm_138a92e758c44e0b8717bcf316b14633
+LicenseKEY: lic_apm_32166a6f029e4a29ac10ec6b643baafa
