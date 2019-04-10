@@ -225,6 +225,71 @@ class SubmitExecutionPostingController extends BaseController {
      * popup info Execution and Posting
      * @return string
      */
+    public function actionExecutionPostingNonComplect()
+    {
+        if(empty($request)){
+            $request['to']   = date("Y-m-d");
+            $request['from'] = date("Y-m-d", strtotime( $request['to']." -1 months"));
+        }
+        $dateTo   = $request['to'];
+        $dateFrom = $request['from'];
+        $none_complects_title =[];
+        $none_complects_parts =[];
+        $where_arr=[
+            'date_create' => [
+                '$gte' => new UTCDatetime(strtotime($dateFrom) * 1000),
+                '$lte' => new UTCDateTime(strtotime($dateTo . '23:59:59') * 1000),
+            ]
+        ];
+        if (!empty($request['noneComplectsPart'])) {
+            //'list_none_component.parts_accessories_id'=>['$in'=>[new ObjectID((string)$request['noneComplectsPart'])]]
+            //$items->andFilterWhere([
+            $where_arr['list_none_component.parts_accessories_id'] = ['$in'=>[new ObjectID((string)$request['noneComplectsPart'])]];
+            //]);
+        }
+        if (!empty($request['noneComplectsTitle'])) {
+            //'list_none_component.parts_accessories_id'=>['$in'=>[new ObjectID((string)$request['noneComplectsPart'])]]
+            //$items->andFilterWhere([
+            $where_arr['parts_accessories_id'] = $request['noneComplectsTitle'];
+            //]);
+        }
+        $items =PartsAccessoriesNone::find()->where($where_arr)->all();
+
+
+        $items_arr =[];
+        foreach ($items as $item) {
+            $date_create = $item['date_create']->toDateTime()->format('Y-m-d H:i');
+            $p_title     = $item['title'];
+            $p_id        = (string)$item['_id'];
+            $article_id  = $item['article_id'];
+            array_push($none_complects_title,['title'=>$p_title,'_id'=>$p_id]);
+            foreach ($item['list_none_component'] as $none_item) {
+                array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number']]);
+                array_push($none_complects_parts,['title'=>$none_item['title'],'_id'=>$none_item['parts_accessories_id']]);
+            }
+        }
+        function build_sorter($key) {
+            return function ($a, $b) use ($key) {
+                return strnatcmp($a[$key], $b[$key]);
+            };
+        }
+        usort($items_arr,build_sorter('none_title'));
+        //$collection = Yii::$app->mongodb->getCollection('part_accessories_none');
+
+        //$none_complects_parts_arr = array_unique($none_complects_parts);
+        $none_complects_parts_arr = [];
+        foreach($none_complects_parts as $i) if(!isset($none_complects_parts_arr[$i['title']])) $none_complects_parts_arr[$i['title']] = $i;
+        return $this->render('execution-posting-non-complect',[
+            'language' => Yii::$app->language,
+            'alert' => Yii::$app->session->getFlash('alert', '', true),
+            'none_complects_parts'=>$none_complects_parts_arr,
+            'none_complects_title'=>$none_complects_title,
+            'items' =>$items_arr,
+            'dateFrom'=>$dateFrom,
+            'dateTo'=>$dateTo
+        ]);
+    }
+
     public function actionAddEditSendingExecution($id='')
     {
         $model = '';

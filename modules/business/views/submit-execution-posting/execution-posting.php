@@ -32,6 +32,11 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                                 <?= THelper::t('posting_executed') ?>
                             </a>
                         </li>
+                        <li class="">
+                            <a href="/ru/business/submit-execution-posting/execution-posting-non-complect" class="tab-sending-execution">
+                                <?= THelper::t('non_complect') ?>
+                            </a>
+                        </li>
                     </ul>
                 </header>
                 <div class="panel-body">
