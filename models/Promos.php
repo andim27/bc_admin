@@ -44,6 +44,7 @@ class Promos extends ActiveRecord
             'salesSum2',
             'needSaleSum',
             'needSaleSum2',
+            'points'
         ];
     }
 
