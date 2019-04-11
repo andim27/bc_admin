@@ -84,7 +84,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                         </select>
                                     </div>
                                     <div class="col-md-3 m-b">
-                                        <select class="form-control" id="noneComplectsPart" name="noneComplectsPart" title="Неукомплектованые ДЕТАЛИ">
+                                        <select class="form-control" id="noneComplectsPart" name="noneComplectsPart" title="Недостающие ДЕТАЛИ">
                                             <option value="0" <?= (empty($f_noneComplectsPart))?'selected':'' ?>  >Все</option>
                                             <?php  foreach ($none_complects_parts as $item) { ?>
                                                 <option value="<?=$item['_id']  ?>" <?=($f_noneComplectsPart == $item['_id'])? 'selected':'' ?> ><?=$item['title'] ?></option>
@@ -123,9 +123,9 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                             <tr>
                                             <td><?=$item['date_create'] ?></td>
                                             <td><?=$item['article_id'] ?></td>
-                                            <td title="none_id"><?=$item['none_title'] ?></td>
-                                            <td><?=$item['none_number'] ?></td>
-                                            <td></td>
+                                            <td title="<?=$item['none_id'] ?>"><?=$item['none_title'] ?></td>
+                                            <td><?=$item['none_number']  ?></td>
+                                            <td><?=$item['number_in_wh'] ?></td>
                                             <td>
                                                 <input type="number" id="part_id_" />
                                             </td>

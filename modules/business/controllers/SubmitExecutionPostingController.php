@@ -234,10 +234,12 @@ class SubmitExecutionPostingController extends BaseController {
         }
         $dateTo   = $request['to'];
         $dateFrom = $request['from'];
-        $f_noneComplectsTitle = $request['noneComplectsTitle'];
-        $f_noneComplectsPart  = $request['noneComplectsPart'];
+        $f_noneComplectsTitle = $request['noneComplectsTitle'] ?? null;
+        $f_noneComplectsPart  = $request['noneComplectsPart'] ?? null;
         $none_complects_title =[];
         $none_complects_parts =[];
+        $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
+        //var_dump($listGoodsFromMyWarehouse);die();
         $where_arr=[
             'date_create' => [
                 '$gte' => new UTCDatetime(strtotime($dateFrom) * 1000),
@@ -262,14 +264,17 @@ class SubmitExecutionPostingController extends BaseController {
             }
 
             foreach ($item['list_none_component'] as $none_item) {
-
+                $number_in_wh = 0;
+                if (array_key_exists((string)$none_item['parts_accessories_id'],$listGoodsFromMyWarehouse)) {
+                    $number_in_wh = $listGoodsFromMyWarehouse[$none_item['parts_accessories_id']];
+                }
                 if (!empty($f_noneComplectsPart ) ) {
 
                     if ($f_noneComplectsPart == (string)$none_item['parts_accessories_id']) {
-                        array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number']]);
+                        array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number'],'number_in_wh'=>$number_in_wh]);
                     }
                 } else {
-                    array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number']]);
+                    array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number'],'number_in_wh'=>$number_in_wh]);
                 }
 
                 array_push($none_complects_parts,['title'=>$none_item['title'],'_id'=>$none_item['parts_accessories_id']]);
