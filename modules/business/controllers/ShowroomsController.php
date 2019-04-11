@@ -2195,7 +2195,7 @@ class ShowroomsController extends BaseController
                 'type' => [
                     '$ne'   =>  -1
                 ],
-                'productData.productNatural' => 1,
+                //'productData.productNatural' => 1,
                 'dateCreate' => [
                     '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
                     '$lte' => new UTCDateTime(strtotime($filter['dateTo'].'-'.$countDay.' 23:59:59') * 1000)
@@ -2211,10 +2211,13 @@ class ShowroomsController extends BaseController
 
                 if(empty($infoSale['packs'][$sale->productName])){
                     $infoSale['packs'][$sale->productName] = [
-                        'orderCount' => 0
+                        'orderCount'    => 0,
+                        'productNumber' => $sale->product,
+                        'totalPrice'    => 0
                     ];
                 }
                 $infoSale['packs'][$sale->productName]['orderCount']++;
+                $infoSale['packs'][$sale->productName]['totalPrice'] += $sale->price;
 
                 if(!empty($setSales)){
                     foreach ($setSales as $k=>$itemSale) {
@@ -2263,6 +2266,29 @@ class ShowroomsController extends BaseController
         if(empty($showroomId)){
             return $this->render('not-showroom');
         }
+
+        $xz= Yii::$app->mongodb->getCollection('sales');
+        $result = $xz->aggregate(
+            ['$unwind' => '$idUser'],
+            [
+                '$lookup' =>
+                    [
+                        'from' => 'users',
+                        'localField' => 'userId',
+                        'foreignField' => '_id',
+                        'as' => 'U'
+                    ]
+            ]
+        )->queryAll();
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<xmp>';
+        print_r($result);
+        echo '</xmp>';
+        die();
+
+
+
 
         $sales = Sales::find()
             ->where(['showroomId'=>$showroomId])

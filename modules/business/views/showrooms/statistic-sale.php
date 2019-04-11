@@ -5,6 +5,8 @@ use app\components\AlertWidget;
 $listStatusShowroom = \app\models\Sales::getStatusShowroom();
 
 $alert = Yii::$app->session->getFlash('alert', '', true);
+
+$totalPricePack = 0;
 ?>
 
 <div class="m-b-md">
@@ -76,20 +78,31 @@ $alert = Yii::$app->session->getFlash('alert', '', true);
                         <table id="table-requests" class="table table-users table-striped datagrid m-b-sm">
                             <thead>
                             <tr>
+                                <th>Номер пака</th>
                                 <th>Паки</th>
                                 <th>Заказано</th>
+                                <th>Общая стоимость</th>
                             </tr>
                             </thead>
                             <tbody>
                             <?php if(!empty($infoSale['packs'])){?>
                                 <?php foreach ($infoSale['packs'] as $k=>$item) {?>
+                                    <?php $totalPricePack +=$item['totalPrice']; ?>
                                     <tr>
+                                        <td><?=$item['productNumber']?></td>
                                         <td><?=$k?></td>
                                         <td><?=$item['orderCount']?></td>
+                                        <td><?=$item['totalPrice']?></td>
                                     </tr>
                                 <?php } ?>
                             <?php }?>
                             </tbody>
+                            <tfooter>
+                                <tr>
+                                    <th colspan="3" class="text-right">Итого:</th>
+                                    <th><?=$totalPricePack?></th>
+                                </tr>
+                            </tfooter>
                         </table>
                     </div>
                 </div>

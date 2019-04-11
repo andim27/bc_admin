@@ -339,10 +339,16 @@ Class Menu
                 'controller' => 'promotion',
                 'items' => [
                     [
-                        'key'   =>  'sidebar_promotion_current',
-                        'label' => THelper::t('sidebar_promotion_current'),
-                        'url' => ['/business/promotion/current'],
-                        'action' => 'current',
+                        'key'   =>  'sidebar_promotion_turkey',
+                        'label' => THelper::t('sidebar_promotion_turkey'),
+                        'url' => ['/business/promotion/turkey'],
+                        'action' => 'turkey',
+                    ],
+                    [
+                        'key'   =>  'sidebar_promotion_spain',
+                        'label' => THelper::t('sidebar_promotion_spain'),
+                        'url' => ['/business/promotion/spain'],
+                        'action' => 'spain',
                     ],
                     [
                         'key'   =>  'sidebar_promotion_requests',
@@ -350,7 +356,6 @@ Class Menu
                         'url' => ['/business/promotion/requests'],
                         'action' => 'requests',
                     ],
-
                 ]
             ],
             [
