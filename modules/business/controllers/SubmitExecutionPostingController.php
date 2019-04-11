@@ -266,7 +266,7 @@ class SubmitExecutionPostingController extends BaseController {
             foreach ($item['list_none_component'] as $none_item) {
                 $number_in_wh = 0;
                 if (array_key_exists((string)$none_item['parts_accessories_id'],$listGoodsFromMyWarehouse)) {
-                    $number_in_wh = $listGoodsFromMyWarehouse[$none_item['parts_accessories_id']];
+                    $number_in_wh = $listGoodsFromMyWarehouse[(string)$none_item['parts_accessories_id']];
                 }
                 if (!empty($f_noneComplectsPart ) ) {
 
