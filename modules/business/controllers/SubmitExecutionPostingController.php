@@ -227,12 +227,15 @@ class SubmitExecutionPostingController extends BaseController {
      */
     public function actionExecutionPostingNonComplect()
     {
+        $request = Yii::$app->request->post();
         if(empty($request)){
             $request['to']   = date("Y-m-d");
             $request['from'] = date("Y-m-d", strtotime( $request['to']." -1 months"));
         }
         $dateTo   = $request['to'];
         $dateFrom = $request['from'];
+        $f_noneComplectsTitle = $request['noneComplectsTitle'];
+        $f_noneComplectsPart  = $request['noneComplectsPart'];
         $none_complects_title =[];
         $none_complects_parts =[];
         $where_arr=[
@@ -241,18 +244,7 @@ class SubmitExecutionPostingController extends BaseController {
                 '$lte' => new UTCDateTime(strtotime($dateTo . '23:59:59') * 1000),
             ]
         ];
-        if (!empty($request['noneComplectsPart'])) {
-            //'list_none_component.parts_accessories_id'=>['$in'=>[new ObjectID((string)$request['noneComplectsPart'])]]
-            //$items->andFilterWhere([
-            $where_arr['list_none_component.parts_accessories_id'] = ['$in'=>[new ObjectID((string)$request['noneComplectsPart'])]];
-            //]);
-        }
-        if (!empty($request['noneComplectsTitle'])) {
-            //'list_none_component.parts_accessories_id'=>['$in'=>[new ObjectID((string)$request['noneComplectsPart'])]]
-            //$items->andFilterWhere([
-            $where_arr['parts_accessories_id'] = $request['noneComplectsTitle'];
-            //]);
-        }
+
         $items =PartsAccessoriesNone::find()->where($where_arr)->all();
 
 
@@ -262,11 +254,27 @@ class SubmitExecutionPostingController extends BaseController {
             $p_title     = $item['title'];
             $p_id        = (string)$item['_id'];
             $article_id  = $item['article_id'];
-            array_push($none_complects_title,['title'=>$p_title,'_id'=>$p_id]);
+            array_push($none_complects_title,['title'=>$p_title,'_id'=>$p_id,'article_id'=>$article_id]);
+            if (!empty($f_noneComplectsTitle ) ) {
+                if ($f_noneComplectsTitle != $p_id ) {
+                    continue;
+                }
+            }
+
             foreach ($item['list_none_component'] as $none_item) {
-                array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number']]);
+
+                if (!empty($f_noneComplectsPart ) ) {
+
+                    if ($f_noneComplectsPart == (string)$none_item['parts_accessories_id']) {
+                        array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number']]);
+                    }
+                } else {
+                    array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number']]);
+                }
+
                 array_push($none_complects_parts,['title'=>$none_item['title'],'_id'=>$none_item['parts_accessories_id']]);
             }
+
         }
         function build_sorter($key) {
             return function ($a, $b) use ($key) {
@@ -274,7 +282,6 @@ class SubmitExecutionPostingController extends BaseController {
             };
         }
         usort($items_arr,build_sorter('none_title'));
-        //$collection = Yii::$app->mongodb->getCollection('part_accessories_none');
 
         //$none_complects_parts_arr = array_unique($none_complects_parts);
         $none_complects_parts_arr = [];
@@ -286,7 +293,9 @@ class SubmitExecutionPostingController extends BaseController {
             'none_complects_title'=>$none_complects_title,
             'items' =>$items_arr,
             'dateFrom'=>$dateFrom,
-            'dateTo'=>$dateTo
+            'dateTo'=>$dateTo,
+            'f_noneComplectsTitle'=>$f_noneComplectsTitle,
+            'f_noneComplectsPart' =>$f_noneComplectsPart
         ]);
     }
 

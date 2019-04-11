@@ -76,18 +76,18 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                     </div>
                                     <div class="col-md-3 m-b">
                                         <select class="form-control" id="noneComplectsTitle" name="noneComplectsTitle" title="Неукомплектованые ПРИБОРЫ">
-                                            <option value="0" selected>Все</option>
+                                            <option value="0" <?= (empty($f_noneComplectsTitle))?'selected':'' ?> >Все</option>
                                             <?php  foreach ($none_complects_title as $item) { ?>
-                                                <option value="<?=$item['_id'] ?>"><?=$item['title'] ?></option>
+                                                <option value="<?=$item['_id'] ?>" <?=($f_noneComplectsTitle == $item['_id'])? 'selected':'' ?> ><?=$item['article_id'].') '.$item['title'] ?></option>
                                             <?php } ?>
 
                                         </select>
                                     </div>
                                     <div class="col-md-3 m-b">
                                         <select class="form-control" id="noneComplectsPart" name="noneComplectsPart" title="Неукомплектованые ДЕТАЛИ">
-                                            <option value="0" selected>Все</option>
+                                            <option value="0" <?= (empty($f_noneComplectsPart))?'selected':'' ?>  >Все</option>
                                             <?php  foreach ($none_complects_parts as $item) { ?>
-                                                <option value="<?=$item['_id'] ?>"><?=$item['title'] ?></option>
+                                                <option value="<?=$item['_id']  ?>" <?=($f_noneComplectsPart == $item['_id'])? 'selected':'' ?> ><?=$item['title'] ?></option>
                                             <?php } ?>
 
                                         </select>
