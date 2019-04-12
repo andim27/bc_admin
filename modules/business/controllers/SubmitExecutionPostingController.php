@@ -303,7 +303,17 @@ class SubmitExecutionPostingController extends BaseController {
             'f_noneComplectsPart' =>$f_noneComplectsPart
         ]);
     }
+    public function actionFillNoneComplect()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $res = ['success'=>true,'mes'=>'Done!'];
+        $request = Yii::$app->request->post();
+        $part_id = $request['part_id'];
+        $fill_number = $request['fill_number'];
+        $res = ['success'=>true,'mes'=>'Done!part_id='.$part_id.' fill_number='.$fill_number];
 
+        return $res;
+    }
     public function actionAddEditSendingExecution($id='')
     {
         $model = '';

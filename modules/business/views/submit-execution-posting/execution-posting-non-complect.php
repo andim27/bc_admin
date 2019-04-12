@@ -17,6 +17,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
         margin-right: 10px;
     }
 </style>
+
 <div class="m-b-md">
         <h3 class="m-b-none"><?= THelper::t('sidebar_execution_posting') ?></h3>
 </div>
@@ -119,7 +120,9 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($items as $item) { ?>
+                                        <?php foreach ($items as $item) {
+                                            $none_id = $item['none_id'] ;
+                                        ?>
                                             <tr>
                                             <td><?=$item['date_create'] ?></td>
                                             <td><?=$item['article_id'] ?></td>
@@ -127,10 +130,10 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                             <td><?=$item['none_number']  ?></td>
                                             <td><?=$item['number_in_wh'] ?></td>
                                             <td>
-                                                <input type="number" id="part_id_" />
+                                                <input type="number" id="fill_part_id_<?=$item['none_id'] ?>" />
                                             </td>
                                             <td>
-                                                <button class="btn-info">Дополнить</button>
+                                                <button class="btn-info" id="btn-" onclick="fillNoneComplect('<?= $none_id ?>')">Дополнить</button>
                                             </td>
                                             </tr>
                                         <?php } ?>
@@ -145,3 +148,18 @@ $listGoods = PartsAccessories::getListPartsAccessories();
     </div>
 </div>
 
+<script>
+    function showAnswer(data) {
+        console.log(data);
+    }
+    function fillNoneComplect(part_id) {
+        var url="/<?=Yii::$app->language?>/business/submit-execution-posting/fill-none-complect";
+        $.post(url,{'part_id':part_id,'fill_number':fill_number}).done(function (data) {
+            if (data.success == true) {
+                showAnswer(data.mes);
+            } else {
+                console.log('Error:fillNoneComplect ='+data.mes);
+            }
+        });
+    }
+</script>
