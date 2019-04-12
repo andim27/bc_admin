@@ -343,43 +343,44 @@ class ReferenceController extends BaseController
 
     //--------------------b:newAdmin-----------------
     public function actionGoods() {
-        //$goods = [];
-        //$goods = Products::find()->orderBy(['productName'=>SORT_ASC])->all();
-        $category_items = ProductsCategories::find()->all();
-        $cat_items=[
-            ['id'=>0,'name'=>'Все товары','rec_id'=>0],
-        ];
-        $index=1;
-        foreach ($category_items as $item) {
-            //array_push($cat_items,['id'=>$index,'rec_id'=>(string)$item['_id'],'name'=>$item->name]);
-            array_push($cat_items,['id'=>$index,'rec_id'=>(string)($item->_id),'name'=>$item->name]);
-            $index++;
-        }
-        $request = Yii::$app->request;
-        $active_ch =  $request->get('active');
-        if (!isset($active_ch) || (isset($active_ch)&&($active_ch > 0))) {
-            $goods = Products::find()->where(['productActive'=>['$gt'=>0]])->asArray()->all();
-        } else {
-            $goods = Products::find()->asArray()->all();
-        }
-        if (count($request->get())==0) {
-            $active_ch=1;
-        }
-        //$goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->asArray()->all();
-        //$goods = Products::find()->where(['idInMarket' => ['$gt'=>999]])->andWhere(['idInMarket'=>['$gt'=>124]])->andWhere(['idInMarket'=>['$lt'=>200]])->asArray()->all();
 
-        $requestLanguage = $request->get('l');
-        $language = $requestLanguage ? $requestLanguage : Yii::$app->language;
-        $languages = api\dictionary\Lang::all();
+        $request = Yii::$app->request->get();
+
+        $listCategories=$cat_items=[];
+
+        $cat_items[] = ['id'=>0,'name'=>'Все товары','rec_id'=>0];
+
+        $category_items = ProductsCategories::find()->select(['_id','name'])->all();
+
+        foreach ($category_items as $k=>$item) {
+            $cat_items[] = [
+                'id'    =>($k+1),
+                'rec_id'=>strval($item->_id),
+                'name'  =>$item->name
+            ];
+
+            $listCategories[strval($item->_id)] = $item->name;
+        }
+
+        $request['active'] = (isset($request['active']) ? $request['active'] : 1);
+
+        $goods = Products::find()->select(['_id','product','idInMarket','productNameLangs','products','categories',
+            'price','bonus','paymentsToRepresentive','paymentsToStock','productTax','expirationPeriod','type','productActive']);
+        if($request['active'] == 1){
+            $goods = $goods->where(['productActive'=>['$gt'=>0]]);
+        }
+
+        $goods = $goods->asArray()->all();
+
         return $this->render('goods', [
-            'active_ch'=>$active_ch,
-            'category_items'=>$category_items,
-            'cat_items' => $cat_items,
-            'goods' => $goods,
-            'language' => $language,
-            'translationList' => $languages ? ArrayHelper::map($languages, 'alpha2', 'native') : []
+            'active_ch'         => $request['active'],
+            'cat_items'         => $cat_items,
+            'listCategories'    => $listCategories,
+            'goods'             => $goods,
+            'lang'              => Yii::$app->language
         ]);
     }
+
     public function actionCategoryChange() {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $res=['success'=>true,'message'=>'All is ok'];
