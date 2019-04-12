@@ -2191,11 +2191,11 @@ class ShowroomsController extends BaseController
         $listPartsAccessoriesForSaLe = PartsAccessories::getListPartsAccessoriesForSaLe();
 
         $modelSales = Sales::find()
+            ->select(['_id','product','productName','price'])
             ->where([
                 'type' => [
                     '$ne'   =>  -1
                 ],
-                //'productData.productNatural' => 1,
                 'dateCreate' => [
                     '$gte' => new UTCDateTime(strtotime($filter['dateFrom'] . '-01 00:00:00') * 1000),
                     '$lte' => new UTCDateTime(strtotime($filter['dateTo'].'-'.$countDay.' 23:59:59') * 1000)
@@ -2209,15 +2209,16 @@ class ShowroomsController extends BaseController
                 $statusSale = $sale->statusSale;
                 $setSales = $statusSale->setSales;
 
-                if(empty($infoSale['packs'][$sale->productName])){
-                    $infoSale['packs'][$sale->productName] = [
+                if(empty($infoSale['packs'][$sale->product])){
+                    $infoSale['packs'][$sale->product] = [
                         'orderCount'    => 0,
                         'productNumber' => $sale->product,
+                        'productName'   => $sale->productName,
                         'totalPrice'    => 0
                     ];
                 }
-                $infoSale['packs'][$sale->productName]['orderCount']++;
-                $infoSale['packs'][$sale->productName]['totalPrice'] += $sale->price;
+                $infoSale['packs'][$sale->product]['orderCount']++;
+                $infoSale['packs'][$sale->product]['totalPrice'] += $sale->price;
 
                 if(!empty($setSales)){
                     foreach ($setSales as $k=>$itemSale) {

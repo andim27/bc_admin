@@ -21,4 +21,4 @@ function hh($data)
 }
 
 (new yii\web\Application($config))->run();
-//echo '<div>Время выполнения скрипта: '.round(microtime(true) - $start, 4).' сек.</div>';
+//echo '<div style="position: fixed;bottom: 0px; background-color: #973634;color:#FFF;">Время выполнения скрипта: '.round(microtime(true) - $start, 4).' сек.</div>';

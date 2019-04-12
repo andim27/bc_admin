@@ -86,11 +86,11 @@ $totalPricePack = 0;
                             </thead>
                             <tbody>
                             <?php if(!empty($infoSale['packs'])){?>
-                                <?php foreach ($infoSale['packs'] as $k=>$item) {?>
-                                    <?php $totalPricePack +=$item['totalPrice']; ?>
+                                <?php foreach ($infoSale['packs'] as $item) {?>
+                                    <?php $totalPricePack += $item['totalPrice']; ?>
                                     <tr>
                                         <td><?=$item['productNumber']?></td>
-                                        <td><?=$k?></td>
+                                        <td><?=$item['productName']?></td>
                                         <td><?=$item['orderCount']?></td>
                                         <td><?=$item['totalPrice']?></td>
                                     </tr>
