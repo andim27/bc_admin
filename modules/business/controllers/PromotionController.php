@@ -10,10 +10,20 @@ class PromotionController extends BaseController
     /**
      * @return string
      */
-    public function actionCurrent()
+    public function actionTurkey()
     {
-        return $this->render('current', [
-            'promotions' => Promos::find()->where(['type' => 'TYPE_TURKEY_240319'])->orderBy(['completed' => SORT_DESC, 'date' => SORT_DESC])->all(),
+        return $this->render('turkey', [
+            'promotions' => Promos::find()->where(['type' => 'TYPE_TURKEY_240319'])->all(),
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function actionSpain()
+    {
+        return $this->render('spain', [
+            'promotions' => Promos::find()->where(['type' => 'TYPE_SPAIN_240319'])->all(),
         ]);
     }
 

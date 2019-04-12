@@ -50,7 +50,7 @@ spec:
         - name: ATATUS_FRAMEWORK
           value: 'Yii2'
         - name: MAX_EXECUTION_TIME
-          value: '60'
+          value: '120'
         - name: PHP_SESSION_TIME
           value: '86400'
         - name: PHP_MEMORY_MAX

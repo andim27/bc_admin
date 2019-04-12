@@ -1,7 +1,7 @@
 <?php use app\components\THelper; ?>
 <div class="row">
     <div class="col-md-12">
-        <h3><?= THelper::t('promotion_currenr_results_title'); ?></h3>
+        <h3><?= THelper::t('sidebar_promotion_turkey'); ?></h3>
     </div>
 </div>
 <div class="row">
