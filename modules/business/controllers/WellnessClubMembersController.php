@@ -1,11 +1,8 @@
-<?php
-
-namespace app\modules\business\controllers;
+<?php namespace app\modules\business\controllers;
 
 use app\components\THelper;
 use app\controllers\BaseController;
 use app\models\api\dictionary\Country;
-use app\models\api\Lang;
 use app\models\WellnessClubInfo;
 use app\models\WellnessClubMembersInfoForm;
 use app\models\WellnessClubVideo;
@@ -15,7 +12,6 @@ use MongoDB\BSON\UTCDateTime;
 use Yii;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
-
 
 class WellnessClubMembersController extends BaseController
 {

@@ -1565,6 +1565,22 @@ class UserController extends BaseController
         }
     }
 
+    public function actionCareerHistory()
+    {
+        $request = Yii::$app->request->post();
+
+        $dateFrom = isset($request['from']) ? strtotime($request['from']) : time();
+        $dateTo = isset($request['to']) ? strtotime($request['to']) : time();
+
+        $careerHistory = api\user\CareerHistory::get(gmdate('d.m.Y', $dateFrom), gmdate('d.m.Y', $dateTo));
+
+        return $this->render('career_history', [
+            'careerHistory' => $careerHistory,
+            'from' => $dateFrom,
+            'to' => $dateTo
+        ]);
+    }
+
 }
 
 function compareShortPin($pin){
