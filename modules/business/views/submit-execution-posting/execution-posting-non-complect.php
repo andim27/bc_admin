@@ -6,7 +6,7 @@ use app\components\AlertWidget;
 use yii\helpers\Html;
 use kartik\widgets\ActiveForm;
 use kartik\widgets\DatePicker;
-
+use MongoDB\BSON\UTCDatetime;
 $listGoods = PartsAccessories::getListPartsAccessories();
 //$listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
 
@@ -17,6 +17,23 @@ $listGoods = PartsAccessories::getListPartsAccessories();
         margin-right: 10px;
     }
 </style>
+
+<script>
+    function showAnswer(data) {
+        console.log(data);
+    }
+    function fillNoneComplect(article_id,part_id,none_number) {
+        var url="/<?=Yii::$app->language?>/business/submit-execution-posting/fill-none-complect";
+        var fill_number =$('#fill_part_id_'+part_id).val();
+        $.post(url,{'article_id':article_id,'part_id':part_id,'none_number':none_number,'fill_number':fill_number}).done(function (data) {
+            if (data.success == true) {
+                showAnswer(data.mes);
+            } else {
+                console.log('Error:fillNoneComplect ='+data.mes);
+            }
+        });
+    }
+</script>
 
 <div class="m-b-md">
         <h3 class="m-b-none"><?= THelper::t('sidebar_execution_posting') ?></h3>
@@ -121,19 +138,29 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                     </thead>
                                     <tbody>
                                         <?php foreach ($items as $item) {
-                                            $none_id = $item['none_id'] ;
+                                            $none_id     = $item['none_id'] ;
+                                            $article_id  = $item['article_id'];
+                                            $none_number = $item['none_number'];
                                         ?>
                                             <tr>
                                             <td><?=$item['date_create'] ?></td>
                                             <td><?=$item['article_id'] ?></td>
                                             <td title="<?=$item['none_id'] ?>"><?=$item['none_title'] ?></td>
-                                            <td><?=$item['none_number']  ?></td>
+                                            <td><?=$item['none_number'] ?></td>
                                             <td><?=$item['number_in_wh'] ?></td>
                                             <td>
-                                                <input type="number" id="fill_part_id_<?=$item['none_id'] ?>" />
+                                                <?php if (!empty($item['filled'])) { ?>
+                                                    <?php foreach ($item['filled'] as $filled_item) { ?>
+                                                        <span class="font-bold"> <?= @$filled_item['number']; ?> </span>
+                                                        <span> (<?=@$filled_item['date_create']->toDateTime()->format('Y-m-d H:i') ?>)</span>
+                                                    <?php } ?>
+
+                                                <?php } else { ?>
+                                                    <input type="number" id="fill_part_id_<?=$item['none_id'] ?>" />
+                                                <?php } ?>
                                             </td>
                                             <td>
-                                                <button class="btn-info" id="btn-" onclick="fillNoneComplect('<?= $none_id ?>')">Дополнить</button>
+                                                <button class="btn-info" id="btn-" onclick="fillNoneComplect('<?=$article_id ?>','<?= $none_id ?>','<?= $none_number  ?>')">Дополнить</button>
                                             </td>
                                             </tr>
                                         <?php } ?>
@@ -148,18 +175,3 @@ $listGoods = PartsAccessories::getListPartsAccessories();
     </div>
 </div>
 
-<script>
-    function showAnswer(data) {
-        console.log(data);
-    }
-    function fillNoneComplect(part_id) {
-        var url="/<?=Yii::$app->language?>/business/submit-execution-posting/fill-none-complect";
-        $.post(url,{'part_id':part_id,'fill_number':fill_number}).done(function (data) {
-            if (data.success == true) {
-                showAnswer(data.mes);
-            } else {
-                console.log('Error:fillNoneComplect ='+data.mes);
-            }
-        });
-    }
-</script>

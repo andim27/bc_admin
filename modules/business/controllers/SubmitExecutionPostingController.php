@@ -265,16 +265,18 @@ class SubmitExecutionPostingController extends BaseController {
 
             foreach ($item['list_none_component'] as $none_item) {
                 $number_in_wh = 0;
+                $filled = isset($none_item['filled'])? $none_item['filled']:null;
+                //$filled_date   = isset($none_item['filled']['date_create'])? $none_item['filled']['date_create']->toDateTime()->format('Y-m-d H:i'): '?' ;
                 if (array_key_exists((string)$none_item['parts_accessories_id'],$listGoodsFromMyWarehouse)) {
                     $number_in_wh = $listGoodsFromMyWarehouse[(string)$none_item['parts_accessories_id']];
                 }
                 if (!empty($f_noneComplectsPart ) ) {
 
                     if ($f_noneComplectsPart == (string)$none_item['parts_accessories_id']) {
-                        array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number'],'number_in_wh'=>$number_in_wh]);
+                        array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number'],'number_in_wh'=>$number_in_wh,'filled'=>$filled]);
                     }
                 } else {
-                    array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number'],'number_in_wh'=>$number_in_wh]);
+                    array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number'],'number_in_wh'=>$number_in_wh,'filled'=>$filled]);
                 }
 
                 array_push($none_complects_parts,['title'=>$none_item['title'],'_id'=>$none_item['parts_accessories_id']]);
@@ -308,9 +310,51 @@ class SubmitExecutionPostingController extends BaseController {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $res = ['success'=>true,'mes'=>'Done!'];
         $request = Yii::$app->request->post();
-        $part_id = $request['part_id'];
+        $article_id  = $request['article_id'];
+        $part_id     = $request['part_id'];
+        $none_number = $request['none_number'];
         $fill_number = $request['fill_number'];
-        $res = ['success'=>true,'mes'=>'Done!part_id='.$part_id.' fill_number='.$fill_number];
+        $p_none      = PartsAccessoriesNone::find()->where(['article_id'=>(int)$article_id])->one();
+        $p_list_none_component = $p_none->list_none_component;
+        //var_dump($p_list_none_component);die();
+        for ($i=0;$i< count($p_list_none_component);$i++) {
+            if (($part_id == (string)($p_list_none_component[$i]['parts_accessories_id'])) && ($none_number == $p_list_none_component[$i]['number'])) {
+                //array_push($p_list_none_component[$i],['filled'=>$fill_number,'filled_date'=>new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)]);
+                //array_push($p_list_none_component[$i],['filled'=>$fill_number]);
+                //$p_list_none_component[$i][] = ["filled" => $fill_number];
+                $p_list_none_component[$i]['filled'][]      = ['number'=>$fill_number,'date_create'=>new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)];
+                //$p_list_none_component[$i]['filled_date'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+                break;
+
+            }
+
+        }
+        $p_none->list_none_component = $p_list_none_component;
+        if (!$p_none->save()) {
+            $res = ['success'=>false,'mes'=>'Error:filled error!'.date("Y-m-d H:i:s")];
+
+        } else {
+            $res = ['success'=>true,'mes'=>'Filled!'.date("Y-m-d H:i:s")];
+
+        }
+//        foreach ($p_list_none_component as $none_item) {
+//            if (((string)$none_item['parts_accessories_id'] == $part_id) && ($none_item['number'] == $none_number) ) {
+//
+//                $none_item['filled']      = $fill_number;
+//                $none_item['filled_date'] = new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000);
+//                $p_none['list_none_component'] =$p_list_none_component;
+//                if (!$p_none->save()) {
+//                    $res = ['success'=>false,'mes'=>'Error:filled error!'.date("Y-m-d H:i:s")];
+//
+//                } else {
+//                    $res = ['success'=>true,'mes'=>'Filled!'.date("Y-m-d H:i:s")];
+//                    break;
+//                }
+//            }
+//        }
+        //var_dump($p_list_none_component);die();
+        //--' list_none_comp='.json_encode($p_none->list_none_component)
+        //$res = ['success'=>true,'mes'=>'Done!part_id='.$part_id.' fill_number='.$fill_number.' article_id='.$article_id];
 
         return $res;
     }
