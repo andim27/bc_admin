@@ -32,6 +32,7 @@ class ExecutionPosting extends \yii2tech\embedded\mongodb\ActiveRecord
             'parts_accessories_id',
             'number',
             'received',
+            'none_complect_id',
 
             'list_component',
 

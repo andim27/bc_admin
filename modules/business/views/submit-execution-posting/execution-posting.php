@@ -47,6 +47,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                                     <table class="table table-translations table-striped datagrid m-b-sm">
                                         <thead>
                                         <tr>
+                                            <th><?=THelper::t('article')?></th>
                                             <th>Дата добавдения</th>
                                             <th>Что собираем</th>
                                             <th><?=THelper::t('count')?></th>
@@ -80,6 +81,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 url: '/ru/business/submit-execution-posting/execution-posting',
             },
             "columns": [
+                {"data": "acticleId"},
                 {"data": "dateCreate"},
                 {"data": "whatMake"},
                 {"data": "count"},

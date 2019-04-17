@@ -19,17 +19,32 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 </style>
 
 <script>
-    function showAnswer(data) {
+    function showAnswer(data,part_id) {
         console.log(data);
+        if (data.success == true) {
+            $('#td_part_id_'+part_id).html(data.mes);
+        } else {
+            $('#td_part_id_'+part_id).html('<p>Error!</p>');
+        }
     }
     function fillNoneComplect(article_id,part_id,none_number) {
         var url="/<?=Yii::$app->language?>/business/submit-execution-posting/fill-none-complect";
         var fill_number =$('#fill_part_id_'+part_id).val();
         $.post(url,{'article_id':article_id,'part_id':part_id,'none_number':none_number,'fill_number':fill_number}).done(function (data) {
             if (data.success == true) {
-                showAnswer(data.mes);
+                showAnswer(data,part_id);
             } else {
                 console.log('Error:fillNoneComplect ='+data.mes);
+            }
+        });
+    }
+    function moveNoneComplect(article_id,part_id,none_number) {
+        var url="/<?=Yii::$app->language?>/business/submit-execution-posting/move-none-complect";
+        $.post(url,{'article_id':article_id,'part_id':part_id,'none_number':none_number}).done(function (data) {
+            if (data.success == true) {
+                showAnswer(data.mes);
+            } else {
+                console.log('Error:moveNoneComplect ='+data.mes);
             }
         });
     }
@@ -96,7 +111,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                         <select class="form-control" id="noneComplectsTitle" name="noneComplectsTitle" title="Неукомплектованые ПРИБОРЫ">
                                             <option value="0" <?= (empty($f_noneComplectsTitle))?'selected':'' ?> >Все</option>
                                             <?php  foreach ($none_complects_title as $item) { ?>
-                                                <option value="<?=$item['_id'] ?>" <?=($f_noneComplectsTitle == $item['_id'])? 'selected':'' ?> ><?=$item['article_id'].') '.$item['title'] ?></option>
+                                                <option value="<?=$item['_id'] ?>" <?=($f_noneComplectsTitle == $item['_id'])||(!empty($cur_id))? 'selected':'' ?> ><?=$item['article_id'].') '.$item['title'] ?></option>
                                             <?php } ?>
 
                                         </select>
@@ -148,19 +163,37 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                             <td title="<?=$item['none_id'] ?>"><?=$item['none_title'] ?></td>
                                             <td><?=$item['none_number'] ?></td>
                                             <td><?=$item['number_in_wh'] ?></td>
-                                            <td>
-                                                <?php if (!empty($item['filled'])) { ?>
-                                                    <?php foreach ($item['filled'] as $filled_item) { ?>
-                                                        <span class="font-bold"> <?= @$filled_item['number']; ?> </span>
-                                                        <span> (<?=@$filled_item['date_create']->toDateTime()->format('Y-m-d H:i') ?>)</span>
+                                            <td id="td_part_id_<?=$item['none_id'] ?>">
+                                                <?php
+                                                $filled_sum=0;
+                                                if (!empty($item['filled'])) { ?>
+                                                    <?php
+
+                                                    foreach ($item['filled'] as $filled_item) {
+                                                        $filled_sum += $filled_item['number'];
+                                                    }
+                                                    ?>
+
+                                                    <?php  if (($filled_sum >0)) {
+                                                                foreach ($item['filled'] as $filled_item) {
+                                                            ?>
+                                                                    <p>
+                                                                        <span class="font-bold"> <?= @$filled_item['number']; ?> </span>
+                                                                        <span> (<?=@$filled_item['date_create']->toDateTime()->format('Y-m-d H:i') ?>)</span>
+                                                                    </p>
+                                                                <?php } ?>
                                                     <?php } ?>
 
-                                                <?php } else { ?>
+                                                <?php } if ($filled_sum < $item['none_number']) { ?>
                                                     <input type="number" id="fill_part_id_<?=$item['none_id'] ?>" />
                                                 <?php } ?>
                                             </td>
-                                            <td>
-                                                <button class="btn-info" id="btn-" onclick="fillNoneComplect('<?=$article_id ?>','<?= $none_id ?>','<?= $none_number  ?>')">Дополнить</button>
+                                            <td id="td_action_id_<?=$item['none_id'] ?>">
+                                                <?php if ($filled_sum < $item['none_number']) { ?>
+                                                        <button class="btn-warning" id="btn-fill" onclick="fillNoneComplect('<?=$article_id ?>','<?= $none_id ?>','<?= $none_number  ?>')">Дополнить</button>
+                                                <?php } else { ?>
+                                                         <button class="btn-info" id="btn-move" onclick="moveNoneComplect('<?=$article_id ?>','<?= $none_id ?>','<?= $none_number  ?>')">Выполнено</button>
+                                                <?php } ?>
                                             </td>
                                             </tr>
                                         <?php } ?>
