@@ -8,7 +8,7 @@
 </div>
 <div class="row">
     <?php $formStatus = ActiveForm::begin([
-        'action' => '/' . Yii::$app->language . '/business/career-history',
+        'action' => '/' . Yii::$app->language . '/business/user/career-history',
         'options' => ['name' => 'saveStatus', 'data-pjax' => '1']
     ]); ?>
     <div class="col-md-2 m-b">
