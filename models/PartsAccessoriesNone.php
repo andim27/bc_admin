@@ -37,6 +37,7 @@ class PartsAccessoriesNone extends \yii2tech\embedded\mongodb\ActiveRecord
             'suppliers_performers_id',
             'parts_accessories_id',
             'list_none_component',
+            'executed_none_complect',
             'date_create'
         ];
     }

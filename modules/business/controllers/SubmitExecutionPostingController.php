@@ -152,7 +152,14 @@ class SubmitExecutionPostingController extends BaseController {
             /** @var ExecutionPosting $item */
             foreach ($model->all() as $key => $item){
                 if (!empty($item->none_complect_id)) {
-                    $none_block = '<p>'.Html::a('<i class="fa fa-bell text-color-c14d4c" title="Некомплект"></i>', ['/business/submit-execution-posting/execution-posting-non-complect','id'=>$item->_id->__toString()]).'</p>';
+                    $icon_html ='<i class="fa fa-bell text-color-c14d4c" title="Некомплект"></i>';
+                    //--check if executet--
+                    $p_none = @PartsAccessoriesNone::find()->where(['_id'=>new ObjectID($item->none_complect_id)])->one();
+
+                    if ($p_none->executed_none_complect == true) {
+                        $icon_html ='<i class="fa fa-book text-color-green" title="Укомплектовано"></i>';//battery-full battery-full
+                    }
+                    $none_block = '<p>'.Html::a($icon_html, ['/business/submit-execution-posting/execution-posting-non-complect','id'=>$item->_id->__toString()]).'</p>';
                 } else {
                     $none_block ='';
                 }
@@ -244,7 +251,6 @@ class SubmitExecutionPostingController extends BaseController {
         $none_complects_title =[];
         $none_complects_parts =[];
         $listGoodsFromMyWarehouse = PartsAccessoriesInWarehouse::getCountGoodsFromMyWarehouse();
-        //var_dump($listGoodsFromMyWarehouse);die();
         $where_arr=[
             'date_create' => [
                 '$gte' => new UTCDatetime(strtotime($dateFrom) * 1000),
@@ -270,10 +276,11 @@ class SubmitExecutionPostingController extends BaseController {
                     continue;
                 }
             }
-
+            $executed_none_complect = isset($item['executed_none_complect'])? $item['executed_none_complect']:null;
             foreach ($item['list_none_component'] as $none_item) {
                 $number_in_wh = 0;
-                $filled = isset($none_item['filled'])? $none_item['filled']:null;
+                $filled   = isset($none_item['filled'])? $none_item['filled']:null;
+                $executed = isset($none_item['executed'])? $none_item['executed']:null;
                 //$filled_date   = isset($none_item['filled']['date_create'])? $none_item['filled']['date_create']->toDateTime()->format('Y-m-d H:i'): '?' ;
                 if (array_key_exists((string)$none_item['parts_accessories_id'],$listGoodsFromMyWarehouse)) {
                     $number_in_wh = $listGoodsFromMyWarehouse[(string)$none_item['parts_accessories_id']];
@@ -281,10 +288,10 @@ class SubmitExecutionPostingController extends BaseController {
                 if (!empty($f_noneComplectsPart ) ) {
 
                     if ($f_noneComplectsPart == (string)$none_item['parts_accessories_id']) {
-                        array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number'],'number_in_wh'=>$number_in_wh,'filled'=>$filled]);
+                        array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number'],'number_in_wh'=>$number_in_wh,'filled'=>$filled,'executed_none_complect'=>$executed_none_complect,'executed'=>$executed]);
                     }
                 } else {
-                    array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number'],'number_in_wh'=>$number_in_wh,'filled'=>$filled]);
+                    array_push($items_arr,['date_create'=>$date_create,'title'=>$p_title,'article_id'=>$article_id,'none_title'=>$none_item['title'],'none_id'=>$none_item['parts_accessories_id'],'none_number'=>$none_item['number'],'number_in_wh'=>$number_in_wh,'filled'=>$filled,'executed_none_complect'=>$executed_none_complect,'executed'=>$executed]);
                 }
 
                 array_push($none_complects_parts,['title'=>$none_item['title'],'_id'=>$none_item['parts_accessories_id']]);
@@ -317,32 +324,81 @@ class SubmitExecutionPostingController extends BaseController {
     public function actionFillNoneComplect()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $res = ['success'=>true,'mes'=>'Done!'];
+        $res = ['success' => true, 'mes' => 'Done!'];
         $request = Yii::$app->request->post();
-        $article_id  = $request['article_id'];
-        $part_id     = $request['part_id'];
+        $article_id = $request['article_id'];
+        $part_id = $request['part_id'];
         $none_number = $request['none_number'];
         $fill_number = $request['fill_number'];
-        $p_none      = PartsAccessoriesNone::find()->where(['article_id'=>(int)$article_id])->one();
+        $p_none = PartsAccessoriesNone::find()->where(['article_id' => (int)$article_id])->one();
         $p_list_none_component = $p_none->list_none_component;
 
-        for ($i=0;$i< count($p_list_none_component);$i++) {
+        for ($i = 0; $i < count($p_list_none_component); $i++) {
             if (($part_id == (string)($p_list_none_component[$i]['parts_accessories_id'])) && ($none_number == $p_list_none_component[$i]['number'])) {
-                $p_list_none_component[$i]['filled'][]      = ['number'=>$fill_number,'date_create'=>new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)];
+                $p_list_none_component[$i]['filled'][] = ['number' => $fill_number, 'date_create' => new UTCDatetime(strtotime(date("Y-m-d H:i:s")) * 1000)];
                 break;
             }
         }
         $p_none->list_none_component = $p_list_none_component;
         if (!$p_none->save()) {
-            $res = ['success'=>false,'mes'=>'Error:filled error!'.date("Y-m-d H:i:s")];
+            $res = ['success' => false, 'mes' => 'Error:filled error!' . date("Y-m-d H:i:s")];
 
         } else {
-            $res = ['success'=>true,'mes'=>$fill_number.' - Дополнено !('.date("Y-m-d H:i:s").')','part_id'=>$part_id];
+            $res = ['success' => true, 'mes' => $fill_number . ' - Дополнено !(' . date("Y-m-d H:i:s") . ')', 'part_id' => $part_id];
 
         }
 
         return $res;
     }
+    private function isExecutedNoneComplect($list_none_component)
+    {
+        $executed   = false;
+        $executed_i = 0;
+        $items_all  = count($list_none_component);
+        foreach ($list_none_component as $item) {
+            if (!empty($item['executed'])) {
+                $executed_i++;
+            }
+        }
+        if ($executed_i == $items_all) {
+            $executed = true;
+        }
+        return $executed;
+    }
+
+    public function actionExecuteNoneComplect()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $res = ['success'=>true,'mes'=>'Done!'];
+        $request = Yii::$app->request->post();
+        $article_id  = $request['article_id'];
+        $part_id     = $request['part_id'];
+        $none_number = $request['none_number'];
+        $p_none      = PartsAccessoriesNone::find()->where(['article_id'=>(int)$article_id])->one();
+        $p_list_none_component = $p_none->list_none_component;
+
+        for ($i=0;$i< count($p_list_none_component);$i++) {
+            if (($part_id == (string)($p_list_none_component[$i]['parts_accessories_id'])) && ($none_number == $p_list_none_component[$i]['number'])) {
+                $p_list_none_component[$i]['executed'] =true;
+            }
+        }
+        $p_none->list_none_component = $p_list_none_component;
+        if (!$p_none->save()) {
+            $res = ['success'=>false,'mes'=>'Error:executed error!'.date("Y-m-d H:i:s")];
+
+        } else {
+            $res = ['success'=>true,'mes'=>' Выполнено !'];
+            if (self::isExecutedNoneComplect($p_none->list_none_component)) {
+                //--set all executed--
+                $p_none->executed_none_complect = true;
+                $p_none->save();
+                $res = ['success'=>true,'mes'=>' Выполнено ВСЕ!'];
+            }
+
+        }
+        return $res;
+    }
+
     public function actionAddEditSendingExecution($id='')
     {
         $model = '';

@@ -19,12 +19,12 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 </style>
 
 <script>
-    function showAnswer(data,part_id) {
+    function showAnswer(prefix,data,part_id) {
         console.log(data);
         if (data.success == true) {
-            $('#td_part_id_'+part_id).html(data.mes);
+            $('#'+prefix+'_id_'+part_id).html(data.mes);
         } else {
-            $('#td_part_id_'+part_id).html('<p>Error!</p>');
+            $('#'+prefix+'_id_'+part_id).html('<p>Error!</p>');
         }
     }
     function fillNoneComplect(article_id,part_id,none_number) {
@@ -32,19 +32,19 @@ $listGoods = PartsAccessories::getListPartsAccessories();
         var fill_number =$('#fill_part_id_'+part_id).val();
         $.post(url,{'article_id':article_id,'part_id':part_id,'none_number':none_number,'fill_number':fill_number}).done(function (data) {
             if (data.success == true) {
-                showAnswer(data,part_id);
+                showAnswer('td_part',data,part_id);
             } else {
                 console.log('Error:fillNoneComplect ='+data.mes);
             }
         });
     }
-    function moveNoneComplect(article_id,part_id,none_number) {
-        var url="/<?=Yii::$app->language?>/business/submit-execution-posting/move-none-complect";
+    function executeNoneComplect(article_id,part_id,none_number) {
+        var url="/<?=Yii::$app->language?>/business/submit-execution-posting/execute-none-complect";
         $.post(url,{'article_id':article_id,'part_id':part_id,'none_number':none_number}).done(function (data) {
             if (data.success == true) {
-                showAnswer(data.mes);
+                showAnswer('td_action',data,part_id);
             } else {
-                console.log('Error:moveNoneComplect ='+data.mes);
+                console.log('Error:executeNoneComplect ='+data.mes);
             }
         });
     }
@@ -192,7 +192,16 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                                 <?php if ($filled_sum < $item['none_number']) { ?>
                                                         <button class="btn-warning" id="btn-fill" onclick="fillNoneComplect('<?=$article_id ?>','<?= $none_id ?>','<?= $none_number  ?>')">Дополнить</button>
                                                 <?php } else { ?>
-                                                         <button class="btn-info" id="btn-move" onclick="moveNoneComplect('<?=$article_id ?>','<?= $none_id ?>','<?= $none_number  ?>')">Выполнено</button>
+                                                    <?php if (!empty($item['executed_none_complect'])) { ?>
+                                                        <h4>Выполнено ВСЕ</h4>
+                                                    <?php } else { ?>
+                                                        <?php  if (!empty($item['executed'])) { ?>
+                                                                    <h5>Выполнено</h5>
+                                                                <?php } else { ?>
+                                                                    <button class="btn-info" id="btn-move" onclick="executeNoneComplect('<?=$article_id ?>','<?= $none_id ?>','<?= $none_number  ?>')">Выполнено</button>
+                                                                <?php } ?>
+
+                                                             <?php } ?>
                                                 <?php } ?>
                                             </td>
                                             </tr>
