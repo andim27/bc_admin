@@ -29,7 +29,6 @@ GoodsAsset::register($this);
 </style>
 <div class="m-b-md">
     <h3 class="m-b-none"><?=THelper::t('goods') ?></h3>
-
 </div>
 <section class="hbox stretch">
     <aside class="aside-md bg-white b-r" id="subNav">
@@ -37,7 +36,6 @@ GoodsAsset::register($this);
             <?= THelper::t('category_goods') ?>
             <button id="add-category-btn" type="button" class="btn btn-link" style="margin-top: 0px;"><i class="fa fa-plus"></i></button>
             <button id="edit-category-btn" type="button" class="btn btn-link" style="display:none;margin-top: 0px;margin-left:10px"><i class="fa fa-edit"></i></button>
-<!--            <button type="button" class="btn btn-default btn-sm" id="createBtn"> <i class="fa fa-plus"></i></button>-->
         </div>
 
         <ul class="nav">
@@ -135,9 +133,7 @@ GoodsAsset::register($this);
                         </tr>
                         </thead>
                         <tbody>
-                        <?php
-                        $index=1;
-                        foreach ($goods as $item) { ?>
+                        <?php foreach ($goods as $item) { ?>
                         <tr>
                             <td>
                                 <span title="<?='Код='.$item['product'].' ID магазина='.$item['idInMarket']; ?>">
@@ -146,8 +142,7 @@ GoodsAsset::register($this);
 
                             </td>
                             <td>
-                                <?php $p_id=$item['_id'];?>
-                                <a href="#" onclick='showEditProduct("<?=$p_id; ?>")' data-toggle="modal" data-productid="<?=$item['_id'] ?>">
+                                <a href="#" onclick='showEditProduct("<?=$item['_id'];?>")' data-toggle="modal" data-productid="<?=$item['_id'] ?>">
                                     <i class="fa fa-search-plus"></i>
                                 </a>
                             </td>
@@ -155,33 +150,25 @@ GoodsAsset::register($this);
                             <td>
 
                                 <?php
-                                if (empty($item['productNameLangs'][Yii::$app->language])) {
+                                if (empty($item['productNameLangs'][$lang])) {
                                     echo "???";
                                 } else {
                                     if (empty($item['products']) ) {
-                                        echo (empty($item['productNameLangs'][Yii::$app->language])?'??':$item['productNameLangs'][Yii::$app->language]);
+                                        echo (empty($item['productNameLangs'][$lang])?'??':$item['productNameLangs'][$lang]);
                                     } else {
-                                        echo "<strong>".(empty($item['productNameLangs'][Yii::$app->language])?'??':$item['productNameLangs'][Yii::$app->language])."</strong>";
+                                        echo "<strong>".(empty($item['productNameLangs'][$lang])?'??':$item['productNameLangs'][$lang])."</strong>";
                                     }
                                 }
                                 ?>
                             </td>
                             <td>
-                                <?php
-                                if (empty($item['categories'])) {
-                                    echo '??';
-                                } else {
-                                    $cats_str='';
-                                foreach ($cat_items as $cat_item) {
-                                        //if ($cat_item['rec_id'] ==(string)$item['category_id']) {
-                                        if (in_array($cat_item['rec_id'], $item['categories'])) {
-                                            $cats_str.=$cat_item['name'].'<br>';
-
-                                        }
-                                }
-                                echo $cats_str;
-                                } ?>
-
+                                <?php if(!empty($item['categories'])) {?>
+                                    <?php foreach ($item['categories'] as $category) { ?>
+                                        <?=$listCategories[$category]?><br>
+                                    <?php } ?>
+                                <?php } else {?>
+                                    ???
+                                <?php } ?>
                             </td>
                             <td><?=empty($item['price'])?0:$item['price'] ?></td>
                             <td class="text-center"><?=empty($item['bonus']['money']['beginner'])?0:$item['bonus']['money']['beginner']  ?></td>
@@ -292,7 +279,6 @@ GoodsAsset::register($this);
 <!--E:Category modal-->
 <script>
     category_items=<?=json_encode($cat_items) ?>;
-    goods=<?=json_encode($goods) ?>;
     cur_product_action='edit';
     cur_category_id=0;
     cur_product_id=0;
@@ -352,7 +338,7 @@ GoodsAsset::register($this);
 
     }
     function getNameDescLang(lang) {
-        var url="/<?=Yii::$app->language?>/business/reference/name-desc-lang";
+        var url="/<?=$lang?>/business/reference/name-desc-lang";
         $.post(url,{'product-lang':lang,'p_id':cur_product_id}).done(function (data) {
             if (data.success == true) {
                 var name_lang=data.name_lang;
@@ -368,7 +354,7 @@ GoodsAsset::register($this);
     }
     function saveCategory() {
         $('#server-message').removeClass('bg-danger');
-        var url="/<?=Yii::$app->language?>/business/reference/category-change";
+        var url="/<?=$lang?>/business/reference/category-change";
         var c_action=$('#category-action').val();
         var c_name  =$('#category-name').val();
         $.post(url,{'category-action':c_action,'category-name': c_name,'category-id':cur_category_id}).done(function(data) {
@@ -387,7 +373,7 @@ GoodsAsset::register($this);
 
     }
     function checkProduct() {
-        var url="/<?=Yii::$app->language?>/business/reference/product-check";
+        var url="/<?=$lang?>/business/reference/product-check";
         $.post(url,{'product-id':$('#product-id').val()}).done(function(data){
             if (data.success==false) {
                 //alert('Product with code:'+$('#product-id').val()+' exist!');
@@ -400,14 +386,14 @@ GoodsAsset::register($this);
         });
     }
     function getProductAddContent() {
-        var url="/<?=Yii::$app->language?>/business/reference/product-edit";
+        var url="/<?=$lang?>/business/reference/product-edit";
         $.post(url,{'product-action':'add','cur-product-action':'add'}).done(function(data){
             //--add form content--
             $("#edit-product-content").html(data);
         });
     }
     function getProductEditContent() {
-        var url="/<?=Yii::$app->language?>/business/reference/product-edit";
+        var url="/<?=$lang?>/business/reference/product-edit";
         $.post(url,{'product-action':'edit','p_id':cur_product_id}).done(function(data){
             //--add form content--
             $("#edit-product-content").html(data);
@@ -431,7 +417,7 @@ GoodsAsset::register($this);
     function saveProduct() {
         //alert('Save!');
         //$('#save-product-btn').hide();
-        var url="/<?=Yii::$app->language?>/business/reference/product-edit";
+        var url="/<?=$lang?>/business/reference/product-edit";
         var product_data={
             'product-action':$('#product-action').val(),
             'cur-product-action':cur_product_action,
@@ -551,7 +537,7 @@ GoodsAsset::register($this);
     $(function() {
         function showGoodsPage() {
             var active_str='active=1';
-            var url="/<?=Yii::$app->language?>/business/reference/goods";
+            var url="/<?=$lang?>/business/reference/goods";
             if ( $('#goods-active').is(':checked')==true) {
                 active_str='?active=1';
             } else {

@@ -59,13 +59,19 @@ Class Menu
                     [
                         'key'   =>  'sidebar_users_career_history',
                         'label' => THelper::t('sidebar_users_career_history'),
-                        'url' => ['/business/career-history'],
-                        'action' => 'index',
+                        'url' => ['/business/user/career-history'],
+                        'action' => 'career-history',
                     ],
                     [
                         'key'   =>  'sidebar_wellness_club_members',
                         'label' => THelper::t('sidebar_wellness_club_members'),
                         'url' => ['/business/wellness-club-members'],
+                        'action' => 'index',
+                    ],
+                    [
+                        'key'   =>  'sidebar_academy_vip_vip',
+                        'label' => THelper::t('sidebar_academy_vip_vip'),
+                        'url' => ['/business/academy-vip-vip'],
                         'action' => 'index',
                     ],
                 ]

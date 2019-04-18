@@ -52,10 +52,24 @@
                                 'dataProvider' => $dataProvider,
                                 'filterModel' => [],
                                 'columns' => [
+                                    [
+                                        'class' => 'yii\grid\ActionColumn',
+                                        'template' => '{editOrder}',
+                                        'buttons' => [
+                                            'editOrder' => function($url, $model, $key) {
+
+                                                return '<a class="editIssue" href="#issueInfo" data-id="'.$model['saleId'].'" data-toggle="modal">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>';
+
+                                            }
+                                        ]
+                                    ],
 
                                     [
                                         'class' => 'yii\grid\DataColumn',
                                         'attribute' => 'dateCreate',
+                                        'enableSorting' => false,
                                         'label' => 'Дата создания',
                                         'format' => 'raw',
                                         'value' => function ($model){
@@ -66,6 +80,7 @@
                                     [
                                         'class' => 'yii\grid\DataColumn',
                                         'attribute' => 'login',
+                                        'enableSorting' => false,
                                         'label' => 'Оригинал',
                                         'format' => 'raw',
                                         'value' => function ($model){
@@ -77,6 +92,7 @@
                                     [
                                         'class' => 'yii\grid\DataColumn',
                                         'attribute' => 'fullName',
+                                        'enableSorting' => false,
                                         'label' => 'Полное имя',
                                         'format' => 'raw',
                                         'value' => function ($model){
@@ -87,6 +103,7 @@
                                     [
                                         'class' => 'yii\grid\DataColumn',
                                         'attribute' => 'phones',
+                                        'enableSorting' => false,
                                         'label' => 'Телефоны',
                                         'format' => 'raw',
                                         'value' => function ($model){
@@ -97,6 +114,7 @@
                                     [
                                         'class' => 'yii\grid\DataColumn',
                                         'attribute' => 'productName',
+                                        'enableSorting' => false,
                                         'label' => 'Название продукта',
                                         'format' => 'raw',
                                         'value' => function ($model){
@@ -108,6 +126,7 @@
                                     [
                                         'class' => 'yii\grid\DataColumn',
                                         'attribute' => 'productNumber',
+                                        'enableSorting' => false,
                                         'label' => 'Кол',
                                         'format' => 'raw',
                                         'value' => function ($model){
@@ -119,6 +138,7 @@
                                     [
                                         'class' => 'yii\grid\DataColumn',
                                         'attribute' => 'statusShowroom',
+                                        'enableSorting' => false,
                                         'label' => 'Статус',
                                         'format' => 'raw',
                                         'value' => function ($model){
@@ -138,6 +158,7 @@
                                     [
                                         'class' => 'yii\grid\DataColumn',
                                         'attribute' => 'dateClose',
+                                        'enableSorting' => false,
                                         'label' => 'Время доставки',
                                         'format' => 'raw',
                                         'value' => function ($model){
