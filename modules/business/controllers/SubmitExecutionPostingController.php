@@ -153,11 +153,11 @@ class SubmitExecutionPostingController extends BaseController {
             foreach ($model->all() as $key => $item){
                 if (!empty($item->none_complect_id)) {
                     $icon_html ='<i class="fa fa-bell text-color-c14d4c" title="Некомплект"></i>';
-                    //--check if executet--
+                    //--check if executed--
                     $p_none = @PartsAccessoriesNone::find()->where(['_id'=>new ObjectID($item->none_complect_id)])->one();
 
                     if ($p_none->executed_none_complect == true) {
-                        $icon_html ='<i class="fa fa-book text-color-green" title="Укомплектовано"></i>';//battery-full battery-full
+                        $icon_html ='<i class="fa fa-book text-color-green" title="Укомплектовано"></i>';//battery-full
                     }
                     $none_block = '<p>'.Html::a($icon_html, ['/business/submit-execution-posting/execution-posting-non-complect','id'=>$item->_id->__toString()]).'</p>';
                 } else {
@@ -281,7 +281,6 @@ class SubmitExecutionPostingController extends BaseController {
                 $number_in_wh = 0;
                 $filled   = isset($none_item['filled'])? $none_item['filled']:null;
                 $executed = isset($none_item['executed'])? $none_item['executed']:null;
-                //$filled_date   = isset($none_item['filled']['date_create'])? $none_item['filled']['date_create']->toDateTime()->format('Y-m-d H:i'): '?' ;
                 if (array_key_exists((string)$none_item['parts_accessories_id'],$listGoodsFromMyWarehouse)) {
                     $number_in_wh = $listGoodsFromMyWarehouse[(string)$none_item['parts_accessories_id']];
                 }

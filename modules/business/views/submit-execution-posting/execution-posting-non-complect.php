@@ -33,8 +33,10 @@ $listGoods = PartsAccessories::getListPartsAccessories();
         $.post(url,{'article_id':article_id,'part_id':part_id,'none_number':none_number,'fill_number':fill_number}).done(function (data) {
             if (data.success == true) {
                 showAnswer('td_part',data,part_id);
+                $('#td_action_id_'+part_id).html('<p>Дополнено!</p>');
             } else {
                 console.log('Error:fillNoneComplect ='+data.mes);
+                $('#td_action_id_'+part_id).html('<p>'+data.mes+'</p>');
             }
         });
     }
@@ -45,6 +47,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                 showAnswer('td_action',data,part_id);
             } else {
                 console.log('Error:executeNoneComplect ='+data.mes);
+                $('#td_action_id_'+part_id).html('<p>'+data.mes+'</p>');
             }
         });
     }
