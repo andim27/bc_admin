@@ -32,6 +32,11 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                                 <?= THelper::t('posting_executed') ?>
                             </a>
                         </li>
+                        <li class="">
+                            <a href="/ru/business/submit-execution-posting/execution-posting-non-complect" class="tab-sending-execution">
+                                <?= THelper::t('non_complect') ?>
+                            </a>
+                        </li>
                     </ul>
                 </header>
                 <div class="panel-body">
@@ -42,6 +47,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                                     <table class="table table-translations table-striped datagrid m-b-sm">
                                         <thead>
                                         <tr>
+                                            <th><?=THelper::t('article')?></th>
                                             <th>Дата добавдения</th>
                                             <th>Что собираем</th>
                                             <th><?=THelper::t('count')?></th>
@@ -75,6 +81,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                 url: '/ru/business/submit-execution-posting/execution-posting',
             },
             "columns": [
+                {"data": "acticleId"},
                 {"data": "dateCreate"},
                 {"data": "whatMake"},
                 {"data": "count"},

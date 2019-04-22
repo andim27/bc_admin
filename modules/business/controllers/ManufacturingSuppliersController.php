@@ -301,7 +301,7 @@ class ManufacturingSuppliersController extends BaseController {
                     $nestedData[$columns[2]] = (!empty($item->adminInfo) ? $item->adminInfo->secondName . ' ' .$item->adminInfo->firstName : 'None');
                     $nestedData[$columns[3]] = $item->number;
                     if (!Empty($item->suppliers_performers_id)) {
-                        $s_p_title = @SuppliersPerformers::find(['_id'=>new ObjectID((string)$item->suppliers_performers_id)])->one()->title;
+                        $s_p_title = @SuppliersPerformers::findOne(['_id'=>new ObjectID((string)$item->suppliers_performers_id)])->title;
                     } else {
                         $s_p_title = '???';
                     }
