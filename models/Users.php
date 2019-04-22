@@ -78,7 +78,7 @@ class Users extends ActiveRecord
 
     public static function getRulesUser()
     {
-        $model = self::find()
+        $model = self::find()->select(['rules'])
             ->where(['_id'=>new ObjectID(\Yii::$app->view->params['user']->id)])
             ->one();
         

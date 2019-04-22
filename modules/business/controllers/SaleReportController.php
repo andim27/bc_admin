@@ -6,6 +6,7 @@ use app\components\ArrayInfoHelper;
 use app\components\GoodException;
 use app\components\THelper;
 use app\controllers\BaseController;
+use app\models\Order;
 use app\models\PartsAccessoriesInWarehouse;
 use app\models\Products;
 use app\models\Repayment;
@@ -21,6 +22,8 @@ use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 use Yii;
 use yii\base\Theme;
+use yii\data\ArrayDataProvider;
+use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 use app\models\Pins;
 use app\models\Transaction;
@@ -3454,5 +3457,179 @@ class SaleReportController extends BaseController
         );
     }
     //------------e:--Report balance up
+
+
+    public function actionReportForMonth()
+    {
+        $request = Yii::$app->request->get();
+
+        $filter = [];
+        $filter['date'] = (!empty($request['date']) ? $request['date'] : date('Y-m'));
+
+        $infoDateTo = explode("-",$filter['date']);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+
+        $sales = Sales::find()
+            ->where([
+                'type' => [
+                    '$ne'   =>  -1
+                ],
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($filter['date'] . '-01 00:00:00') * 1000),
+                    '$lte' => new UTCDateTime(strtotime($filter['date'] .'-'.$countDay.' 23:59:59') * 1000)
+                ]
+            ])
+            ->orderBy(['dateCreate'=>SORT_DESC]);
+
+        if (!empty($request['search']['login'])) {
+            $sales->andFilterWhere(['or',
+                ['like', 'username', $request['search']['login']]
+            ]);
+        }
+        if (!empty($request['search']['productName'])) {
+            $sales->andFilterWhere(['or',
+                ['like', 'productName', $request['search']['productName']]
+            ]);
+        }
+
+        $countQuery = clone $sales;
+        $countQuery = $countQuery->count();
+
+        $pageSize = 20;
+        $pages = new Pagination(['totalCount' => $countQuery, 'pageSize' => $pageSize]);
+
+        $sales = $sales
+            ->offset($pages->offset)
+            ->limit($pages->limit);
+
+        $data = [];
+        if(!empty($sales)){
+            /** @var Sales $sale */
+            foreach ($sales->all() as $key => $sale){
+
+                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+
+                $orderId = '';
+                if(!empty($sale->orderId)){
+                    $orderId = $sale->order->orderId;
+                }
+
+                $data[] = [
+                    'saleId'            =>  strval($sale->_id),
+                    'orderId'           =>  $orderId,
+                    'dateCreate'        =>  $dateCreate,
+                    'login'             =>  $sale->username,
+                    'productName'       =>  $sale->productData['productName'],
+                    'productId'         =>  $sale->productData['product'],
+                    'productNumber'     =>  $sale->productData['count'],
+                    'price'             =>  $sale->price
+                ];
+
+            }
+        }
+
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $data,
+            'totalCount' => $countQuery,
+            'pagination' => false
+        ]);
+
+
+        return $this->render('report-for-month', [
+            'dataProvider' => $dataProvider,
+            'request' => $request,
+            'pages' => $pages,
+            'filter' => $filter
+        ]);
+    }
+
+    public function actionReportExcelForMonth($date)
+    {
+
+
+
+        $infoDateTo = explode("-",$date);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+
+        $sales = Sales::find()
+            ->select(['dateCreate','orderId','username','price','productData'])
+            ->where([
+                'type' => [
+                    '$ne'   =>  -1
+                ],
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($date . '-01 00:00:00') * 1000),
+                    '$lte' => new UTCDateTime(strtotime($date .'-'.$countDay.' 23:59:59') * 1000)
+                ]
+            ])
+            ->orderBy(['dateCreate'=>SORT_DESC])
+            ->all();
+
+
+        $orderIdArrayKey = ArrayHelper::getColumn($sales,'orderId');
+
+        $ordersArray = [];
+        if(!empty($orderIdArrayKey)){
+            $ordersArrayModel = Order::find()
+                ->select(['_id','orderId'])
+                ->where(['id' => ['$in'=>$orderIdArrayKey]])->all();
+
+            foreach ($ordersArrayModel as $order) {
+                $ordersArray[strval($order->_id)] = $order->orderId;
+            }
+
+            unset($ordersArrayModel);
+        }
+
+        $data = [];
+        if(!empty($sales)){
+            /** @var Sales $sale */
+            foreach ($sales as $key => $sale){
+
+                $dateCreate = $sale->dateCreate->toDateTime()->format('Y-m-d H:i');
+
+                $orderId = '';
+                if(!empty($sale->orderId)){
+                    $orderId = $ordersArray[strval($sale->orderId)];
+                }
+
+                $data[] = [
+                    'orderId'           =>  $orderId,
+                    'dateCreate'        =>  $dateCreate,
+                    'login'             =>  $sale->username,
+                    'productName'       =>  $sale->productData['productName'],
+                    'productId'         =>  $sale->productData['product'],
+                    'productNumber'     =>  $sale->productData['count'],
+                    'price'             =>  $sale->price
+                ];
+
+            }
+        }
+
+        \moonland\phpexcel\Excel::export([
+            'models' => $data,
+            'fileName' => 'export '.date('Y-m-d H:i:s'),
+            'columns' => [
+                'orderId',
+                'dateCreate',
+                'login',
+                'productName',
+                'productId',
+                'productNumber',
+                'price'
+            ],
+            'headers' => [
+                'orderId'       =>  '№ заказа',
+                'dateCreate'    =>  'Дата создания',
+                'login'         =>  'login',
+                'productName'   =>  'Pack',
+                'productId'     =>  'PackId',
+                'productNumber' =>  'кол',
+                'price'         =>  'цена'
+            ],
+        ]);
+
+        die();
+    }
 
 }

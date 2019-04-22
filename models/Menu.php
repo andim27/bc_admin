@@ -496,6 +496,12 @@ Class Menu
                         'url' => ['sale-report/report-charges-warehouse'],
                         'action' => 'report-charges-warehouse',
                     ],
+                    [
+                        'key'   =>  'sidebar_report_sales',
+                        'label' => THelper::t('sidebar_report_sales'),
+                        'url' => ['sale-report/report-for-month'],
+                        'action' => 'report-for-month',
+                    ]
                 ]
             ],
 

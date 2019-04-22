@@ -49,6 +49,9 @@
                         </div>                        
                         <div class="table-responsive">
                             <?= GridView::widget([
+                                'options' => [
+                                    'class' => 'grid-view table-responsive'
+                                ],
                                 'dataProvider' => $dataProvider,
                                 'filterModel' => [],
                                 'columns' => [
