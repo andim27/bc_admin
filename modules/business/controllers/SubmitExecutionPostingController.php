@@ -307,19 +307,70 @@ class SubmitExecutionPostingController extends BaseController {
         //$none_complects_parts_arr = array_unique($none_complects_parts);
         $none_complects_parts_arr = [];
         foreach($none_complects_parts as $i) if(!isset($none_complects_parts_arr[$i['title']])) $none_complects_parts_arr[$i['title']] = $i;
-        return $this->render('execution-posting-non-complect',[
-            'language' => Yii::$app->language,
-            'alert' => Yii::$app->session->getFlash('alert', '', true),
-            'none_complects_parts'=>$none_complects_parts_arr,
-            'none_complects_title'=>$none_complects_title,
-            'items' =>$items_arr,
-            'dateFrom'=>$dateFrom,
-            'dateTo'=>$dateTo,
-            'f_noneComplectsTitle'=>$f_noneComplectsTitle,
-            'f_noneComplectsPart' =>$f_noneComplectsPart,
-            'cur_id'=>$cur_id
-        ]);
+
+        if (!empty( $request['action_excel'])) {
+
+           self::actionNoneComplectExcel($items_arr);
+           die();
+        } else {
+
+            return $this->render('execution-posting-non-complect', [
+                'language' => Yii::$app->language,
+                'alert' => Yii::$app->session->getFlash('alert', '', true),
+                'none_complects_parts' => $none_complects_parts_arr,
+                'none_complects_title' => $none_complects_title,
+                'items' => $items_arr,
+                'dateFrom' => $dateFrom,
+                'dateTo' => $dateTo,
+                'f_noneComplectsTitle' => $f_noneComplectsTitle,
+                'f_noneComplectsPart' => $f_noneComplectsPart,
+                'cur_id' => $cur_id
+            ]);
+        }
     }
+
+    public function actionNoneComplectExcel($infoExport)
+    {
+        //$infoExport=[];
+        try {
+            //var_dump($infoExport);die();
+            \moonland\phpexcel\Excel::export([
+                'models' => $infoExport,
+                'fileName' => 'NoneComplectExport_'.date('Y-m-d H:i:s'),
+                'columns' => [
+                    'date_create',
+                    'title',
+                    'article_id',
+                    'none_title',
+                    'none_id',
+                    'none_number',
+                    'number_in_wh',
+                    'filled',
+                    'executed_none_complect',
+                    'executed'
+                ],
+                'headers' => [
+                    'date_create'   =>  THelper::t('date_create'),
+                    'title'         =>'Название',
+                    'article_id'    =>  'Номер статьи',
+                    'none_title'       =>  'Название детали',
+                    'none_id'          =>  'Код детали',
+                    'none_number'      =>  'Некомплект кол_во',
+                    'number_in_wh'     =>  'На складе',
+                    'filled'           =>  'Дополнено',
+                    'executed_none_complect'           =>  'Выполнено',
+                    'executed'         =>  'Состояние'
+                ],
+            ]);
+
+        } catch (\Exception $e) {
+            return 'Error'.$e->getMessage().' line:'.$e->getLine();
+        }
+
+
+        die();
+    }
+
     public function actionFillNoneComplect()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

@@ -51,6 +51,22 @@ $listGoods = PartsAccessories::getListPartsAccessories();
             }
         });
     }
+    $(document).ready(function() {
+        $('.exportExcel').on('click', function (e) {
+            e.preventDefault();
+            var from =  $('input[name="from"').val();
+            var to   =  $('input[name="to"').val();
+            var article_id = $('#noneComplectsTitle').children("option:selected").val();
+            var part_id    = $('#noneComplectsPart').children("option:selected").val();
+            $('input[type="hidden"][name="from"').val(from);
+            $('input[type="hidden"][name="to"').val(to);
+            $('input[name="noneComplectsTitle"').val(article_id);
+            $('input[name="noneComplectsPart"').val(part_id);
+            formExcel = $('form[name="none-comp-excel"]');
+            console.log(formExcel.attr('action'));
+            formExcel.submit();
+        })
+    });
 </script>
 
 <div class="m-b-md">
@@ -96,7 +112,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                         'options' => ['name' => 'selectFilters'],
                                     ]); ?>
 
-                                    <div class="col-md-5 m-b">
+                                    <div class="col-md-4 m-b">
                                         <?= DatePicker::widget([
                                             'name' => 'from',
                                             'value' => $dateFrom,
@@ -138,14 +154,25 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 
                                     <?php ActiveForm::end(); ?>
 
-                                    <div class="col-md-4 m-b text-right">
+                                    <div class="col-md-1 m-b">
+                                        <form name="none-comp-excel" method="post" action="/ru/business/submit-execution-posting/execution-posting-non-complect">
+                                            <input type="hidden" name="action_excel" value="excel">
+                                            <input type="hidden" name="from">
+                                            <input type="hidden" name="to">
+                                            <input type="hidden" name="noneComplectsTitle">
+                                            <input type="hidden" name="noneComplectsPart">
+                                            <?=Html::a('<i class="fa fa-file-o"></i>','#',['class'=>'btn btn-default btn-block exportExcel','title'=>'Выгрузка в excel'])?>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-3 m-b text-right">
 
                                     </div>
+
                                 </div>
                                 <table class="table table-translations table-striped datagrid m-b-sm">
                                     <thead>
                                     <tr>
-                                        <th>Дата добавдения</th>
+                                        <th>Дата добавления</th>
                                         <th>Номер статьи</th>
                                         <th>Название детали</th>
                                         <th>Некомплект<br><?=THelper::t('count')?></th>
