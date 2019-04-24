@@ -331,11 +331,46 @@ class SubmitExecutionPostingController extends BaseController {
 
     public function actionNoneComplectExcel($infoExport)
     {
-        //$infoExport=[];
         try {
-            //var_dump($infoExport);die();
+            $excel_items =[];
+            foreach ($infoExport as $item) {
+                $filled_sum=0;
+                $filled_str='';
+                if (!empty($item['filled'])) {
+                    foreach ($item['filled'] as $filled_item) {
+                        $filled_sum += $filled_item['number'];
+                    }
+                    if (($filled_sum >0)) {
+                        foreach ($item['filled'] as $filled_item) {
+                            $filled_str.='Кол-во:'.$filled_item['number'].' дата:'.$filled_item['date_create']->toDateTime()->format('Y-m-d H:i')."\r\n";
+                        }
+                    }
+                }
+                if (!empty($item['executed_none_complect'])) {
+                   $executed_none_complect_str = 'Выполнено ВСЕ';
+                } else {
+                    $executed_none_complect_str ='?';
+                }
+                if (!empty($item['executed'])) {
+                    $executed_str ='Выполнено';
+                } else {
+                    $executed_str ='?';
+                }
+                    $excel_items[]=[
+                    'date_create'  => $item['date_create'],
+                    'title'        => $item['title'],
+                    'article_id'   => $item['article_id'],
+                    'none_title'   => $item['none_title'],
+                    'none_id'      => (string)$item['none_id'],
+                    'none_number'  => $item['none_number'],
+                    'number_in_wh' => $item['number_in_wh'],
+                    'filled'       => $filled_str,
+                    'executed_none_complect'=> $executed_none_complect_str,
+                    'executed'     => $executed_str
+                ];
+            }
             \moonland\phpexcel\Excel::export([
-                'models' => $infoExport,
+                'models' => $excel_items,
                 'fileName' => 'NoneComplectExport_'.date('Y-m-d H:i:s'),
                 'columns' => [
                     'date_create',
@@ -358,16 +393,14 @@ class SubmitExecutionPostingController extends BaseController {
                     'none_number'      =>  'Некомплект кол_во',
                     'number_in_wh'     =>  'На складе',
                     'filled'           =>  'Дополнено',
-                    'executed_none_complect'           =>  'Выполнено',
+                    'executed_none_complect'           =>  'Выполнение',
                     'executed'         =>  'Состояние'
                 ],
             ]);
 
         } catch (\Exception $e) {
-            return 'Error'.$e->getMessage().' line:'.$e->getLine();
+            return 'Excel generate Error'.$e->getMessage().' line:'.$e->getLine();
         }
-
-
         die();
     }
 
