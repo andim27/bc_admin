@@ -548,6 +548,12 @@ Class Menu
                         'action' => 'sending-execution',
                     ],
                     [
+                        'key'   =>  'sidebar_returns_performers',
+                        'label' => THelper::t('sidebar_returns_performers'),
+                        'url' => ['manufacturing-suppliers/returns-performers'],
+                        'action' => 'returns-performers',
+                    ],
+                    [
                         'key'   =>  'sidebar_history_cancellation_posting',
                         'label' => THelper::t('sidebar_history_cancellation_posting'),
                         'url' => ['submit-execution-posting/history-cancellation-posting'],

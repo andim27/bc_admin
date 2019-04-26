@@ -995,7 +995,66 @@ class ManufacturingSuppliersController extends BaseController {
             'language' => Yii::$app->language,
         ]);
     }
-
+    /**
+     * control for retuns from performers
+     * @return \yii\web\Response
+     */
+    public function actionReturnsPerformers() {
+        $request = Yii::$app->request->post();
+//        Yii::$app->session->setFlash('alert' ,[
+//                'typeAlert'=>'danger',
+//                'message'=>'Сохранения не применились, что то пошло не так!!!'
+//            ]
+//        );
+        $dateInterval['from']='2019-01-01';
+        $dateInterval['to'] = date("Y-m-d");
+        $p_id = \Yii::$app->request->get('p_id');
+        if (!empty($p_id)) {
+            //$model = PartsAccessories::find()->where(['arc'=>['$ne'=>1]])->all();
+            $model = LogWarehouse::find()
+                ->where(['parts_accessories_id'=>new ObjectID((string)$p_id)])
+                ->andWhere(['IN','action',['retun_performer']])
+                ->orderBy(['date_create'=>SORT_DESC])
+                ->one();
+        } else {
+            $model = LogWarehouse::find()
+                //->where(['IN','action',['retun_performer']])
+                ->where(['IN','action',['posting_ordering']])//--example
+                ->andWhere([
+                    'date_create' => [
+                        '$gte' => new UTCDatetime(strtotime($dateInterval['from']) * 1000),
+                        '$lte' => new UTCDateTime(strtotime($dateInterval['to'] . '23:59:59') * 1000)
+                    ]
+                ])
+                ->orderBy(['date_create'=>SORT_DESC])
+                ->all();
+        }
+        $model_items =[];
+        $performer_items=[];
+        foreach ($model as $item) {
+            $part_info = $item->getInfoPartsAccessories()->one();
+            $performer_info = SuppliersPerformers::find()->where(['_id'=>new ObjectID($item->suppliers_performers_id)])->one();
+            if (!empty($performer_info->title)) {
+                array_push($performer_items,$performer_info->title);
+            }
+            $model_items[]=[
+                'part_info'      =>$part_info,
+                'performer_info' =>$performer_info,
+                'performer_items'=>$performer_items,
+                'date_create'    =>$item->date_create->toDateTime()->format('Y-m-d H:i:s'),
+                'comment'=>$item->comment,
+                'number' =>$item->number,
+            ];
+        }
+        $performer_items = array_unique($performer_items);
+        return $this->render('returns-performers',[
+            'model' => $model_items,
+            'alert' => Yii::$app->session->getFlash('alert', '', true),
+            'p_id'  => $p_id,
+            'part_info'=>$part_info,
+            'performer_items'=>$performer_items
+        ]);
+    }
     /**
      * save posting ordering
      * @return \yii\web\Response
