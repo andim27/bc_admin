@@ -316,6 +316,12 @@ Class Menu
                         'url' => ['/business/transactions/world-bonus'],
                         'action' => 'world-bonus',
                     ],
+                    [
+                        'key'   =>  'sidebar_stock_bonus',
+                        'label' => THelper::t('sidebar_stock_bonus'),
+                        'url' => ['/business/transactions/stock-bonus'],
+                        'action' => 'stock-bonus',
+                    ],
                 ]
             ],
             [

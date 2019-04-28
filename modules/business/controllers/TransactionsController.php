@@ -4,10 +4,12 @@ namespace app\modules\business\controllers;
 
 use app\components\THelper;
 use app\controllers\BaseController;
+use app\models\api\transactions\StockBonus;
 use app\models\api\transactions\Withdrawal;
 use app\models\api\transactions\WorldBonus;
 use app\models\PaymentCard;
 use app\models\Transaction;
+use app\models\Users;
 use MongoDB\BSON\ObjectID;
 use Yii;
 use yii\web\Response;
@@ -315,6 +317,54 @@ class TransactionsController extends BaseController
             Yii::$app->response->format = Response::FORMAT_JSON;
 
             return $result;
+        }
+    }
+
+    public function actionStockBonus()
+    {
+        return $this->render('stock_bonus');
+    }
+
+    public function actionGetStockBonusPayInfo()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $type = Yii::$app->request->post('type');
+
+            if (!$currentStockBonus = StockBonus::getCurrentStockBonus($type)) {
+                $amount = Yii::$app->request->post('amount');
+                $amount = !is_null($amount) ? intval($amount) : null;
+                return $this->renderAjax('_stock_bonus_pay_info', [
+                    'payInfo' => StockBonus::getStockBonusPayInfo($type, $amount),
+                    'amount' => $amount
+                ]);
+            } else {
+                return $this->renderAjax('_stock_bonus_current', [
+                    'currentStockBonus' => $currentStockBonus,
+                ]);
+            }
+        }
+    }
+
+    public function actionSetStockBonus()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $amount = Yii::$app->request->post('amount');
+            $type = Yii::$app->request->post('type');
+
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            return StockBonus::setStockBonus($type, $amount);
+        }
+    }
+
+    public function actionCancelCurrentStockBonus()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $type = Yii::$app->request->post('type');
+
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            return StockBonus::cancelCurrentStockBonus($type);
         }
     }
 
