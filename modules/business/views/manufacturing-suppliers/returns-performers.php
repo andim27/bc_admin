@@ -23,8 +23,11 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
                 <option value="0"  <?=(isset($p_id)&&$p_id==0?'selected':'')  ?> >Все исполнители</option>
                 <?php foreach ($performer_items as $item) { ?>
-                    <option value="1"  <?=(!isset($p_id)||$p_id==1?'selected':'')  ?> ><?=$item ?></option>
-                <?php  } ?>
+                    <?php if ($item['p_id'] == $p_id) { ?>
+                            <option value="<?=$item['p_id'] ?>"  selected   ><?=$item['name'] ?></option>
+                        <?php } else { ?>
+                            <option value="<?=$item['p_id'] ?>"     ><?=$item['name'] ?></option>
+                <?php  }} ?>
 
             </select>
         </div>
@@ -81,7 +84,7 @@ $idMyWarehouse = Warehouse::getIdMyWarehouse();
 
 
 <script>
-$('#p-id').change(function(){
+$('#p-id').click(function(){
     window.location.href = '/' + LANG + '/business/manufacturing-suppliers/returns-performers?p_id='+$('#p-id').val();
 });
 $('.table-translations').dataTable({
