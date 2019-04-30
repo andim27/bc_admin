@@ -9,6 +9,9 @@
         <input type="number" min="0" id="stock-bonus-amount-<?= $payInfo->type ?>" class="form-control" placeholder="Cумма к распределению" value="<?= $payInfo->amount ?>" />
     </div>
     <div class="col-md-8 m-b-20">
+        <b>Максимальный бонус:</b> <span id="stock-bonus-max-<?= $payInfo->type ?>"><?= $payInfo->maxBonus ?></span>
+    </div>
+    <div class="col-md-8 m-b-20">
         <input type="button" id="get-stock-bonus-<?= $payInfo->type ?>" class="form-control btn-success" value="Расчитать" />
     </div>
     <div class="col-md-8 m-b-20">
@@ -80,5 +83,12 @@
     $('#table-<?= $payInfo->type ?>').dataTable({
         language: TRANSLATION,
         order: [[ 2, 'desc' ]]
+    });
+    $('#stock-bonus-amount-<?= $payInfo->type ?>').keyup(function() {
+        var stockBonusMax = <?= $payInfo->max ?>;
+        var stockBonusTotal = <?= $payInfo->total ?>;
+        var stockBonusAmount = $('#stock-bonus-amount-<?= $payInfo->type ?>').val();
+        var result = (stockBonusAmount / stockBonusTotal) * stockBonusMax;
+        $('#stock-bonus-max-<?= $payInfo->type ?>').html(Math.ceil((result) * 100) / 100);
     });
 </script>
