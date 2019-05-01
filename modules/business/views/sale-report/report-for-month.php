@@ -85,7 +85,7 @@ use yii\helpers\Html;
                         'class' => 'yii\grid\DataColumn',
                         'attribute' => 'productName',
                         'enableSorting' => false,
-                        'label' => 'Полное имя',
+                        'label' => 'Pack',
                         'format' => 'raw',
                         'value' => function ($model){
                             return $model['productName'];

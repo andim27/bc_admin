@@ -3572,7 +3572,8 @@ class SaleReportController extends BaseController
         if(!empty($orderIdArrayKey)){
             $ordersArrayModel = Order::find()
                 ->select(['_id','orderId'])
-                ->where(['id' => ['$in'=>$orderIdArrayKey]])->all();
+                ->where(['id' => ['$in'=>$orderIdArrayKey]])
+                ->all();
 
             foreach ($ordersArrayModel as $order) {
                 $ordersArray[strval($order->_id)] = $order->orderId;
