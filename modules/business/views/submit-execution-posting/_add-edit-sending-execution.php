@@ -326,7 +326,7 @@ if(!empty($model)){
             nonComplectCells('show');
         } else {
             nonComplectCells('hide');
-            return;
+            //return;
         }
         blForm.find('.blPartsAccessories .row').each(function () {
             partNeedForOne = $(this).find('.partNeedForOne').val();
