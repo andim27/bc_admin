@@ -457,6 +457,15 @@ if(!empty($model)){
                     );
                     answer = 0;
                 }
+                if (weHaveInWarehouse ==0) {
+                    $(this).closest('.blInterchangeable').find('.infoDangerExecution').html(
+                        '<div class="alert alert-danger fade in">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                        'ВНИМАНИЕ на складе нет этих деталей!Все под Вашу ответственность!' +
+                        '</div>'
+                    );
+                    answer = 1;
+                }
 
                 needSendInterchangeable += weWantSend;
             });
@@ -506,7 +515,7 @@ if(!empty($model)){
                 }
             }
         }
-        $('.assemblyBtn').hide();
+        //$('.assemblyBtn').hide();
         if (document.getElementById('none-complect-ch').checked) {
             $('.assemblyBtn').show();
         }

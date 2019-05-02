@@ -516,6 +516,7 @@ class SubmitExecutionPostingController extends BaseController {
                 'message'=>'Сохранения не применились, что то пошло не так!!!'
             ]
         );
+        try {
 
         $request = Yii::$app->request->post();
 
@@ -638,22 +639,41 @@ class SubmitExecutionPostingController extends BaseController {
 
                                 $modelItem->number = (float)($modelItem->number + $item['cancellation_performer'] - $number_use - $item['reserve']);
                             } else {
-                                $modelItem->number = (float)($modelItem->number - $number_use - $item['reserve']);
+                                try {
+                                    $modelItem->number = (float)($modelItem->number - $number_use - $item['reserve']);
+                                } catch (\Exception $e_number) {
+                                    //$modelItem->number = 0;
+                                    Yii::$app->session->setFlash('alert' ,[
+                                            'typeAlert'=>'success',
+                                            'message'=>'Сохранения НЕ применились.modelItem->number error'
+                                        ]
+                                    );
+                                }
+
+                            }
+                            if (isset($modelItem)) {
+                                if($modelItem->save()){
+                                    // add log
+                                    LogWarehouse::setInfoLog([
+                                        'action'                    =>  'send_for_execution_posting',
+                                        'parts_accessories_id'      =>  (string)$item['parts_accessories_id'],
+                                        'number'                    =>  (float)($number_use + $item['reserve']),
+                                        'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
+                                    ]);
+                                }
+                            } else {
+                                Yii::$app->session->setFlash('alert' ,[
+                                        'typeAlert'=>'success',
+                                        'message'=>'Сохранения НЕ применились.modelItem->save error'
+                                    ]
+                                );
                             }
 
-                            if($modelItem->save()){
-                                // add log
-                                LogWarehouse::setInfoLog([
-                                    'action'                    =>  'send_for_execution_posting',
-                                    'parts_accessories_id'      =>  (string)$item['parts_accessories_id'],
-                                    'number'                    =>  (float)($number_use + $item['reserve']),
-                                    'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
-                                ]);
-                            }
                         }
                     }
                 }
                 //--noneComplect--
+                $mes_none='';
                 $none_complect = $request['arrayNoneComplect'];
                 if (!empty($none_complect)) {
                     foreach ($none_complect as $k=>$item) {
@@ -702,7 +722,14 @@ class SubmitExecutionPostingController extends BaseController {
             
             
         }
-
+        } catch (\Exception $e) {
+            $error_save ='Error!'.$e->getMessage().' line:'.$e->getLine();
+            Yii::$app->session->setFlash('alert' ,[
+                    'typeAlert'=>'danger',
+                    'message'=>'Ошибка сохранения!, что то пошло не так!!!'.$error_save
+                ]
+            );
+        }
         return $this->redirect('/'.Yii::$app->language.'/business/submit-execution-posting/sending-execution');
     }
 
