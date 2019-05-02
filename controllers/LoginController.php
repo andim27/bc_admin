@@ -65,7 +65,7 @@ class LoginController extends \yii\web\Controller
                     ]));
                 }
 
-                if(! $session->isActive){
+                //if(! $session->isActive){
                     $session->open();
 
                     $session->set('user', $user);
@@ -83,7 +83,7 @@ class LoginController extends \yii\web\Controller
                     $session->set('id', $user->id);
 
                     return $this->redirect('/' . $language->prefix . '/business');
-                }
+                //}
             } else {
                 $this->actionLogout();
             }
