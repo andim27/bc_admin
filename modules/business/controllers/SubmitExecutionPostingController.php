@@ -458,7 +458,7 @@ class SubmitExecutionPostingController extends BaseController {
                     }
 
                 } else {
-                    $res = ['success' => false, 'mes' => $fill_number . ' - Ошибка уменьшения остатка на складе !(' . date("Y-m-d H:i:s") . ')', 'part_id' => $part_id];
+                    $res = ['success' => false, 'mes' => $fill_number . " - Ошибка уменьшения остатка на складе !<br>Надо оприходовать(" . date("Y-m-d H:i:s") . ')', 'part_id' => $part_id];
 
                 }
 
@@ -710,8 +710,9 @@ class SubmitExecutionPostingController extends BaseController {
                 }
                 //--noneComplect--
                 $mes_none='';
-                $none_complect = $request['arrayNoneComplect'];
-                if (!empty($none_complect)) {
+                if (!empty($request['arrayNoneComplect'])) {
+                    $none_complect = $request['arrayNoneComplect'];
+
                     foreach ($none_complect as $k=>$item) {
                         if (!empty($k)&&(!empty($item))) {
                             $list_none_component[] = [
