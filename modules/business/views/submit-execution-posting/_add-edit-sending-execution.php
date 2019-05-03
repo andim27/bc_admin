@@ -335,7 +335,8 @@ if(!empty($model)){
         //--fill Interchangeable--
         blForm.find('.blInterchangeable .row').each(function () {
             partNeedForOneInterchangeable = $(this).find('.partNeedForOneInterchangeable').val();
-            $(this).find('.needSendInterchangeable').val((parseInt(partNeedForOneInterchangeable*wantC)));
+            //$(this).find('.needSendInterchangeable').val((parseInt(partNeedForOneInterchangeable*wantC)));
+            $(this).find('.needSendInterchangeable').val(0);
         });
         //--none complect--
         blForm.find('.form-group .row').each(function () {
