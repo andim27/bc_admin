@@ -34,6 +34,9 @@ $listGoods = PartsAccessories::getListPartsAccessories();
             if (data.success == true) {
                 showAnswer('td_part',data,part_id);
                 $('#td_action_id_'+part_id).html('<p>Дополнено!</p>');
+                var was_number_in_wh = parseInt($('#number_in_wh_'+part_id).html());
+                fill_number=parseInt(fill_number);
+                $('#number_in_wh_'+part_id).html(was_number_in_wh - fill_number);
             } else {
                 console.log('Error:fillNoneComplect ='+data.mes);
                 $('#td_action_id_'+part_id).html('<p>'+data.mes+'</p>');
@@ -192,7 +195,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                             <td><?=$item['article_id'] ?></td>
                                             <td title="<?=$item['none_id'] ?>"><?=$item['none_title'] ?></td>
                                             <td><?=$item['none_number'] ?></td>
-                                            <td><?=$item['number_in_wh'] ?></td>
+                                            <td><span id="number_in_wh_<?=$item['none_id'] ?>"><?=$item['number_in_wh'] ?></span></td>
                                             <td id="td_part_id_<?=$item['none_id'] ?>">
                                                 <?php
                                                 $filled_sum=0;

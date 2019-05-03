@@ -430,7 +430,43 @@ class SubmitExecutionPostingController extends BaseController {
             $res = ['success' => true, 'mes' => $fill_number . ' - Дополнено !(' . date("Y-m-d H:i:s") . ')', 'part_id' => $part_id];
 
         }
+        //--minus on werehouse
+        $warehouse_id = new ObjectID('592426f6dca7872e64095b45');//Украина
+        if ($res['success'] == true) {
+            $model = PartsAccessoriesInWarehouse::findOne([
+                'parts_accessories_id'  =>  new ObjectID($part_id),
+                'warehouse_id'          =>  $warehouse_id
+            ]);
 
+            if (!empty($model)) {
+                if (!empty($model->number) && ((int)$model->number >=(int)$fill_number) ) {
+                    $was_number = $model->number;
+                    $model->number = $model->number - $fill_number;
+                    if ($model->save() ) {
+                        // add log
+                        $rest_number = $model->number;
+                        LogWarehouse::setInfoLog([
+                            'action'                    =>  'fill_none_complect',
+                            'parts_accessories_id'      =>  (string)$part_id,
+                            'number'                    =>  (float)$fill_number,
+                            'comment'                   => 'was:'.$was_number.';rest:'.$rest_number
+                            //'suppliers_performers_id'   =>  $request['suppliers_performers_id'],
+                        ]);
+                    } else {
+                        $res = ['success' => false, 'mes' => $fill_number . ' - Ошибка сохранения НОВОГО остатка на складе !(' . date("Y-m-d H:i:s") . ')', 'part_id' => $part_id];
+
+                    }
+
+                } else {
+                    $res = ['success' => false, 'mes' => $fill_number . ' - Ошибка уменьшения остатка на складе !(' . date("Y-m-d H:i:s") . ')', 'part_id' => $part_id];
+
+                }
+
+            } else {
+                $res = ['success' => false, 'mes' => $fill_number . ' - Ошибка модели остатка на складе !()не числится(' . date("Y-m-d H:i:s") . ')', 'part_id' => $part_id];
+
+            }
+        }
         return $res;
     }
     private function isExecutedNoneComplect($list_none_component)
