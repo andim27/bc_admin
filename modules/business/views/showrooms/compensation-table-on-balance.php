@@ -1,7 +1,6 @@
 <?php
-    use app\components\THelper;
     use yii\helpers\Html;
-    use app\models\api\Showrooms;
+    use app\components\AlertWidget;
 ?>
 
 <div class="m-b-md">
@@ -33,6 +32,11 @@
             <div class="panel-body">
                 <div class="tab-content">
                     <div class="tab-pane active" id="onBalance">
+
+                        <?php if(!empty($error)){ ?>
+                            <?= AlertWidget::widget(['message'=>$error]) ?>
+                        <?php } ?>
+
                         <!-- Товар на балансе -->
                         <div class="table-responsive">
                             <table id="table-onBalance" class="table table-users table-striped datagrid m-b-sm">

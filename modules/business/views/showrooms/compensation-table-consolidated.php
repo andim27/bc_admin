@@ -87,7 +87,7 @@
                                                 <td><?=$itemCompensationСonsolidate['profit']?></td>
                                                 <td><?=$itemCompensationСonsolidate['paidOffBankTransfer']?></td>
                                                 <td><?=$itemCompensationСonsolidate['paidOffBC']?></td>
-                                                <td><?=$itemCompensationСonsolidate['remainder']?></td>
+                                                <td><?=round($itemCompensationСonsolidate['remainder'],2)?></td>
                                                 <td class="text-center">
                                                     <a href="#" class="editShowroomData" data-showroom="<?=$kCompensationСonsolidate?>">
                                                         <i class="fa fa-pencil"></i>

@@ -741,78 +741,129 @@ class ShowroomsController extends BaseController
         }
 
         $listShowroomsForSelect = api\Showrooms::getListForFilter();
-        if($this->user->username != 'main'){
-            $filter['showroomId'] = strval($showroomId);
-            $listShowroomsForSelect = [
-                $filter['showroomId'] => $listShowroomsForSelect[$filter['showroomId']]
-            ];
-        } else{
-            $filter['showroomId'] = false;
-        }
-        
+
         if(!empty($request['showroomId'])){
             $filter['showroomId'] = $request['showroomId'];
+        } else {
+            if($this->user->username != 'main'){
+                $filter['showroomId'] = strval($showroomId);
+                $listShowroomsForSelect = [
+                    $filter['showroomId'] => $listShowroomsForSelect[$filter['showroomId']]
+                ];
+            } else{
+
+                if(!empty($showroomId)){
+                    $filter['showroomId'] = $showroomId;
+                } else {
+                    $filter['showroomId'] = false;
+                }
+            }
         }
-        
 
         $partsAccessories = [];
-        $modelPartsAccessories = PartsAccessoriesInWarehouse::find()
-            ->filterWhere((!empty($filter['showroomId']) ? ['warehouse_id'=>new ObjectId($filter['showroomId'])] : []))
-            ->all();
-        if(!empty($modelPartsAccessories)){
-            /** @var PartsAccessoriesInWarehouse $itemPartsAccessory */
-            foreach ($modelPartsAccessories as $itemPartsAccessory) {
+        $error = '';
 
-                $number = $priceTotal = 0;
-                if(!empty($itemPartsAccessory->number)){
-                    $number = $itemPartsAccessory->number;
-                    $modelInfoProduct = Products::findOne(['product_connect_to_natural'=>strval($itemPartsAccessory->parts_accessories_id)]);
+        if(!empty($filter['showroomId'])){
+            $modelPartsAccessories = PartsAccessoriesInWarehouse::find()
+                ->select(['parts_accessories_id','number'])
+                ->filterWhere((!empty($filter['showroomId']) ? ['warehouse_id'=>new ObjectId($filter['showroomId'])] : []))
+                ->all();
 
-                    if(!empty($modelInfoProduct)){
-                        $priceTotal = number_format($modelInfoProduct->price * $number, 2, ',', ' ');
-                    }
+            if(!empty($modelPartsAccessories)){
+                /** @var PartsAccessoriesInWarehouse $itemPartsAccessory */
+                $listPartsAccessoriesStr = ArrayHelper::getColumn($modelPartsAccessories,function ($item) { return strval($item['parts_accessories_id']);});
+                $listPartsAccessoriesObj = ArrayHelper::getColumn($modelPartsAccessories,'parts_accessories_id');
 
+                $modelInfoProduct = Products::find()
+                    ->select(['product_connect_to_natural','price'])
+                    ->where([
+                        'product_connect_to_natural' => [
+                            '$in' => $listPartsAccessoriesStr
+                        ]
+                    ])
+                    ->all();
+                if(!empty($modelInfoProduct)){
+                    $modelInfoProduct = ArrayHelper::index($modelInfoProduct, function ($item) { return strval($item['product_connect_to_natural']);});
                 }
 
-                $partsAccessories[strval($itemPartsAccessory->parts_accessories_id)] = [
-                    'title'                     => $itemPartsAccessory->partsAccessory->title,
-                    'number'                    => $number,
-                    'numberDelivering'          => 0,
-                    'priceTotal'                => $priceTotal
-                ];
+                $modelPartsAccessoriesInfo = PartsAccessories::find()
+                    ->select(['_id','title'])
+                    ->where([
+                        '_id' => [
+                            '$in' => $listPartsAccessoriesObj
+                        ]
+                    ])
+                    ->all();
+                if(!empty($modelPartsAccessoriesInfo)){
+                    $modelPartsAccessoriesInfo = ArrayHelper::index($modelPartsAccessoriesInfo, function ($item) { return strval($item['_id']);});
+                }
+
+                /** @var PartsAccessoriesInWarehouse $itemPartsAccessory */
+                foreach ($modelPartsAccessories as $itemPartsAccessory) {
+
+                    $number = $priceTotal = 0;
+                    if(!empty($itemPartsAccessory->number)){
+                        $number = $itemPartsAccessory->number;
+
+                        if(!empty($modelInfoProduct[strval($itemPartsAccessory->parts_accessories_id)])){
+                            $priceTotal = number_format($modelInfoProduct[strval($itemPartsAccessory->parts_accessories_id)]->price * $number, 2, ',', ' ');
+                        }
+
+                    }
+
+                    $title = '???';
+                    if(!empty($modelPartsAccessoriesInfo[strval($itemPartsAccessory->parts_accessories_id)])){
+                        $title = $modelPartsAccessoriesInfo[strval($itemPartsAccessory->parts_accessories_id)]->title;
+                    }
+
+                    $partsAccessories[strval($itemPartsAccessory->parts_accessories_id)] = [
+                        'title'                     => $title,
+                        'number'                    => $number,
+                        'numberDelivering'          => 0,
+                        'priceTotal'                => $priceTotal
+                    ];
+                }
             }
-        }
 
 
-        $modelSendingWaitingParcel = SendingWaitingParcel::find()
-            ->where(['where_sent'=>strval($showroomId)])
-            ->andWhere(['is_posting'=>0])
-            ->all();
+            $modelSendingWaitingParcel = SendingWaitingParcel::find()
+                ->select(['part_parcel'])
+                ->where(['where_sent'=>$filter['showroomId']])
+                ->andWhere(['is_posting'=>0])
+                ->all();
 
-        if(!empty($modelSendingWaitingParcel)){
-            foreach ($modelSendingWaitingParcel as $itemSendingWaitingParcel) {
-                foreach ($itemSendingWaitingParcel->part_parcel as $item) {
-                    if(!empty($partsAccessories[$item['goods_id']])){
-                        $partsAccessories[$item['goods_id']]['numberDelivering'] += $item['goods_count'];
-                    } else {
+            if(!empty($modelSendingWaitingParcel)){
+                foreach ($modelSendingWaitingParcel as $itemSendingWaitingParcel) {
+                    foreach ($itemSendingWaitingParcel->part_parcel as $item) {
+                        if(!empty($partsAccessories[$item['goods_id']])){
+                            $partsAccessories[$item['goods_id']]['numberDelivering'] += $item['goods_count'];
+                        } else {
 
-                        $modelPartsAccessories = PartsAccessories::findOne(['_id'=>new ObjectId($item['goods_id'])]);
+                            $modelPartsAccessories = PartsAccessories::find()
+                                ->select(['title'])
+                                ->where(['_id'=>new ObjectId($item['goods_id'])])
+                                ->one();
 
-                        $partsAccessories[$item['goods_id']] = [
-                            'title'                     => (!empty($modelPartsAccessories->title) ? $modelPartsAccessories->title : '???'),
-                            'number'                    => 0,
-                            'numberDelivering'          => $item['goods_count'],
-                            'priceTotal'                => 0
-                        ];
+                            $partsAccessories[$item['goods_id']] = [
+                                'title'                     => (!empty($modelPartsAccessories->title) ? $modelPartsAccessories->title : '???'),
+                                'number'                    => 0,
+                                'numberDelivering'          => $item['goods_count'],
+                                'priceTotal'                => 0
+                            ];
+                        }
                     }
                 }
             }
+        } else {
+            $error = 'Не выбран шоу-рум';
         }
+
 
         return $this->render('compensation-table-on-balance', [
             'filter'                    =>  $filter,
             'listShowroomsForSelect'    =>  $listShowroomsForSelect,
-            'partsAccessories'          =>  $partsAccessories
+            'partsAccessories'          =>  $partsAccessories,
+            'error'                     =>  $error
         ]);
     }
 
