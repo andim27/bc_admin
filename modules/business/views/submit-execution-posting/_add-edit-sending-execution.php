@@ -453,7 +453,7 @@ if(!empty($model)){
                     $(this).closest('.blInterchangeable').find('.infoDangerExecution').html(
                         '<div class="alert alert-danger fade in">' +
                         '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-                        'Не достаточно на складе' +
+                        'Замена:Не достаточно на складе' +
                         '</div>'
                     );
                     answer = 0;

@@ -139,7 +139,9 @@ function pasportLang($name,$p_lang) {
                                             'class'=>'form-control needSendInterchangeable',
                                             'pattern'=>'\d*',
                                             'step'=>'0.01',
-                                            'data-part_id'=> (string)$kInterchangeable
+                                            'data-part_id'=> (string)$kInterchangeable,
+                                            'data-one_number'=> $item['number'],
+                                            'data-n_in_wh'=>(!empty($listGoodsFromMyWarehouse[$kInterchangeable]) ? $listGoodsFromMyWarehouse[$kInterchangeable] : 0 )
                                         ]);?>
                                     </div>
                                     <div class="col-md-1">
@@ -285,15 +287,21 @@ function pasportLang($name,$p_lang) {
 
     $(document).ready(function() {
         //needSendInterchangeable
-        $(".needSendInterchangeable").on("change",function () {
-            cur_val     = $(this).val();
+        $(".needSendInterchangeable").on("blur",function () {
+            cur_val     = parseFloat($(this).val());
             cur_part_id = $(this).attr('data-part_id');
-            console.log('needSendInterchangeable val= '+cur_val+' part_id='+cur_part_id);
-            //if (cur_val == 0){
-                $("#NoneComplect-"+cur_part_id).val(cur_val);
-                $("#itemNoneComplect-"+cur_part_id).val(cur_val);
+            cur_one_number = parseInt($(this).attr('data-one_number'));
+            cur_n_in_wh = parseFloat($(this).attr('data-n_in_wh'));
+            console.log('needSendInterchangeable val= '+cur_val+' part_id='+cur_part_id,' cur_n_in_wh='+cur_n_in_wh);
+            if (($("#NoneComplect-"+cur_part_id).css('display') =='inline-block')){
+                if ((cur_val >= cur_n_in_wh)) {
+                    console.log('yes,need none comp');
+                    $("#NoneComplect-"+cur_part_id).val(cur_val*cur_one_number);
+                    $("#itemNoneComplect-"+cur_part_id).val(cur_val*cur_one_number);
+                }
 
-            //}
+
+            }
         });
     });
 //    $(document).on('change','select[name="complect[]"]',function () {
