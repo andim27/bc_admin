@@ -313,7 +313,7 @@ class SubmitExecutionPostingController extends BaseController {
            self::actionNoneComplectExcel($items_arr);
            die();
         } else {
-
+            $can_del = $this->user->isMain();
             return $this->render('execution-posting-non-complect', [
                 'language' => Yii::$app->language,
                 'alert' => Yii::$app->session->getFlash('alert', '', true),
@@ -324,7 +324,8 @@ class SubmitExecutionPostingController extends BaseController {
                 'dateTo' => $dateTo,
                 'f_noneComplectsTitle' => $f_noneComplectsTitle,
                 'f_noneComplectsPart' => $f_noneComplectsPart,
-                'cur_id' => $cur_id
+                'cur_id' => $cur_id,
+                'can_del'=> $can_del
             ]);
         }
     }
@@ -402,6 +403,32 @@ class SubmitExecutionPostingController extends BaseController {
             return 'Excel generate Error'.$e->getMessage().' line:'.$e->getLine();
         }
         die();
+    }
+
+    public function actionDelNoneComplect() {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $res = ['success' => true, 'mes' => 'Done!'];
+        $request = Yii::$app->request->post();
+        $article_id = $request['article_id'];
+        $part_id = $request['part_id'];
+        $p_none = PartsAccessoriesNone::find()->where(['article_id' => (int)$article_id])->one();
+        $p_list_none_component = $p_none->list_none_component;
+        $p_list_del_none_component=[];
+        for ($i = 0; $i < count($p_list_none_component); $i++) {
+            if (($part_id != (string)($p_list_none_component[$i]['parts_accessories_id'])) ) {
+                //$p_list_del_none_component[]= $p_list_none_component[$i];
+                array_push($p_list_del_none_component,$p_list_none_component[$i]);
+            }
+        }
+        $p_none->list_none_component = $p_list_del_none_component;
+        if (!$p_none->save()) {
+            $res = ['success' => false, 'mes' => 'Error:Delete error!' . date("Y-m-d H:i:s")];
+
+        } else {
+            $res = ['success' => true, 'mes' => ' Удалено !(' . date("Y-m-d H:i:s") . ')', 'part_id' => $part_id];
+
+        }
+        return $res;
     }
 
     public function actionFillNoneComplect()

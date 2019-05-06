@@ -319,7 +319,7 @@ if(!empty($model)){
     $(".WantCollect").on('change',function(){
         $('#none-complect-items').html("");
         blForm = $(this).closest('form');
-
+        $('.assemblyBtn').show();
         wantC = parseFloat($(this).val());
         canC = parseFloat(blForm.find('.CanCollect').val());
         if (wantC > canC) {
@@ -457,15 +457,6 @@ if(!empty($model)){
                         '</div>'
                     );
                     answer = 0;
-                }
-                if (weHaveInWarehouse ==0) {
-                    $(this).closest('.blInterchangeable').find('.infoDangerExecution').html(
-                        '<div class="alert alert-danger fade in">' +
-                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-                        'ВНИМАНИЕ на складе нет этих деталей!Все под Вашу ответственность!' +
-                        '</div>'
-                    );
-                    answer = 1;
                 }
 
                 needSendInterchangeable += weWantSend;

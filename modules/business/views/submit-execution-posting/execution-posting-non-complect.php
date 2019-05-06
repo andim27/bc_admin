@@ -27,6 +27,21 @@ $listGoods = PartsAccessories::getListPartsAccessories();
             $('#'+prefix+'_id_'+part_id).html('<p>Error!</p>');
         }
     }
+    function delNoneComplect(article_id,part_id,none_title) {
+        var url="/<?=Yii::$app->language?>/business/submit-execution-posting/del-none-complect";
+        if (confirm('Вы уверены что хотите удалить деталь : '+none_title+' ?')) {
+
+            $.post(url, {'article_id': article_id, 'part_id': part_id}).done(function (data) {
+                if (data.success == true) {
+                    showAnswer('td_part', data, part_id);
+                    $('#td_action_id_' + part_id).html('<p>Удалено!</p>');
+                } else {
+                    console.log('Error:delNoneComplect =' + data.mes);
+                    $('#td_action_id_' + part_id).html('<p>' + data.mes + '</p>');
+                }
+            });
+        }
+    }
     function fillNoneComplect(article_id,part_id,none_number) {
         var url="/<?=Yii::$app->language?>/business/submit-execution-posting/fill-none-complect";
         var fill_number =$('#fill_part_id_'+part_id).val();
@@ -189,6 +204,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                             $none_id     = $item['none_id'] ;
                                             $article_id  = $item['article_id'];
                                             $none_number = $item['none_number'];
+                                            $none_title  = $item['none_title'];
                                         ?>
                                             <tr>
                                             <td><?=$item['date_create'] ?></td>
@@ -236,6 +252,10 @@ $listGoods = PartsAccessories::getListPartsAccessories();
 
                                                              <?php } ?>
                                                 <?php } ?>
+                                                <?php if ($can_del){  ?>
+                                                    <button class="btn-danger" id="btn-del" style="margin-top: 5px" onclick="delNoneComplect('<?=$article_id ?>','<?= $none_id ?>','<?=$none_title ?>')">Удалить  </button>
+
+                                                <?php }?>
                                             </td>
                                             </tr>
                                         <?php } ?>
