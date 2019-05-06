@@ -1189,23 +1189,44 @@ class ShowroomsController extends BaseController
 
         // get info showrooms
         $listShowrooms = Showrooms::find()
+            ->select(['_id','otherLogin','userId','countryId','cityId','otherLogin','userId'])
             ->filterWhere($whereShowroom)
-            ->with(['countryInfo','cityInfo'])
             ->all();
 
         $showrooms = [];
         if(!empty($listShowrooms)){
+
+            $listInfoUser = Users::find()
+                ->select(['_id','username','firstName','secondName'])
+                ->where([
+                    '$or' => [
+                        [
+                            '_id' => [
+                                '$in' => ArrayHelper::getColumn($listShowrooms,'userId')
+
+                            ]
+                        ],
+                        [
+                            'username'  => [
+                                '$in' => ArrayHelper::getColumn($listShowrooms,'otherLogin')
+                            ]
+                        ]
+                    ]
+
+                ])
+                ->all();
+            $listInfoUserId = ArrayHelper::index($listInfoUser, function ($item) { return strval($item['_id']);});
+            $listInfoUserLogin = ArrayHelper::index($listInfoUser, 'username');
+
             /** @var Showrooms $listShowroom */
             foreach ($listShowrooms as $itemShowroom) {
 
                 /** @var $infoUser Users */
-                if(!empty($itemShowroom->otherLogin)){
-                    $infoUser = $itemShowroom->infoOtherUser;
+                if(!empty($itemShowroom->otherLogin) && !empty($listInfoUserLogin[$itemShowroom->otherLogin])) {
+                    $infoUser = $listInfoUserLogin[$itemShowroom->otherLogin];
+                } else if(!empty($listInfoUserId[strval($itemShowroom->userId)])){
+                    $infoUser = $listInfoUserId[strval($itemShowroom->userId)];
                 } else {
-                    $infoUser = $itemShowroom->infoUser;
-                }
-
-                if(empty($infoUser)){
                     header('Content-Type: text/html; charset=utf-8');
                     echo '<xmp>';
                     print_r('info anout user not found for showroom - '.strval($itemShowroom->_id));

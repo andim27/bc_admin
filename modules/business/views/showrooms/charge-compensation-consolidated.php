@@ -89,7 +89,7 @@
                                                 <td><?=$itemShowroom['profit']?></td>
                                                 <td><?=$itemShowroom['paidOffBankTransfer']?></td>
                                                 <td><?=$itemShowroom['paidOffBC']?></td>
-                                                <td><?=$itemShowroom['remainder']?></td>
+                                                <td><?=round($itemShowroom['remainder'],2)?></td>
                                                 <td class="text-center">
                                                     <a href="/ru/business/showrooms/charge-compensation-history?showroomId=<?=$kShowroom?>" class="historyCompensation">История</a>
                                                     <a href="#topUpCompensation" data-toggle="modal" class="topUpCompensation" data-showroom-id="<?=$kShowroom?>" data-user-id="<?=$itemShowroom['userId']?>">Пополнить</a>
