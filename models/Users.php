@@ -78,6 +78,7 @@ class Users extends ActiveRecord
 
     public static function getRulesUser()
     {
+        echo 1;
         $model = self::find()->select(['rulesAdmin'])
             ->where(['_id'=>new ObjectID(\Yii::$app->view->params['user']->id)])
             ->one();
@@ -90,17 +91,22 @@ class Users extends ActiveRecord
     {
         $fl = false;
 
-        $rules = self::$userMenuRules;
-        if(empty($rules)){
-            $rules = self::getRulesUser();
-            self::$userMenuRules = $rules;
+        if (\Yii::$app->view->params['user']->username == 'main'){
+            $fl = true;
         }
 
-        if(!empty($rules[$rule]) && in_array($key,$rules[$rule])){
-            $fl = true;
-        } elseif (\Yii::$app->view->params['user']->username == 'main'){
-            $fl = true;
+        if($fl !== true){
+            $rules = self::$userMenuRules;
+            if(empty($rules)){
+                $rules = self::getRulesUser();
+                self::$userMenuRules = $rules;
+            }
+
+            if(!empty($rules[$rule]) && in_array($key,$rules[$rule])){
+                $fl = true;
+            }
         }
+
             
         return $fl;
     }
