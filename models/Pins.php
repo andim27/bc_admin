@@ -34,7 +34,9 @@ class Pins extends ActiveRecord
             'author',
             'dateCreate',
             'comment',
-            'kind'
+            'kind',
+            'productData',
+            'userData'
         ];
     }
 

@@ -15,16 +15,18 @@ $total = [
 </div>
 
 <div class="m-b-md">
-    <h3 class="m-b-none" title="<?=$loan_date ?>"><?= THelper::t('sidebar_loan') ?></h3>
+    <h3 class="m-b-none" ><?= THelper::t('sidebar_loan') ?></h3>
 </div>
 
 <div class="row form-group">
     <div class="col-md-3">
-        <select  class="form-control" id="loan-filter-id" name="loan-filter">
-            <option <?=$f==0?'selected':'' ?> value="0">Долг равен 0</option>
-            <option <?=(!isset($f)||$f==1)?'selected':'' ?> value="1">Долг больше 0</option>
-            <option <?=$f==1000?'selected':'' ?> value="1000">Долг больше 0 (пересчет)</option>
-        </select>
+        <?=Html::dropDownList('loan-filter',$f,
+            [0=>'Все',1=>'С долгом'],
+            [
+                'class'=>'form-control',
+                'id'=>'loan-filter-id'
+            ]
+        )?>
     </div>
     <div class="col-md-2 col-md-offset-7">
         <?= Html::a('<i class="fa fa-usd"></i> '.THelper::t('sent_loan'), ['/business/loan/sent-repayment'], ['data-toggle'=>'ajaxModal','class'=>'btn btn-block btn-success']) ?>
@@ -59,8 +61,8 @@ $total = [
                         <td><?=$item['amountRepayment']?></td>
                         <td class="<?=($difference>0 ? 'text-danger' : 'text-success')?>"><?=abs($difference)?></td>
                         <td>
-                            <?= Html::a('<i class="fa fa-usd"></i> '.THelper::t('sent_loan'), ['/business/loan/sent-repayment','id'=>$k], ['data-toggle'=>'ajaxModal','class'=>'btn btn-success']) ?>
-                            <?= Html::a('<i class="fa fa-eye"></i> '.THelper::t('more'), ['/business/loan/more-look-repayment','id'=>$k],['class'=>'btn btn-primary']) ?>
+                            <?= Html::a('<i class="fa fa-usd"></i> '.THelper::t('sent_loan'), ['/business/loan/sent-repayment','username'=>$k], ['data-toggle'=>'ajaxModal','class'=>'btn btn-success']) ?>
+                            <?= Html::a('<i class="fa fa-eye"></i> '.THelper::t('more'), ['/business/loan/more-look-repayment','username'=>$k],['class'=>'btn btn-primary']) ?>
                         </td>
                     </tr>
                 <?php } ?>

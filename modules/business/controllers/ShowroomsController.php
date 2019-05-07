@@ -2,6 +2,8 @@
 
 namespace app\modules\business\controllers;
 
+use app\models\Cities;
+use app\models\Countries;
 use app\models\LogWarehouse;
 use app\models\PartsAccessories;
 use app\models\PartsAccessoriesInWarehouse;
@@ -1218,6 +1220,26 @@ class ShowroomsController extends BaseController
             $listInfoUserId = ArrayHelper::index($listInfoUser, function ($item) { return strval($item['_id']);});
             $listInfoUserLogin = ArrayHelper::index($listInfoUser, 'username');
 
+            $listCountryShowroom = Countries::find()
+                ->select(['_id','name'])
+                ->where([
+                    '_id' => [
+                        '$in' => ArrayHelper::getColumn($listShowrooms,'countryId')
+                    ]
+                ])
+                ->all();
+            $listCountryShowroom = ArrayHelper::index($listCountryShowroom, function ($item) { return strval($item['_id']);});
+
+            $listCityShowroom = Cities::find()
+                ->select(['_id','name'])
+                ->where([
+                    '_id' => [
+                        '$in' => ArrayHelper::getColumn($listShowrooms,'cityId')
+                    ]
+                ])
+                ->all();
+            $listCityShowroom = ArrayHelper::index($listCityShowroom, function ($item) { return strval($item['_id']);});
+
             /** @var Showrooms $listShowroom */
             foreach ($listShowrooms as $itemShowroom) {
 
@@ -1235,8 +1257,8 @@ class ShowroomsController extends BaseController
                 }
 
                 $showrooms[strval($itemShowroom->_id)] = [
-                    'country'               => $itemShowroom->countryInfo->name['ru'],
-                    'city'                  => $itemShowroom->cityInfo->name['ru'],
+                    'country'               => $listCountryShowroom[strval($itemShowroom->countryId)]->name['ru'],
+                    'city'                  => $listCityShowroom[strval($itemShowroom->cityId)]->name['ru'],
                     'userId'                => strval($infoUser->_id),
                     'login'                 => $infoUser->username,
                     'fullName'              => $infoUser->secondName . '<br>' .$infoUser->firstName,
@@ -1248,6 +1270,15 @@ class ShowroomsController extends BaseController
                 ];
             }
         }
+
+
+//        $arrayTurnover = $this->getTurnover($filter['date'],$filter['date'],[$filter['showroomId']]);
+//
+//        header('Content-Type: text/html; charset=utf-8');
+//        echo '<xmp>';
+//        print_r($arrayTurnover);
+//        echo '</xmp>';
+//        die();
 
         //get turnover and accruals
         $arrayTurnoverAccruals = $this->getTurnoverAccruals($filter['date'] . '-01',$filter['date'] .'-'.$countDay,$filter['showroomId']);
@@ -2414,6 +2445,82 @@ class ShowroomsController extends BaseController
 //
 //    }
 
+
+    private function getTurnover($dateMonthFrom,$dateMonthTo,$listShowrooms = []){
+
+        $currentDate = date('Y-m');
+
+        $turnovers = [];
+
+        $whereShowroom = [];
+        if(!empty($listShowrooms)) {
+            $whereShowroom = ['_id' => ['$in'=>$listShowrooms]];
+        }
+
+        $modelShowrooms = Showrooms::find()
+            ->select(['_id','turnovers'])
+            ->filterWhere($whereShowroom)
+            ->all();
+
+        foreach ($modelShowrooms as $item){
+
+            $timestampFrom = strtotime($dateMonthFrom);
+            $timestampTo = strtotime($dateMonthTo);
+
+            $i = 1;
+            do {
+                $checkDate = date('Y-m',$timestampFrom);
+                if(!isset($item->turnovers[$checkDate])){
+                    $turnoverMonth = $this->calculationTurnover($checkDate,$item->_id);
+
+                    if($currentDate != $checkDate){
+
+                    }
+                } else {
+                    $turnoverMonth = $item->turnovers[$checkDate];
+                }
+
+                $turnovers[strval($item->_id)]['turnovers'][$checkDate] = $turnoverMonth;
+                if(!isset($turnovers[strval($item->_id)]['totalTurnovers'])){
+                    $turnovers[strval($item->_id)]['totalTurnovers'] = 0;
+                }
+                $turnovers[strval($item->_id)]['totalTurnovers'] += $turnoverMonth;
+
+                $timestampFrom = strtotime('+'.$i++.' months',$timestampFrom);
+
+            } while ($timestampFrom <= $timestampTo);
+
+
+        }
+
+        return $turnovers;
+
+    }
+
+    private function calculationTurnover($dateMonth,$showroomId)
+    {
+
+
+        $infoDateTo = explode("-",$dateMonth);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+
+        $turnover = Sales::find()
+            ->where([
+                'type' => [
+                    '$ne'   =>  -1
+                ],
+                'showroomId' => $showroomId,
+                'dateCreate' => [
+                    '$gte' => new UTCDateTime(strtotime($dateMonth . '-01 00:00:00') * 1000),
+                    '$lte' => new UTCDateTime(strtotime($dateMonth.'-'.$countDay.' 23:59:59') * 1000)
+                ]
+            ])
+            ->orderBy(['dateCreate'=>SORT_DESC])
+            ->sum('price');
+
+
+        return $turnover;
+    }
 
     private function getTurnoverAccruals($dateFrom,$dateTo,$showroomId = [])
     {
