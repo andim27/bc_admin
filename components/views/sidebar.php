@@ -3,6 +3,7 @@
     use app\models\Users;
     use app\models\Settings;
     use MongoDB\BSON\ObjectID;
+
     $rule_admin_menu = Yii::$app->cache->get('rule_admin_menu');
     if ($rule_admin_menu == false) {
         $can_main_menu = Settings::find()->where(['_id'=> new ObjectID('576912f443f9c4f46bc23a0d')])->one();
