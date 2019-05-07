@@ -2306,11 +2306,21 @@ class ShowroomsController extends BaseController
             ])
             ->andFilterWhere((!empty($filter['showroomId']) ? ['showroomId'=>new ObjectId($filter['showroomId'])] : []))
             ->all();
+
         if(!empty($modelSales)){
+
+            $arraySetSales = StatusSales::find()
+                ->select(['idSale','setSales'])
+                ->where([
+                    'idSale' => [
+                        '$in' => ArrayHelper::getColumn($modelSales,'_id')
+                    ]
+                ])
+                ->all();
+            $arraySetSales = ArrayHelper::index($arraySetSales, function ($item) { return strval($item['idSale']);});
+
             /** @var Sales $sale */
             foreach ($modelSales as $sale) {
-                $statusSale = $sale->statusSale;
-                $setSales = $statusSale->setSales;
 
                 if(empty($infoSale['packs'][$sale->product])){
                     $infoSale['packs'][$sale->product] = [
@@ -2320,11 +2330,12 @@ class ShowroomsController extends BaseController
                         'totalPrice'    => 0
                     ];
                 }
+
                 $infoSale['packs'][$sale->product]['orderCount']++;
                 $infoSale['packs'][$sale->product]['totalPrice'] += $sale->price;
 
-                if(!empty($setSales)){
-                    foreach ($setSales as $k=>$itemSale) {
+                if(!empty($arraySetSales[strval($sale->_id)])){
+                    foreach ($arraySetSales[strval($sale->_id)]->setSales as $k=>$itemSale) {
 
                         $title = $listPartsAccessoriesForSaLe[strval($itemSale['parts_accessories_id'])];
 
