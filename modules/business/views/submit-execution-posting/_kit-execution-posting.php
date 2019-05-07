@@ -286,11 +286,12 @@ function pasportLang($name,$p_lang) {
     $(document).find('.CanCollect').val(canCollect);
 
     $(document).ready(function() {
+        $('.none-complect-ch-row').show();
         //needSendInterchangeable
         $(".needSendInterchangeable").on("blur",function () {
             cur_val     = parseFloat($(this).val());
             cur_part_id = $(this).attr('data-part_id');
-            cur_one_number = parseInt($(this).attr('data-one_number'));
+            cur_one_number = parseFloat($(this).attr('data-one_number'));
             cur_n_in_wh = parseFloat($(this).attr('data-n_in_wh'));
             console.log('needSendInterchangeable val= '+cur_val+' part_id='+cur_part_id,' cur_n_in_wh='+cur_n_in_wh);
             if (($("#NoneComplect-"+cur_part_id).css('display') =='inline-block')){

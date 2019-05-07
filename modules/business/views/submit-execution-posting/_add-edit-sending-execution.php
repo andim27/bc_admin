@@ -518,9 +518,9 @@ if(!empty($model)){
         if (document.getElementById('none-complect-ch').checked) {
             $('.assemblyBtn').show();
             $('#none-complect-ch-val').val(1);
-            //nonComplectCells('show');
+            nonComplectCells('show');
         } else {
-            //nonComplectCells('hide');
+            nonComplectCells('hide');
             $('#none-complect-ch-val').val(0);
         }
     });
@@ -716,7 +716,7 @@ if(!empty($model)){
         console.log('noneComplectCells:'+action);
         if (action == 'show') {
             $('.none-complect-ch-row').show();
-            $('#none-complect-ch').attr('checked',true).attr('disabled',true);
+            $('#none-complect-ch').attr('checked',true);//.attr('disabled',true)
             $('#none-complect-ch-val').val(1);
             $('.partNoneComplect').show();
             $('.assemblyBtn').show();
