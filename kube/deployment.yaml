@@ -44,7 +44,7 @@ spec:
         - name: ENVIRONMENT
           value: '__ENVIRONMENT__'
         - name: ATATUS_LICENSE_KEY
-          value: 'lic_apm_32166a6f029e4a29ac10ec6b643baafa'
+          value: 'lic_apm_e85e95beb584452da2d52c9ab1c3c755'
         - name: ATATUS_APP_NAME
           value: 'six-app'
         - name: ATATUS_FRAMEWORK
