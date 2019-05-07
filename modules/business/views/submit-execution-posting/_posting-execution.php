@@ -81,7 +81,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
 
                                                     <?php foreach($items as $k=>$item){ ?>
                                                         <div class="form-group row">
-                                                            <div class="col-md-7">
+                                                            <div class="col-md-6">
                                                                 <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
                                                             </div>
                                                             <div class="col-md-2">
@@ -97,6 +97,9 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                                                             <div class="col-md-1">
                                                                 <?=Html::input('text','',$item['reserve'],['class'=>'form-control partNeedReserve','disabled'=>'disabled']);?>
                                                             </div>
+                                                            <div class="col-md-1">
+                                                                <?=Html::input('text','',0,['class'=>'form-control partNoneComplect','disabled'=>'disabled']);?>
+                                                            </div>
                                                         </div>
                                                     <?php } ?>
                                                 </div>
@@ -104,7 +107,7 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                                         <?php } else {?>
                                             <?php $item=$items['0']; ?>
                                             <div class="form-group row">
-                                                <div class="col-md-7">
+                                                <div class="col-md-6">
                                                     <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],['class'=>'form-control partTitle','disabled'=>'disabled']);?>
                                                 </div>
                                                 <div class="col-md-4">
@@ -112,6 +115,9 @@ $listSuppliers = SuppliersPerformers::getListSuppliersPerformers();
                                                 </div>
                                                 <div class="col-md-1">
                                                     <?=Html::input('text','',$item['reserve'],['class'=>'form-control partNeedReserve','disabled'=>'disabled']);?>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <?=Html::input('text','',0,['class'=>'form-control partNoneComplect','disabled'=>'disabled']);?>
                                                 </div>
                                             </div>
                                         <?php } ?>

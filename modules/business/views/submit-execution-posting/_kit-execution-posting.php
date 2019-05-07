@@ -66,12 +66,13 @@ function pasportLang($name,$p_lang) {
 <div class="panel panel-default">
     <div class="panel-body">
         <div class="row form-group">
-            <div class="col-md-7"></div>
+            <div class="col-md-6"></div>
             <div class="col-md-1">В наличие</div>
             <div class="col-md-1">У исполнителя</div>
             <div class="col-md-1">На одну шт.</div>
             <div class="col-md-1">Надо отправить</div>
             <div class="col-md-1">С запасом</div>
+            <div class="col-md-1 partNoneComplect">Не комплект</div>
         </div>
         <?php if(!empty($model->composite)){ ?>
             <?php foreach($model->composite as $item){ ?>
@@ -103,7 +104,7 @@ function pasportLang($name,$p_lang) {
                                 ?>
                         <?php if ((!empty($p_lang)) && pasportLang($itemInterchangeable,$p_lang)) {?>
                                 <div class="form-group row">
-                                    <div class="col-md-7 mmm">
+                                    <div class="col-md-6 mmm">
                                         <?=Html::hiddenInput('complectInterchangeable['.(string)$item['_id'].'][]',$kInterchangeable,[]);?>
                                         <?=Html::input('text','',$itemInterchangeable,
                                             [
@@ -111,7 +112,8 @@ function pasportLang($name,$p_lang) {
                                                 'disabled'=>true,
                                                 'data' => [
                                                     'toggle'    =>  'tooltip',
-                                                    'placement' =>  'placement'
+                                                    'placement' =>  'placement',
+                                                    'part_id'   => (string)$kInterchangeable
                                                 ],
                                                 'title' => $itemInterchangeable
                                             ]);?>
@@ -137,6 +139,9 @@ function pasportLang($name,$p_lang) {
                                             'class'=>'form-control needSendInterchangeable',
                                             'pattern'=>'\d*',
                                             'step'=>'0.01',
+                                            'data-part_id'=> (string)$kInterchangeable,
+                                            'data-one_number'=> $item['number'],
+                                            'data-n_in_wh'=>(!empty($listGoodsFromMyWarehouse[$kInterchangeable]) ? $listGoodsFromMyWarehouse[$kInterchangeable] : 0 )
                                         ]);?>
                                     </div>
                                     <div class="col-md-1">
@@ -146,13 +151,23 @@ function pasportLang($name,$p_lang) {
                                             'step'=>'1',
                                         ]);?>
                                     </div>
+                                    <div class="col-md-1">
+                                        <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[$kInterchangeable]) ? $listGoodsFromMyWarehouse[$kInterchangeable] : 0 ),['class'=>'partNoneComplect']);?>
+                                        <?=Html::input('number','numberNoneComplect['.$kInterchangeable.']','0',[
+                                            'class'=>'form-control partNoneComplect',
+                                            'pattern'=>'\d*',
+                                            'disabled'=>'disabled',
+                                            'title' => 'Не комплект(_kit-p-lang)',
+                                            'id'=>'NoneComplect-'.(string)$kInterchangeable
+                                        ]);?>
+                                    </div>
                                 </div>
                         <?php } ?>
                             <?php } ?>
 
 
                             <div class="form-group row totalInterchangeable">
-                                <div class="col-md-7"></div>
+                                <div class="col-md-6"></div>
                                 <div class="col-md-1">
                                     <?=Html::input('text',
                                         '',
@@ -177,6 +192,16 @@ function pasportLang($name,$p_lang) {
                                         'disabled'=>'disabled'
                                     ]);?>
                                 </div>
+                                <div class="col-md-1">
+                                    <?=Html::hiddenInput('',(!empty($listGoodsFromMyWarehouse[$kInterchangeable]) ? $listGoodsFromMyWarehouse[$kInterchangeable] : 0 ),['class'=>'partNoneComplect']);?>
+                                    <?=Html::input('number','numberNoneComplect['.$kInterchangeable.']','',[
+                                        'class'=>'form-control partNoneComplect',
+                                        'pattern'=>'\d*',
+                                        'disabled'=>'disabled',
+                                        'title' => 'Не комплект(_kit)',
+                                        'id'=>'NoneComplect-'.(string)$kInterchangeable
+                                    ]);?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -187,7 +212,7 @@ function pasportLang($name,$p_lang) {
                         ?>
                     <?php if ((!empty($p_lang)) && pasportLang($listGoods[(string)$item['_id']],$p_lang)) {?>
                             <div class="form-group row blUnique">
-                        <div class="col-md-7">
+                        <div class="col-md-6">
                             <?=Html::hiddenInput('complect[]',(string)$item['_id'],[]);?>
                             <?=Html::input('text','',$listGoods[(string)$item['_id']],
                                 [
@@ -195,7 +220,8 @@ function pasportLang($name,$p_lang) {
                                     'disabled'=>true,
                                     'data' => [
                                         'toggle'    =>  'tooltip',
-                                        'placement' =>  'placement'
+                                        'placement' =>  'placement',
+                                        'part_id'   => (string)$item['_id']
                                     ],
                                     'title' => $listGoods[(string)$item['_id']]
                                 ]);?>
@@ -226,6 +252,16 @@ function pasportLang($name,$p_lang) {
                                 'step'=>'1',
                             ]);?>
                         </div>
+                                <div class="col-md-1">
+                                    <?=Html::input('number','numberNoneComplect['.(string)$item['_id'].']',0,[
+                                        'class'=>'form-control partNoneComplect',
+                                        'pattern'=>'\d*',
+                                        'step'=>'1',
+                                        'disabled'=>true,
+                                        'title' => 'Не комплект(_kit_exec!empty)',
+                                        'id'=>'NoneComplect-'.(string)$item['_id']
+                                    ]);?>
+                                </div>
                     </div>
                     <?php } ?>
                     <?php } ?>
@@ -249,6 +285,26 @@ function pasportLang($name,$p_lang) {
 
     $(document).find('.CanCollect').val(canCollect);
 
+    $(document).ready(function() {
+        $('.none-complect-ch-row').show();
+        //needSendInterchangeable
+        $(".needSendInterchangeable").on("blur",function () {
+            cur_val     = parseFloat($(this).val());
+            cur_part_id = $(this).attr('data-part_id');
+            cur_one_number = parseFloat($(this).attr('data-one_number'));
+            cur_n_in_wh = parseFloat($(this).attr('data-n_in_wh'));
+            console.log('needSendInterchangeable val= '+cur_val+' part_id='+cur_part_id,' cur_n_in_wh='+cur_n_in_wh);
+            if (($("#NoneComplect-"+cur_part_id).css('display') =='inline-block')){
+                if ((cur_val >= cur_n_in_wh)) {
+                    console.log('yes,need none comp');
+                    $("#NoneComplect-"+cur_part_id).val(cur_val*cur_one_number);
+                    $("#itemNoneComplect-"+cur_part_id).val(cur_val*cur_one_number);
+                }
+
+
+            }
+        });
+    });
 //    $(document).on('change','select[name="complect[]"]',function () {
 //
 //        changeRow = $(this).closest('.row');

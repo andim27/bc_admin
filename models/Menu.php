@@ -316,6 +316,12 @@ Class Menu
                         'url' => ['/business/transactions/world-bonus'],
                         'action' => 'world-bonus',
                     ],
+                    [
+                        'key'   =>  'sidebar_stock_bonus',
+                        'label' => THelper::t('sidebar_stock_bonus'),
+                        'url' => ['/business/transactions/stock-bonus'],
+                        'action' => 'stock-bonus',
+                    ],
                 ]
             ],
             [
@@ -552,6 +558,12 @@ Class Menu
                         'label' => THelper::t('sidebar_execution_posting'),
                         'url' => ['submit-execution-posting/sending-execution'],
                         'action' => 'sending-execution',
+                    ],
+                    [
+                        'key'   =>  'sidebar_returns_performers',
+                        'label' => THelper::t('sidebar_returns_performers'),
+                        'url' => ['manufacturing-suppliers/returns-performers'],
+                        'action' => 'returns-performers',
                     ],
                     [
                         'key'   =>  'sidebar_history_cancellation_posting',

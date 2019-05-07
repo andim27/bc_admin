@@ -25,13 +25,14 @@ class ExecutionPosting extends \yii2tech\embedded\mongodb\ActiveRecord
     {
         return [
             '_id',
-
+            'article_id',
             'one_component',
             'repair',
 
             'parts_accessories_id',
             'number',
             'received',
+            'none_complect_id',
 
             'list_component',
 

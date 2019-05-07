@@ -34,7 +34,16 @@ if(!empty($model)){
 }
 
 ?>
-
+<style>
+    .partNoneComplect {
+        display: none;
+        border-bottom-color: red;
+        color: red;
+    }
+    .none-complect-ch-row {
+        display: none;
+    }
+</style>
 <div class="modal-dialog modal-more-lg popupSendingExecution">
     <div class="modal-content">
         <div class="modal-header">
@@ -51,6 +60,12 @@ if(!empty($model)){
                     <?=Html::checkbox('',(!empty($model->one_component) ?  true : false ),['class'=>'flOneComponent'])?>
                 </div>
             </div>
+            <div class="form-group row none-complect-ch-row">
+                <div class="col-md-offset-8 col-md-3 text-right"><?=THelper::t('non_complect')?></div>
+                <div class="col-md-1">
+                    <?=Html::checkbox('none-complect-ch', false ,['id'=>'none-complect-ch'])?>
+                </div>
+            </div>
             <?php } ?>
 
             <!--kit product-->
@@ -62,6 +77,7 @@ if(!empty($model)){
 
                 <?=Html::hiddenInput('_id',(!empty($model) ? (string)$model->_id : ''));?>
                 <?=Html::hiddenInput('one_component',0);?>
+                <?=Html::hiddenInput('none-complect-ch-val',0);?>
 
                 <div class="form-group row infoDanger"></div>
 
@@ -179,6 +195,9 @@ if(!empty($model)){
                     </div>
                     <div class="col-md-6 text-right">
                         <?php if(empty($model)){?>
+                            <div id="none-complect-items">
+
+                            </div>
                         <?= Html::submitButton(THelper::t('save'), ['class' => 'btn btn-success assemblyBtn']) ?>
                         <?php } ?>
                     </div>
@@ -202,6 +221,7 @@ if(!empty($model)){
 
 
                 <div class="form-group row blUnique">
+                   <!-- add-edit-sending-exec-->
                     <div class="col-md-7">
                         <?=Html::dropDownList('parts_accessories_id',
                             (!empty($model) ?  $model->parts_accessories_id : ''),
@@ -251,6 +271,9 @@ if(!empty($model)){
 
                 <div class="row">
                     <div class="col-md-12 text-right">
+                        <div id="none-complect-items">
+
+                        </div>
                         <?= Html::submitButton(THelper::t('save'), ['class' => 'btn btn-success assemblyBtn']) ?>
                     </div>
                 </div>
@@ -285,19 +308,109 @@ if(!empty($model)){
             }
         });
     });
+    function isInt(n)
+    {
+        return ((n != "" && !isNaN(n)) && (Math.round(n) == n));
+    }
+    function isFloat (x) {
+        return !!(x % 1); //return n != "" && !isNaN(n) && Math.round(n) != n;
 
+    }
     $(".WantCollect").on('change',function(){
-
+        $('#none-complect-items').html("");
         blForm = $(this).closest('form');
-
+        $('.assemblyBtn').show();
         wantC = parseFloat($(this).val());
-
+        canC = parseFloat(blForm.find('.CanCollect').val());
+        if (wantC > canC) {
+            nonComplectCells('show');
+        } else {
+            nonComplectCells('hide');
+            //return;
+        }
         blForm.find('.blPartsAccessories .row').each(function () {
             partNeedForOne = $(this).find('.partNeedForOne').val();
            $(this).find('.needSend').val((partNeedForOne*wantC).toFixed(2));
         });
+        //--fill Interchangeable--
+        blForm.find('.blInterchangeable .row').each(function () {
+            partNeedForOneInterchangeable = $(this).find('.partNeedForOneInterchangeable').val();
+            //$(this).find('.needSendInterchangeable').val((parseInt(partNeedForOneInterchangeable*wantC)));
+            $(this).find('.needSendInterchangeable').val(0);
+        });
+        //--none complect--
+        blForm.find('.form-group .row').each(function () {
+            if ($(this).find('input.partTitle').val() != undefined) {
 
-        checkBeforeSend();
+                noneVal=undefined;
+                part_id = $(this).find('input.partTitle').attr('data-part_id');
+                //--inWarehouseInterchangeable--
+                partNeedForOne  = parseInt($(this).find('.partNeedForOneInterchangeable').val());
+                partNeedForSend = parseInt($(this).find('.needSendInterchangeable').val());
+                partNeedForSendAll = parseInt($(this).find('.needSendInterchangeable').val());//partNeedForSend*partNeedForOne;
+                inwhInter = $(this).find('input.inWarehouseInterchangeable').val();//--inWarehouseInterchangeable inWarwhouse
+                if (inwhInter != undefined) {
+                    console.log('(inwhInter) yes inwhInter=' + inwhInter + '  wantC=' + wantC+ ' partNeedForSend=' + partNeedForSend+' partTitle='+$(this).find('input.partTitle').val());
+                    if (isFloat(inwhInter)) {
+                        inwhInter = parseFloat(inwhInter);
+                        partNeedForOne  = parseFloat($(this).find('.partNeedForOneInterchangeable').val());
+                        partNeedForSend = parseFloat($(this).find('.needSendInterchangeable').val());
+                        partNeedForSendAll = partNeedForSend;//partNeedForSend*partNeedForOne;
+                        if (inwhInter < partNeedForSendAll) {
+                            noneVal = partNeedForSendAll - inwhInter;
+                            console.log('(inwhInter)FLOAT-LESS yes inwhInter='+inwhInter+'< LESS! partNeedForOne=' + partNeedForOne +' partNeedForSendAll='+partNeedForSendAll+' noneVal='+noneVal);
+                            $(this).find('input.partNoneComplect').val(noneVal);
+
+                        }
+                    } else {
+                        if (inwhInter == 0) {
+                            noneVal =parseInt(partNeedForOne * wantC);
+                            console.log('(inwhInter)INT-0 yes >'+noneVal+'< ZERO! partNeedForOne=' + partNeedForOne +' noneVal='+noneVal);
+
+                            $(this).find('input.partNoneComplect').val(noneVal);
+                        }
+                        if (inwhInter < partNeedForSend) {
+                            noneVal = parseInt(partNeedForOne * wantC) - inwhInter;
+                            console.log('(inwhInter)INT-LESS yes >'+noneVal+'< LESS! partNeedForOne=' + partNeedForOne  + wantC+' noneVal='+noneVal);
+                            $(this).find('input.partNoneComplect').val(noneVal);
+
+                        }
+                    }
+
+                }
+                //--inWarehouse--
+                inwh = $(this).find('input.inWarehouse').val();
+                partNeedForOne = parseInt($(this).find('.partNeedForOne').val());
+                partNeedForSend = parseInt($(this).find('.needSend').val());
+                partNeedForSendAll = parseInt($(this).find('.needSend').val());//partNeedForSend*partNeedForOne;
+                if (inwh != undefined) {
+                    if (isFloat(inwh)) {
+                        inwh            = parseFloat($(this).find('input.inWarehouse').val());
+                        partNeedForOne  = parseFloat($(this).find('.partNeedForOne').val());
+                        partNeedForSend = parseFloat($(this).find('.needSend').val());
+                        partNeedForSendAll = partNeedForSend;//partNeedForSend*partNeedForOne;
+                        if (inwh < partNeedForSendAll) {
+                            noneVal = partNeedForSendAll - inwh;
+                            console.log('FLOAT yes >'+noneVal+'< LESS! partNeedForSendAll=' + partNeedForSendAll + '  wantC=' + wantC+' noneVal='+noneVal);
+                            $(this).find('input.partNoneComplect').val(noneVal);
+                        }
+                    } else {
+                        if (inwh < partNeedForSendAll) {
+                            noneVal = partNeedForSendAll - inwh;
+                            console.log('(inwh)INT LESS yes inWarehouse >'+noneVal+'<LESS! partNeedForOne=' + partNeedForOne + '  wantC=' + wantC + ' inWareHouse=' + inwh+' partTitle='+$(this).find('input.partTitle').val());
+                            $(this).find('input.partNoneComplect').val(noneVal);
+                        }
+                    }
+
+                }
+                console.log('NONEVAL='+noneVal+' part_id='+part_id);
+                if ((part_id != undefined)&&(noneVal != undefined)) {
+                    $('#none-complect-items').append("<input type='hidden' id='itemNoneComplect-"+part_id+"' name='arrayNoneComplect["+part_id+"]' value='"+noneVal+"' />");
+                }
+            }
+        });
+        //checkBeforeSend();
+
     });
 
     $(".partNeedReserve").on("change",function () {
@@ -340,7 +453,7 @@ if(!empty($model)){
                     $(this).closest('.blInterchangeable').find('.infoDangerExecution').html(
                         '<div class="alert alert-danger fade in">' +
                         '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-                        'Не достаточно на складе' +
+                        'Замена:Не достаточно на складе' +
                         '</div>'
                     );
                     answer = 0;
@@ -373,7 +486,9 @@ if(!empty($model)){
 
         if(wantC>canC){
             answer = 0;
+            //nonComplectCells('show');
         } else {
+            //nonComplectCells('hide');
             answer = 1;
         }
 
@@ -392,10 +507,23 @@ if(!empty($model)){
                 }
             }
         }
-        $('.assemblyBtn').hide();
+        //$('.assemblyBtn').hide();
+        if (document.getElementById('none-complect-ch').checked) {
+            $('.assemblyBtn').show();
+        }
+
         return true;
     }
-
+    $('#none-complect-ch').on('change',function(){
+        if (document.getElementById('none-complect-ch').checked) {
+            $('.assemblyBtn').show();
+            $('#none-complect-ch-val').val(1);
+            nonComplectCells('show');
+        } else {
+            nonComplectCells('hide');
+            $('#none-complect-ch-val').val(0);
+        }
+    });
 
     $('.blPartsAccessories').on('change','.partNeedReserve',function(){
         bl = $(this).closest('.row');
@@ -583,5 +711,22 @@ if(!empty($model)){
         }
 
     });
+    //----non complect func-----
+    function nonComplectCells(action) {
+        console.log('noneComplectCells:'+action);
+        if (action == 'show') {
+            $('.none-complect-ch-row').show();
+            $('#none-complect-ch').attr('checked',true);//.attr('disabled',true)
+            $('#none-complect-ch-val').val(1);
+            $('.partNoneComplect').show();
+            $('.assemblyBtn').show();
+        }
+        if (action == 'hide') {
+            $('.none-complect-ch-row').hide();
+            $('#none-complect-ch').attr('checked',false);
+            $('#none-complect-ch-val').val(0);
+            $('.partNoneComplect').hide();
+        }
+    }
 
 </script>

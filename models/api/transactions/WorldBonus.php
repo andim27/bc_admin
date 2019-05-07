@@ -92,8 +92,6 @@ class WorldBonus {
 
         $response = $apiClient->delete(['date' => $date], false);
 
-        hh($response);
-
         return $response == 'OK';
     }
 

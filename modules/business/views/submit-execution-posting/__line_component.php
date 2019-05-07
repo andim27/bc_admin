@@ -13,7 +13,8 @@ $partContractor = ExecutionPosting::getPresenceInPerformer((string)$item['parts_
 
 
 <div class="form-group row blUnique">
-    <div class="col-md-7">
+    <!-- line_component-->
+    <div class="col-md-6">
         <?=Html::hiddenInput('complect[]',(string)$item['parts_accessories_id'],[]);?>
         <?=Html::input('text','',$listGoods[(string)$item['parts_accessories_id']],[
             'class'             => 'form-control partTitle',
@@ -48,6 +49,15 @@ $partContractor = ExecutionPosting::getPresenceInPerformer((string)$item['parts_
             'class'=>'form-control partNeedReserve',
             'pattern'=>'\d*',
             'step'=>'1',
+        ]);?>
+    </div>
+    <div class="col-md-1">
+        <?=Html::input('number','numberNoneComplect['.(string)$item['parts_accessories_id'].']',0,[
+            'class'=>'form-control partNoneComplect',
+            'pattern'=>'\d*',
+            'step'=>'1',
+            'disabled'=>true,
+            'title' => 'Не комплект(_line_component)'
         ]);?>
     </div>
 </div>
