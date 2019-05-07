@@ -1174,6 +1174,7 @@ class ShowroomsController extends BaseController
      */
     public function actionChargeCompensationConsolidated()
     {
+
         $request = Yii::$app->request->get();
 
         $filter = [];
@@ -1272,21 +1273,19 @@ class ShowroomsController extends BaseController
         }
 
 
-//        $arrayTurnover = $this->getTurnover($filter['date'],$filter['date'],[$filter['showroomId']]);
-//
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo '<xmp>';
-//        print_r($arrayTurnover);
-//        echo '</xmp>';
-//        die();
+        //get turnover
+        $arrayTurnovers = $this->getTurnovers($filter['date'],$filter['date'],$filter['showroomId']);
+        if(!empty($arrayTurnovers)){
+            foreach ($arrayTurnovers as $k=>$itemTurnover) {
+                $showrooms[$k]['turnoverTotal'] = $itemTurnover['totalTurnover'];
+            }
+        }
 
-        //get turnover and accruals
-        $arrayTurnoverAccruals = $this->getTurnoverAccruals($filter['date'] . '-01',$filter['date'] .'-'.$countDay,$filter['showroomId']);
-        if(!empty($arrayTurnoverAccruals)){
-            foreach ($arrayTurnoverAccruals as $k=>$itemTurnoverAccrual) {
-                $showrooms[$k]['turnoverTotal'] = $itemTurnoverAccrual['turnoverTotal'];
-                $showrooms[$k]['profit'] = $itemTurnoverAccrual['accruals'];
-
+        //get profit
+        $arrayProfits = $this->getProfits($filter['date'],$filter['date'],$filter['showroomId']);
+        if(!empty($arrayProfits)){
+            foreach ($arrayProfits as $k=>$itemProfit) {
+                $showrooms[$k]['profit'] = $itemProfit['totalProfit'];
             }
         }
 
@@ -1306,7 +1305,6 @@ class ShowroomsController extends BaseController
                 $showrooms[$k]['remainder'] = $itemTotalRemainder['remainder'];
             }
         }
-
 
         return $this->render('charge-compensation-consolidated', [
             'filter'                 =>  $filter,
@@ -2457,7 +2455,7 @@ class ShowroomsController extends BaseController
 //    }
 
 
-    private function getTurnover($dateMonthFrom,$dateMonthTo,$listShowrooms = []){
+    private function getTurnovers($dateMonthFrom,$dateMonthTo,$listShowrooms = []){
 
         $currentDate = date('Y-m');
 
@@ -2465,6 +2463,10 @@ class ShowroomsController extends BaseController
 
         $whereShowroom = [];
         if(!empty($listShowrooms)) {
+            if(!is_array($listShowrooms)){
+                $listShowrooms = [new ObjectId($listShowrooms)];
+            }
+
             $whereShowroom = ['_id' => ['$in'=>$listShowrooms]];
         }
 
@@ -2475,32 +2477,40 @@ class ShowroomsController extends BaseController
 
         foreach ($modelShowrooms as $item){
 
-            $timestampFrom = strtotime($dateMonthFrom);
-            $timestampTo = strtotime($dateMonthTo);
+            $timestampFrom = strtotime($dateMonthFrom.'-01');
+            $timestampTo = strtotime($dateMonthTo.'-01');
 
-            $i = 1;
             do {
                 $checkDate = date('Y-m',$timestampFrom);
+
                 if(!isset($item->turnovers[$checkDate])){
                     $turnoverMonth = $this->calculationTurnover($checkDate,$item->_id);
 
                     if($currentDate != $checkDate){
+                        $dataInsert = $item->turnovers;
+                        $dataInsert[$checkDate] = [
+                            'date'      =>  $checkDate,
+                            'turnover'  =>  $turnoverMonth
+                        ];
+                        $item->turnovers = $dataInsert;
+                        if($item->save()){
 
+                        }
                     }
                 } else {
-                    $turnoverMonth = $item->turnovers[$checkDate];
+                    $turnoverMonth = $item->turnovers[$checkDate]['turnover'];
                 }
 
                 $turnovers[strval($item->_id)]['turnovers'][$checkDate] = $turnoverMonth;
-                if(!isset($turnovers[strval($item->_id)]['totalTurnovers'])){
-                    $turnovers[strval($item->_id)]['totalTurnovers'] = 0;
-                }
-                $turnovers[strval($item->_id)]['totalTurnovers'] += $turnoverMonth;
 
-                $timestampFrom = strtotime('+'.$i++.' months',$timestampFrom);
+                if(!isset($turnovers[strval($item->_id)]['totalTurnover'])){
+                    $turnovers[strval($item->_id)]['totalTurnover'] = 0;
+                }
+                $turnovers[strval($item->_id)]['totalTurnover'] += $turnoverMonth;
+
+                $timestampFrom = strtotime('+1 month',$timestampFrom);
 
             } while ($timestampFrom <= $timestampTo);
-
 
         }
 
@@ -2510,8 +2520,6 @@ class ShowroomsController extends BaseController
 
     private function calculationTurnover($dateMonth,$showroomId)
     {
-
-
         $infoDateTo = explode("-",$dateMonth);
         $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
 
@@ -2529,9 +2537,117 @@ class ShowroomsController extends BaseController
             ->orderBy(['dateCreate'=>SORT_DESC])
             ->sum('price');
 
+        if(empty($turnover)){
+            $turnover = 0;
+        }
 
         return $turnover;
     }
+
+    private function getProfits($dateMonthFrom,$dateMonthTo,$listShowrooms = [])
+    {
+        $currentDate = date('Y-m');
+
+        $profits = [];
+
+        $whereShowroom = [];
+        if(!empty($listShowrooms)) {
+            if(!is_array($listShowrooms)){
+                $listShowrooms = [new ObjectId($listShowrooms)];
+            }
+
+            $whereShowroom = ['_id' => ['$in'=>$listShowrooms]];
+        }
+
+        $modelShowrooms = Showrooms::find()
+            ->select(['_id','profits'])
+            ->filterWhere($whereShowroom)
+            ->all();
+
+
+        foreach ($modelShowrooms as $item){
+
+            $timestampFrom = strtotime($dateMonthFrom.'-01');
+            $timestampTo = strtotime($dateMonthTo.'-01');
+
+            do {
+                $checkDate = date('Y-m',$timestampFrom);
+
+                if(!isset($item->profits[$checkDate])){
+
+                    $profitMonth = $this->calculationProfit($checkDate,$item->_id);
+
+                    if($currentDate != $checkDate){
+                        $i++;
+                        $dataInsert = $item->profits;
+                        $dataInsert[$checkDate] = [
+                            'date'    =>  $checkDate,
+                            'profit'  =>  $profitMonth
+                        ];
+                        $item->profits = $dataInsert;
+                        if($item->save()){
+
+                        }
+                    }
+                } else {
+                    $profitMonth = $item->profits[$checkDate]['profit'];
+                }
+
+                $profits[strval($item->_id)]['profits'][$checkDate] = $profitMonth;
+
+                if(!isset($profits[strval($item->_id)]['totalProfit'])){
+                    $profits[strval($item->_id)]['totalProfit'] = 0;
+                }
+                $profits[strval($item->_id)]['totalProfit'] += $profitMonth;
+
+                $timestampFrom = strtotime('+1 month',$timestampFrom);
+
+            } while ($timestampFrom <= $timestampTo);
+        }
+
+        return $profits;
+    }
+
+    private function calculationProfit($dateMonth,$showroomId)
+    {
+        $profit = 0;
+
+        $infoDateTo = explode("-",$dateMonth);
+        $countDay = cal_days_in_month(CAL_GREGORIAN, $infoDateTo['1'], $infoDateTo['0']);
+
+        $modelSales = Sales::find()
+            ->select(['statusShowroom','productData'])
+            ->where([
+                'type' => [
+                    '$ne'   =>  -1
+                ],
+                'showroomId' => $showroomId,
+                'dateCloseSale' => [
+                    '$gte' => new UTCDateTime(strtotime($dateMonth . '-01 00:00:00') * 1000),
+                    '$lte' => new UTCDateTime(strtotime($dateMonth.'-'.$countDay.' 23:59:59') * 1000)
+                ]
+            ])
+            ->orderBy(['dateCreate'=>SORT_DESC])
+            ->all();
+        if(!empty($modelSales)){
+
+            $turnoverMonth = $this->calculationTurnover($dateMonth,$showroomId);
+            $typePayments = 'paymentsToStock';
+            if($turnoverMonth >= 10000){
+                $typePayments = 'paymentsToRepresentive';
+            }
+
+            /** @var Sales $sale */
+            foreach ($modelSales as $sale) {
+                if(in_array($sale->statusShowroom,[Sales::STATUS_SHOWROOM_DELIVERED,Sales::STATUS_SHOWROOM_DELIVERED_COMPANY])){
+                    $profit += ($sale->productData[$typePayments] * $sale->productData['count']);
+                }
+            }
+        }
+
+        return $profit;
+    }
+
 
     private function getTurnoverAccruals($dateFrom,$dateTo,$showroomId = [])
     {
@@ -2634,6 +2750,12 @@ class ShowroomsController extends BaseController
         return $response;
     }
 
+
+
+
+
+
+
     private function getCompensation($dateFrom,$dateTo,$showroomId = [])
     {
         $response = [];
@@ -2644,6 +2766,7 @@ class ShowroomsController extends BaseController
         }
 
         $modelCompensationPayments = ShowroomsCompensation::find()
+            ->select(['showroomId','typeOperation','typeRefill','amount'])
             ->andWhere([
                 'created_at' => [
                     '$gte' => new UTCDateTime(strtotime($dateFrom . ' 00:00:00') * 1000),
@@ -2694,13 +2817,17 @@ class ShowroomsController extends BaseController
 
         $response = [];
 
-        $arrayTurnoverAccruals = $this->getTurnoverAccruals('2019-01-01',$yearNow . '-' . $monthNow . '-' . $countDay,$showroomId);
+        //$arrayTurnoverAccruals = $this->getTurnoverAccruals('2019-01-01',$yearNow . '-' . $monthNow . '-' . $countDay,$showroomId);
+
+
+
+        $arrayTurnoverAccruals = $this->getProfits('2019-01',$yearNow . '-' . $monthNow,$showroomId);
         if(!empty($arrayTurnoverAccruals)){
             foreach ($arrayTurnoverAccruals as $k=>$itemTurnoverAccrual) {
                 if(empty($response[$k]['remainder'])) {
                     $response[$k]['remainder'] = 0;
                 }
-                $response[$k]['remainder'] += $itemTurnoverAccrual['accruals'];
+                $response[$k]['remainder'] += $itemTurnoverAccrual['totalProfit'];
             }
         }
 

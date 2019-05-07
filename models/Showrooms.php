@@ -66,6 +66,8 @@ class Showrooms extends \yii2tech\embedded\mongodb\ActiveRecord
             'otherLogin',
             'status',
             'created_at',
+            'turnovers',
+            'profits',
         ];
     }
 
