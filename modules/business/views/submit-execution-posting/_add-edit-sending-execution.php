@@ -720,6 +720,7 @@ if(!empty($model)){
             $('#none-complect-ch-val').val(1);
             $('.partNoneComplect').show();
             $('.assemblyBtn').show();
+
         }
         if (action == 'hide') {
             $('.none-complect-ch-row').hide();
