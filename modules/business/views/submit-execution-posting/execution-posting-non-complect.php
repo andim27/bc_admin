@@ -210,7 +210,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                             <td><?=$item['date_create'] ?></td>
                                             <td><?=$item['article_id'] ?></td>
                                             <td title="<?=$item['none_id'] ?>"><?=$item['none_title'] ?></td>
-                                            <td><?=$item['none_number'] ?></td>
+                                            <td><?=round($item['none_number'],2) ?></td>
                                             <td><span id="number_in_wh_<?=$item['none_id'] ?>"><?=$item['number_in_wh'] ?></span></td>
                                             <td id="td_part_id_<?=$item['none_id'] ?>">
                                                 <?php

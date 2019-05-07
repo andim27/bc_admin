@@ -156,8 +156,10 @@ function pasportLang($name,$p_lang) {
                                         <?=Html::input('number','numberNoneComplect['.$kInterchangeable.']','0',[
                                             'class'=>'form-control partNoneComplect',
                                             'pattern'=>'\d*',
+                                            'step'=>'0.01',
                                             'disabled'=>'disabled',
                                             'title' => 'Не комплект(_kit-p-lang)',
+                                            'data-part_id'=> (string)$kInterchangeable,
                                             'id'=>'NoneComplect-'.(string)$kInterchangeable
                                         ]);?>
                                     </div>
@@ -284,9 +286,13 @@ function pasportLang($name,$p_lang) {
     console.log(canCollect);
 
     $(document).find('.CanCollect').val(canCollect);
-
+    function CanNone(el) {
+        $(el).attr('disabled',false);
+        console.log('CanNone Click!')
+    }
     $(document).ready(function() {
         $('.none-complect-ch-row').show();
+
         //needSendInterchangeable
         $(".needSendInterchangeable").on("blur",function () {
             cur_val     = parseFloat($(this).val());
@@ -294,6 +300,11 @@ function pasportLang($name,$p_lang) {
             cur_one_number = parseFloat($(this).attr('data-one_number'));
             cur_n_in_wh = parseFloat($(this).attr('data-n_in_wh'));
             console.log('needSendInterchangeable val= '+cur_val+' part_id='+cur_part_id,' cur_n_in_wh='+cur_n_in_wh);
+            $("#NoneComplect-"+cur_part_id).attr('disabled',false);
+            $("#NoneComplect-"+cur_part_id).on('change',function (){
+                console.log('new none val='+$(this).val());
+                $("#itemNoneComplect-"+cur_part_id).val($(this).val());
+            });
             if (($("#NoneComplect-"+cur_part_id).css('display') =='inline-block')){
                 if ((cur_val >= cur_n_in_wh)) {
                     console.log('yes,need none comp');
@@ -304,6 +315,7 @@ function pasportLang($name,$p_lang) {
 
             }
         });
+
     });
 //    $(document).on('change','select[name="complect[]"]',function () {
 //
