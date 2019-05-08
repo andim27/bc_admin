@@ -2578,7 +2578,6 @@ class ShowroomsController extends BaseController
                     $profitMonth = $this->calculationProfit($checkDate,$item->_id);
 
                     if($currentDate != $checkDate){
-                        $i++;
                         $dataInsert = $item->profits;
                         $dataInsert[$checkDate] = [
                             'date'    =>  $checkDate,

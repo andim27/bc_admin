@@ -26,6 +26,8 @@ class Order extends ActiveRecord
         return [
             '_id',
             'orderId',
+            'userId',
+            'userToId',
             'status',
             'paymentStatus',
             'paymentType',

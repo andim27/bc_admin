@@ -1,4 +1,6 @@
 <?php
+    use yii\grid\GridView;
+    use yii\helpers\Html;
     use app\components\THelper;
 ?>
 <div class="m-b-md">
@@ -9,54 +11,131 @@
         <section class="panel panel-default">
             <div class="panel-body">
                 <div class="tab-content">
-                    <table class="table table-striped datagrid m-b-sm">
-                        <thead>
-                        <tr>
-                            <th><?= THelper::t('shop_orders_order_id') ?></th>
-                            <th><?= THelper::t('shop_orders_user') ?></th>
-                            <th><?= THelper::t('shop_orders_user_to') ?></th>
-                            <th><?= THelper::t('shop_orders_date') ?></th>
-                            <th><?= THelper::t('shop_orders_products') ?></th>
-                            <th><?= THelper::t('shop_orders_total') ?></th>
-                            <th><?= THelper::t('shop_orders_payment_type') ?></th>
-                            <th><?= THelper::t('shop_orders_payment_status') ?></th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach($orders as $order) { ?>
-                                <tr>
-                                    <td><?= $order->orderId ?></td>
-                                    <td>
-                                        <?= $order->user->login ?>
-                                        <br />
-                                        <?= trim($order->user->firstName . ' ' . $order->user->secondName) ?>
-                                    </td>
-                                    <td>
-                                        <?= $order->userTo->login ?>
-                                        <br />
-                                        <?= trim($order->userTo->firstName . ' ' . $order->userTo->secondName) ?>
-                                    </td>
-                                    <td><?= gmdate('d.m.Y', $order->date) ?></td>
-                                    <td>
-                                        <ul class="list-group">
-                                        <?php foreach ($order->products as $product) { ?>
-                                            <li class="list-group-item"><?= $product->productName; ?></li>
-                                        <?php } ?>
-                                        </ul>
-                                    </td>
-                                    <td><?= $order->total ?></td>
-                                    <td><?= THelper::t('shop_orders_payment_type_' . $order->paymentType) ?></td>
-                                    <td class="shop_order_<?= $order->_id ?>"><?= THelper::t('shop_orders_payment_status_' . $order->paymentStatus) ?></td>
-                                    <td>
-                                        <?php if ($order->paymentStatus != 'paid') { ?>
-                                            <a data-id="<?= $order->_id ?>" class="btn btn-success btn-sm set-payment-type"><?= THelper::t('shop_orders_set_payment_type') ?></a>
-                                        <?php } ?>
-                                    </td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <?= GridView::widget([
+                            'options' => [
+                                'class' => 'grid-view table-responsive'
+                            ],
+                            'dataProvider' => $dataProvider,
+                            'filterModel' => [],
+                            'columns' => [
+                                [
+                                    'class' => 'yii\grid\DataColumn',
+                                    'attribute' => 'orderId',
+                                    'enableSorting' => false,
+                                    'label' =>  THelper::t('shop_orders_order_id'),
+                                    'format' => 'raw',
+                                    'value' => function ($data){
+                                        return $data['orderId'];
+                                    },
+                                    'filter' => Html::input('text','search[orderId]',(!empty($request['search']['orderId']) ? $request['search']['orderId'] : ''),['class'=>'form-control','style'=>'width: 60px;'])
+                                ],
+
+                                [
+                                    'class' => 'yii\grid\DataColumn',
+                                    'attribute' => 'userLogin',
+                                    'enableSorting' => false,
+                                    'label' => THelper::t('shop_orders_user'),
+                                    'format' => 'raw',
+                                    'value' => function ($data){
+                                        return
+                                            $data['user']['login'].'<br/>' .
+                                            $data['user']['firstName'] . ' ' . $data['user']['secondName'];
+                                    },
+                                    'filter' => Html::input('text','search[userLogin]',(!empty($request['search']['userLogin']) ? $request['search']['userLogin'] : ''),['class'=>'form-control'])
+                                ],
+
+                                [
+                                    'class' => 'yii\grid\DataColumn',
+                                    'attribute' => 'userToLogin',
+                                    'enableSorting' => false,
+                                    'label' => THelper::t('shop_orders_user_to'),
+                                    'format' => 'raw',
+                                    'value' => function ($data){
+                                        return
+                                            $data['userTo']['login'].'<br/>' .
+                                            $data['userTo']['firstName'] . ' ' . $data['userTo']['secondName'];
+                                    },
+                                    'filter' => Html::input('text','search[userToLogin]',(!empty($request['search']['userToLogin']) ? $request['search']['userToLogin'] : ''),['class'=>'form-control'])
+                                ],
+
+                                [
+                                    'class' => 'yii\grid\DataColumn',
+                                    'attribute' => 'dateCreate',
+                                    'enableSorting' => false,
+                                    'label' => THelper::t('shop_orders_date'),
+                                    'format' => 'raw',
+                                    'value' => function ($data){
+                                        return $data['dateCreate'];
+                                    }
+                                ],
+
+                                [
+                                    'class' => 'yii\grid\DataColumn',
+                                    'attribute' => 'productsName',
+                                    'enableSorting' => false,
+                                    'label' => THelper::t('shop_orders_products'),
+                                    'format' => 'raw',
+                                    'value' => function ($data){
+                                        $listProduct = '<ul class="list-group">';
+                                        foreach ($data['products'] as $product) {
+                                            $listProduct .= '<li class="list-group-item">' . $product['productName'] . '</li>';
+                                        }
+                                        $listProduct .= '</ul>';
+
+                                        return $listProduct;
+
+                                    }
+                                ],
+
+                                [
+                                    'class' => 'yii\grid\DataColumn',
+                                    'attribute' => 'total',
+                                    'enableSorting' => false,
+                                    'label' => THelper::t('shop_orders_total'),
+                                    'format' => 'raw',
+                                    'value' => function ($data){
+                                        return $data['total'];
+                                    },
+                                    'filter' => Html::input('integer','search[total]',(!empty($request['search']['total']) ? $request['search']['total'] : ''),['class'=>'form-control'])
+                                ],
+
+                                [
+                                    'class' => 'yii\grid\DataColumn',
+                                    'attribute' => 'paymentType',
+                                    'enableSorting' => false,
+                                    'label' => THelper::t('shop_orders_payment_type'),
+                                    'format' => 'raw',
+                                    'value' => function ($data){
+                                        return THelper::t('shop_orders_payment_status_' . $data['paymentType']);
+                                    }
+                                ],
+
+                                [
+                                    'class' => 'yii\grid\DataColumn',
+                                    'attribute' => 'paymentStatus',
+                                    'enableSorting' => false,
+                                    'label' => THelper::t('shop_orders_payment_status'),
+                                    'format' => 'raw',
+                                    'value' => function ($data){
+                                        $btn = '';
+                                        if ($data['paymentStatus'] != 'paid') {
+                                           $btn = '<a data-id="'.$data['id'].'" class="btn btn-success btn-sm set-payment-type">'. THelper::t('shop_orders_set_payment_type') .'</a>';
+                                        }
+                                        return $btn;
+                                    }
+                                ]
+                            ]
+
+                        ]); ?>
+
+
+                        <?= \yii\widgets\LinkPager::widget([
+                            'pagination' => $pages,
+                        ]);
+                        ?>
+
+                    </div>
                 </div>
             </div>
         </section>
@@ -82,10 +161,5 @@
                 }
             }
         });
-    });
-    var table = $('.table');
-    table = table.dataTable({
-        language: TRANSLATION,
-        'order': [[ 0, 'desc' ]]
     });
 </script>
