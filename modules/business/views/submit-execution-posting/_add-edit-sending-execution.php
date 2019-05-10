@@ -66,6 +66,9 @@ if(!empty($model)){
                     <?=Html::checkbox('none-complect-ch', false ,['id'=>'none-complect-ch'])?>
                 </div>
             </div>
+            <div class="form-group row none-complect-count">
+                <div class="col-md-offset-10 col-md-2 text-left"><span><a onclick="showNkParts();" title="Показать н.к детали"> Н.к деталей - <span id="none-complect-count-val">0</span></a></span></div>
+            </div>
             <?php } ?>
 
             <!--kit product-->
@@ -318,6 +321,7 @@ if(!empty($model)){
     }
     $(".WantCollect").on('change',function(){
         $('#none-complect-items').html("");
+        $('#none-complect-count-val').html($("#none-complect-items").children().length);
         blForm = $(this).closest('form');
         $('.assemblyBtn').show();
         wantC = parseFloat($(this).val());
@@ -404,8 +408,9 @@ if(!empty($model)){
 
                 }
                 console.log('NONEVAL='+noneVal+' part_id='+part_id);
-                if ((part_id != undefined)&&(noneVal != undefined)) {
+                if ( (wantC > canC)&&(part_id != undefined)&&(noneVal != undefined)) {
                     $('#none-complect-items').append("<input type='hidden' id='itemNoneComplect-"+part_id+"' name='arrayNoneComplect["+part_id+"]' value='"+noneVal+"' />");
+                    $('#none-complect-count-val').html($("#none-complect-items").children().length);
                 }
             }
         });
@@ -728,6 +733,16 @@ if(!empty($model)){
             $('#none-complect-ch-val').val(0);
             $('.partNoneComplect').hide();
         }
+    }
+    function showNkParts() {
+        var nk_str='';
+        $('#none-complect-items').children().each(function(){
+            var part_id = $(this).attr('id').split('-')[1];
+            console.log('part is:'+part_id);
+            nk_str=nk_str+$("input[data-part_id="+part_id+"]").val()+"\n";
+        });
+        nk_str=nk_str+'----------Всего:'+$("#none-complect-items").children().length+'----------\n';
+        alert(nk_str);
     }
 
 </script>

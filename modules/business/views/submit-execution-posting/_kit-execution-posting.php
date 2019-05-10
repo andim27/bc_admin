@@ -302,18 +302,39 @@ function pasportLang($name,$p_lang) {
             console.log('needSendInterchangeable val= '+cur_val+' part_id='+cur_part_id,' cur_n_in_wh='+cur_n_in_wh);
             $("#NoneComplect-"+cur_part_id).attr('disabled',false);
             $("#NoneComplect-"+cur_part_id).on('change',function (){
-                console.log('new none val='+$(this).val());
-                $("#itemNoneComplect-"+cur_part_id).val($(this).val());
+                var new_none_val = $(this).val();
+                if (new_none_val != 0) {
+                    console.log('new none val='+new_none_val);
+                    if ($("#itemNoneComplect-"+cur_part_id).length == 0) {
+                        console.log('Need APPEND new position none val='+new_none_val)
+                        $('#none-complect-items').append("<input type='hidden' id='itemNoneComplect-"+cur_part_id+"' name='arrayNoneComplect["+cur_part_id+"]' value='"+new_none_val+"' />");
+
+                    }
+                    $("#itemNoneComplect-"+cur_part_id).val(new_none_val);
+                } else {
+                    $("#itemNoneComplect-"+cur_part_id).remove();
+                }
+
+
             });
             if (($("#NoneComplect-"+cur_part_id).css('display') =='inline-block')){
                 if ((cur_val >= cur_n_in_wh)) {
                     console.log('yes,need none comp');
+                    if ($("#itemNoneComplect-"+cur_part_id).length == 0) {
+                        console.log('Need APPEND cur_val >= cur_n_in_wh='+new_none_val)
+                        $('#none-complect-items').append("<input type='hidden' id='itemNoneComplect-"+cur_part_id+"' name='arrayNoneComplect["+cur_part_id+"]' value='"+cur_val+"' />");
+
+                    }
                     $("#NoneComplect-"+cur_part_id).val(cur_val*cur_one_number);
                     $("#itemNoneComplect-"+cur_part_id).val(cur_val*cur_one_number);
+                    if (cur_val ==0) {
+                        $("#itemNoneComplect-"+cur_part_id).remove();
+                    }
                 }
 
 
             }
+            $('#none-complect-count-val').html($("#none-complect-items").children().length);
         });
 
     });
