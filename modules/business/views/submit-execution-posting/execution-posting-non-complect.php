@@ -219,7 +219,7 @@ $listGoods = PartsAccessories::getListPartsAccessories();
                                                     <?php
 
                                                     foreach ($item['filled'] as $filled_item) {
-                                                        $filled_sum += $filled_item['number'];
+                                                        $filled_sum += round(floatval($filled_item['number']),2);
                                                     }
                                                     ?>
 
